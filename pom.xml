@@ -76,5 +76,15 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+    	<groupId>fr.ign.cogit</groupId>
+    	<artifactId>cogit-sig3d</artifactId>
+    	<version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+    	<groupId>fr.ign.cogit</groupId>
+    	<artifactId>geoxygene-geopensim</artifactId>
+    	<version>1.6-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 </project>
