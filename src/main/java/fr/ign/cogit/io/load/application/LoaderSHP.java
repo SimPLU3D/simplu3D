@@ -18,7 +18,7 @@ import fr.ign.cogit.model.application.SousParcelle;
 import fr.ign.cogit.model.application.Voirie;
 import fr.ign.cogit.model.application.Zone;
 import fr.ign.cogit.sig3d.convert.geom.FromGeomToSurface;
-import fr.ign.cogit.util.assignZ.AssignZ;
+import fr.ign.cogit.util.AssignZ;
 
 public class LoaderSHP {
 
