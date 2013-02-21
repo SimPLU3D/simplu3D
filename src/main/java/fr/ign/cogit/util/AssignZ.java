@@ -1,4 +1,4 @@
-package fr.ign.cogit.util.assignZ;
+package fr.ign.cogit.util;
 
 import fr.ign.cogit.model.application.Bordure;
 import fr.ign.cogit.model.application.Parcelle;
