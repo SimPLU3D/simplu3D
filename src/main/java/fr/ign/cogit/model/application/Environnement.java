@@ -1,0 +1,67 @@
+package fr.ign.cogit.model.application;
+
+import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
+import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
+import fr.ign.cogit.sig3d.model.citygml.core.CG_CityModel;
+
+public class Environnement extends CG_CityModel {
+
+  private IFeatureCollection<Parcelle> parcelles;
+  private IFeatureCollection<SousParcelle> sousParcelles;
+  private IFeatureCollection<Batiment> batiments;
+  private IFeatureCollection<Zone> zones;
+
+  public static double DEFAULT_ZERO_Z = 139; // 41; //138
+
+  public static IDirectPosition dpTranslate = null;
+
+  public static boolean VERBOSE = false;
+  public static boolean TRANSLATE_TO_ZERO = false;
+
+  public IFeatureCollection<Parcelle> getParcelles() {
+    return parcelles;
+  }
+
+  public void setParcelles(IFeatureCollection<Parcelle> parcelles) {
+    this.parcelles = parcelles;
+  }
+
+  private IFeatureCollection<Voirie> voiries;
+
+  public Environnement() {
+
+  }
+
+  public IFeatureCollection<SousParcelle> getSousParcelles() {
+    return sousParcelles;
+  }
+
+  public void setSousParcelles(IFeatureCollection<SousParcelle> sousParcelles) {
+    this.sousParcelles = sousParcelles;
+  }
+
+  public IFeatureCollection<Batiment> getBatiments() {
+    return batiments;
+  }
+
+  public void setBatiments(IFeatureCollection<Batiment> batiments) {
+    this.batiments = batiments;
+  }
+
+  public IFeatureCollection<Zone> getZones() {
+    return zones;
+  }
+
+  public void setZones(IFeatureCollection<Zone> zones) {
+    this.zones = zones;
+  }
+
+  public IFeatureCollection<Voirie> getVoiries() {
+    return voiries;
+  }
+
+  public void setVoiries(IFeatureCollection<Voirie> voiries) {
+    this.voiries = voiries;
+  }
+
+}
