@@ -87,6 +87,18 @@
         </plugin>
     </plugins>
   </build>
+   <repositories>
+    <repository>
+      <id>mvnRepository</id>
+      <name>mvnRepository</name>
+      <url>http://repo1.maven.org/maven2/</url>
+    </repository>
+        <repository>
+      <id>jarvana</id>
+      <name>jarvana</name>
+      <url>http://www.jarvana.com/jarvana/browse/</url>
+    </repository>	
+    </repositories>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -104,5 +116,60 @@
     	<artifactId>geoxygene-geopensim</artifactId>
     	<version>1.6-SNAPSHOT</version>
     </dependency>
+    <dependency>
+  <groupId>org.antlr</groupId>
+  <artifactId>stringtemplate</artifactId>
+  <version>3.2.1</version>
+</dependency>
+<dependency>
+  <groupId>org.antlr</groupId>
+  <artifactId>antlr</artifactId>
+  <version>3.2</version>
+</dependency>
+<dependency>
+	<groupId>commons-lang</groupId>
+	<artifactId>commons-lang</artifactId>
+	<version>2.3</version>
+</dependency>
+<dependency>
+	<groupId>org.eclipse.core</groupId>
+	<artifactId>org.eclipse.core.resources</artifactId>
+	<version>3.6.0.v20100526-0737</version>
+</dependency>
+<dependency>
+	<groupId>org.eclipse.core</groupId>
+	<artifactId>org.eclipse.core.runtime</artifactId>
+	<version>3.6.0.v20100505</version>
+</dependency>
+<dependency>
+	<groupId>org.eclipse.emf</groupId>
+	<artifactId>org.eclipse.emf.common</artifactId>
+	<version>2.6.0.v20100614-1136</version>
+</dependency>
+<dependency>
+	<groupId>org.eclipse.emf</groupId>
+	<artifactId>org.eclipse.emf.ecore</artifactId>
+	<version>2.6.0.v20100614-1136</version>
+</dependency>
+<dependency>
+	<groupId>org.eclipse.emf</groupId>
+	<artifactId>org.eclipse.emf.mapping.ecore2xml</artifactId>
+	<version>2.5.0.v20100521-1847</version>
+</dependency>
+<dependency>
+	<groupId>org.eclipse.emf</groupId>
+	<artifactId>org.eclipse.emf.mapping.ecore2xml</artifactId>
+	<version>2.5.0.v20100521-1847</version>
+</dependency>
+<dependency>
+	<groupId>org.eclipse.equinox</groupId>
+	<artifactId>org.eclipse.equinox.common</artifactId>
+	<version>3.6.0.v20100503</version>
+</dependency>
+<dependency>
+	<groupId>org.eclipse.osgi</groupId>
+	<artifactId>org.eclipse.osgi</artifactId>
+	<version>3.6.0.v20100517</version>
+</dependency>
   </dependencies>
 </project>
