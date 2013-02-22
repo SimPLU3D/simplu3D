@@ -11,10 +11,28 @@
   <artifactId>simplu3d</artifactId>
   <version>1.0-SNAPSHOT</version>
   <name>simplu3d</name>
+  <description>Algorithmes 3D internes au laboratoire </description>
   <url>http://maven.apache.org</url>
+  
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+  
+  <developers>
+		<developer>
+			<id>mbrasbin</id>
+			<name>Mickael Brasebin</name>
+			<email>mickael.brasebin(at)ign.fr</email>
+			<organization>Laboratoire COGIT, IGN</organization>
+			<organizationUrl>http://recherche.ign.fr</organizationUrl>
+			<roles>
+				<role>Administrator</role>
+				<role>Doctorant</role>
+				<role>Java Developer</role>
+			</roles>
+		</developer>
+	</developers>
+  
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
     <testSourceDirectory>src/test/java</testSourceDirectory>
