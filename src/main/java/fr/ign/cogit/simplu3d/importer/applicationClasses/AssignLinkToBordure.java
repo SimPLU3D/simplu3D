@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.importer;
+package fr.ign.cogit.simplu3d.importer.applicationClasses;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -71,12 +71,4 @@ public class Bordure extends CG_CityObject{
   }
   
   
-  
-  
-  
-  
-  
-  
-
-  
 }

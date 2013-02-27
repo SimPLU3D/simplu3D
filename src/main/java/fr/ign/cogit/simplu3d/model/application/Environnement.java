@@ -2,6 +2,7 @@ package fr.ign.cogit.simplu3d.model.application;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
+import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.sig3d.model.citygml.core.CG_CityModel;
 
 public class Environnement extends CG_CityModel {
@@ -33,6 +34,9 @@ public class Environnement extends CG_CityModel {
   }
 
   public IFeatureCollection<SousParcelle> getSousParcelles() {
+    if (sousParcelles == null) {
+      sousParcelles = new FT_FeatureCollection<SousParcelle>();
+    }
     return sousParcelles;
   }
 

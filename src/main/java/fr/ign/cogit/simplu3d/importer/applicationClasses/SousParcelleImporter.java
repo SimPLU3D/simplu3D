@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.importer;
+package fr.ign.cogit.simplu3d.importer.applicationClasses;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -7,6 +7,7 @@ import java.util.List;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.ILineString;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
+import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
@@ -53,7 +54,21 @@ public class SousParcelleImporter {
       if (zonesTemp.size() < 2) {
 
         SousParcelle sp = new SousParcelle();
-        sp.setGeom(geom);
+        
+        
+        IMultiSurface<IOrientableSurface> ms = FromGeomToSurface.convertMSGeom(geom);
+        
+        
+        
+        
+        if(ms.size() == 1){
+          sp.setGeom(ms.get(0));
+        }else{
+          sp.setGeom(ms);
+        }
+        
+        
+   
         sp.setLod2MultiSurface(FromGeomToSurface.convertMSGeom(geom));
         
         

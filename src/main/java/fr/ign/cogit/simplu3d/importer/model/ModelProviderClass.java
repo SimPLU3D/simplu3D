@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.model.application;
+package fr.ign.cogit.simplu3d.importer.model;
 
 import fr.ign.cogit.simplu3d.model.application.Batiment;
 import fr.ign.cogit.simplu3d.model.application.Bordure;

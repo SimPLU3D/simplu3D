@@ -13,6 +13,16 @@ public class Batiment extends CG_Building {
   private Toit toit;
   private List<Facade> facades;
   private EmpriseBatiment emprise;
+  
+  private String destination = "";
+
+  public String getDestination() {
+    return destination;
+  }
+
+  public void setDestination(String destination) {
+    this.destination = destination;
+  }
 
   public EmpriseBatiment getEmprise() {
     return emprise;
