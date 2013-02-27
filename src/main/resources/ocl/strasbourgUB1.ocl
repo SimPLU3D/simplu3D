@@ -1,0 +1,15 @@
+package  fr::ign::cogit::simplu3d::model::application
+
+
+-- Article 1 : respect des destinations des batiments
+context Batiment
+inv: Sequence{'bureau','habitation','commerce','artisanat'}->includes(self.destination)
+
+-- Article 3 : les terrains peuvent être batis si ils sont atenants sur 4.5m sur une voie publique ou privée
+context SousParcelle
+inv: getBordures()->asBag()->select(bordure | (bordure.getTypeDroit()=4  or bordure.getTypeGauche()=4) and bordure.getGeom().length() > 4.5  )->notEmpty()
+
+
+
+
+endpackage
