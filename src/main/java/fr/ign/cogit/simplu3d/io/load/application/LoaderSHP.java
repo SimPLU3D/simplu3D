@@ -7,11 +7,13 @@ import fr.ign.cogit.geoxygene.sig3d.semantic.DTM;
 import fr.ign.cogit.geoxygene.sig3d.util.ColorShade;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
 import fr.ign.cogit.sig3d.convert.geom.FromGeomToSurface;
+import fr.ign.cogit.simplu3d.importer.applicationClasses.AlignementImporter;
 import fr.ign.cogit.simplu3d.importer.applicationClasses.AssignLinkToBordure;
 import fr.ign.cogit.simplu3d.importer.applicationClasses.BordureImporter;
 import fr.ign.cogit.simplu3d.importer.applicationClasses.BuildingImporter;
 import fr.ign.cogit.simplu3d.importer.applicationClasses.SousParcelleImporter;
 import fr.ign.cogit.simplu3d.importer.applicationClasses.VoirieImporter;
+import fr.ign.cogit.simplu3d.model.application.Alignement;
 import fr.ign.cogit.simplu3d.model.application.Batiment;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.model.application.Parcelle;
@@ -30,10 +32,8 @@ public class LoaderSHP {
   public final static String NOM_FICHIER_VOIRIE = "route.shp";
   public final static String NOM_FICHIER_BATIMENTS = "bati.shp";
   public final static String NOM_FICHIER_TERRAIN = "MNT_BD3D.asc";
-  
-  
-  
-  
+  public final static String NOM_FICHIER_PRESC_LINEAIRE = "PRESCRIPTION_LIN.shp";
+
   public final static boolean SURSAMPLED = true;
 
   /*
@@ -41,7 +41,8 @@ public class LoaderSHP {
    */
   public final static String NOM_ATT_TYPE_ZONE = "TYPEZONE";
 
-  public static Environnement load(String folder) {
+  public static Environnement load(String folder)
+      throws CloneNotSupportedException {
     Environnement env = new Environnement();
 
     // Chargement des fichiers
@@ -54,50 +55,48 @@ public class LoaderSHP {
         + NOM_FICHIER_VOIRIE);
     IFeatureCollection<IFeature> batiColl = ShapefileReader.read(folder
         + NOM_FICHIER_BATIMENTS);
-    
-    
-    //Etape 0 : doit on translater tous les objets ?
-    
-    if(Environnement.TRANSLATE_TO_ZERO){
-      
+
+    // Etape 0 : doit on translater tous les objets ?
+
+    if (Environnement.TRANSLATE_TO_ZERO) {
+
       Environnement.dpTranslate = zoneColl.envelope().center();
-      
-      
-      for(IFeature feat: zoneColl){
-        feat.setGeom(feat.getGeom().translate(- Environnement.dpTranslate.getX(),-  Environnement.dpTranslate.getY(), 0));
-        
+
+      for (IFeature feat : zoneColl) {
+        feat.setGeom(feat.getGeom().translate(
+            -Environnement.dpTranslate.getX(),
+            -Environnement.dpTranslate.getY(), 0));
+
       }
-      
-      
-      for(IFeature feat: parcelleColl){
-        feat.setGeom(feat.getGeom().translate(- Environnement.dpTranslate.getX(),-  Environnement.dpTranslate.getY(), 0));
-        
+
+      for (IFeature feat : parcelleColl) {
+        feat.setGeom(feat.getGeom().translate(
+            -Environnement.dpTranslate.getX(),
+            -Environnement.dpTranslate.getY(), 0));
+
       }
-      
-      for(IFeature feat: voirieColl){
-        feat.setGeom(feat.getGeom().translate(- Environnement.dpTranslate.getX(),-  Environnement.dpTranslate.getY(), 0));
-        
+
+      for (IFeature feat : voirieColl) {
+        feat.setGeom(feat.getGeom().translate(
+            -Environnement.dpTranslate.getX(),
+            -Environnement.dpTranslate.getY(), 0));
+
       }
-      
-      for(IFeature feat: batiColl){
-        feat.setGeom(feat.getGeom().translate(- Environnement.dpTranslate.getX(),-  Environnement.dpTranslate.getY(), 0));
-        
+
+      for (IFeature feat : batiColl) {
+        feat.setGeom(feat.getGeom().translate(
+            -Environnement.dpTranslate.getX(),
+            -Environnement.dpTranslate.getY(), 0));
+
       }
-      
-      
-      
-      
+
     }
-    
-    
-    
 
     // Etape 1 : chargement des parcelles et créations des bordures
-//    IFeatureCollection<Parcelle> parcelles = BordureImporter
-//        .assignBordureToParcelle(parcelleColl);
+    // IFeatureCollection<Parcelle> parcelles = BordureImporter
+    // .assignBordureToParcelle(parcelleColl);
     IFeatureCollection<Parcelle> parcelles = BordureImporter
-    .assignBordureToParcelleWithOrientation(parcelleColl, 1.5);
-    
+        .assignBordureToParcelleWithOrientation(parcelleColl, 1.5);
 
     env.setParcelles(parcelles);
 
@@ -130,26 +129,32 @@ public class LoaderSHP {
     IFeatureCollection<Voirie> voiries = VoirieImporter
         .importVoirie(voirieColl);
     env.setVoiries(voiries);
-    
 
-    //Etape 6 : on affecte les liens entres une bordure et ses objets adjacents
+    // Etape 6 : on affecte les liens entres une bordure et ses objets adjacents
     AssignLinkToBordure.process(sousParcelles, voiries);
+
+    // Etape 7 : on importe les alignements
+    IFeatureCollection<IFeature> prescriptions = ShapefileReader.read(folder
+        + NOM_FICHIER_PRESC_LINEAIRE);
+    IFeatureCollection<Alignement> alignementColl =AlignementImporter.importRecul(prescriptions, sousParcelles);
+    env.setAlignements(alignementColl);
     
-    
-    //Etape 7 : on affecte des z à tout ce bon monde
+    System.out.println("NBRE alignement"+alignementColl.size());
+
+    // Etape 8 : on affecte des z à tout ce bon monde
     // - parcelles, sous-parcelles route sans z, zonage, les bordures etc...
-    DTM dtm  = new DTM(folder+NOM_FICHIER_TERRAIN, "Terrain", true, 1, ColorShade.BLUE_CYAN_GREEN_YELLOW_WHITE);
+    DTM dtm = new DTM(folder + NOM_FICHIER_TERRAIN, "Terrain", true, 1,
+        ColorShade.BLUE_CYAN_GREEN_YELLOW_WHITE);
     try {
       AssignZ.toParcelle(env.getParcelles(), dtm, SURSAMPLED);
       AssignZ.toSousParcelle(env.getSousParcelles(), dtm, SURSAMPLED);
       AssignZ.toZone(env.getZones(), dtm, false);
       AssignZ.toVoirie(env.getVoiries(), dtm, SURSAMPLED);
+      AssignZ.toAlignement(alignementColl,dtm ,SURSAMPLED);
     } catch (Exception e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    
-
 
     return env;
   }

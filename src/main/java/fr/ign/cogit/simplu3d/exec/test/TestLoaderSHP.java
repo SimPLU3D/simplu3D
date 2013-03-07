@@ -1,6 +1,7 @@
 package fr.ign.cogit.simplu3d.exec.test;
 
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
+import fr.ign.cogit.simplu3d.model.application.Alignement;
 import fr.ign.cogit.simplu3d.model.application.Batiment;
 import fr.ign.cogit.simplu3d.model.application.Bordure;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
@@ -15,7 +16,7 @@ import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 
 public class TestLoaderSHP {
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws CloneNotSupportedException {
     String folder = "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project1/";
     String folderOut = "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project1/out/";
 
@@ -23,21 +24,44 @@ public class TestLoaderSHP {
 
     IFeatureCollection<Bordure> bordures = new FT_FeatureCollection<Bordure>();
 
-    for (Parcelle p : env.getParcelles()) {
+    for (SousParcelle sp : env.getSousParcelles()) {
+      
+      AddAttribute.addAttribute(sp,"ID", sp.getId(), "Integer");  
 
-      bordures.addAll(p.getBordures());
+      bordures.addAll(sp.getBordures()); 
 
     }
+    
+    
+    IFeatureCollection<Alignement> featAL = new FT_FeatureCollection<Alignement>();
 
     for (Bordure b : bordures) {
-
+      AddAttribute.addAttribute(b,"ID", b.getId(), "Integer");
       AddAttribute.addAttribute(b, "IDD", b.getTypeDroit(), "Integer");
-      AddAttribute.addAttribute(b, "IDG", b.getTypeDroit(), "Integer");
+      AddAttribute.addAttribute(b, "IDG", b.getTypeGauche(), "Integer");
+      
+      
 
     }
 
+    for(Alignement a:env.getAlignements()){
+
+      
+      
+      if(a!=null){
+        featAL.add(a);
+        
+        
+        AddAttribute.addAttribute(a,"ID", a.getId(), "Integer");
+      }
+    }
+    
+    
     ShapefileWriter.write(env.getParcelles(), folderOut + "parcelles.shp");
     ShapefileWriter.write(bordures, folderOut + "bordures.shp");
+    
+    System.out.println("Nombre d'alignements concernés" + featAL.size());
+    ShapefileWriter.write(featAL, folderOut + "alignements.shp");
 
     System.out.println("Sous Parcelles  " + env.getSousParcelles().size());
 

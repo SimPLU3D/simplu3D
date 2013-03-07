@@ -165,34 +165,27 @@ public class OCLInterpreterSimplu3D extends CustomSwitch<OclAny> implements
     this.myEnvironment.setModelInstance(aModelInstance);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see tudresden.ocl20.pivot.interpreter.IOclInterpreter#interpretConstraint
-   * (tudresden .ocl20.pivot.pivotmodel.Constraint,
-   * tudresden.ocl20.pivot.modelbus.IModelInstanceElement)
-   */
+
   public IInterpretationResult interpretConstraint(Constraint constraint,
       IModelInstanceElement modelInstanceElement) {
 
     if (constraint == null)
-      throw new IllegalArgumentException(
-          "Parameter 'constraint' must not be null.");
-    // no else.
+      throw new IllegalArgumentException("Parameter 'constraint' must not be null.");
+
 
     /* Probably log the entry into this method. */
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("Entry interpretConstraint(constraint = " + constraint
           + ", modelInstanceElement = " + modelInstanceElement + ")");
     }
-    // no else.
+
 
     IInterpretationResult result;
 
     /* Check if the constraint has a static context. */
     if (this.hasStaticContext(constraint)) {
 
-      // no else
+   
 
       OclAny context = myStandardLibraryFactory.createOclUndefined(
           EssentialOclPlugin.getOclLibraryProvider().getOclLibrary()
@@ -216,7 +209,7 @@ public class OCLInterpreterSimplu3D extends CustomSwitch<OclAny> implements
 
     else if (this.isConstrained(modelInstanceElement, constraint)) {
 
-      // no else
+     
 
       OclAny context = myStandardLibraryFactory
           .createOclAny(modelInstanceElement);
@@ -241,7 +234,7 @@ public class OCLInterpreterSimplu3D extends CustomSwitch<OclAny> implements
           .debug("Exit interpretConstraint(Constraint, IModelInstanceElement) - Result = "
               + result);
     }
-    // no else.
+
 
     return result;
   }
@@ -621,15 +614,7 @@ public class OCLInterpreterSimplu3D extends CustomSwitch<OclAny> implements
     // end for.
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * tudresden.ocl20.pivot.interpreter.IOclInterpreter#preparePostConditions
-   * (tudresden .ocl20.pivot.modelbus.modelinstance.types.IModelInstanceElement,
-   * tudresden.ocl20.pivot.pivotmodel.Operation, tudresden.ocl20.pivot.modelbus
-   * .modelinstance.types.IModelInstanceElement[], java.util.Collection)
-   */
+
   public void preparePostConditions(IModelInstanceElement modelInstanceElement,
       Operation operation, IModelInstanceElement[] parameterValues,
       Collection<Constraint> postConditions) {
@@ -2784,6 +2769,9 @@ public class OCLInterpreterSimplu3D extends CustomSwitch<OclAny> implements
    */
   protected OclAny evaluateNonStaticOperation(OperationCallExp operationCallExp) {
 
+    
+  //  System.out.println("Non-static call : " + operationCallExp.getReferredOperation().getName());
+    
     OclAny result;
     Operation referredOperation = operationCallExp.getReferredOperation();
 
@@ -2888,6 +2876,9 @@ public class OCLInterpreterSimplu3D extends CustomSwitch<OclAny> implements
    * @return The evaluated result.
    */
   protected OclAny evaluateStaticOperation(OperationCallExp operationCallExp) {
+    
+    
+ //   System.out.println("Static call : " + operationCallExp.getName());
 
     OclAny result;
 

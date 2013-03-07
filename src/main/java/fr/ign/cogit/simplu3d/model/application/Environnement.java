@@ -11,6 +11,15 @@ public class Environnement extends CG_CityModel {
   private IFeatureCollection<SousParcelle> sousParcelles;
   private IFeatureCollection<Batiment> batiments;
   private IFeatureCollection<Zone> zones;
+  private IFeatureCollection<Alignement> alignements;
+
+  public IFeatureCollection<Alignement> getAlignements() {
+    return alignements;
+  }
+
+  public void setAlignements(IFeatureCollection<Alignement> alignements) {
+    this.alignements = alignements;
+  }
 
   public static double DEFAULT_ZERO_Z = 139; // 41; //138
 
@@ -45,6 +54,10 @@ public class Environnement extends CG_CityModel {
   }
 
   public IFeatureCollection<Batiment> getBatiments() {
+    
+    if(batiments == null){
+      batiments = new FT_FeatureCollection<Batiment>();
+    }
     return batiments;
   }
 

@@ -15,8 +15,17 @@ public class Bordure extends CG_CityObject{
   public final static int UNKNOWN = 2;
   public final static int FICTIVE = 3;
   public final static int VOIE = 4;
+  public final static int EMPRISEPUBLIQUE = 5;
   
   
+  
+  public Alignement alignement = null;
+  
+  
+  
+
+
+
 //Il s'agit de l'objet qui ne référence pas cette bordure et qui est adjacent à la bordure
  private List<? extends IFeature> featAdj = null;
 
@@ -69,6 +78,29 @@ public class Bordure extends CG_CityObject{
   public void setTypeGauche(int type) {
     this.typeGauche = type;
   }
+  
+  
+  public Alignement getAlignement() {
+    return alignement;
+  }
+
+
+
+  public void setAlignement(Alignement alignement) {
+    this.alignement = alignement;
+  }
+
+  
+  public boolean recul(Batiment b) {
+
+    return true;
+  }
+
+  public boolean alignement(Batiment b) {
+
+    return true;
+  }
+  
   
   
 }

@@ -7,12 +7,12 @@ import java.util.List;
 import tudresden.ocl20.pivot.interpreter.IInterpretationResult;
 import tudresden.ocl20.pivot.interpreter.IOclInterpreter;
 import tudresden.ocl20.pivot.interpreter.OclInterpreterPlugin;
-import tudresden.ocl20.pivot.interpreter.internal.OclInterpreter;
 import tudresden.ocl20.pivot.model.IModel;
 import tudresden.ocl20.pivot.modelinstance.IModelInstance;
 import tudresden.ocl20.pivot.modelinstancetype.types.IModelInstanceObject;
 import tudresden.ocl20.pivot.pivotmodel.Constraint;
 import tudresden.ocl20.pivot.standalone.facade.StandaloneFacade;
+import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.importer.model.ImportModelInstance;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
@@ -50,8 +50,8 @@ public class TestStrasbourgPLU {
     System.out.println("****Chargement des contraintes OCL*********");
     System.out.println("*******************************************");
 
-    List<Constraint> constraintList = StandaloneFacade.INSTANCE
-        .parseOclConstraints(model, oclConstraints);
+   // List<Constraint> constraintList = StandaloneFacade.INSTANCE
+   //     .parseOclConstraints(model, oclConstraints);
     
     
 
@@ -60,12 +60,15 @@ public class TestStrasbourgPLU {
     System.out.println("*******************************************");
     Environnement env = LoaderSHP.load(folderEnv);
     
+    
+    ShapefileWriter.write(env.getSousParcelles(), "C:/temp/test.shp");
+    
 
     System.out.println("*******************************************");
     System.out.println("****Peuplement du modèle en instances******");
     System.out.println("*******************************************");
 
-    IModelInstance modelInstance = ImportModelInstance.getModelInstance(
+    /*    IModelInstance modelInstance = ImportModelInstance.getModelInstance(
         model, env);
 
 
@@ -77,11 +80,11 @@ public class TestStrasbourgPLU {
     System.out.println("*******************************************");
 
     for (IInterpretationResult result : interpretEverything(modelInstance, constraintList)) {
-      System.out.println("  " + result.getModelObject() + " ("
+    System.out.println("  " + result.getModelObject() + " ("
           + result.getConstraint().getKind() + ": "
           + result.getConstraint().getSpecification().getBody() + "): "
           + result.getResult());
-    }
+    }*/
 
 
   } catch (Exception e) {

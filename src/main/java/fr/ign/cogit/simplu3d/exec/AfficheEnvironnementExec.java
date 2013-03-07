@@ -31,7 +31,7 @@ public class AfficheEnvironnementExec {
   
   
   
-  public static void main(String[] args){
+  public static void main(String[] args) throws CloneNotSupportedException{
     
     
     ConstantRepresentation.backGroundColor = new Color(156,180,193);

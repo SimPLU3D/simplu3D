@@ -29,7 +29,7 @@ import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Polygon;
 public class TestRepresentationIncoherence {
 
   
-  public static void main(String[] args){
+  public static void main(String[] args) throws CloneNotSupportedException{
     ConstantRepresentation.backGroundColor = new Color(156,180,193);
     
     

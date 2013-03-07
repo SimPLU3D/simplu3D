@@ -1,13 +1,14 @@
 package fr.ign.cogit.simplu3d.util;
 
+import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
+import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
+import fr.ign.cogit.geoxygene.sig3d.semantic.DTM;
+import fr.ign.cogit.simplu3d.model.application.Alignement;
 import fr.ign.cogit.simplu3d.model.application.Bordure;
 import fr.ign.cogit.simplu3d.model.application.Parcelle;
 import fr.ign.cogit.simplu3d.model.application.SousParcelle;
 import fr.ign.cogit.simplu3d.model.application.Voirie;
 import fr.ign.cogit.simplu3d.model.application.Zone;
-import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.sig3d.semantic.DTM;
 
 public class AssignZ {
 
@@ -65,5 +66,18 @@ public class AssignZ {
 
     }
 
+  }
+
+  public static void toAlignement(
+      IFeatureCollection<Alignement> alignementColl, DTM dtm, boolean sursampled)
+      throws Exception {
+    
+    for(Alignement a:alignementColl){
+      
+      IGeometry geom = dtm.mapGeom(a.getGeom(), 0, true, sursampled);
+      a.setGeom(geom);
+    }
+    
+    
   }
 }

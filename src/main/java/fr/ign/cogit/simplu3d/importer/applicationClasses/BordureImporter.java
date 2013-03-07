@@ -519,6 +519,7 @@ System.out.println(vTrans.getX()+ "   " + vTrans.getY());
         System.out.println("Error 2");
       }
       
+      
 
       // carteTopo.fusionNoeuds(threshold);
 
@@ -531,7 +532,7 @@ System.out.println(vTrans.getX()+ "   " + vTrans.getY());
       
       
       if(!test(carteTopo)){
-        System.out.println("Error 3");
+        System.out.println("Error 3"); 
       }
       
 
