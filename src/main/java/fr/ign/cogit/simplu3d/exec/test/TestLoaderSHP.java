@@ -4,7 +4,7 @@ import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
-import fr.ign.cogit.geoxygene.util.attribute.AddAttribute;
+import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.Alignement;
@@ -25,7 +25,7 @@ public class TestLoaderSHP {
 
     for (SousParcelle sp : env.getSousParcelles()) {
       
-      AddAttribute.addAttribute(sp,"ID", sp.getId(), "Integer");  
+      AttributeManager.addAttribute(sp,"ID", sp.getId(), "Integer");  
 
       bordures.addAll(sp.getBordures()); 
 
@@ -35,9 +35,9 @@ public class TestLoaderSHP {
     IFeatureCollection<Alignement> featAL = new FT_FeatureCollection<Alignement>();
 
     for (Bordure b : bordures) {
-      AddAttribute.addAttribute(b,"ID", b.getId(), "Integer");
-      AddAttribute.addAttribute(b, "IDD", b.getTypeDroit(), "Integer");
-      AddAttribute.addAttribute(b, "IDG", b.getTypeGauche(), "Integer");
+      AttributeManager.addAttribute(b,"ID", b.getId(), "Integer");
+      AttributeManager.addAttribute(b, "IDD", b.getTypeDroit(), "Integer");
+      AttributeManager.addAttribute(b, "IDG", b.getTypeGauche(), "Integer");
       
       
 
@@ -51,7 +51,7 @@ public class TestLoaderSHP {
         featAL.add(a);
         
         
-        AddAttribute.addAttribute(a,"ID", a.getId(), "Integer");
+        AttributeManager.addAttribute(a,"ID", a.getId(), "Integer");
       }
     }
     
@@ -65,7 +65,7 @@ public class TestLoaderSHP {
     System.out.println("Sous Parcelles  " + env.getSousParcelles().size());
 
     for (SousParcelle sp : env.getSousParcelles()) {
-      AddAttribute.addAttribute(sp, "Test", 0, "Integer");
+      AttributeManager.addAttribute(sp, "Test", 0, "Integer");
     }
 
     ShapefileWriter.write(env.getSousParcelles(), folderOut

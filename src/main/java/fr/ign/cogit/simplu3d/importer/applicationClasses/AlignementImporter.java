@@ -9,7 +9,7 @@ import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
-import fr.ign.cogit.geoxygene.util.attribute.AddAttribute;
+import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.index.Tiling;
 import fr.ign.cogit.simplu3d.convert.ConvertToLineString;
 import fr.ign.cogit.simplu3d.model.application.Alignement;
@@ -204,8 +204,8 @@ public class AlignementImporter {
     }
 
     System.out.println(scoreMax);
-    AddAttribute.addAttribute(a, "ID_B", bCand.getId(), "Integer");
-    AddAttribute.addAttribute(a, "score", scoreMax, "Double");
+    AttributeManager.addAttribute(a, "ID_B", bCand.getId(), "Integer");
+    AttributeManager.addAttribute(a, "score", scoreMax, "Double");
     return bCand;
   }
 
