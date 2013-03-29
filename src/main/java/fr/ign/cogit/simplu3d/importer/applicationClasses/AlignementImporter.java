@@ -9,12 +9,12 @@ import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
+import fr.ign.cogit.geoxygene.util.attribute.AddAttribute;
 import fr.ign.cogit.geoxygene.util.index.Tiling;
 import fr.ign.cogit.simplu3d.convert.ConvertToLineString;
 import fr.ign.cogit.simplu3d.model.application.Alignement;
 import fr.ign.cogit.simplu3d.model.application.Bordure;
 import fr.ign.cogit.simplu3d.model.application.SousParcelle;
-import fr.ign.cogit.util.AddAttribute;
 
 public class AlignementImporter {
 
@@ -35,9 +35,8 @@ public class AlignementImporter {
     }
 
     for (SousParcelle sP : spColl) {
-      
+
       IFeatureCollection<Alignement> lAlignementTemp = new FT_FeatureCollection<Alignement>();
-      
 
       Collection<IFeature> coll = prescriptions.select(sP.getGeom());
 
@@ -50,7 +49,8 @@ public class AlignementImporter {
       for (IFeature feat : coll) {
 
         // on ne garde que les types alignements et recul
-        Double type = Double.parseDouble(feat.getAttribute(ATT_TYPE).toString());
+        Double type = Double
+            .parseDouble(feat.getAttribute(ATT_TYPE).toString());
 
         if (type != 11) {
           continue;
@@ -79,7 +79,7 @@ public class AlignementImporter {
             .getGeom());
 
         if (lIOC.isEmpty()) {
-         continue;
+          continue;
         }
 
         for (IOrientableCurve c : lIOC) {
@@ -110,19 +110,15 @@ public class AlignementImporter {
       // On a 1 feature par segment d'alignement
 
       IFeatureCollection<Bordure> iFCVoie = sP.getBorduresVoies();
-      
-      
-      
-      
 
       for (Alignement a : lAlignementTemp) {
-        Bordure b = determineBestBordure(iFCVoie,a);
-        if(b != null) {
+        Bordure b = determineBestBordure(iFCVoie, a);
+        if (b != null) {
           b.setAlignement(a);
         }
 
       }
-          lAlignement.addAll(lAlignementTemp);
+      lAlignement.addAll(lAlignementTemp);
 
     }
 
@@ -132,13 +128,13 @@ public class AlignementImporter {
   private static Bordure determineBestBordure(
       IFeatureCollection<Bordure> bordures, Alignement a) {
     System.out.println("Alignement " + a.getId());
-    
-    for(Bordure b:bordures){
-      
-      if(b.getId() > 165  ){
+
+    for (Bordure b : bordures) {
+
+      if (b.getId() > 165) {
         System.out.println("STOP");
       }
-      
+
     }
 
     double scoreMax = -1;
@@ -188,21 +184,15 @@ public class AlignementImporter {
         scoreDist = Math.abs(1 - Math.abs(distance - rec) / rec);
       }
 
-      
-      
-      
-      if(Math.abs(scal) > 0.8){
-        
-        if(scoreDist > 0.7){         
-         System.out.println("ID " + b.getId());
+      if (Math.abs(scal) > 0.8) {
+
+        if (scoreDist > 0.7) {
+          System.out.println("ID " + b.getId());
         }
-        
-      
+
       }
-      
-      
-      
-      double scoreTemp =  scoreDist * scal;
+
+      double scoreTemp = scoreDist * scal;
 
       if (scoreTemp > scoreMax) {
 

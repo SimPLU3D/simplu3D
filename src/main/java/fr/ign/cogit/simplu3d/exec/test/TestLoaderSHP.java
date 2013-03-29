@@ -1,18 +1,17 @@
 package fr.ign.cogit.simplu3d.exec.test;
 
+import fr.ign.cogit.geoxygene.api.feature.IFeature;
+import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
+import fr.ign.cogit.geoxygene.feature.DefaultFeature;
+import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
+import fr.ign.cogit.geoxygene.util.attribute.AddAttribute;
+import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.Alignement;
 import fr.ign.cogit.simplu3d.model.application.Batiment;
 import fr.ign.cogit.simplu3d.model.application.Bordure;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
-import fr.ign.cogit.simplu3d.model.application.Parcelle;
 import fr.ign.cogit.simplu3d.model.application.SousParcelle;
-import fr.ign.cogit.util.AddAttribute;
-import fr.ign.cogit.geoxygene.api.feature.IFeature;
-import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
-import fr.ign.cogit.geoxygene.feature.DefaultFeature;
-import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
-import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 
 public class TestLoaderSHP {
 
