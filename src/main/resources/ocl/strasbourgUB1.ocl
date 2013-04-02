@@ -11,5 +11,11 @@ inv: getBordures()->asBag()->select(bordure | (bordure.getTypeDroit()=4  or bord
 
 
 
+-- Aire d'une sous parcelle positive
+context SousParcelle
+inv: self.getLod2MultiSurface().area()->sum()>50
+
+
+
 
 endpackage

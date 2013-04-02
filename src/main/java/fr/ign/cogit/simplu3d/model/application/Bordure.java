@@ -23,9 +23,6 @@ public class Bordure extends CG_CityObject{
   
   
   
-
-
-
 //Il s'agit de l'objet qui ne référence pas cette bordure et qui est adjacent à la bordure
  private List<? extends IFeature> featAdj = null;
 

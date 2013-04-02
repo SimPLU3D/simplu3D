@@ -25,7 +25,7 @@ public class BuildingImporter {
   /**
    * Aire minimale pour considérée un polygone comme attaché à une parcelle
    */
-  public final static double AREA_MIN = 3;
+  public final static double RATIO_MIN = 0.1;
 
   public static IFeatureCollection<Batiment> importBuilding(
       IFeatureCollection<IFeature> featBati,
@@ -91,6 +91,8 @@ public class BuildingImporter {
       }
 
       Iterator<SousParcelle> itSP = sousParcelles.select(poly).iterator();
+      
+      double aireEmprise = poly.area();
 
       while (itSP.hasNext()) {
 
@@ -99,7 +101,7 @@ public class BuildingImporter {
         double area = (poly.intersection(sp.getGeom())).area();
         
         
-        if(area>AREA_MIN){
+        if(area/aireEmprise>RATIO_MIN){
           
           
           //On crée les association Batiments <=> SousParcelle
@@ -111,6 +113,8 @@ public class BuildingImporter {
         }
 
       }
+      
+
 
     }
 

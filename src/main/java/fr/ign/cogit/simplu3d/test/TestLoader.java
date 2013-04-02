@@ -15,8 +15,11 @@ import tudresden.ocl20.pivot.pivotmodel.Constraint;
 import tudresden.ocl20.pivot.standalone.facade.StandaloneFacade;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.ITriangle;
+import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
+import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Triangle;
+import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.simplu3d.importer.model.ImportModelInstance;
 import fr.ign.cogit.simplu3d.model.application.SousParcelle;
 import fr.ign.cogit.simplu3d.solver.interpreter.OCLInterpreterSimplu3D;
@@ -51,8 +54,19 @@ public class TestLoader {
       
       IDirectPosition dp3 = new DirectPosition(0,0,0);
       
+      
+      
+      IMultiSurface<IOrientableSurface> ims = new GM_MultiSurface<>();
+      
+      
       ITriangle t = new GM_Triangle(dp1,dp2,dp3);
-      p.setGeom(t);
+      ITriangle t2 = new GM_Triangle(dp1,dp2,dp1);
+      
+      ims.add(t);
+      ims.add(t2);
+      
+      
+      p.setGeom(ims);
 
 
 

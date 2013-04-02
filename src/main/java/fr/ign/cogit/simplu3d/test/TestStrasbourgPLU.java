@@ -1,6 +1,7 @@
 package fr.ign.cogit.simplu3d.test;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,87 +13,97 @@ import tudresden.ocl20.pivot.modelinstance.IModelInstance;
 import tudresden.ocl20.pivot.modelinstancetype.types.IModelInstanceObject;
 import tudresden.ocl20.pivot.pivotmodel.Constraint;
 import tudresden.ocl20.pivot.standalone.facade.StandaloneFacade;
-import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
+import fr.ign.cogit.geoxygene.sig3d.gui.MainWindow;
+import fr.ign.cogit.geoxygene.sig3d.semantic.VectorLayer;
 import fr.ign.cogit.simplu3d.importer.model.ImportModelInstance;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.model.application.SousParcelle;
+import fr.ign.cogit.simplu3d.representation.RepEnvironnement;
+import fr.ign.cogit.simplu3d.representation.RepEnvironnement.Theme;
 import fr.ign.cogit.simplu3d.solver.interpreter.OCLInterpreterSimplu3D;
 
 public class TestStrasbourgPLU {
-  
-  
-  
-  public static void main(String[] args){
-    
-    
-    //Dossier contenant les fichiers définissant l'environnement géo
+
+  public static void main(String[] args) {
+
+    // Dossier contenant les fichiers définissant l'environnement géo
     String folderEnv = "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project1/";
-  
-    
-    //Fichier contenant les contraintes OCL à appliquer
-    File  oclConstraints = new File(
-      "src/main/resources/ocl/strasbourgUB1.ocl");
- 
 
-  try {
+    // Fichier contenant les contraintes OCL à appliquer
+    File oclConstraints = new File("src/main/resources/ocl/strasbourgUB1.ocl");
 
+    try {
 
-    System.out.println("*******************************************");
-    System.out.println("************Import modèle******************");
-    System.out.println("*******************************************");
+      System.out.println("*******************************************");
+      System.out.println("***********Import environnement************");
+      System.out.println("*******************************************");
+      Environnement env = LoaderSHP.load(folderEnv);
 
-    IModel model = ImportModelInstance
-        .getModel("target/classes/fr/ign/cogit/simplu3d/importer/model/ModelProviderClass.class");
-    
-    
-    System.out.println("*******************************************");
-    System.out.println("****Chargement des contraintes OCL*********");
-    System.out.println("*******************************************");
+      System.out.println("*******************************************");
+      System.out.println("************Import modèle******************");
+      System.out.println("*******************************************");
 
-   // List<Constraint> constraintList = StandaloneFacade.INSTANCE
-   //     .parseOclConstraints(model, oclConstraints);
-    
-    
+      IModel model = ImportModelInstance
+          .getModel("target/classes/fr/ign/cogit/simplu3d/importer/model/ModelProviderClass.class");
 
-    System.out.println("*******************************************");
-    System.out.println("***********Import environnement************");
-    System.out.println("*******************************************");
-    Environnement env = LoaderSHP.load(folderEnv);
-    
-    
-    ShapefileWriter.write(env.getSousParcelles(), "C:/temp/test.shp");
-    
+      System.out.println("*******************************************");
+      System.out.println("****Chargement des contraintes OCL*********");
+      System.out.println("*******************************************");
 
-    System.out.println("*******************************************");
-    System.out.println("****Peuplement du modèle en instances******");
-    System.out.println("*******************************************");
+      List<Constraint> constraintList = StandaloneFacade.INSTANCE
+          .parseOclConstraints(model, oclConstraints);
 
-    /*    IModelInstance modelInstance = ImportModelInstance.getModelInstance(
-        model, env);
+      // ShapefileWriter.write(env.getSousParcelles(), "C:/temp/test.shp");
 
+      System.out.println("*******************************************");
+      System.out.println("****Peuplement du modèle en instances******");
+      System.out.println("*******************************************");
 
+      IModelInstance modelInstance = ImportModelInstance.getModelInstance(
+          model, env);
 
+      System.out.println("*******************************************");
+      System.out.println("**Interprétation des contraintes OCL*******");
+      System.out.println("*******************************************");
 
+      for (IInterpretationResult result : interpretEverything(modelInstance,
+          constraintList)) {
+        System.out.println("  " + result.getModelObject() + " ("
+            + result.getConstraint().getKind() + ": "
+            + result.getConstraint().getSpecification().getBody() + "): "
+            + result.getResult());
+      }
 
-    System.out.println("*******************************************");
-    System.out.println("**Interprétation des contraintes OCL*******");
-    System.out.println("*******************************************");
+      List<Theme> lTheme = new ArrayList<RepEnvironnement.Theme>();
+      lTheme.add(Theme.TOIT_BATIMENT);
+      lTheme.add(Theme.FACADE_BATIMENT);
+      lTheme.add(Theme.FAITAGE);
+      lTheme.add(Theme.PIGNON);
+      lTheme.add(Theme.GOUTTIERE);
+      lTheme.add(Theme.VOIRIE);
+      // lTheme.add(Theme.PARCELLE);
+      lTheme.add(Theme.SOUS_PARCELLE);
+      // lTheme.add(Theme.ZONE);
+      lTheme.add(Theme.PAN);
 
-    for (IInterpretationResult result : interpretEverything(modelInstance, constraintList)) {
-    System.out.println("  " + result.getModelObject() + " ("
-          + result.getConstraint().getKind() + ": "
-          + result.getConstraint().getSpecification().getBody() + "): "
-          + result.getResult());
-    }*/
+      Theme[] tab = lTheme.toArray(new Theme[0]);
 
+      List<VectorLayer> vl = RepEnvironnement.represent(env, tab);
 
-  } catch (Exception e) {
-    e.printStackTrace();
+      MainWindow mW = new MainWindow();
+
+      for (VectorLayer l : vl) {
+
+        mW.getInterfaceMap3D().getCurrent3DMap().addLayer(l);
+      }
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
   }
 
-}
-  
   /**
    * 
    * @param modelInstance
@@ -104,30 +115,26 @@ public class TestStrasbourgPLU {
 
     new OclInterpreterPlugin();
 
-  List<IInterpretationResult> resultList = new LinkedList<IInterpretationResult>();
+    List<IInterpretationResult> resultList = new LinkedList<IInterpretationResult>();
 
-  IOclInterpreter interpreter = new OCLInterpreterSimplu3D(modelInstance);
+    IOclInterpreter interpreter = new OCLInterpreterSimplu3D(modelInstance);
 
-  for (IModelInstanceObject imiObject : modelInstance
-          .getAllModelInstanceObjects()) {
-    
+    for (IModelInstanceObject imiObject : modelInstance
+        .getAllModelInstanceObjects()) {
 
-    if(imiObject.getObject() instanceof SousParcelle){
-      System.out.println(imiObject.getName());
-    }
-    
-
-    
-      for (Constraint constraint : constraintList) {
-          IInterpretationResult result = interpreter.interpretConstraint(
-                  constraint, imiObject);
-          if (result != null)
-              resultList.add(result);
+      if (imiObject.getObject() instanceof SousParcelle) {
+        System.out.println(imiObject.getName());
       }
+
+      for (Constraint constraint : constraintList) {
+        IInterpretationResult result = interpreter.interpretConstraint(
+            constraint, imiObject);
+        if (result != null)
+          resultList.add(result);
+      }
+    }
+
+    return resultList;
   }
-
-  return resultList;
-}
-
 
 }

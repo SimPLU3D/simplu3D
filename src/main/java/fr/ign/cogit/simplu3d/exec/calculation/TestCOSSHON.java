@@ -1,15 +1,9 @@
-package fr.ign.cogit.simplu3d.exec.test;
+package fr.ign.cogit.simplu3d.exec.calculation;
 
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
-import fr.ign.cogit.simplu3d.model.application.Batiment;
-import fr.ign.cogit.simplu3d.model.application.Environnement;
-import fr.ign.cogit.simplu3d.model.regle.consequences.batiment.Interdiction;
-import fr.ign.cogit.simplu3d.representation.RepEnvironnement;
-import fr.ign.cogit.simplu3d.representation.RepEnvironnement.Theme;
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
@@ -25,11 +19,23 @@ import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_LineString;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Polygon;
+import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
+import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
+import fr.ign.cogit.simplu3d.calculation.COSCalculation;
+import fr.ign.cogit.simplu3d.calculation.SHONCalculation;
+import fr.ign.cogit.simplu3d.calculation.COSCalculation.METHOD;
+import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
+import fr.ign.cogit.simplu3d.model.application.Batiment;
+import fr.ign.cogit.simplu3d.model.application.Environnement;
+import fr.ign.cogit.simplu3d.model.application.SousParcelle;
+import fr.ign.cogit.simplu3d.representation.RepEnvironnement;
+import fr.ign.cogit.simplu3d.representation.RepEnvironnement.Theme;
 
-public class TestRepresentationIncoherence {
-
+public class TestCOSSHON {
   
   public static void main(String[] args) throws CloneNotSupportedException{
+    
+    
     ConstantRepresentation.backGroundColor = new Color(156,180,193);
     
     
@@ -39,17 +45,52 @@ public class TestRepresentationIncoherence {
    Environnement env =  LoaderSHP.load(folder);
    
    
+   
+   IFeatureCollection<IFeature> featC = new FT_FeatureCollection<IFeature>();
+   
+   
+   int nbBat = 0;
+   for(SousParcelle sp:env.getSousParcelles()){
+     
+    double cos1 =  COSCalculation.assess(sp, METHOD.SIMPLE);
+    double cos2 =  COSCalculation.assess(sp, METHOD.FLOOR_CUT);
+     
+     AttributeManager.addAttribute(sp, "COS_SIMPLE", cos1, "DOUBLE");
+     AttributeManager.addAttribute(sp, "COS_CUT", cos2, "DOUBLE");
+     
+     nbBat = nbBat + sp.getBatiments().size();
+   }
+   
+   
+   for(Batiment b:env.getBatiments()){
+     if(b.getSousParcelles().size() > 1){
+       featC.add(b);
+       System.out.println("Batiment rattaché à plus d'une sous parcelle ?");
+     }
+     
+     if(b.getSousParcelles().size() == 0){
+       System.out.println("Batiment rattaché à 0 sous-parcelle");
+       featC.add(b);
+     }
+   }
+   
+   
+   featC.add(new DefaultFeature(new GM_MultiSurface<>(SHONCalculation.DEBUG)));
+   
+   System.out.println("Nombre de bâtiments chargées : " + nbBat);
+   
    List<Theme> lTheme = new ArrayList<RepEnvironnement.Theme>();
    lTheme.add(Theme.TOIT_BATIMENT);
    lTheme.add(Theme.FACADE_BATIMENT);
-   lTheme.add(Theme.FAITAGE);
-   lTheme.add(Theme.PIGNON);
-   lTheme.add(Theme.GOUTTIERE);
-   lTheme.add(Theme.VOIRIE);
+
+  lTheme.add(Theme.EMPRISE_BATIMENT);
+   //lTheme.add(Theme.PIGNON);
+   // lTheme.add(Theme.GOUTTIERE);
+  // lTheme.add(Theme.VOIRIE);
   // lTheme.add(Theme.PARCELLE);
    lTheme.add(Theme.SOUS_PARCELLE);
  //  lTheme.add(Theme.ZONE);
-   lTheme.add(Theme.PAN);
+//   lTheme.add(Theme.PAN);
    
    Theme[] tab = lTheme.toArray(new Theme[0]);
    
@@ -73,7 +114,7 @@ public class TestRepresentationIncoherence {
    
    
    
-   
+   mW.getInterfaceMap3D().getCurrent3DMap().addLayer(new VectorLayer(featC, "test",Color.pink));
    
    
  //  1051042.8513268954120576,6840539.0837931865826249 : 1051264.8064121364150196,6840679.2711814027279615
@@ -116,6 +157,8 @@ public class TestRepresentationIncoherence {
    
    
    feat.setRepresentation(new TexturedSurface(feat, TextureManager.textureLoading( "C:/Users/mbrasebin/Desktop/Env3D/TextParcelle.png"),longueur,largeur));
+   
+   
 
    
    
@@ -123,27 +166,8 @@ public class TestRepresentationIncoherence {
    
    mW.getInterfaceMap3D().getCurrent3DMap().addLayer(new VectorLayer(fc,"Cool"));
    
-   
-   
-   Batiment b =  env.getBatiments().get(0);
-   
-   Interdiction i = new Interdiction();
-   
-   
-   
-   
-   IFeature incoherence = i.generateIncoherence(b);
-   
-   
-   
-   
-   IFeatureCollection<IFeature> featC = new FT_FeatureCollection<IFeature>();
-   featC.add(incoherence);
-   
-   
-   
-   mW.getInterfaceMap3D().getCurrent3DMap().addLayer(new VectorLayer(featC,"Incoherence"));
+
     
-     
   }
+
 }

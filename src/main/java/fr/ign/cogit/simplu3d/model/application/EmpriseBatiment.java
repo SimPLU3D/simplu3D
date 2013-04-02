@@ -2,6 +2,7 @@ package fr.ign.cogit.simplu3d.model.application;
 
 import org.citygml4j.model.citygml.building.GroundSurface;
 
+import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.sig3d.model.citygml.building.CG_GroundSurface;
 
 public class EmpriseBatiment extends CG_GroundSurface {
@@ -16,5 +17,7 @@ public class EmpriseBatiment extends CG_GroundSurface {
     super(gS);
     // TODO Auto-generated constructor stub
   }
+
+  
 
 }

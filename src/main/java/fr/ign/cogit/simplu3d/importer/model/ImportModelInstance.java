@@ -74,15 +74,17 @@ public class ImportModelInstance {
       }
       modelInstance.addModelInstanceElement(sp.getLod2MultiSurface());
       
-      /*
-       * 
-       * 
-       * 
-       * Gestion des bordures
-       * 
-       *  
-       * 
-       */
+      
+      
+
+    }
+     
+    
+    /*
+    
+    // Gestion des bordures
+
+   
       for(Bordure b:sp.getBordures()){
         modelInstance.addModelInstanceElement(b);
         modelInstance.addModelInstanceElement(b.getGeom());
@@ -100,13 +102,8 @@ public class ImportModelInstance {
     
 
     
-    /*
-     * 
-     * 
-     * Gestion des bâtiments
-     * 
-     * 
-     */
+  //Gestion des bâtiments
+  
     
     for(Batiment b:env.getBatiments()){
       modelInstance.addModelInstanceElement(b);
@@ -114,7 +111,7 @@ public class ImportModelInstance {
     
     
 
-    
+    */
 
     
     

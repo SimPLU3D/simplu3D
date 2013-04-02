@@ -3,7 +3,7 @@ package  fr::ign::cogit::simplu3d::model::application
 
 -- Aire d'une sous parcelle positive
 context SousParcelle
-inv: geom.area()>0.8
+inv: self.getLod2MultiSurface().area()->sum()<3
 
 
 

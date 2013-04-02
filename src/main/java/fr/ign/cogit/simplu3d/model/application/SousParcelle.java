@@ -26,8 +26,7 @@ public class SousParcelle extends CG_LandUse {
     this.setClazz(CLASSE);
 
   }
-  
-  
+
   public SousParcelle() {
     super();
 

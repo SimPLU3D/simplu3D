@@ -10,7 +10,6 @@ import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.sig3d.model.citygml.landuse.CG_LandUse;
-import fr.ign.cogit.simplu3d.model.regle.Regle;
 
 public class Zone extends CG_LandUse {
 
@@ -18,7 +17,6 @@ public class Zone extends CG_LandUse {
 
   private List<Document> documents = new ArrayList<Document>();
   private IFeatureCollection<SousParcelle> sousParcelles = new FT_FeatureCollection<SousParcelle>();
-  private List<Regle> regles = new ArrayList<Regle>();
   private String type = "";
   
 
@@ -55,13 +53,7 @@ public class Zone extends CG_LandUse {
     this.sousParcelles = sousParcelles;
   }
 
-  public List<Regle> getRegles() {
-    return regles;
-  }
 
-  public void setRegles(List<Regle> regles) {
-    this.regles = regles;
-  }
   
   public String getType() {
     return type;
