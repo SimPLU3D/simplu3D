@@ -3,6 +3,8 @@ package fr.ign.cogit.simplu3d.exec.test;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.citygml4j.model.citygml.transportation.Road;
+
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
@@ -29,7 +31,7 @@ public class TestGenerator {
   public static void main(String[] args) {
 
 DTM dtm = new DTM("E:/mbrasebin/Donnees/test/ISERE_50_asc.asc", "Ours_vert_a_ailes", true , 1, ColorShade.BLUE_PURPLE_WHITE);
-    
+
     
     IFeatureCollection<IFeature> featC = new FT_FeatureCollection<IFeature>();
 
@@ -54,7 +56,7 @@ DTM dtm = new DTM("E:/mbrasebin/Donnees/test/ISERE_50_asc.asc", "Ours_vert_a_ail
       bP.generationToit();
       bP.generationFacade();
 
-      bP.setRepresentation(new RepresentationBatiment(bP, true, true));
+      bP.setRepresentation(new RepresentationBatiment(bP, false, false));
 
       featC.add(bP);
     }
