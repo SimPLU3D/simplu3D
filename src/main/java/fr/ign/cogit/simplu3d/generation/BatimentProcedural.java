@@ -17,6 +17,7 @@ import fr.ign.cogit.geoxygene.sig3d.semantic.DTM;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.geoxygene.util.algo.JtsUtil;
 import fr.ign.cogit.geoxygene.util.conversion.JtsGeOxygene;
+import fr.ign.cogit.simplu3d.calculation.StoreyCalculation;
 import fr.ign.cogit.simplu3d.generation.emprise.GenerateEmprise;
 import fr.ign.cogit.simplu3d.generation.facade.GenerationFacade;
 import fr.ign.cogit.simplu3d.generation.toit.GenerationToit;
@@ -425,6 +426,13 @@ public class BatimentProcedural extends Batiment {
     
     this.generationToit();
     this.generationFacade();
+
+  }
+  
+  
+  @Override
+  public int getStoreysAboveGround() {
+      return StoreyCalculation.process(this);
 
   }
 

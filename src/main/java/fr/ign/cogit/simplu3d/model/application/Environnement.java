@@ -4,6 +4,7 @@ import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.sig3d.model.citygml.core.CG_CityModel;
+import fr.ign.cogit.sig3d.semantic.MNTAire;
 
 public class Environnement extends CG_CityModel {
 
@@ -12,6 +13,15 @@ public class Environnement extends CG_CityModel {
   private IFeatureCollection<Batiment> batiments;
   private IFeatureCollection<Zone> zones;
   private IFeatureCollection<Alignement> alignements;
+  private MNTAire terrain;
+
+  public MNTAire getTerrain() {
+    return terrain;
+  }
+
+  public void setTerrain(MNTAire terrain) {
+    this.terrain = terrain;
+  }
 
   public IFeatureCollection<Alignement> getAlignements() {
     return alignements;

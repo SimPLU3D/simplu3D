@@ -6,6 +6,7 @@ import java.util.List;
 import org.citygml4j.model.citygml.building.Building;
 
 import fr.ign.cogit.sig3d.model.citygml.building.CG_Building;
+import fr.ign.cogit.simplu3d.calculation.StoreyCalculation;
 
 public class Batiment extends CG_Building {
 
@@ -13,7 +14,7 @@ public class Batiment extends CG_Building {
   private Toit toit;
   private List<Facade> facades;
   private EmpriseBatiment emprise;
-  
+
   private String destination = "";
 
   public String getDestination() {
@@ -40,11 +41,11 @@ public class Batiment extends CG_Building {
     super(build);
   }
 
-  public  List<SousParcelle>  getSousParcelles() {
+  public List<SousParcelle> getSousParcelles() {
     return sousParcelles;
   }
 
-  public void setSousParcelle(List<SousParcelle>  sousParcelle) {
+  public void setSousParcelle(List<SousParcelle> sousParcelle) {
     this.sousParcelles = sousParcelle;
   }
 
@@ -63,6 +64,17 @@ public class Batiment extends CG_Building {
   public void setFacade(List<? extends Facade> facades) {
     this.facades = new ArrayList<Facade>();
     this.facades.addAll(facades);
+
+  }
+
+  @Override
+  public int getStoreysAboveGround() {
+    if (this.storeysAboveGround == -1) {
+      this.storeysAboveGround = StoreyCalculation.process(this);
+    }
+
+    return this.storeysAboveGround;
+
   }
 
 }

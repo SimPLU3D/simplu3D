@@ -44,8 +44,8 @@ public class GenerationFacade {
       dpl.add(dp4);
       dpl.add(dp1);
 
-      ITriangle t1 = new GM_Triangle(dp1, dp2, dp3);
-      ITriangle t2 = new GM_Triangle(dp1, dp3, dp4);
+      ITriangle t1 = new GM_Triangle(dp1, dp3, dp2);
+      ITriangle t2 = new GM_Triangle(dp1, dp4, dp3);
 
       IMultiSurface<IOrientableSurface> mS = new GM_MultiSurface<IOrientableSurface>();
       mS.add(t1);

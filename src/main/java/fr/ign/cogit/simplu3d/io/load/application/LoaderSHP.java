@@ -3,10 +3,10 @@ package fr.ign.cogit.simplu3d.io.load.application;
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
-import fr.ign.cogit.geoxygene.sig3d.semantic.DTM;
 import fr.ign.cogit.geoxygene.sig3d.util.ColorShade;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
 import fr.ign.cogit.sig3d.convert.geom.FromGeomToSurface;
+import fr.ign.cogit.sig3d.semantic.MNTAire;
 import fr.ign.cogit.simplu3d.importer.applicationClasses.AlignementImporter;
 import fr.ign.cogit.simplu3d.importer.applicationClasses.AssignLinkToBordure;
 import fr.ign.cogit.simplu3d.importer.applicationClasses.BordureImporter;
@@ -136,21 +136,23 @@ public class LoaderSHP {
     // Etape 7 : on importe les alignements
     IFeatureCollection<IFeature> prescriptions = ShapefileReader.read(folder
         + NOM_FICHIER_PRESC_LINEAIRE);
-    IFeatureCollection<Alignement> alignementColl =AlignementImporter.importRecul(prescriptions, sousParcelles);
+    IFeatureCollection<Alignement> alignementColl = AlignementImporter
+        .importRecul(prescriptions, sousParcelles);
     env.setAlignements(alignementColl);
-    
-    System.out.println("NBRE alignement"+alignementColl.size());
+
+    System.out.println("NBRE alignement" + alignementColl.size());
 
     // Etape 8 : on affecte des z à tout ce bon monde
     // - parcelles, sous-parcelles route sans z, zonage, les bordures etc...
-    DTM dtm = new DTM(folder + NOM_FICHIER_TERRAIN, "Terrain", true, 1,
+    MNTAire dtm = new MNTAire(folder + NOM_FICHIER_TERRAIN, "Terrain", true, 1,
         ColorShade.BLUE_CYAN_GREEN_YELLOW_WHITE);
+    env.setTerrain(dtm);
     try {
       AssignZ.toParcelle(env.getParcelles(), dtm, SURSAMPLED);
       AssignZ.toSousParcelle(env.getSousParcelles(), dtm, SURSAMPLED);
       AssignZ.toZone(env.getZones(), dtm, false);
       AssignZ.toVoirie(env.getVoiries(), dtm, SURSAMPLED);
-      AssignZ.toAlignement(alignementColl,dtm ,SURSAMPLED);
+      AssignZ.toAlignement(alignementColl, dtm, SURSAMPLED);
     } catch (Exception e) {
       // TODO Auto-generated catch block
       e.printStackTrace();

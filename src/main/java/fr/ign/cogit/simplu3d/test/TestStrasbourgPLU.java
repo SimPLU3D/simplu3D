@@ -31,7 +31,7 @@ public class TestStrasbourgPLU {
     String folderEnv = "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project1/";
 
     // Fichier contenant les contraintes OCL à appliquer
-    File oclConstraints = new File("src/main/resources/ocl/strasbourgUB1.ocl");
+    File oclConstraints = new File("src/main/resources/ocl/test_static.ocl");
 
     try {
 
@@ -69,12 +69,13 @@ public class TestStrasbourgPLU {
 
       for (IInterpretationResult result : interpretEverything(modelInstance,
           constraintList)) {
-        System.out.println("  " + result.getModelObject() + " ("
+       System.out.println("  " + result.getModelObject() + " ("
             + result.getConstraint().getKind() + ": "
             + result.getConstraint().getSpecification().getBody() + "): "
             + result.getResult());
       }
 
+      /*
       List<Theme> lTheme = new ArrayList<RepEnvironnement.Theme>();
       lTheme.add(Theme.TOIT_BATIMENT);
       lTheme.add(Theme.FACADE_BATIMENT);
@@ -96,7 +97,7 @@ public class TestStrasbourgPLU {
       for (VectorLayer l : vl) {
 
         mW.getInterfaceMap3D().getCurrent3DMap().addLayer(l);
-      }
+      }*/
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -122,9 +123,7 @@ public class TestStrasbourgPLU {
     for (IModelInstanceObject imiObject : modelInstance
         .getAllModelInstanceObjects()) {
 
-      if (imiObject.getObject() instanceof SousParcelle) {
-        System.out.println(imiObject.getName());
-      }
+ 
 
       for (Constraint constraint : constraintList) {
         IInterpretationResult result = interpreter.interpretConstraint(

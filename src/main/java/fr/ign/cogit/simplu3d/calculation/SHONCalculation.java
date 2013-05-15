@@ -4,14 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
-import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.sig3d.conversion.Extrusion3DObject;
 import fr.ign.cogit.geoxygene.sig3d.equation.PlanEquation;
 import fr.ign.cogit.geoxygene.sig3d.geometry.Box3D;
-import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
-import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.sig3d.calculation.CutBuilding;
 import fr.ign.cogit.simplu3d.model.application.Batiment;
 import fr.ign.cogit.simplu3d.model.application.SousParcelle;
@@ -20,7 +16,6 @@ import fr.ign.cogit.simplu3d.model.application.Toit;
 public class SHONCalculation {
 
   // METHODE
-  public static double HAUTEUR_ETAGE = 3;
   public static double COEF_PLANCHER_PAR_ETAGE = 0.95;
 
   // COMPLEXE
@@ -75,8 +70,6 @@ public class SHONCalculation {
 
     double aireBatie = 0;
 
-    Box3D b = new Box3D(bati.getGeom());
-
     Toit t = bati.getToit();
 
     if (t == null) {
@@ -86,27 +79,27 @@ public class SHONCalculation {
       return 0;
     }
 
-    Box3D b2 = new Box3D(t.getGeom());
-
-    double hauteur = b2.getLLDP().getZ() - b.getLLDP().getZ();
-
-
-    int nbEtage = (int) (hauteur / HAUTEUR_ETAGE);
-
-    if (nbEtage == 0) {
-      nbEtage++;
-    }
+    int nbEtage = bati.getStoreysAboveGround();
 
     aireBatie = bati.getEmprise().getLod2MultiSurface().area() * nbEtage
         * COEF_PLANCHER_PAR_ETAGE;
 
     return aireBatie;
   }
-  
-  
+
   public static List<IOrientableSurface> DEBUG = new ArrayList<IOrientableSurface>();
 
   public static double assessCUTSHON(Batiment bati) {
+
+    double hauteurEtage = 0;
+
+    if (StoreyCalculation.USE_STOREYS_HEIGH_ATT) {
+      hauteurEtage = bati.getStoreyHeightsAboveGround();
+    }
+
+    if (hauteurEtage < 0.1) {
+      hauteurEtage = StoreyCalculation.HAUTEUR_ETAGE;
+    }
 
     List<IOrientableSurface> lOS = new ArrayList<IOrientableSurface>();
     lOS.addAll(bati.getLod2MultiSurface());
@@ -116,11 +109,10 @@ public class SHONCalculation {
     double zMin = b.getLLDP().getZ();
     double zMax = b.getURDP().getZ();
 
-    int nbFloor = (int) ((zMax - zMin) / HAUTEUR_ETAGE);
-    
-    
-    if(nbFloor ==0){
-      nbFloor=1;
+    int nbFloor = StoreyCalculation.process(bati);
+
+    if (nbFloor == 0) {
+      nbFloor = 1;
     }
 
     double zActu = zMin;
@@ -133,7 +125,6 @@ public class SHONCalculation {
 
       if (lG != null && lG.size() > 0) {
 
-        
         DEBUG.addAll(lG);
 
       }
@@ -144,7 +135,7 @@ public class SHONCalculation {
         return -1;
       }
 
-      zActu = zActu + HAUTEUR_ETAGE;
+      zActu = zActu + hauteurEtage;
 
       areaSHON = areaSHON + areaTemp;
 
@@ -185,15 +176,15 @@ public class SHONCalculation {
       if (gT instanceof IPolygon) {
         if (gT.isValid()) {
           areaTemp = areaTemp + gT.area();
-        } /*else {
-          return -1;
+        } /*
+           * else { return -1;
+           * 
+           * }
+           */
 
-        }*/
-
-      } /*else {
-        areaTemp = -1;
-        return areaTemp;
-      }*/
+      } /*
+         * else { areaTemp = -1; return areaTemp; }
+         */
 
     }
 

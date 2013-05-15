@@ -7,6 +7,7 @@ import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.sig3d.model.citygml.building.CG_RoofSurface;
+import fr.ign.cogit.simplu3d.calculation.RoofAngle;
 
 public class Toit extends CG_RoofSurface {
 
@@ -85,5 +86,39 @@ public class Toit extends CG_RoofSurface {
     return tCopy;
 
   }
+
+
+  private double angleMin = Double.NaN;
+  private double angleMax = Double.NaN;
+  
+  
+  
+  public double getAngleMin() {
+    
+    
+    if(Double.isNaN(angleMin)){
+      angleMin = RoofAngle.angleMin(this);
+    }
+    
+    return angleMin;
+  }
+
+  public void setAngleMin(double angleMin) {
+    this.angleMin = angleMin;
+  }
+
+  public double getAngleMax() {
+    
+    if(Double.isNaN(angleMax)){
+      angleMax = RoofAngle.angleMax(this);
+    }
+    
+    return angleMax;
+  }
+
+  public void setAngleMax(double angleMax) {
+    this.angleMax = angleMax;
+  }
+  
 
 }

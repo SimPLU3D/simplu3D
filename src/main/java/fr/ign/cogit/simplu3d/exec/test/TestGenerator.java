@@ -36,6 +36,106 @@ DTM dtm = new DTM("E:/mbrasebin/Donnees/test/ISERE_50_asc.asc", "Ours_vert_a_ail
     IFeatureCollection<IFeature> featC = new FT_FeatureCollection<IFeature>();
 
     long l = System.currentTimeMillis();
+    
+    int i = 0;
+
+    TopologieBatiment tB = new TopologieBatiment(FormeEmpriseEnum.FORME_L,
+        FormeToitEnum.SYMETRIQUE, new ArrayList<Integer>());
+    
+    
+  
+    
+    BatimentProcedural bP = new BatimentProcedural(tB, 20, 30, 15, 15, 15, 24,
+        null,new ArrayList<Materiau>(),  //  Materiau.TOLE, lMatF,
+        new boolean[0], new DirectPosition(0, i * 100, 0), 0,dtm, Math.PI/4);
+    
+    bP.generationEmprise();
+    bP.generationToit();
+    bP.generationFacade();
+
+    
+    
+    bP.setRepresentation(new RepresentationBatiment(bP, false, false));
+
+    featC.add(bP);
+    i++;
+    
+    //on change de forme
+    
+    
+     tB = new TopologieBatiment(FormeEmpriseEnum.RECTANGLE,
+        FormeToitEnum.SYMETRIQUE, new ArrayList<Integer>());
+    
+    
+  
+     bP = new BatimentProcedural(tB, 20, 30, 5, 5, 15, 24,
+        null,new ArrayList<Materiau>(),  //  Materiau.TOLE, lMatF,
+        new boolean[0], new DirectPosition(0, i * 100, 0), 0,dtm, Math.PI/4);
+     
+     bP.generationEmprise();
+     bP.generationToit();
+     bP.generationFacade();
+
+     
+     bP.setRepresentation(new RepresentationBatiment(bP, false, false));
+
+    featC.add(bP);
+    i++;
+    
+    //on change de volume
+    
+    
+    tB = new TopologieBatiment(FormeEmpriseEnum.RECTANGLE,
+        FormeToitEnum.SYMETRIQUE, new ArrayList<Integer>());
+    
+    
+  
+     bP = new BatimentProcedural(tB, 25, 30, 5, 5, 15, 24,
+        null,new ArrayList<Materiau>(),  //  Materiau.TOLE, lMatF,
+        new boolean[0], new DirectPosition(0, i * 100, 0), 0,dtm, Math.PI/4);
+     
+     bP.generationEmprise();
+     bP.generationToit();
+     bP.generationFacade();
+
+     
+     bP.setRepresentation(new RepresentationBatiment(bP, false, false));
+
+    featC.add(bP);
+    i++;
+    
+    
+    
+    //on change tourne
+    
+    
+    tB = new TopologieBatiment(FormeEmpriseEnum.RECTANGLE,
+        FormeToitEnum.SYMETRIQUE, new ArrayList<Integer>());
+    
+    
+  
+     bP = new BatimentProcedural(tB, 25, 30, 5, 5, 15, 24,
+        null,new ArrayList<Materiau>(),  //  Materiau.TOLE, lMatF,
+        new boolean[0], new DirectPosition(0, i * 100, 0), 0,dtm, Math.PI/8);
+     
+     
+     bP.generationEmprise();
+     bP.generationToit();
+     bP.generationFacade();
+
+     
+     bP.setRepresentation(new RepresentationBatiment(bP, false, false));
+
+    featC.add(bP);
+    i++;
+    
+    
+    
+    
+    
+    
+    
+    /*
 
     FormeEmpriseEnum[] val = FormeEmpriseEnum.values();
 
@@ -59,7 +159,7 @@ DTM dtm = new DTM("E:/mbrasebin/Donnees/test/ISERE_50_asc.asc", "Ours_vert_a_ail
       bP.setRepresentation(new RepresentationBatiment(bP, false, false));
 
       featC.add(bP);
-    }
+    }*/
 
     System.out.println(System.currentTimeMillis() - l);
 

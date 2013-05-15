@@ -73,32 +73,24 @@ public class ImportModelInstance {
         System.out.println("Patata");
       }
       modelInstance.addModelInstanceElement(sp.getLod2MultiSurface());
-      
-      
-      
+    
+      // Gestion des bordures
+
+      for(Bordure b:sp.getBordures()){
+          modelInstance.addModelInstanceElement(b);
+          modelInstance.addModelInstanceElement(b.getGeom());
+        }
+        
 
     }
      
     
-    /*
-    
-    // Gestion des bordures
 
-   
-      for(Bordure b:sp.getBordures()){
-        modelInstance.addModelInstanceElement(b);
-        modelInstance.addModelInstanceElement(b.getGeom());
-      }
+
       
       
       
-      
-      
-      
-      
-    }
-    
-    
+
     
 
     
@@ -110,8 +102,6 @@ public class ImportModelInstance {
     }
     
     
-
-    */
 
     
     
