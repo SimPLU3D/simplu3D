@@ -1,6 +1,6 @@
 package fr.ign.cogit.simplu3d.calculation;
 
-import fr.ign.cogit.simplu3d.model.application.SousParcelle;
+import fr.ign.cogit.simplu3d.model.application.SubParcel;
 
 public class COSCalculation {
 
@@ -8,7 +8,7 @@ public class COSCalculation {
     SIMPLE, FLOOR_CUT
   }
 
-  public static double assess(SousParcelle p, METHOD m) {
+  public static double assess(SubParcel p, METHOD m) {
 
     double area = p.getLod2MultiSurface().area();
     double aireBatie = 0;

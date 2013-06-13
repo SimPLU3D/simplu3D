@@ -28,7 +28,7 @@ import fr.ign.cogit.simplu3d.calculation.COSCalculation.METHOD;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.Batiment;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
-import fr.ign.cogit.simplu3d.model.application.SousParcelle;
+import fr.ign.cogit.simplu3d.model.application.SubParcel;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement.Theme;
 
@@ -50,7 +50,7 @@ public class TestPente {
    
    
  
-   for(SousParcelle sp:env.getSousParcelles()){
+   for(SubParcel sp:env.getSousParcelles()){
      
     double pente =  AverageSlope.averageSlope(sp, env.getTerrain());
     

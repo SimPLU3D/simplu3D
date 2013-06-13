@@ -8,10 +8,10 @@ import fr.ign.cogit.sig3d.semantic.MNTAire;
 
 public class Environnement extends CG_CityModel {
 
-  private IFeatureCollection<Parcelle> parcelles;
-  private IFeatureCollection<SousParcelle> sousParcelles;
-  private IFeatureCollection<Batiment> batiments;
-  private IFeatureCollection<Zone> zones;
+  private IFeatureCollection<CadastralParcel> parcelles;
+  private IFeatureCollection<SubParcel> sousParcelles;
+  private IFeatureCollection<Building> batiments;
+  private IFeatureCollection<UrbaZone> zones;
   private IFeatureCollection<Alignement> alignements;
   private MNTAire terrain;
 
@@ -38,56 +38,56 @@ public class Environnement extends CG_CityModel {
   public static boolean VERBOSE = false;
   public static boolean TRANSLATE_TO_ZERO = false;
 
-  public IFeatureCollection<Parcelle> getParcelles() {
+  public IFeatureCollection<CadastralParcel> getParcelles() {
     return parcelles;
   }
 
-  public void setParcelles(IFeatureCollection<Parcelle> parcelles) {
+  public void setParcelles(IFeatureCollection<CadastralParcel> parcelles) {
     this.parcelles = parcelles;
   }
 
-  private IFeatureCollection<Voirie> voiries;
+  private IFeatureCollection<Road> voiries;
 
   public Environnement() {
 
   }
 
-  public IFeatureCollection<SousParcelle> getSousParcelles() {
+  public IFeatureCollection<SubParcel> getSousParcelles() {
     if (sousParcelles == null) {
-      sousParcelles = new FT_FeatureCollection<SousParcelle>();
+      sousParcelles = new FT_FeatureCollection<SubParcel>();
     }
     return sousParcelles;
   }
 
-  public void setSousParcelles(IFeatureCollection<SousParcelle> sousParcelles) {
+  public void setSousParcelles(IFeatureCollection<SubParcel> sousParcelles) {
     this.sousParcelles = sousParcelles;
   }
 
-  public IFeatureCollection<Batiment> getBatiments() {
+  public IFeatureCollection<Building> getBuilding() {
     
     if(batiments == null){
-      batiments = new FT_FeatureCollection<Batiment>();
+      batiments = new FT_FeatureCollection<Building>();
     }
     return batiments;
   }
 
-  public void setBatiments(IFeatureCollection<Batiment> batiments) {
+  public void setBatiments(IFeatureCollection<Building> batiments) {
     this.batiments = batiments;
   }
 
-  public IFeatureCollection<Zone> getZones() {
+  public IFeatureCollection<UrbaZone> getZones() {
     return zones;
   }
 
-  public void setZones(IFeatureCollection<Zone> zones) {
+  public void setZones(IFeatureCollection<UrbaZone> zones) {
     this.zones = zones;
   }
 
-  public IFeatureCollection<Voirie> getVoiries() {
+  public IFeatureCollection<Road> getVoiries() {
     return voiries;
   }
 
-  public void setVoiries(IFeatureCollection<Voirie> voiries) {
+  public void setVoiries(IFeatureCollection<Road> voiries) {
     this.voiries = voiries;
   }
 

@@ -27,7 +27,7 @@ import fr.ign.cogit.simplu3d.calculation.COSCalculation.METHOD;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.Batiment;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
-import fr.ign.cogit.simplu3d.model.application.SousParcelle;
+import fr.ign.cogit.simplu3d.model.application.SubParcel;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement.Theme;
 
@@ -50,7 +50,7 @@ public class TestCOSSHON {
    
    
    int nbBat = 0;
-   for(SousParcelle sp:env.getSousParcelles()){
+   for(SubParcel sp:env.getSousParcelles()){
      
     double cos1 =  COSCalculation.assess(sp, METHOD.SIMPLE);
     double cos2 =  COSCalculation.assess(sp, METHOD.FLOOR_CUT);
@@ -58,11 +58,11 @@ public class TestCOSSHON {
      AttributeManager.addAttribute(sp, "COS_SIMPLE", cos1, "DOUBLE");
      AttributeManager.addAttribute(sp, "COS_CUT", cos2, "DOUBLE");
      
-     nbBat = nbBat + sp.getBatiments().size();
+     nbBat = nbBat + sp.getBuilding().size();
    }
    
    
-   for(Batiment b:env.getBatiments()){
+   for(Batiment b:env.getBuilding()){
      if(b.getSousParcelles().size() > 1){
        featC.add(b);
        System.out.println("Batiment rattaché à plus d'une sous parcelle ?");

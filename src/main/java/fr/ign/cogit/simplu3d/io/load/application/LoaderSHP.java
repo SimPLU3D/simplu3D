@@ -14,12 +14,12 @@ import fr.ign.cogit.simplu3d.importer.applicationClasses.BuildingImporter;
 import fr.ign.cogit.simplu3d.importer.applicationClasses.SousParcelleImporter;
 import fr.ign.cogit.simplu3d.importer.applicationClasses.VoirieImporter;
 import fr.ign.cogit.simplu3d.model.application.Alignement;
-import fr.ign.cogit.simplu3d.model.application.Batiment;
+import fr.ign.cogit.simplu3d.model.application.Building;
+import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
-import fr.ign.cogit.simplu3d.model.application.Parcelle;
-import fr.ign.cogit.simplu3d.model.application.SousParcelle;
-import fr.ign.cogit.simplu3d.model.application.Voirie;
-import fr.ign.cogit.simplu3d.model.application.Zone;
+import fr.ign.cogit.simplu3d.model.application.SubParcel;
+import fr.ign.cogit.simplu3d.model.application.UrbaZone;
+import fr.ign.cogit.simplu3d.model.application.Road;
 import fr.ign.cogit.simplu3d.util.AssignZ;
 
 public class LoaderSHP {
@@ -95,16 +95,16 @@ public class LoaderSHP {
     // Etape 1 : chargement des parcelles et créations des bordures
     // IFeatureCollection<Parcelle> parcelles = BordureImporter
     // .assignBordureToParcelle(parcelleColl);
-    IFeatureCollection<Parcelle> parcelles = BordureImporter
+    IFeatureCollection<CadastralParcel> parcelles = BordureImporter
         .assignBordureToParcelleWithOrientation(parcelleColl, 1.5);
 
     env.setParcelles(parcelles);
 
     // Etape 2 : création des zones
-    IFeatureCollection<Zone> zones = new FT_FeatureCollection<Zone>();
+    IFeatureCollection<UrbaZone> zones = new FT_FeatureCollection<UrbaZone>();
 
     for (IFeature feat : zoneColl) {
-      Zone z = new Zone(FromGeomToSurface.convertMSGeom(feat.getGeom()));
+      UrbaZone z = new UrbaZone(FromGeomToSurface.convertMSGeom(feat.getGeom()).get(0));
 
       z.setType(feat.getAttribute(NOM_ATT_TYPE_ZONE).toString());
 
@@ -116,28 +116,28 @@ public class LoaderSHP {
 
     // Etape 3 : création des sous parcelles
 
-    IFeatureCollection<SousParcelle> sousParcelles = SousParcelleImporter
+    IFeatureCollection<SubParcel> sousParcelles = SousParcelleImporter
         .create(parcelles, zones);
     env.setSousParcelles(sousParcelles);
 
     // Etape 4 : import des bâtiments
-    IFeatureCollection<Batiment> batiments = BuildingImporter.importBuilding(
+    IFeatureCollection<Building> batiments = BuildingImporter.importBuilding(
         batiColl, sousParcelles);
     env.setBatiments(batiments);
 
     // Etape 5 : chargement des rues
-    IFeatureCollection<Voirie> voiries = VoirieImporter
+    IFeatureCollection<Road> voiries = VoirieImporter
         .importVoirie(voirieColl);
     env.setVoiries(voiries);
 
     // Etape 6 : on affecte les liens entres une bordure et ses objets adjacents
-    AssignLinkToBordure.process(sousParcelles, voiries);
+    AssignLinkToBordure.process(parcelles, voiries);
 
     // Etape 7 : on importe les alignements
     IFeatureCollection<IFeature> prescriptions = ShapefileReader.read(folder
         + NOM_FICHIER_PRESC_LINEAIRE);
     IFeatureCollection<Alignement> alignementColl = AlignementImporter
-        .importRecul(prescriptions, sousParcelles);
+        .importRecul(prescriptions, parcelles);
     env.setAlignements(alignementColl);
 
     System.out.println("NBRE alignement" + alignementColl.size());

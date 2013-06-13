@@ -1,23 +1,21 @@
 package fr.ign.cogit.simplu3d.importer.applicationClasses;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
 import fr.ign.cogit.geoxygene.util.index.Tiling;
-import fr.ign.cogit.simplu3d.model.application.Bordure;
-import fr.ign.cogit.simplu3d.model.application.SousParcelle;
-import fr.ign.cogit.simplu3d.model.application.Voirie;
+import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
+import fr.ign.cogit.simplu3d.model.application.Road;
+import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 
 public class AssignLinkToBordure {
 
-  public static void process(IFeatureCollection<SousParcelle> sousParcelles,
-      IFeatureCollection<Voirie> voiries) {
+  public static void process(IFeatureCollection<CadastralParcel> sousParcelles,
+      IFeatureCollection<Road> voiries) {
 
     if (!sousParcelles.hasSpatialIndex()) {
       sousParcelles.initSpatialIndex(Tiling.class, false);
@@ -26,33 +24,30 @@ public class AssignLinkToBordure {
       voiries.initSpatialIndex(Tiling.class, false);
     }
 
-    for (SousParcelle sP : sousParcelles) {
+    for (CadastralParcel sP : sousParcelles) {
 
-      IFeatureCollection<Bordure> bordures = sP.getBordures();
+      IFeatureCollection<SpecificCadastralBoundary> bordures = sP
+          .getSpecificCadastralBoundary();
 
-      for (Bordure b : bordures) {
+      for (SpecificCadastralBoundary b : bordures) {
 
         // 2 cas : c'est une bordure avec voirie
-        if (b.getTypeDroit() == Bordure.VOIE) {
+        if (b.getType() == SpecificCadastralBoundary.ROAD) {
+
           b.setFeatAdj(retrieveVoirie(b, voiries));
           continue;
         }
 
-        
-
         // Sinon c'est un lien avec une autre sous Parceller
-        SousParcelle sPOut = retrieveSousParcelle(b,sP,sousParcelles);
-        if(sP == null){
-        
+        CadastralParcel sPOut = retrieveSousParcelle(b, sP, sousParcelles);
+        if (sP == null) {
+
           System.out.println("La sousParcelle est nulle Oo");
-        
-        }else{
-          
-          List<SousParcelle> slp = new ArrayList<SousParcelle>();
-          slp.add(sPOut);
-          
-          b.setFeatAdj(slp);
-          
+
+        } else {
+
+          b.setFeatAdj(sPOut);
+
         }
 
       }
@@ -61,10 +56,11 @@ public class AssignLinkToBordure {
 
   }
 
-  private static SousParcelle retrieveSousParcelle(Bordure b, SousParcelle sousParcelleIni,
-      IFeatureCollection<SousParcelle> parcelles) {
+  private static CadastralParcel retrieveSousParcelle(
+      SpecificCadastralBoundary b, CadastralParcel sousParcelleIni,
+      IFeatureCollection<CadastralParcel> parcelles) {
 
-    Collection<SousParcelle> sP = parcelles.select(b.getGeom(), 0);
+    Collection<CadastralParcel> sP = parcelles.select(b.getGeom(), 0);
 
     if (sP.size() < 2) {
 
@@ -75,11 +71,11 @@ public class AssignLinkToBordure {
       System.out.println("Error in sousParcelle selection");
     }
 
-    Iterator<SousParcelle> itP = sP.iterator();
+    Iterator<CadastralParcel> itP = sP.iterator();
 
     if (sP.size() == 2) {
 
-      SousParcelle spC = itP.next();
+      CadastralParcel spC = itP.next();
 
       if (spC == sousParcelleIni) {
         return itP.next();
@@ -90,15 +86,16 @@ public class AssignLinkToBordure {
     }
 
     while (itP.hasNext()) {
-      SousParcelle sousParcelle = itP.next();
+      CadastralParcel sousParcelle = itP.next();
 
       if (sousParcelle == sousParcelleIni) {
         continue;
       }
 
-      IFeatureCollection<Bordure> lB = sousParcelle.getBordures();
+      IFeatureCollection<SpecificCadastralBoundary> lB = sousParcelle
+          .getSpecificCadastralBoundary();
 
-      for (Bordure b2 : lB) {
+      for (SpecificCadastralBoundary b2 : lB) {
 
         IGeometry geom = b.getGeom().intersection(b2.getGeom());
 
@@ -114,24 +111,22 @@ public class AssignLinkToBordure {
 
   }
 
-  private static List<Voirie> retrieveVoirie(Bordure b,
-      IFeatureCollection<Voirie> voiries) {
+  private static Road retrieveVoirie(SpecificCadastralBoundary b,
+      IFeatureCollection<Road> voiries) {
 
     IGeometry geomB = b.getGeom();
 
-    List<Voirie> lV = new ArrayList<Voirie>();
-
     IGeometry buffer = geomB.buffer(10);
 
-    Collection<Voirie> collVoirie = voiries.select(buffer);
+    Collection<Road> collVoirie = voiries.select(buffer);
 
     if (collVoirie.size() == 0) {
-      return lV;
+      return null;
     }
 
     if (collVoirie.size() == 1) {
-      lV.add(collVoirie.iterator().next());
-      return lV;
+
+      return collVoirie.iterator().next();
     }
 
     IDirectPositionList dpl = geomB.coord();
@@ -140,11 +135,14 @@ public class AssignLinkToBordure {
 
     v.normalise();
 
-    Iterator<Voirie> it = collVoirie.iterator();
+    Iterator<Road> it = collVoirie.iterator();
+
+    Road bestR = null;
+    double bestScore = Double.NEGATIVE_INFINITY;
 
     while (it.hasNext()) {
 
-      Voirie vCandidate = it.next();
+      Road vCandidate = it.next();
       IGeometry geomB2 = b.getGeom();
       IDirectPositionList dpl2 = geomB2.coord();
 
@@ -154,13 +152,19 @@ public class AssignLinkToBordure {
       double cos = Math.abs(v.prodScalaire(v2));
 
       if (cos > Math.cos(Math.PI / 5)) {
-        lV.add(vCandidate);
+
+        // à voir .....
+        if (cos > bestScore) {
+          bestR = vCandidate;
+          bestScore = cos;
+
+        }
 
       }
 
     }
 
-    return lV;
+    return bestR;
 
   }
 

@@ -16,17 +16,17 @@ import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.sig3d.analysis.ClassifyRoof;
 import fr.ign.cogit.sig3d.analysis.DetectPignon;
 import fr.ign.cogit.sig3d.convert.geom.FromPolygonToLineString;
-import fr.ign.cogit.simplu3d.model.application.Toit;
+import fr.ign.cogit.simplu3d.model.application.RoofSurface;
 
 public class RoofImporter {
 
   private static final double epsilonAngle = 0.15;
   private static final double epsilonDist = 1;
 
-  public static Toit create(IMultiSurface<IOrientableSurface> mS,
+  public static RoofSurface create(IMultiSurface<IOrientableSurface> mS,
       IPolygon emprise) {
 
-    Toit t = new Toit();
+    RoofSurface t = new RoofSurface();
     t.setLod2MultiSurface(mS);
     t.setGeom(mS);
 

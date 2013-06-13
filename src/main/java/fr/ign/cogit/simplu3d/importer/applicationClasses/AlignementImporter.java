@@ -5,6 +5,7 @@ import java.util.List;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
+import fr.ign.cogit.geoxygene.api.spatial.geomprim.ICurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
@@ -13,8 +14,10 @@ import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.index.Tiling;
 import fr.ign.cogit.simplu3d.convert.ConvertToLineString;
 import fr.ign.cogit.simplu3d.model.application.Alignement;
-import fr.ign.cogit.simplu3d.model.application.Bordure;
-import fr.ign.cogit.simplu3d.model.application.SousParcelle;
+import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
+import fr.ign.cogit.simplu3d.model.application.Recoil;
+import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
+import fr.ign.cogit.simplu3d.model.application.SubParcel;
 
 public class AlignementImporter {
 
@@ -23,7 +26,7 @@ public class AlignementImporter {
 
   public static IFeatureCollection<Alignement> importRecul(
       IFeatureCollection<IFeature> prescriptions,
-      IFeatureCollection<SousParcelle> spColl)
+      IFeatureCollection<CadastralParcel> spColl)
       throws CloneNotSupportedException {
 
     IFeatureCollection<Alignement> lAlignement = new FT_FeatureCollection<Alignement>();
@@ -34,7 +37,7 @@ public class AlignementImporter {
 
     }
 
-    for (SousParcelle sP : spColl) {
+    for (CadastralParcel sP : spColl) {
 
       IFeatureCollection<Alignement> lAlignementTemp = new FT_FeatureCollection<Alignement>();
 
@@ -84,21 +87,26 @@ public class AlignementImporter {
 
         for (IOrientableCurve c : lIOC) {
 
-          Alignement a = new Alignement();
-          a.setGeom(c);
+          Alignement a;
+ 
 
-          Double type = Double.parseDouble(featTemp.getAttribute(ATT_TYPE)
+          Integer type = Integer.parseInt(featTemp.getAttribute(ATT_TYPE)
               .toString());
 
           if (type == 11) {
 
-            a.setType(Alignement.RECUL);
+            Recoil  b = new Recoil( (int) type, (ICurve) c);
+  
+            
 
             Double param = Double.parseDouble(featTemp.getAttribute(ATT_Param)
                 .toString());
 
-            a.setLargeur(param);
-
+            b.setDistance(param);
+            a=b;
+          }else{
+            a = new Alignement(type, (ICurve) c);
+            
           }
 
           lAlignementTemp.add(a);
@@ -109,10 +117,10 @@ public class AlignementImporter {
 
       // On a 1 feature par segment d'alignement
 
-      IFeatureCollection<Bordure> iFCVoie = sP.getBorduresVoies();
+      IFeatureCollection<SpecificCadastralBoundary> iFCVoie = sP.getSpecificCadastralBoundary();
 
       for (Alignement a : lAlignementTemp) {
-        Bordure b = determineBestBordure(iFCVoie, a);
+        SpecificCadastralBoundary b = determineBestBordure(iFCVoie, a);
         if (b != null) {
           b.setAlignement(a);
         }
@@ -125,11 +133,11 @@ public class AlignementImporter {
     return lAlignement;
   }
 
-  private static Bordure determineBestBordure(
-      IFeatureCollection<Bordure> bordures, Alignement a) {
+  private static SpecificCadastralBoundary determineBestBordure(
+      IFeatureCollection<SpecificCadastralBoundary> bordures, Alignement a) {
     System.out.println("Alignement " + a.getId());
 
-    for (Bordure b : bordures) {
+    for (SpecificCadastralBoundary b : bordures) {
 
       if (b.getId() > 165) {
         System.out.println("STOP");
@@ -138,13 +146,13 @@ public class AlignementImporter {
     }
 
     double scoreMax = -1;
-    Bordure bCand = null;
+    SpecificCadastralBoundary bCand = null;
 
     double rec = 0;
 
-    if (a.getType() == Alignement.RECUL) {
+    if (a instanceof Recoil) {
 
-      rec = a.getLargeur();
+      rec = ((Recoil) a).getDistance();
     }
 
     IOrientableCurve geomAlignement = ConvertToLineString.convert(a.getGeom())
@@ -154,7 +162,7 @@ public class AlignementImporter {
         .coord().get(1));
     v.normalise();
 
-    for (Bordure b : bordures) {
+    for (SpecificCadastralBoundary b : bordures) {
 
       List<IOrientableCurve> lIOC = ConvertToLineString.convert(b.getGeom());
 

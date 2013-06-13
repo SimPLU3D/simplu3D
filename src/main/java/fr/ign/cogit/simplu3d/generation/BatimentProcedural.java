@@ -23,7 +23,7 @@ import fr.ign.cogit.simplu3d.generation.facade.GenerationFacade;
 import fr.ign.cogit.simplu3d.generation.toit.GenerationToit;
 import fr.ign.cogit.simplu3d.model.application.Batiment;
 import fr.ign.cogit.simplu3d.model.application.EmpriseBatiment;
-import fr.ign.cogit.simplu3d.model.application.Facade;
+import fr.ign.cogit.simplu3d.model.application.WallSurface;
 import fr.ign.cogit.simplu3d.model.application.Materiau;
 
 public class BatimentProcedural extends Batiment {
@@ -152,7 +152,7 @@ public class BatimentProcedural extends Batiment {
     IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<IOrientableSurface>();
     iMS.addAll(this.getToit().getLod2MultiSurface());
 
-    for (Facade f : lF) {
+    for (WallSurface f : lF) {
       iMS.addAll(f.getLod2MultiSurface());
     }
 

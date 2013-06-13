@@ -21,7 +21,7 @@ import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Triangle;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.simplu3d.importer.model.ImportModelInstance;
-import fr.ign.cogit.simplu3d.model.application.SousParcelle;
+import fr.ign.cogit.simplu3d.model.application.SubParcel;
 import fr.ign.cogit.simplu3d.solver.interpreter.OCLInterpreterSimplu3D;
 
 public class TestLoader {
@@ -42,7 +42,7 @@ public class TestLoader {
       System.out.println("***********Import environnement************");
       System.out.println("*******************************************");
       
-      SousParcelle p = new SousParcelle();
+      SubParcel p = new SubParcel();
 
 
       
@@ -170,7 +170,7 @@ public class TestLoader {
           .getAllModelInstanceObjects()) {
     
 
-    if(imiObject.getObject() instanceof SousParcelle){
+    if(imiObject.getObject() instanceof SubParcel){
       System.out.println(imiObject.getName());
     }
     

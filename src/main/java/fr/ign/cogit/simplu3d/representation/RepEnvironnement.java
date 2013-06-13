@@ -21,15 +21,15 @@ import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.sig3d.analysis.ClassifyRoof;
 import fr.ign.cogit.sig3d.representation.color.ColorLocalRandom;
 import fr.ign.cogit.sig3d.representation.rendering.CartooMod2;
-import fr.ign.cogit.simplu3d.model.application.Batiment;
-import fr.ign.cogit.simplu3d.model.application.Bordure;
+import fr.ign.cogit.simplu3d.model.application.Building;
+import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
-import fr.ign.cogit.simplu3d.model.application.Facade;
-import fr.ign.cogit.simplu3d.model.application.Parcelle;
-import fr.ign.cogit.simplu3d.model.application.SousParcelle;
-import fr.ign.cogit.simplu3d.model.application.Toit;
-import fr.ign.cogit.simplu3d.model.application.Voirie;
-import fr.ign.cogit.simplu3d.model.application.Zone;
+import fr.ign.cogit.simplu3d.model.application.WallSurface;
+import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
+import fr.ign.cogit.simplu3d.model.application.SubParcel;
+import fr.ign.cogit.simplu3d.model.application.RoofSurface;
+import fr.ign.cogit.simplu3d.model.application.UrbaZone;
+import fr.ign.cogit.simplu3d.model.application.Road;
 
 public class RepEnvironnement {
 
@@ -78,37 +78,37 @@ public class RepEnvironnement {
 
     switch (t) {
       case BORDURE:
-        featC = generateRepresentationBordure(env);
+        featC = generateCadastralBoundaryRepresentation(env);
         break;
       case TOIT_BATIMENT:
-        featC = generateRepresentationToit(env);
+        featC = generateRoofRepresentation(env);
         break;
       case FACADE_BATIMENT:
-        featC = generateRepresentationFacade(env);
+        featC = generateWallRepresentation(env);
         break;
       case VOIRIE:
-        featC = generateRepresentationVoirie(env);
+        featC = generateRoadRepresentation(env);
         break;
       case ZONE:
-        featC = generateRepresentationZone(env);
+        featC = generateZoneRepresentation(env);
         break;
       case PARCELLE:
-        featC = generateRepresentationParcelle(env);
+        featC = generateCadastraParcelRepresentation(env);
         break;
       case SOUS_PARCELLE:
-        featC = generateRepresentationSousParcelle(env);
+        featC = generateSubParcelRepresentation(env);
         break;
       case FAITAGE:
-        featC = generateRepresentationFaitage(env);
+        featC = generateRoofingRepresentation(env);
         break;
       case PIGNON:
-        featC = generateRepresentationPignon(env);
+        featC = generateGableRepresentation(env);
         break;
       case GOUTTIERE:
-        featC = generateRepresentationGouttiere(env);
+        featC = generateGutterRepresentation(env);
         break;
       case PAN:
-        featC = generateRepresentationPAN(env);
+        featC = generateRoofSlopesRepresentation(env);
         break;
     }
 
@@ -125,34 +125,35 @@ public class RepEnvironnement {
   private static final Color BORDURE_LATERAL = new Color(189, 189, 189);
   private static final Color BORDURE_VOIE = new Color(51, 153, 153);
 
-  private static IFeatureCollection<Bordure> generateRepresentationBordure(
+  private static IFeatureCollection<SpecificCadastralBoundary> generateCadastralBoundaryRepresentation(
       Environnement env) {
 
-    IFeatureCollection<SousParcelle> sPF = env.getSousParcelles();
-    IFeatureCollection<Bordure> featBordOut = new FT_FeatureCollection<Bordure>();
+    IFeatureCollection<CadastralParcel> sPF = env.getParcelles();
+    IFeatureCollection<SpecificCadastralBoundary> featBordOut = new FT_FeatureCollection<SpecificCadastralBoundary>();
 
-    for (SousParcelle sp : sPF) {
+    for (CadastralParcel sp : sPF) {
 
-      IFeatureCollection<Bordure> featBord = sp.getBordures();
+      IFeatureCollection<SpecificCadastralBoundary> featBord = sp
+          .getSpecificCadastralBoundary();
 
-      for (Bordure b : featBord) {
-        int type = b.getTypeDroit();
+      for (SpecificCadastralBoundary b : featBord) {
+        int type = b.getType();
 
         Color c = null;
 
         switch (type) {
-          case Bordure.FICTIVE:
+          case SpecificCadastralBoundary.INTRA:
             c = BORDURE_FICTIVE;
             break;
-          case Bordure.FOND:
+          case SpecificCadastralBoundary.BOT:
             c = BORDURE_FOND;
             break;
 
-          case Bordure.LATERAL:
+          case SpecificCadastralBoundary.LAT:
             c = BORDURE_LATERAL;
             break;
 
-          case Bordure.VOIE:
+          case SpecificCadastralBoundary.ROAD:
             c = BORDURE_VOIE;
             break;
 
@@ -176,13 +177,13 @@ public class RepEnvironnement {
 
   private static final Color COLOR_TOIT = new Color(75, 75, 75);
 
-  private static IFeatureCollection<? extends IFeature> generateRepresentationToit(
+  private static IFeatureCollection<? extends IFeature> generateRoofRepresentation(
       Environnement env) {
-    IFeatureCollection<Toit> toitOut = new FT_FeatureCollection<Toit>();
+    IFeatureCollection<RoofSurface> toitOut = new FT_FeatureCollection<RoofSurface>();
 
-    for (Batiment b : env.getBatiments()) {
+    for (Building b : env.getBuilding()) {
 
-      Toit t = b.getToit();
+      RoofSurface t = b.getToit();
 
       t.setRepresentation(new CartooMod2(t, COLOR_TOIT));
       toitOut.add(t);
@@ -198,21 +199,19 @@ public class RepEnvironnement {
 
   private static final Color COLOR_FACADE = new Color(255, 255, 255);
 
-  private static IFeatureCollection<? extends IFeature> generateRepresentationFacade(
+  private static IFeatureCollection<? extends IFeature> generateWallRepresentation(
       Environnement env) {
 
-    IFeatureCollection<Facade> facadesOut = new FT_FeatureCollection<Facade>();
+    IFeatureCollection<WallSurface> facadesOut = new FT_FeatureCollection<WallSurface>();
 
-    for (Batiment b : env.getBatiments()) {
+    for (Building b : env.getBuilding()) {
 
-      List<Facade> facades = b.getFacade();
-      
-      for(Facade f:facades){
+      List<WallSurface> facades = b.getFacade();
+
+      for (WallSurface f : facades) {
         f.setRepresentation(new CartooMod2(f, COLOR_FACADE));
-        facadesOut.add(f); 
+        facadesOut.add(f);
       }
-
-
 
     }
 
@@ -223,17 +222,16 @@ public class RepEnvironnement {
    * ---------------------- Style StyleVOIRIE
    */
 
-  private static final Color COLOR_VOIRIE = new Color(139,137,137);
+  private static final Color COLOR_VOIRIE = new Color(139, 137, 137);
 
-  private static IFeatureCollection<? extends IFeature> generateRepresentationVoirie(
+  private static IFeatureCollection<? extends IFeature> generateRoadRepresentation(
       Environnement env) {
-    for (Voirie v : env.getVoiries()) {
+    for (Road v : env.getVoiries()) {
 
       v.setRepresentation(new Object2d(v, COLOR_VOIRIE));
 
     }
 
-     
     return env.getVoiries();
   }
 
@@ -242,11 +240,12 @@ public class RepEnvironnement {
    */
   private static final Color COLOR_PARCELLE = new Color(60, 60, 60);
 
-  private static IFeatureCollection<? extends IFeature> generateRepresentationParcelle(
+  private static IFeatureCollection<? extends IFeature> generateCadastraParcelRepresentation(
       Environnement env) {
-    for (Parcelle p : env.getParcelles()) {
+    for (CadastralParcel p : env.getParcelles()) {
 
-      p.setRepresentation(new ObjectCartoon(p, Color.white, ColorLocalRandom.getRandomColor(COLOR_PARCELLE, 10, 10, 10), 3,0.0));
+      p.setRepresentation(new ObjectCartoon(p, Color.white, ColorLocalRandom
+          .getRandomColor(COLOR_PARCELLE, 10, 10, 10), 3, 0.0));
 
     }
     return env.getParcelles();
@@ -255,22 +254,22 @@ public class RepEnvironnement {
   /*
    * ------------------------ Style Sous - Parcelle
    */
-  private static final Color COLOR_SOUS_PARCELLE = new Color(162,205,90);
+  private static final Color COLOR_SOUS_PARCELLE = new Color(162, 205, 90);
   private static final int radius = 50;
 
-  private static IFeatureCollection<? extends IFeature> generateRepresentationSousParcelle(
+  private static IFeatureCollection<? extends IFeature> generateSubParcelRepresentation(
       Environnement env) {
     // TODO Auto-generated method stub
 
-    for (SousParcelle sp : env.getSousParcelles()) {
+    for (SubParcel sp : env.getSousParcelles()) {
 
-      sp.setRepresentation(new Object2d(sp,  ColorLocalRandom.getRandomColor(COLOR_SOUS_PARCELLE, radius, radius, radius)));
+      sp.setRepresentation(new Object2d(sp, ColorLocalRandom.getRandomColor(
+          COLOR_SOUS_PARCELLE, radius, radius, radius)));
 
     }
 
     return env.getSousParcelles();
-    
-    
+
   }
 
   /*
@@ -279,12 +278,12 @@ public class RepEnvironnement {
 
   private static final Color COULOR_FAITAGE = Color.red;
 
-  private static IFeatureCollection<? extends IFeature> generateRepresentationFaitage(
+  private static IFeatureCollection<? extends IFeature> generateRoofingRepresentation(
       Environnement env) {
 
     IFeatureCollection<IFeature> featOut = new FT_FeatureCollection<IFeature>();
 
-    for (Batiment b : env.getBatiments()) {
+    for (Building b : env.getBuilding()) {
 
       IGeometry geom = b.getToit().getFaitage();
 
@@ -308,12 +307,12 @@ public class RepEnvironnement {
    */
   private static final Color COULOR_PIGNON = Color.blue;
 
-  private static IFeatureCollection<? extends IFeature> generateRepresentationPignon(
+  private static IFeatureCollection<? extends IFeature> generateGableRepresentation(
       Environnement env) {
 
     IFeatureCollection<IFeature> featOut = new FT_FeatureCollection<IFeature>();
 
-    for (Batiment b : env.getBatiments()) {
+    for (Building b : env.getBuilding()) {
 
       IMultiCurve<IOrientableCurve> geom = b.getToit().getPignons();
 
@@ -340,12 +339,12 @@ public class RepEnvironnement {
    */
   private static final Color COULOR_GOUTTIERE = Color.green;
 
-  private static IFeatureCollection<? extends IFeature> generateRepresentationGouttiere(
+  private static IFeatureCollection<? extends IFeature> generateGutterRepresentation(
       Environnement env) {
 
     IFeatureCollection<IFeature> featOut = new FT_FeatureCollection<IFeature>();
 
-    for (Batiment b : env.getBatiments()) {
+    for (Building b : env.getBuilding()) {
 
       IGeometry geom = b.getToit().getGouttiere();
 
@@ -368,9 +367,9 @@ public class RepEnvironnement {
    * Représentation zone
    */
 
-  private static IFeatureCollection<? extends IFeature> generateRepresentationZone(
+  private static IFeatureCollection<? extends IFeature> generateZoneRepresentation(
       Environnement env) {
-    for (Zone z : env.getZones()) {
+    for (UrbaZone z : env.getZones()) {
 
       z.setRepresentation(new Object2d(z, true, ColorRandom.getRandomColor(),
           1.0f, true));
@@ -385,24 +384,22 @@ public class RepEnvironnement {
    * Représentation de pans
    */
 
-  private static IFeatureCollection<? extends IFeature> generateRepresentationPAN(
+  private static IFeatureCollection<? extends IFeature> generateRoofSlopesRepresentation(
       Environnement env) {
 
     IFeatureCollection<IFeature> pans = new FT_FeatureCollection<IFeature>();
 
-    for (Batiment b : env.getBatiments()) {
+    for (Building b : env.getBuilding()) {
 
-      Toit t = b.getToit();
+      RoofSurface t = b.getToit();
 
       ClassifyRoof cR = new ClassifyRoof(t, 0.2, 1);
       List<List<Triangle>> llTri = cR.getTriangleGroup();
 
-     
-
       for (List<Triangle> lTri : llTri) {
 
         Color c = ColorRandom.getRandomColor();
-        
+
         IFeature feat = new DefaultFeature(new GM_MultiSurface<Triangle>(lTri));
         feat.setRepresentation(new ObjectCartoon(feat, c));
         pans.add(feat);

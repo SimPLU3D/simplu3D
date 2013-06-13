@@ -40,7 +40,7 @@ public class TestHeight {
     Environnement env = LoaderSHP.load(folder);
 
     int nbBat = 0;
-    for (Batiment b : env.getBatiments()) {
+    for (Batiment b : env.getBuilding()) {
 
       int nbStoreys = StoreyCalculation.process(b);
 

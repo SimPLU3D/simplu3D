@@ -8,44 +8,45 @@ import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.sig3d.model.citygml.core.CG_CityObject;
 
-public class Bordure extends CG_CityObject{
+public class SpecificCadastralBoundary extends CG_CityObject{
   
-  public final static int FOND = 0;
-  public final static int LATERAL = 1;
+  public final static int BOT = 0;
+  public final static int LAT = 1;
   public final static int UNKNOWN = 2;
-  public final static int FICTIVE = 3;
-  public final static int VOIE = 4;
-  public final static int EMPRISEPUBLIQUE = 5;
+  public final static int INTRA = 3;
+  public final static int ROAD = 4;
+  public final static int PUB = 5;
   
   
   
   public Alignement alignement = null;
-  
-  
-  
-//Il s'agit de l'objet qui ne référence pas cette bordure et qui est adjacent à la bordure
- private List<? extends IFeature> featAdj = null;
+  public Recoil recoil = null;
+  public int type;
 
   
   
   
-  public List<? extends IFeature> getFeatAdj() {
+  
+//Il s'agit de l'objet qui ne référence pas cette bordure et qui est adjacent à la bordure
+ private IFeature featAdj = null;
+
+  
+  
+  
+  public  IFeature getFeatAdj() {
     return featAdj;
   }
 
 
 
-  public void setFeatAdj(List<? extends IFeature> featAdj) {
+  public void setFeatAdj(IFeature featAdj) {
     this.featAdj = featAdj;
   }
 
   
-
-  private int typeDroit = -1;
-  private int typeGauche = -1;
   
   
-  public Bordure(IGeometry geom){
+  public SpecificCadastralBoundary(IGeometry geom){
     this.setGeom(geom);
   }
   
@@ -57,24 +58,7 @@ public class Bordure extends CG_CityObject{
     return null;
   }
 
-  public int getTypeDroit() {
-    return typeDroit;
-  }
 
-  public void setTypeDroit(int type) {
-    this.typeDroit = type;
-  }
-  
-  
-  
-  
-  public int getTypeGauche() {
-    return typeGauche;
-  }
-
-  public void setTypeGauche(int type) {
-    this.typeGauche = type;
-  }
   
   
   public Alignement getAlignement() {
@@ -87,17 +71,32 @@ public class Bordure extends CG_CityObject{
     this.alignement = alignement;
   }
 
-  
-  public boolean recul(Batiment b) {
 
-    return true;
+
+  public Recoil getRecoil() {
+    return recoil;
   }
 
-  public boolean alignement(Batiment b) {
 
-    return true;
+
+  public void setRecoil(Recoil recoil) {
+    this.recoil = recoil;
   }
+
+
+
+  public int getType() {
+    return type;
+  }
+
+
+
+  public void setType(int type) {
+    this.type = type;
+  }
+
   
+
   
   
 }

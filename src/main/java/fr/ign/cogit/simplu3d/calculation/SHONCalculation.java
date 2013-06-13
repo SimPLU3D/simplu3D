@@ -10,8 +10,8 @@ import fr.ign.cogit.geoxygene.sig3d.equation.PlanEquation;
 import fr.ign.cogit.geoxygene.sig3d.geometry.Box3D;
 import fr.ign.cogit.sig3d.calculation.CutBuilding;
 import fr.ign.cogit.simplu3d.model.application.Batiment;
-import fr.ign.cogit.simplu3d.model.application.SousParcelle;
-import fr.ign.cogit.simplu3d.model.application.Toit;
+import fr.ign.cogit.simplu3d.model.application.SubParcel;
+import fr.ign.cogit.simplu3d.model.application.RoofSurface;
 
 public class SHONCalculation {
 
@@ -25,7 +25,7 @@ public class SHONCalculation {
     SIMPLE, FLOOR_CUT
   }
 
-  public static double assess(SousParcelle p, METHOD m) {
+  public static double assess(SubParcel p, METHOD m) {
 
     double aireBatie = 0;
 
@@ -40,11 +40,11 @@ public class SHONCalculation {
     return aireBatie;
   }
 
-  public static double assessSimpleAireBati(SousParcelle p) {
+  public static double assessSimpleAireBati(SubParcel p) {
 
     double aireBatie = 0;
 
-    for (Batiment b : p.getBatiments()) {
+    for (Batiment b : p.getBuilding()) {
 
       aireBatie = aireBatie + assessSimpleSHON(b);
     }
@@ -53,11 +53,11 @@ public class SHONCalculation {
 
   }
 
-  public static double assessAireBatieFromCut(SousParcelle p) {
+  public static double assessAireBatieFromCut(SubParcel p) {
 
     double aireBatie = 0;
 
-    for (Batiment b : p.getBatiments()) {
+    for (Batiment b : p.getBuilding()) {
 
       aireBatie = aireBatie + assessCUTSHON(b);
     }
@@ -70,7 +70,7 @@ public class SHONCalculation {
 
     double aireBatie = 0;
 
-    Toit t = bati.getToit();
+    RoofSurface t = bati.getToit();
 
     if (t == null) {
 

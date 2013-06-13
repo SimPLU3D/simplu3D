@@ -9,7 +9,7 @@ import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.sig3d.model.citygml.building.CG_RoofSurface;
 import fr.ign.cogit.simplu3d.calculation.RoofAngle;
 
-public class Toit extends CG_RoofSurface {
+public class RoofSurface extends CG_RoofSurface {
 
   private IMultiCurve<IOrientableCurve> gouttiere;
   private IMultiCurve<IOrientableCurve> pignons;
@@ -74,7 +74,7 @@ public class Toit extends CG_RoofSurface {
   }
 
   public Object clone() {
-    Toit tCopy = new Toit();
+    RoofSurface tCopy = new RoofSurface();
 
     tCopy.setGeom((IGeometry) this.getGeom().clone());
     tCopy.setLod2MultiSurface((IMultiSurface<IOrientableSurface>) this

@@ -4,11 +4,11 @@ import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
 import fr.ign.cogit.geoxygene.sig3d.equation.ApproximatedPlanEquation;
 import fr.ign.cogit.sig3d.semantic.MNTAire;
-import fr.ign.cogit.simplu3d.model.application.SousParcelle;
+import fr.ign.cogit.simplu3d.model.application.SubParcel;
 
 public class AverageSlope {
 
-  public static double averageSlope(SousParcelle p, MNTAire dtm)
+  public static double averageSlope(SubParcel p, MNTAire dtm)
       throws Exception {
 
     Vecteur vTot = new Vecteur(0, 0, 0);

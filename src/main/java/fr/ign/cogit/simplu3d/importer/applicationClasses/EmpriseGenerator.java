@@ -15,18 +15,18 @@ import fr.ign.cogit.geoxygene.contrib.geometrie.Operateurs;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Polygon;
 import fr.ign.cogit.sig3d.convert.geom.FromGeomToSurface;
 import fr.ign.cogit.sig3d.convert.geom.FromPolygonToLineString;
-import fr.ign.cogit.simplu3d.model.application.Batiment;
-import fr.ign.cogit.simplu3d.model.application.Toit;
+import fr.ign.cogit.simplu3d.model.application.Building;
+import fr.ign.cogit.simplu3d.model.application.RoofSurface;
 
 public class EmpriseGenerator {
 
-  public static IPolygon convert(Batiment b) {
+  public static IPolygon convert(Building b) {
 
     return convert(b.getToit());
 
   }
 
-  public static IPolygon convert(Toit t) {
+  public static IPolygon convert(RoofSurface t) {
 
     return convert(t.getGeom());
 

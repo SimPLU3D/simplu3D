@@ -2,7 +2,7 @@ package fr.ign.cogit.simplu3d.model.application;
 
 import fr.ign.cogit.sig3d.model.citygml.building.CG_WallSurface;
 
-public class Facade extends CG_WallSurface{
+public class WallSurface extends CG_WallSurface{
   
   public boolean isAveugle;
   
@@ -27,12 +27,12 @@ public class Facade extends CG_WallSurface{
   }
 
 
-  public Facade(){
+  public WallSurface(){
     super();
   }
   
   
-  public Facade(String type, boolean isAveugle){
+  public WallSurface(String type, boolean isAveugle){
     super();
     this.facadeType = type;
     this.isAveugle = isAveugle;

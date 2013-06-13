@@ -5,10 +5,11 @@ import java.util.List;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.sig3d.geometry.Box3D;
-import fr.ign.cogit.simplu3d.calculation.util.PointBasType;
-import fr.ign.cogit.simplu3d.model.application.Batiment;
-import fr.ign.cogit.simplu3d.model.application.Bordure;
-import fr.ign.cogit.simplu3d.model.application.SousParcelle;
+import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
+import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
+import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
+import fr.ign.cogit.simplu3d.model.application.SubParcel;
+import fr.ign.cogit.simplu3d.model.application._AbstractBuilding;
 
 public class HauteurCalculation {
 
@@ -18,7 +19,7 @@ public class HauteurCalculation {
 
 
  
-  public static double calculate(Batiment b, int type_pb,
+  public static double calculate(_AbstractBuilding b, int type_pb,
       POINT_HAUT_TYPE type_ph) {
 
     double zBas = calculateZBas(b, type_pb);
@@ -29,7 +30,7 @@ public class HauteurCalculation {
 
   }
 
-  public static double calculateZHaut(Batiment b, POINT_HAUT_TYPE type_ph) {
+  public static double calculateZHaut(_AbstractBuilding b, POINT_HAUT_TYPE type_ph) {
 
     double zHaut = Double.NaN;
 
@@ -49,7 +50,7 @@ public class HauteurCalculation {
     return zHaut;
   }
 
-  public static double calculateZBas(Batiment b, Integer type_pb) {
+  public static double calculateZBas(_AbstractBuilding b, Integer type_pb) {
     System.out.println(type_pb);
     return 1.0;
     
@@ -60,7 +61,7 @@ public class HauteurCalculation {
       zBas = calculateZBasEP(b);
     } 
     
-    if (type_pb == PointBasType.PLUS_BAS_BATIMENT) {
+    if (type_pb == PointBasType.PLUS_BAS__AbstractBuilding) {
       zBas = calculateZBasPBB(b);
     }
     
@@ -79,7 +80,7 @@ public class HauteurCalculation {
 
   // //////////////////DIFFERENTS TYPES DE ZHAUT
   // // IL s'agit d'un Z et pas d'un H bien sur
-  public static double calculateZHautPPE(Batiment b) {
+  public static double calculateZHautPPE(_AbstractBuilding b) {
 
     double hauteurParEtage = b.getStoreyHeightsAboveGround();
 
@@ -96,7 +97,7 @@ public class HauteurCalculation {
     return hauteur + box.getLLDP().getZ();
   }
 
-  public static double calculateZHautPHE(Batiment b) {
+  public static double calculateZHautPHE(_AbstractBuilding b) {
 
     IGeometry g = b.getToit().getGouttiere();
 
@@ -105,20 +106,20 @@ public class HauteurCalculation {
     return box.getURDP().getZ();
   }
 
-  public static double calculateZHautPHF(Batiment b) {
+  public static double calculateZHautPHF(_AbstractBuilding b) {
     Box3D box = new Box3D(b.getGeom());
     return box.getURDP().getZ();
   }
 
   // //////////////////DIFFERENTS TYPES DE ZBAS
 
-  private static double calculateZBasPHT(Batiment b) {
+  private static double calculateZBasPHT(_AbstractBuilding b) {
 
-    List<SousParcelle> spList = b.getSousParcelles();
+    List<SubParcel> spList = b.getSousParcelles();
 
     double zMax = Double.NEGATIVE_INFINITY;
 
-    for (SousParcelle sp : spList) {
+    for (SubParcel sp : spList) {
 
       Box3D box = new Box3D(sp.getGeom());
 
@@ -129,13 +130,13 @@ public class HauteurCalculation {
     return zMax;
   }
 
-  private static double calculateZBasPBT(Batiment b) {
+  private static double calculateZBasPBT(_AbstractBuilding b) {
 
-    List<SousParcelle> spList = b.getSousParcelles();
+    List<SubParcel> spList = b.getSousParcelles();
 
     double zMin = Double.POSITIVE_INFINITY;
 
-    for (SousParcelle sp : spList) {
+    for (SubParcel sp : spList) {
 
       Box3D box = new Box3D(sp.getGeom());
 
@@ -146,23 +147,23 @@ public class HauteurCalculation {
     return zMin;
   }
 
-  private static double calculateZBasPBB(Batiment b) {
+  private static double calculateZBasPBB(_AbstractBuilding b) {
     Box3D box = new Box3D(b.getGeom());
     return box.getLLDP().getZ();
   }
 
-  private static double calculateZBasEP(Batiment b) {
-    List<SousParcelle> spList = b.getSousParcelles();
+  private static double calculateZBasEP(_AbstractBuilding b) {
+    BasicPropertyUnit  spList = b.getbPU();
 
     double zMin = Double.POSITIVE_INFINITY;
 
-    for (SousParcelle sp : spList) {
+    for (CadastralParcel sp : spList.cadastralParcel) {
 
-      IFeatureCollection<Bordure> bordures = sp.getBordures();
+      IFeatureCollection<SpecificCadastralBoundary> bordures = sp.getSpecificCadastralBoundary();
 
-      for (Bordure bord : bordures) {
-        if (bord.getTypeDroit() == Bordure.VOIE
-            || bord.getTypeDroit() == Bordure.EMPRISEPUBLIQUE) {
+      for (SpecificCadastralBoundary bord : bordures) {
+        if (bord.getType() == SpecificCadastralBoundary.ROAD
+            || bord.getType() == SpecificCadastralBoundary.PUB) {
 
           Box3D box = new Box3D(bord.getGeom());
 

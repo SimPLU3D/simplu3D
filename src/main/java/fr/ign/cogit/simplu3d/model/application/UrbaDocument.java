@@ -1,6 +1,8 @@
 package fr.ign.cogit.simplu3d.model.application;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class UrbaDocument {
   
@@ -9,10 +11,8 @@ public class UrbaDocument {
   private Date endDate;
   private String documentType;
   
-  
-  
-  
-  
+  private List<UrbaZone> lUrbaZone = new ArrayList<>();
+
   public UrbaDocument() {
     super();
   }
@@ -27,6 +27,9 @@ public class UrbaDocument {
   }
   
   
+  public List<UrbaZone> getlUrbaZone() {
+    return lUrbaZone;
+  }
   
   public Date getApprovalDate() {
     return approvalDate;

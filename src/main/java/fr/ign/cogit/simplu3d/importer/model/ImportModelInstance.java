@@ -8,10 +8,10 @@ import tudresden.ocl20.pivot.modelinstance.IModelInstance;
 import tudresden.ocl20.pivot.modelinstancetype.exception.TypeNotFoundInModelException;
 import tudresden.ocl20.pivot.modelinstancetype.java.internal.modelinstance.JavaModelInstance;
 import tudresden.ocl20.pivot.standalone.facade.StandaloneFacade;
-import fr.ign.cogit.simplu3d.model.application.Batiment;
-import fr.ign.cogit.simplu3d.model.application.Bordure;
+import fr.ign.cogit.simplu3d.model.application.Building;
+import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
-import fr.ign.cogit.simplu3d.model.application.SousParcelle;
+import fr.ign.cogit.simplu3d.model.application.SubParcel;
 
 public class ImportModelInstance {
   
@@ -67,7 +67,7 @@ public class ImportModelInstance {
      */
     
     
-    for(SousParcelle sp: env.getSousParcelles()){
+    for(SubParcel sp: env.getSousParcelles()){
       modelInstance.addModelInstanceElement(sp);
       if(sp.getGeom() == null){
         System.out.println("Patata");
@@ -75,11 +75,11 @@ public class ImportModelInstance {
       modelInstance.addModelInstanceElement(sp.getLod2MultiSurface());
     
       // Gestion des bordures
-
-      for(Bordure b:sp.getBordures()){
+/*
+      for(SpecificCadastralBoundary b:sp.getSpecificCadastralBoundary()){
           modelInstance.addModelInstanceElement(b);
           modelInstance.addModelInstanceElement(b.getGeom());
-        }
+        }*/
         
 
     }
@@ -97,7 +97,7 @@ public class ImportModelInstance {
   //Gestion des bâtiments
   
     
-    for(Batiment b:env.getBatiments()){
+    for(Building b:env.getBuilding()){
       modelInstance.addModelInstanceElement(b);
     }
     

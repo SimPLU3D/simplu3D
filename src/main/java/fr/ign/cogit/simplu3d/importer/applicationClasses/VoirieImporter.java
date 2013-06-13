@@ -18,7 +18,7 @@ import fr.ign.cogit.geoxygene.sig3d.calculation.Proximity;
 import fr.ign.cogit.geoxygene.sig3d.equation.ApproximatedPlanEquation;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.sig3d.convert.geom.FromGeomToSurface;
-import fr.ign.cogit.simplu3d.model.application.Voirie;
+import fr.ign.cogit.simplu3d.model.application.Road;
 
 public class VoirieImporter {
 
@@ -27,10 +27,10 @@ public class VoirieImporter {
   public final static String ATT_TYPE = "nature";
 
   @SuppressWarnings("unchecked")
-  public static IFeatureCollection<Voirie> importVoirie(
+  public static IFeatureCollection<Road> importVoirie(
       IFeatureCollection<IFeature> voirieColl) {
 
-    IFeatureCollection<Voirie> voiries = new FT_FeatureCollection<Voirie>();
+    IFeatureCollection<Road> voiries = new FT_FeatureCollection<Road>();
 
     for (IFeature feat : voirieColl) {
 
@@ -39,7 +39,7 @@ public class VoirieImporter {
       String nom = feat.getAttribute(ATT_NOM_RUE).toString();
       String type = feat.getAttribute(ATT_TYPE).toString();
 
-      Voirie v = new Voirie();
+      Road v = new Road();
       v.setNom(nom);
       v.setLargeur(largeur);
       voiries.add(v);

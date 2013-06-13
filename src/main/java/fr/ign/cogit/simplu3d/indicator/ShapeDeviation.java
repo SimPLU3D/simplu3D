@@ -1,7 +1,7 @@
 package fr.ign.cogit.simplu3d.indicator;
 
 import fr.ign.cogit.sig3d.calculation.OrientedBoundingBox;
-import fr.ign.cogit.simplu3d.model.application.Batiment;
+import fr.ign.cogit.simplu3d.model.application._AbstractBuilding;
 
 
 public class ShapeDeviation{
@@ -13,7 +13,7 @@ public class ShapeDeviation{
    * Rapport entre le volume d'un objet de le volume de sa boite orientée
    * @param bP
    */
-  public ShapeDeviation(Batiment bP) {
+  public ShapeDeviation(_AbstractBuilding bP) {
 
 
     value = 1;

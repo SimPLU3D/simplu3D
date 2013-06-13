@@ -1,22 +1,20 @@
 package fr.ign.cogit.simplu3d.model.application;
 
-import org.citygml4j.model.citygml.transportation.Road;
-
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.ILineString;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiCurve;
 import fr.ign.cogit.sig3d.model.citygml.transportation.CG_Road;
 
-public class Voirie extends CG_Road {
+public class Road extends CG_Road {
 
   private IMultiCurve<ILineString> axe;
   private String nom;
   private double largeur;
 
-  public Voirie() {
+  public Road() {
     super();
   }
 
-  public Voirie(Road tO) {
+  public Road(org.citygml4j.model.citygml.transportation.Road tO) {
     super(tO);
 
     // TODO Auto-generated constructor stub

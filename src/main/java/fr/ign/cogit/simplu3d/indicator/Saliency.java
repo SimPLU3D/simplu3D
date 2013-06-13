@@ -7,7 +7,7 @@ import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.simplu3d.calculation.HauteurCalculation;
 import fr.ign.cogit.simplu3d.calculation.util.PointBasType;
-import fr.ign.cogit.simplu3d.model.application.Batiment;
+import fr.ign.cogit.simplu3d.model.application._AbstractBuilding;
 
 /**
  * Détecte les landmarks. Calculé à partir de Ganitseva 2010
@@ -150,7 +150,7 @@ public class Saliency{
 
   }
 
-  public static void processInitialisation(Batiment b) {
+  public static void processInitialisation(_AbstractBuilding b) {
     double h1 = HauteurCalculation.calculate(b,
         PointBasType.PLUS_BAS_BATIMENT,
         HauteurCalculation.POINT_HAUT_TYPE.PLUS_HAUT_FAITAGE);

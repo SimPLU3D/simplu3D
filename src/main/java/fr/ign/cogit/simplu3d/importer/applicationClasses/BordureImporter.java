@@ -20,8 +20,8 @@ import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.geoxygene.util.algo.SmallestSurroundingRectangleComputation;
 import fr.ign.cogit.sig3d.convert.geom.FromGeomToSurface;
 import fr.ign.cogit.sig3d.convert.geom.FromPolygonToLineString;
-import fr.ign.cogit.simplu3d.model.application.Bordure;
-import fr.ign.cogit.simplu3d.model.application.Parcelle;
+import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
+import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 
 /**
  * Assigne les bordures aux parcelles
@@ -40,7 +40,7 @@ public class BordureImporter {
   
   
 
-  public static IFeatureCollection<Parcelle> assignBordureToParcelleWithOrientation(
+  public static IFeatureCollection<CadastralParcel> assignBordureToParcelleWithOrientation(
       IFeatureCollection<IFeature> parcelCollection, double threshold) {
 
     System.out.println("NB Parcelles : " + parcelCollection.size());
@@ -63,8 +63,8 @@ public class BordureImporter {
       
 
       if (a.getFaceDroite() == null || a.getFaceGauche() == null) {
-        a.setOrientation(Bordure.VOIE);
-        a.setPoids(Bordure.VOIE);
+        a.setOrientation(SpecificCadastralBoundary.ROAD);
+        a.setPoids(SpecificCadastralBoundary.ROAD);
 
       } else {
         a.setOrientation(UNKNOWN);
@@ -80,7 +80,7 @@ public class BordureImporter {
       
 
 
-      if (a.getOrientation() == Bordure.VOIE) {
+      if (a.getOrientation() == SpecificCadastralBoundary.ROAD) {
 
         List<Arc> lA = new ArrayList<Arc>();
 
@@ -91,12 +91,12 @@ public class BordureImporter {
 
         for (Arc aTemp : lA) {
 
-          if (aTemp.getOrientation() == Bordure.VOIE) {
+          if (aTemp.getOrientation() == SpecificCadastralBoundary.ROAD) {
             continue;
           }
 
-          aTemp.setOrientation(Bordure.LATERAL);
-          aTemp.setPoids(Bordure.LATERAL);
+          aTemp.setOrientation(SpecificCadastralBoundary.LAT);
+          aTemp.setPoids(SpecificCadastralBoundary.LAT);
           lArcLateral.add(aTemp);
         }
 
@@ -120,10 +120,10 @@ public class BordureImporter {
         boolean  isFaceADroite = f.getArcsIndirects().contains(a);
 
         
-        if (isFaceADroite   && a.getOrientation() != Bordure.LATERAL) {
+        if (isFaceADroite   && a.getOrientation() != SpecificCadastralBoundary.LAT) {
 
           continue;
-        }else if(! isFaceADroite && a.getPoids() != Bordure.LATERAL){
+        }else if(! isFaceADroite && a.getPoids() != SpecificCadastralBoundary.LAT){
           continue;
           
         }
@@ -235,7 +235,7 @@ public class BordureImporter {
 
     }
 
-    IFeatureCollection<Parcelle> parcelles = new FT_FeatureCollection<Parcelle>();
+    IFeatureCollection<CadastralParcel> parcelles = new FT_FeatureCollection<CadastralParcel>();
 
     // Toutes les arretes sont supposées être affectées à un type
     for (Face f : facesParcelles) {
@@ -244,7 +244,7 @@ public class BordureImporter {
           .getGeom());
 
       // On a la parcelle
-      Parcelle p = new Parcelle(ms);
+      CadastralParcel p = new CadastralParcel(ms);
       parcelles.add(p);
 
       List<Arc> lArcs = new ArrayList<Arc>();
@@ -253,52 +253,52 @@ public class BordureImporter {
 
       for (Arc a : lArcs) {
 
-        Bordure b = new Bordure(a.getGeom());
+        SpecificCadastralBoundary b = new SpecificCadastralBoundary(a.getGeom());
         
         
         if(a.getOrientation() == LATERAL_TEMP){
           
           
-          b.setTypeDroit(Bordure.LATERAL);
+          b.setType(SpecificCadastralBoundary.LAT);
           
           
         }else if(a.getOrientation() == UNKNOWN){
           
           
-          b.setTypeDroit(Bordure.FOND);
+          b.setType(SpecificCadastralBoundary.BOT);
           
           
         }else{
           
-          b.setTypeDroit(a.getOrientation());
+          b.setType(a.getOrientation());
           
         }
         
         
         
         
-        
+        /*
         if(a.getPoids() == LATERAL_TEMP){
           
           
-          b.setTypeGauche(Bordure.LATERAL);
+          b.setTypeGauche(SpecificCadastralBoundary.LAT);
           
           
         }else if(a.getPoids() == UNKNOWN){
           
           
-          b.setTypeGauche(Bordure.FOND);
+          b.setTypeGauche(SpecificCadastralBoundary.BOT);
           
           
         }else{
           
           b.setTypeGauche((int)a.getPoids());
           
-        }
+        }*/
 
 
 
-        p.getBordures().add(b);
+        p.getSpecificCadastralBoundary().add(b);
 
       }
 
@@ -343,7 +343,7 @@ System.out.println(vTrans.getX()+ "   " + vTrans.getY());
 
   }
 
-  public static IFeatureCollection<Parcelle> assignBordureToParcelle(
+  public static IFeatureCollection<CadastralParcel> assignBordureToParcelle(
       IFeatureCollection<IFeature> parcelCollection) {
 
     System.out.println("NB Parcelles : " + parcelCollection.size());
@@ -360,7 +360,7 @@ System.out.println(vTrans.getX()+ "   " + vTrans.getY());
     for (Arc a : arcsParcelles) {
 
       if (a.getFaceDroite() == null || a.getFaceGauche() == null) {
-        a.setOrientation(Bordure.VOIE);
+        a.setOrientation(SpecificCadastralBoundary.ROAD);
 
       } else {
         a.setOrientation(UNKNOWN);
@@ -371,7 +371,7 @@ System.out.println(vTrans.getX()+ "   " + vTrans.getY());
     // Type latéral, les noeuds débouchent sur une arrete sans parcelle
     for (Arc a : arcsParcelles) {
 
-      if (a.getOrientation() == Bordure.VOIE) {
+      if (a.getOrientation() == SpecificCadastralBoundary.ROAD) {
 
         List<Arc> lA = new ArrayList<Arc>();
 
@@ -382,11 +382,11 @@ System.out.println(vTrans.getX()+ "   " + vTrans.getY());
 
         for (Arc aTemp : lA) {
 
-          if (aTemp.getOrientation() == Bordure.VOIE) {
+          if (aTemp.getOrientation() == SpecificCadastralBoundary.ROAD) {
             continue;
           }
 
-          aTemp.setOrientation(Bordure.LATERAL);
+          aTemp.setOrientation(SpecificCadastralBoundary.LAT);
 
         }
 
@@ -405,7 +405,7 @@ System.out.println(vTrans.getX()+ "   " + vTrans.getY());
 
       for (Arc a : lA) {
 
-        if (a.getOrientation() == Bordure.VOIE) {
+        if (a.getOrientation() == SpecificCadastralBoundary.ROAD) {
           continue boucleFace;
         }
 
@@ -422,13 +422,13 @@ System.out.println(vTrans.getX()+ "   " + vTrans.getY());
 
         for (Arc aTemp : lATemp) {
 
-          if (aTemp.getOrientation() == Bordure.VOIE) {
+          if (aTemp.getOrientation() == SpecificCadastralBoundary.ROAD) {
             continue bouclarc;
           }
 
         }
 
-        a.setOrientation(Bordure.FOND);
+        a.setOrientation(SpecificCadastralBoundary.BOT);
 
       }
 
@@ -437,7 +437,7 @@ System.out.println(vTrans.getX()+ "   " + vTrans.getY());
     // IFeatureCollection<Bordure> bordures = new
     // FT_FeatureCollection<Bordure>();
     // List<Arc> arcsTreated = new ArrayList<Arc>();
-    IFeatureCollection<Parcelle> parcelles = new FT_FeatureCollection<Parcelle>();
+    IFeatureCollection<CadastralParcel> parcelles = new FT_FeatureCollection<CadastralParcel>();
 
     // Toutes les arretes sont supposées être affectées à un type
     for (Face f : facesParcelles) {
@@ -446,7 +446,7 @@ System.out.println(vTrans.getX()+ "   " + vTrans.getY());
           .getGeom());
 
       // On a la parcelle
-      Parcelle p = new Parcelle(ms);
+      CadastralParcel p = new CadastralParcel(ms);
       parcelles.add(p);
 
       List<Arc> lArcs = new ArrayList<Arc>();
@@ -455,10 +455,10 @@ System.out.println(vTrans.getX()+ "   " + vTrans.getY());
 
       for (Arc a : lArcs) {
 
-        Bordure b = new Bordure(a.getGeom());
-        b.setTypeDroit(a.getOrientation());
+        SpecificCadastralBoundary b = new SpecificCadastralBoundary(a.getGeom());
+        b.setType(a.getOrientation());
 
-        p.getBordures().add(b);
+        p.getSpecificCadastralBoundary().add(b);
 
       }
 

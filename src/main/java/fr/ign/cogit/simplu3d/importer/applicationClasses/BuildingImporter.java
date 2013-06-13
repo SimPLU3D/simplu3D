@@ -14,11 +14,10 @@ import fr.ign.cogit.geoxygene.sig3d.calculation.Util;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.geoxygene.util.index.Tiling;
 import fr.ign.cogit.sig3d.convert.geom.FromGeomToSurface;
-import fr.ign.cogit.simplu3d.model.application.Batiment;
-import fr.ign.cogit.simplu3d.model.application.EmpriseBatiment;
-import fr.ign.cogit.simplu3d.model.application.Facade;
-import fr.ign.cogit.simplu3d.model.application.SousParcelle;
-import fr.ign.cogit.simplu3d.model.application.Toit;
+import fr.ign.cogit.simplu3d.model.application.Building;
+import fr.ign.cogit.simplu3d.model.application.RoofSurface;
+import fr.ign.cogit.simplu3d.model.application.SubParcel;
+import fr.ign.cogit.simplu3d.model.application.WallSurface;
 
 public class BuildingImporter {
 
@@ -27,16 +26,16 @@ public class BuildingImporter {
    */
   public final static double RATIO_MIN = 0.1;
 
-  public static IFeatureCollection<Batiment> importBuilding(
+  public static IFeatureCollection<Building> importBuilding(
       IFeatureCollection<IFeature> featBati,
-      IFeatureCollection<SousParcelle> sousParcelles) {
+      IFeatureCollection<SubParcel> sousParcelles) {
 
-    IFeatureCollection<Batiment> batiments = new FT_FeatureCollection<Batiment>();
+    IFeatureCollection<Building> batiments = new FT_FeatureCollection<Building>();
 
     for (IFeature batiFeat : featBati) {
 
       // On crée le bâtiment
-      Batiment b = new Batiment();
+      Building b = new Building();
       batiments.add(b);
       b.setGeom(batiFeat.getGeom());
       b.setLod2MultiSurface((IMultiSurface<IOrientableSurface>) batiFeat.getGeom());
@@ -50,32 +49,30 @@ public class BuildingImporter {
           0.2);
 
       // Création facade
-      Facade f = new Facade();
+      WallSurface f = new WallSurface();
       f.setGeom(surfaceWall);
       f.setLod2MultiSurface(surfaceWall);
       
-      List<Facade> lF = new ArrayList<Facade>();
+      List<WallSurface> lF = new ArrayList<WallSurface>();
       lF.add(f);
       b.setFacade(lF);
       
       
       // Etape 2 : on créé l'emprise du bâtiment
       IPolygon poly = EmpriseGenerator.convert(surfaceRoof);
+      b.setFootprint(new GM_MultiSurface<IOrientableSurface>());
+      
+      b.getFootprint().add(poly);
       
       
-      
-      EmpriseBatiment empB = new EmpriseBatiment();
-      empB.setGeom(poly);
 
       IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<IOrientableSurface>();
       iMS.add(poly);
 
-      empB.setLod2MultiSurface(iMS);
-      b.setEmprise(empB);
       
       
       // Création toit
-      Toit t = RoofImporter.create(surfaceRoof, (IPolygon) poly.clone());
+      RoofSurface t = RoofImporter.create(surfaceRoof, (IPolygon) poly.clone());
      
 
       // Affectation
@@ -90,13 +87,13 @@ public class BuildingImporter {
 
       }
 
-      Iterator<SousParcelle> itSP = sousParcelles.select(poly).iterator();
+      Iterator<SubParcel> itSP = sousParcelles.select(poly).iterator();
       
       double aireEmprise = poly.area();
 
       while (itSP.hasNext()) {
 
-        SousParcelle sp = itSP.next();
+        SubParcel sp = itSP.next();
 
         double area = (poly.intersection(sp.getGeom())).area();
         
@@ -104,9 +101,9 @@ public class BuildingImporter {
         if(area/aireEmprise>RATIO_MIN){
           
           
-          //On crée les association Batiments <=> SousParcelle
+          //On crée les association Batiments <=> Parcelle
           
-          sp.getBatiments().add(b);
+          sp.getBuildingsParts().add(b);
           b.getSousParcelles().add(sp);
           
           

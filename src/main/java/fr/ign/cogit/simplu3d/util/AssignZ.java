@@ -4,35 +4,23 @@ import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.sig3d.semantic.DTM;
 import fr.ign.cogit.simplu3d.model.application.Alignement;
-import fr.ign.cogit.simplu3d.model.application.Bordure;
-import fr.ign.cogit.simplu3d.model.application.Parcelle;
-import fr.ign.cogit.simplu3d.model.application.SousParcelle;
-import fr.ign.cogit.simplu3d.model.application.Voirie;
-import fr.ign.cogit.simplu3d.model.application.Zone;
+import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
+import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
+import fr.ign.cogit.simplu3d.model.application.SubParcel;
+import fr.ign.cogit.simplu3d.model.application.UrbaZone;
+import fr.ign.cogit.simplu3d.model.application.Road;
 
 public class AssignZ {
 
-  public static void toParcelle(IFeatureCollection<Parcelle> parcelles,
+  public static void toParcelle(IFeatureCollection<CadastralParcel> parcelles,
       DTM dtm, boolean sursampled) throws Exception {
 
-    for (Parcelle p : parcelles) {
+    for (CadastralParcel p : parcelles) {
 
       IGeometry geom = dtm.mapGeom(p.getGeom(), 0, true, sursampled);
       p.setGeom(geom);
 
-    }
-
-  }
-
-  public static void toSousParcelle(IFeatureCollection<SousParcelle> parcelles,
-      DTM dtm, boolean sursampled) throws Exception {
-
-    for (SousParcelle p : parcelles) {
-
-      IGeometry geom = dtm.mapGeom(p.getGeom(), 0, true, sursampled);
-      p.setGeom(geom);
-
-      for (Bordure b : p.getBordures()) {
+      for (SpecificCadastralBoundary b : p.getSpecificCadastralBoundary()) {
 
         IGeometry geomB = dtm.mapGeom(b.getGeom(), 0, true, sursampled);
         b.setGeom(geomB);
@@ -42,11 +30,23 @@ public class AssignZ {
     }
 
   }
-  
-  public static void toVoirie(IFeatureCollection<Voirie> voiries,
+
+  public static void toSousParcelle(IFeatureCollection<SubParcel> parcelles,
       DTM dtm, boolean sursampled) throws Exception {
 
-    for (Voirie z : voiries) {
+    for (SubParcel p : parcelles) {
+
+      IGeometry geom = dtm.mapGeom(p.getGeom(), 0, true, sursampled);
+      p.setGeom(geom);
+
+    }
+
+  }
+
+  public static void toVoirie(IFeatureCollection<Road> voiries, DTM dtm,
+      boolean sursampled) throws Exception {
+
+    for (Road z : voiries) {
 
       IGeometry geom = dtm.mapGeom(z.getGeom(), 0, true, sursampled);
       z.setGeom(geom);
@@ -55,11 +55,10 @@ public class AssignZ {
 
   }
 
-  
-  public static void toZone(IFeatureCollection<Zone> zones,
-      DTM dtm, boolean sursampled) throws Exception {
+  public static void toZone(IFeatureCollection<UrbaZone> zones, DTM dtm,
+      boolean sursampled) throws Exception {
 
-    for (Zone z : zones) {
+    for (UrbaZone z : zones) {
 
       IGeometry geom = dtm.mapGeom(z.getGeom(), 0, true, sursampled);
       z.setGeom(geom);
@@ -71,13 +70,12 @@ public class AssignZ {
   public static void toAlignement(
       IFeatureCollection<Alignement> alignementColl, DTM dtm, boolean sursampled)
       throws Exception {
-    
-    for(Alignement a:alignementColl){
-      
+
+    for (Alignement a : alignementColl) {
+
       IGeometry geom = dtm.mapGeom(a.getGeom(), 0, true, sursampled);
       a.setGeom(geom);
     }
-    
-    
+
   }
 }

@@ -9,9 +9,9 @@ import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.Alignement;
 import fr.ign.cogit.simplu3d.model.application.Batiment;
-import fr.ign.cogit.simplu3d.model.application.Bordure;
+import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
-import fr.ign.cogit.simplu3d.model.application.SousParcelle;
+import fr.ign.cogit.simplu3d.model.application.SubParcel;
 
 public class TestLoaderSHP {
 
@@ -21,20 +21,20 @@ public class TestLoaderSHP {
 
     Environnement env = LoaderSHP.load(folder);
 
-    IFeatureCollection<Bordure> bordures = new FT_FeatureCollection<Bordure>();
+    IFeatureCollection<SpecificCadastralBoundary> bordures = new FT_FeatureCollection<SpecificCadastralBoundary>();
 
-    for (SousParcelle sp : env.getSousParcelles()) {
+    for (SubParcel sp : env.getSousParcelles()) {
       
       AttributeManager.addAttribute(sp,"ID", sp.getId(), "Integer");  
 
-      bordures.addAll(sp.getBordures()); 
+      bordures.addAll(sp.getSpecificCadastralBoundary()); 
 
     }
     
     
     IFeatureCollection<Alignement> featAL = new FT_FeatureCollection<Alignement>();
 
-    for (Bordure b : bordures) {
+    for (SpecificCadastralBoundary b : bordures) {
       AttributeManager.addAttribute(b,"ID", b.getId(), "Integer");
       AttributeManager.addAttribute(b, "IDD", b.getTypeDroit(), "Integer");
       AttributeManager.addAttribute(b, "IDG", b.getTypeGauche(), "Integer");
@@ -64,7 +64,7 @@ public class TestLoaderSHP {
 
     System.out.println("Sous Parcelles  " + env.getSousParcelles().size());
 
-    for (SousParcelle sp : env.getSousParcelles()) {
+    for (SubParcel sp : env.getSousParcelles()) {
       AttributeManager.addAttribute(sp, "Test", 0, "Integer");
     }
 
@@ -73,15 +73,15 @@ public class TestLoaderSHP {
 
     IFeatureCollection<IFeature> featToits = new FT_FeatureCollection<IFeature>();
 
-    System.out.println("NB emprise " + env.getBatiments().size());
-    for (Batiment b : env.getBatiments()) {
+    System.out.println("NB emprise " + env.getBuilding().size());
+    for (Batiment b : env.getBuilding()) {
       featToits.add(b.getEmprise());
     }
 
     ShapefileWriter.write(featToits, folderOut + "emprise.shp");
 
     IFeatureCollection<IFeature> featFaitage = new FT_FeatureCollection<IFeature>();
-    for (Batiment b : env.getBatiments()) {
+    for (Batiment b : env.getBuilding()) {
       featFaitage.add(new DefaultFeature(b.getToit().getFaitage()));
     }
 

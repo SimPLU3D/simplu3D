@@ -31,17 +31,17 @@ import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.geoxygene.spatial.geomcomp.GM_CompositeCurve;
 import fr.ign.cogit.geoxygene.spatial.geomprim.GM_OrientableCurve;
 import fr.ign.cogit.sig3d.convert.geom.FromGeomToSurface;
-import fr.ign.cogit.simplu3d.model.application.Batiment;
-import fr.ign.cogit.simplu3d.model.application.Facade;
+import fr.ign.cogit.simplu3d.model.application.Building;
+import fr.ign.cogit.simplu3d.model.application.WallSurface;
 import fr.ign.cogit.simplu3d.model.application.Materiau;
-import fr.ign.cogit.simplu3d.model.application.Toit;
+import fr.ign.cogit.simplu3d.model.application.RoofSurface;
 
 public class RepresentationBatiment extends Default3DRep {
 
   boolean representFaitage;
   boolean representGouttiere;
 
-  public RepresentationBatiment(Batiment b) {
+  public RepresentationBatiment(Building b) {
     this(b, false, false);
   }
 
@@ -53,14 +53,14 @@ public class RepresentationBatiment extends Default3DRep {
     return representGouttiere;
   }
 
-  public RepresentationBatiment(Batiment b, boolean representFaitage,
+  public RepresentationBatiment(Building b, boolean representFaitage,
       boolean representGouttiere) {
     super();
     this.feat = b;
     this.representFaitage = representFaitage;
     this.representGouttiere = representGouttiere;
-    Toit t = b.getToit();
-    List<Facade> f = b.getFacade();
+    RoofSurface t = b.getToit();
+    List<WallSurface> f = b.getFacade();
 
     // /1 on s'occupe du toit
     GeometryInfo geometryInfoToit = null;
@@ -93,7 +93,7 @@ public class RepresentationBatiment extends Default3DRep {
 
     // On s'occupe des façades
 
-    for (Facade facade : f) {
+    for (WallSurface facade : f) {
 
       GeometryInfo geometryInfoF = null;
       Appearance appF = null;
@@ -126,8 +126,8 @@ public class RepresentationBatiment extends Default3DRep {
 
     // On s'occupe de la gouttière
     if (representGouttiere) {
-      Shape3D gut3D = new Shape3D(
-          geometryWithColor(Color.blue, t.getGouttiere()), AppearanceLineApp());
+      Shape3D gut3D = new Shape3D(geometryWithColor(Color.blue,
+          t.getGouttiere()), AppearanceLineApp());
 
       gut3D.setCapability(Shape3D.ALLOW_APPEARANCE_READ);
       gut3D.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
@@ -157,10 +157,9 @@ public class RepresentationBatiment extends Default3DRep {
     // Optimisation
     this.bGRep.compile();
   }
-  
-  
-  private Appearance AppearanceLineApp(){
-    
+
+  private Appearance AppearanceLineApp() {
+
     // Création de l'apparence
     Appearance apparenceFinale = new Appearance();
 
@@ -171,20 +170,16 @@ public class RepresentationBatiment extends Default3DRep {
     // Autorisations pour le material
     apparenceFinale.setCapability(Appearance.ALLOW_MATERIAL_READ);
     apparenceFinale.setCapability(Appearance.ALLOW_MATERIAL_WRITE);
-    
-    
+
     LineAttributes lp = new LineAttributes();
 
     lp.setLineAntialiasingEnable(true);
     lp.setLineWidth(5f);
 
-      lp.setLinePattern(LineAttributes.PATTERN_SOLID);
-
-
-  
+    lp.setLinePattern(LineAttributes.PATTERN_SOLID);
 
     apparenceFinale.setLineAttributes(lp);
-    
+
     return apparenceFinale;
   }
 

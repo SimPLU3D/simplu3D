@@ -29,11 +29,11 @@ import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
 import fr.ign.cogit.simplu3d.generation.TopologieBatiment;
 import fr.ign.cogit.simplu3d.generation.TopologieBatiment.FormeEmpriseEnum;
-import fr.ign.cogit.simplu3d.model.application.Toit;
+import fr.ign.cogit.simplu3d.model.application.RoofSurface;
 
 public class GenerationToitSymetrique {
 
-  public static IMultiSurface<IPolygon> generate(TopologieBatiment tB, Toit t,
+  public static IMultiSurface<IPolygon> generate(TopologieBatiment tB, RoofSurface t,
       double zGut, double zMax, IPolygon emprise,double angleToit) {
 
     IMultiCurve<ILineString> iMC = new GM_MultiCurve<ILineString>();

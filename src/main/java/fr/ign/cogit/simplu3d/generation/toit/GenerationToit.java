@@ -22,7 +22,7 @@ import fr.ign.cogit.simplu3d.generation.TopologieBatiment;
 import fr.ign.cogit.simplu3d.generation.TopologieBatiment.FormeToitEnum;
 import fr.ign.cogit.simplu3d.model.application.EmpriseBatiment;
 import fr.ign.cogit.simplu3d.model.application.Materiau;
-import fr.ign.cogit.simplu3d.model.application.Toit;
+import fr.ign.cogit.simplu3d.model.application.RoofSurface;
 
 public class GenerationToit {
 
@@ -53,7 +53,7 @@ public class GenerationToit {
     return t;
   }
 
-  public static void generationToitPlat(TopologieBatiment tB, Toit t,
+  public static void generationToitPlat(TopologieBatiment tB, RoofSurface t,
       double zGouttiere, double zMax, IPolygon emprise) {
 
     // On affecte le z aux sommets
@@ -88,7 +88,7 @@ public class GenerationToit {
 
   }
 
-  public static Toit generationToitAppentis(TopologieBatiment tB, Toit t,
+  public static RoofSurface generationToitAppentis(TopologieBatiment tB, RoofSurface t,
       double zGouttiere, double zMax, IPolygon emprise) {
 
     // On affecte les z

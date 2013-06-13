@@ -1,7 +1,7 @@
 package fr.ign.cogit.simplu3d.calculation;
 
 import fr.ign.cogit.geoxygene.sig3d.geometry.Box3D;
-import fr.ign.cogit.simplu3d.model.application.Batiment;
+import fr.ign.cogit.simplu3d.model.application._AbstractBuilding;
 
 public class StoreyCalculation {
 
@@ -21,7 +21,7 @@ public class StoreyCalculation {
   
   
 
-  public static int process(Batiment batiment) {
+  public static int process(_AbstractBuilding batiment) {
 
     Box3D b = new Box3D(batiment.getGeom());
 

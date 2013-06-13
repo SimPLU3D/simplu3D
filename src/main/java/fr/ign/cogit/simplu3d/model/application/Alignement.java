@@ -1,36 +1,18 @@
 package fr.ign.cogit.simplu3d.model.application;
 
-import org.citygml4j.model.citygml.core.CityObject;
+import java.util.List;
 
-import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiCurve;
-import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
-import fr.ign.cogit.sig3d.model.citygml.core.CG_CityObject;
+import fr.ign.cogit.geoxygene.api.spatial.geomprim.ICurve;
 
-public class Alignement extends CG_CityObject {
+public class Alignement extends Prescription_LIN {
 
-  private int type;
-  private IMultiCurve<IOrientableCurve> iMC;
-  private double largeur = Double.NaN;
 
-  public final static int ALIGNEMENT = 0;
-  public final static int RECUL = 1;
-
-  public Alignement() {
-    super();
+  public Alignement(int type, ICurve geom) {
+    super(type, geom);
+    // TODO Auto-generated constructor stub
   }
 
-  public Alignement(int type, IMultiCurve<IOrientableCurve> iMC, double largeur) {
-    super();
-    this.type = type;
-    this.iMC = iMC;
-    this.largeur = largeur;
-  }
-
-  @Override
-  public CityObject export() {
-    // TODO Auto-generated method stub
-    return null;
-  }
+  public boolean isStrict;
 
   public int getType() {
     return type;
@@ -40,20 +22,8 @@ public class Alignement extends CG_CityObject {
     this.type = type;
   }
 
-  public IMultiCurve<IOrientableCurve> getiMC() {
-    return iMC;
-  }
-
-  public void setiMC(IMultiCurve<IOrientableCurve> iMC) {
-    this.iMC = iMC;
-  }
-
-  public double getLargeur() {
-    return largeur;
-  }
-
-  public void setLargeur(double largeur) {
-    this.largeur = largeur;
+  public List<Alignement> opposite() {
+    return null;
   }
 
 }

@@ -1,5 +1,5 @@
 package fr.ign.cogit.simplu3d.model.application;
 
-public class Document {
+public class PLU extends UrbaDocument{
 
 }

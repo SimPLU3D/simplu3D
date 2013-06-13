@@ -3,7 +3,7 @@ import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.sig3d.calculation.OrientedBoundingBox;
-import fr.ign.cogit.simplu3d.model.application.Batiment;
+import fr.ign.cogit.simplu3d.model.application._AbstractBuilding;
 
 
 public class ShapeFactor {
@@ -14,7 +14,7 @@ public class ShapeFactor {
    *  Hauteur bâtiment / largeur + longueur
    * @param bP
    */
-  public ShapeFactor(Batiment bP) {
+  public ShapeFactor(_AbstractBuilding bP) {
 
 
     OrientedBoundingBox oBB = new OrientedBoundingBox(bP.getGeom());

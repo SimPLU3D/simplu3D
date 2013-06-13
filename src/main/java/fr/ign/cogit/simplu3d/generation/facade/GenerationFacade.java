@@ -5,7 +5,7 @@ import java.util.List;
 
 import fr.ign.cogit.simplu3d.generation.FacadeProcedural;
 import fr.ign.cogit.simplu3d.model.application.Materiau;
-import fr.ign.cogit.simplu3d.model.application.Toit;
+import fr.ign.cogit.simplu3d.model.application.RoofSurface;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.ITriangle;
@@ -19,7 +19,7 @@ import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 
 public class GenerationFacade {
 
-  public static List<FacadeProcedural> generate(Toit t, List<Materiau> lMat,
+  public static List<FacadeProcedural> generate(RoofSurface t, List<Materiau> lMat,
       double zMin, boolean[] facadesNonAveugles) {
 
     List<FacadeProcedural> lF = new ArrayList<FacadeProcedural>();
