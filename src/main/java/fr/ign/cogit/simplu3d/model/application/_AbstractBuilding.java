@@ -16,27 +16,21 @@ public class _AbstractBuilding extends CG_AbstractBuilding{
   
   public List<BuildingPart> buildingPart = new ArrayList<BuildingPart>();
   private RoofSurface roofSurface;
-  private List<WallSurface> wallSurface;
-  private IOrientableSurface footPrint;
-  
+  private List<SpecificWallSurface> wallSurface;
+
   
   private List<SubParcel> sousParcelles = new ArrayList<SubParcel>();
   private BasicPropertyUnit bPU;
 
 
   
-  public List<WallSurface> getFacades() {
+  public List<SpecificWallSurface> getFacades() {
     return wallSurface;
   }
-  public void setFacades(List<WallSurface> facades) {
+  public void setFacades(List<SpecificWallSurface> facades) {
     this.wallSurface = facades;
   }
-  public IOrientableSurface getFootPrint() {
-    return footPrint;
-  }
-  public void setFootPrint(IOrientableSurface footPrint) {
-    this.footPrint = footPrint;
-  }
+
   public List<SubParcel> getSousParcelles() {
     return sousParcelles;
   }
@@ -95,12 +89,12 @@ public class _AbstractBuilding extends CG_AbstractBuilding{
     this.roofSurface = toit;
   }
 
-  public List<WallSurface> getFacade() {
+  public List<SpecificWallSurface> getFacade() {
     return wallSurface;
   }
 
-  public void setFacade(List<? extends WallSurface> facades) {
-    this.wallSurface = new ArrayList<WallSurface>();
+  public void setFacade(List<? extends SpecificWallSurface> facades) {
+    this.wallSurface = new ArrayList<SpecificWallSurface>();
     this.wallSurface.addAll(facades);
 
   }

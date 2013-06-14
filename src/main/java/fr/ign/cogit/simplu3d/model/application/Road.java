@@ -6,9 +6,9 @@ import fr.ign.cogit.sig3d.model.citygml.transportation.CG_Road;
 
 public class Road extends CG_Road {
 
-  private IMultiCurve<ILineString> axe;
-  private String nom;
-  private double largeur;
+  private IMultiCurve<ILineString> axis;
+  private String name;
+  private double width;
 
   public Road() {
     super();
@@ -20,28 +20,28 @@ public class Road extends CG_Road {
     // TODO Auto-generated constructor stub
   }
 
-  public IMultiCurve<ILineString> getAxe() {
-    return axe;
+  public IMultiCurve<ILineString> getAxis() {
+    return axis;
   }
 
-  public void setAxe(IMultiCurve<ILineString> axe) {
-    this.axe = axe;
+  public void setAxe(IMultiCurve<ILineString> axis) {
+    this.axis = axis;
   }
 
-  public String getNom() {
-    return nom;
+  public String getName() {
+    return name;
   }
 
-  public void setNom(String nom) {
-    this.nom = nom;
+  public void setName(String name) {
+    this.name = name;
   }
 
-  public double getLargeur() {
-    return largeur;
+  public double getWidth() {
+    return width;
   }
 
-  public void setLargeur(double largeur) {
-    this.largeur = largeur;
+  public void setWidth(double width) {
+    this.width = width;
   }
 
 }

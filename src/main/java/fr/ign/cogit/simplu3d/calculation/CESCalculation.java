@@ -1,8 +1,8 @@
 package fr.ign.cogit.simplu3d.calculation;
 
 import fr.ign.cogit.simplu3d.calculation.COSCalculation.METHOD;
-import fr.ign.cogit.simplu3d.model.application.Batiment;
 import fr.ign.cogit.simplu3d.model.application.SubParcel;
+import fr.ign.cogit.simplu3d.model.application._AbstractBuilding;
 
 public class CESCalculation {
 
@@ -12,8 +12,8 @@ public class CESCalculation {
     double aireBatie = 0;
    
     
-    for(Batiment b:p.getBuilding()){
-      aireBatie = aireBatie + b.getEmprise().getLod2MultiSurface().area();
+    for(_AbstractBuilding b:p.getBuildingsParts()){
+      aireBatie = aireBatie + b.getFootprint().area();
     }
     
     return aireBatie/area;

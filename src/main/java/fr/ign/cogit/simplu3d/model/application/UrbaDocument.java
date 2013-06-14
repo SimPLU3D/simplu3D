@@ -4,14 +4,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 
+ * @author MBrasebin
+ *
+ */
 public class UrbaDocument {
   
   
-  private Date approvalDate;
-  private Date endDate;
-  private String documentType;
+  public Date approvalDate;
+  public Date endDate;
+  public String documentType;
   
-  private List<UrbaZone> lUrbaZone = new ArrayList<>();
+  public List<UrbaZone> lUrbaZone = new ArrayList<>();
 
   public UrbaDocument() {
     super();

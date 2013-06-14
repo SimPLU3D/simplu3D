@@ -9,9 +9,9 @@ public class Rule {
   
   public int integerID = LAST_ID++;
   
-  private Constraint constraint;
+  public Constraint constraint;
   
-  private String text;
+  public String text;
 
   public Rule(Constraint constraint, String text) {
     super();

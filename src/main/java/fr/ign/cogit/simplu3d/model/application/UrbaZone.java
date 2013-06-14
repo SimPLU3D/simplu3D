@@ -2,14 +2,19 @@ package fr.ign.cogit.simplu3d.model.application;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
-import fr.ign.cogit.geoxygene.feature.FT_Feature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
+import fr.ign.cogit.sig3d.model.citygml.landuse.CG_LandUse;
 
-public class UrbaZone extends FT_Feature {
+/**
+ * 
+ * @author MBrasebin
+ * 
+ */
+public class UrbaZone extends CG_LandUse {
 
   public final String CLASSE = "Zone";
 
-  private IFeatureCollection<SubParcel> sousParcelles = new FT_FeatureCollection<SubParcel>();
+  private IFeatureCollection<SubParcel> subParcels = new FT_FeatureCollection<SubParcel>();
   private String name = "";
 
   public UrbaZone(IOrientableSurface geom) {
@@ -17,12 +22,12 @@ public class UrbaZone extends FT_Feature {
 
   }
 
-  public IFeatureCollection<SubParcel> getSousParcelles() {
-    return sousParcelles;
+  public IFeatureCollection<SubParcel> getSubParcels() {
+    return subParcels;
   }
 
-  public void setSousParcelles(IFeatureCollection<SubParcel> sousParcelles) {
-    this.sousParcelles = sousParcelles;
+  public void setSubParcels(IFeatureCollection<SubParcel> subParcels) {
+    this.subParcels = subParcels;
   }
 
   public String getName() {

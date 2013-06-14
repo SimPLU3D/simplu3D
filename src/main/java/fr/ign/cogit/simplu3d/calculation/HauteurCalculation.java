@@ -99,7 +99,7 @@ public class HauteurCalculation {
 
   public static double calculateZHautPHE(_AbstractBuilding b) {
 
-    IGeometry g = b.getToit().getGouttiere();
+    IGeometry g = b.getToit().setGutter();
 
     Box3D box = new Box3D(g);
 

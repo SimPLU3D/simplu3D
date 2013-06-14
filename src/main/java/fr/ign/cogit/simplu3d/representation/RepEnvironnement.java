@@ -21,20 +21,20 @@ import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.sig3d.analysis.ClassifyRoof;
 import fr.ign.cogit.sig3d.representation.color.ColorLocalRandom;
 import fr.ign.cogit.sig3d.representation.rendering.CartooMod2;
-import fr.ign.cogit.simplu3d.model.application.Building;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
-import fr.ign.cogit.simplu3d.model.application.WallSurface;
-import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.model.application.SubParcel;
-import fr.ign.cogit.simplu3d.model.application.RoofSurface;
-import fr.ign.cogit.simplu3d.model.application.UrbaZone;
 import fr.ign.cogit.simplu3d.model.application.Road;
+import fr.ign.cogit.simplu3d.model.application.RoofSurface;
+import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
+import fr.ign.cogit.simplu3d.model.application.SpecificWallSurface;
+import fr.ign.cogit.simplu3d.model.application.SubParcel;
+import fr.ign.cogit.simplu3d.model.application.UrbaZone;
+import fr.ign.cogit.simplu3d.model.application._AbstractBuilding;
 
 public class RepEnvironnement {
 
   public enum Theme {
-    BORDURE("Bordure"), EMPRISE_BATIMENT("Emprise"), TOIT_BATIMENT("Toit"), FACADE_BATIMENT(
+    BORDURE("Bordure"),  TOIT_BATIMENT("Toit"), FACADE_BATIMENT(
         "Facade"), VOIRIE("Voirie"), ZONE("Zone"), PARCELLE("Parcelle"), SOUS_PARCELLE(
         "SousParcelle"), FAITAGE("FAITAGE"), PIGNON("Pignon"), GOUTTIERE(
         "GOUTIERRE"), PAN("PAN");
@@ -110,6 +110,8 @@ public class RepEnvironnement {
       case PAN:
         featC = generateRoofSlopesRepresentation(env);
         break;
+      default:
+        break;
     }
 
     return new VectorLayer(featC, t.getNomCouche());
@@ -181,7 +183,7 @@ public class RepEnvironnement {
       Environnement env) {
     IFeatureCollection<RoofSurface> toitOut = new FT_FeatureCollection<RoofSurface>();
 
-    for (Building b : env.getBuilding()) {
+    for (_AbstractBuilding b : env.getBuildings()) {
 
       RoofSurface t = b.getToit();
 
@@ -202,13 +204,13 @@ public class RepEnvironnement {
   private static IFeatureCollection<? extends IFeature> generateWallRepresentation(
       Environnement env) {
 
-    IFeatureCollection<WallSurface> facadesOut = new FT_FeatureCollection<WallSurface>();
+    IFeatureCollection<SpecificWallSurface> facadesOut = new FT_FeatureCollection<SpecificWallSurface>();
 
-    for (Building b : env.getBuilding()) {
+    for (_AbstractBuilding b : env.getBuildings()) {
 
-      List<WallSurface> facades = b.getFacade();
+      List<SpecificWallSurface> facades = b.getFacade();
 
-      for (WallSurface f : facades) {
+      for (SpecificWallSurface f : facades) {
         f.setRepresentation(new CartooMod2(f, COLOR_FACADE));
         facadesOut.add(f);
       }
@@ -226,13 +228,13 @@ public class RepEnvironnement {
 
   private static IFeatureCollection<? extends IFeature> generateRoadRepresentation(
       Environnement env) {
-    for (Road v : env.getVoiries()) {
+    for (Road v : env.getRoads()) {
 
       v.setRepresentation(new Object2d(v, COLOR_VOIRIE));
 
     }
 
-    return env.getVoiries();
+    return env.getRoads();
   }
 
   /*
@@ -261,14 +263,14 @@ public class RepEnvironnement {
       Environnement env) {
     // TODO Auto-generated method stub
 
-    for (SubParcel sp : env.getSousParcelles()) {
+    for (SubParcel sp : env.getSubParcels()) {
 
       sp.setRepresentation(new Object2d(sp, ColorLocalRandom.getRandomColor(
           COLOR_SOUS_PARCELLE, radius, radius, radius)));
 
     }
 
-    return env.getSousParcelles();
+    return env.getSubParcels();
 
   }
 
@@ -283,9 +285,9 @@ public class RepEnvironnement {
 
     IFeatureCollection<IFeature> featOut = new FT_FeatureCollection<IFeature>();
 
-    for (Building b : env.getBuilding()) {
+    for (_AbstractBuilding b : env.getBuildings()) {
 
-      IGeometry geom = b.getToit().getFaitage();
+      IGeometry geom = b.getToit().getRoofing();
 
       if (geom == null || geom.isEmpty()) {
         continue;
@@ -312,9 +314,9 @@ public class RepEnvironnement {
 
     IFeatureCollection<IFeature> featOut = new FT_FeatureCollection<IFeature>();
 
-    for (Building b : env.getBuilding()) {
+    for (_AbstractBuilding b : env.getBuildings()) {
 
-      IMultiCurve<IOrientableCurve> geom = b.getToit().getPignons();
+      IMultiCurve<IOrientableCurve> geom = b.getToit().setGable();
 
       if (geom == null || geom.isEmpty()) {
         continue;
@@ -344,9 +346,9 @@ public class RepEnvironnement {
 
     IFeatureCollection<IFeature> featOut = new FT_FeatureCollection<IFeature>();
 
-    for (Building b : env.getBuilding()) {
+    for (_AbstractBuilding b : env.getBuildings()) {
 
-      IGeometry geom = b.getToit().getGouttiere();
+      IGeometry geom = b.getToit().setGutter();
 
       if (geom == null || geom.isEmpty()) {
         continue;
@@ -369,14 +371,14 @@ public class RepEnvironnement {
 
   private static IFeatureCollection<? extends IFeature> generateZoneRepresentation(
       Environnement env) {
-    for (UrbaZone z : env.getZones()) {
+    for (UrbaZone z : env.getUrbaZones()) {
 
       z.setRepresentation(new Object2d(z, true, ColorRandom.getRandomColor(),
           1.0f, true));
 
     }
 
-    return env.getZones();
+    return env.getUrbaZones();
 
   }
 
@@ -389,7 +391,7 @@ public class RepEnvironnement {
 
     IFeatureCollection<IFeature> pans = new FT_FeatureCollection<IFeature>();
 
-    for (Building b : env.getBuilding()) {
+    for (_AbstractBuilding b : env.getBuildings()) {
 
       RoofSurface t = b.getToit();
 

@@ -1,7 +1,11 @@
 package fr.ign.cogit.simplu3d.model.application;
 
 
-
+/**
+ * 
+ * @author MBrasebin
+ *
+ */
   public enum Materiau{
     
     BRIQUE("Brique", Materiau.folderMat + "texture.jpg", 5, 5),
@@ -12,9 +16,9 @@ package fr.ign.cogit.simplu3d.model.application;
   private final static String folderMat = "E:/mbrasebin/Workspace/geoxygene/geoxygene-sig3d/src/main/resources/texture/";
     
     
-  private String nomMateriau;
-  private String textRep = null;
-  private double textH = Double.NaN,textL = Double.NaN;
+  public String nomMateriau;
+  public String textRep = null;
+  public double textH = Double.NaN,textL = Double.NaN;
   
   
   

@@ -112,23 +112,23 @@ public class LoaderSHP {
 
     }
 
-    env.setZones(zones);
+    env.setUrbaZones(zones);
 
     // Etape 3 : création des sous parcelles
 
     IFeatureCollection<SubParcel> sousParcelles = SousParcelleImporter
         .create(parcelles, zones);
-    env.setSousParcelles(sousParcelles);
+    env.setSubParcels(sousParcelles);
 
     // Etape 4 : import des bâtiments
     IFeatureCollection<Building> batiments = BuildingImporter.importBuilding(
         batiColl, sousParcelles);
-    env.setBatiments(batiments);
+    env.getBuildings().addAll(batiments);
 
     // Etape 5 : chargement des rues
     IFeatureCollection<Road> voiries = VoirieImporter
         .importVoirie(voirieColl);
-    env.setVoiries(voiries);
+    env.setRoads(voiries);
 
     // Etape 6 : on affecte les liens entres une bordure et ses objets adjacents
     AssignLinkToBordure.process(parcelles, voiries);
@@ -149,9 +149,9 @@ public class LoaderSHP {
     env.setTerrain(dtm);
     try {
       AssignZ.toParcelle(env.getParcelles(), dtm, SURSAMPLED);
-      AssignZ.toSousParcelle(env.getSousParcelles(), dtm, SURSAMPLED);
-      AssignZ.toZone(env.getZones(), dtm, false);
-      AssignZ.toVoirie(env.getVoiries(), dtm, SURSAMPLED);
+      AssignZ.toSousParcelle(env.getSubParcels(), dtm, SURSAMPLED);
+      AssignZ.toZone(env.getUrbaZones(), dtm, false);
+      AssignZ.toVoirie(env.getRoads(), dtm, SURSAMPLED);
       AssignZ.toAlignement(alignementColl, dtm, SURSAMPLED);
     } catch (Exception e) {
       // TODO Auto-generated catch block

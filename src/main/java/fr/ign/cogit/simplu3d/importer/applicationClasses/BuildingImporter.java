@@ -17,7 +17,7 @@ import fr.ign.cogit.sig3d.convert.geom.FromGeomToSurface;
 import fr.ign.cogit.simplu3d.model.application.Building;
 import fr.ign.cogit.simplu3d.model.application.RoofSurface;
 import fr.ign.cogit.simplu3d.model.application.SubParcel;
-import fr.ign.cogit.simplu3d.model.application.WallSurface;
+import fr.ign.cogit.simplu3d.model.application.SpecificWallSurface;
 
 public class BuildingImporter {
 
@@ -49,11 +49,11 @@ public class BuildingImporter {
           0.2);
 
       // Création facade
-      WallSurface f = new WallSurface();
+      SpecificWallSurface f = new SpecificWallSurface();
       f.setGeom(surfaceWall);
       f.setLod2MultiSurface(surfaceWall);
       
-      List<WallSurface> lF = new ArrayList<WallSurface>();
+      List<SpecificWallSurface> lF = new ArrayList<SpecificWallSurface>();
       lF.add(f);
       b.setFacade(lF);
       

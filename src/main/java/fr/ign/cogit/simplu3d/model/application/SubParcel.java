@@ -45,7 +45,7 @@ public class SubParcel extends CG_LandUse {
   private IFeatureCollection<_AbstractBuilding> buildingsParts = new FT_FeatureCollection<_AbstractBuilding>();
   // private IFeatureCollection<Voirie> voiries = new
   // FT_FeatureCollection<Voirie>();
-  private IFeatureCollection<SpecificCadastralBoundary> bordures = new FT_FeatureCollection<SpecificCadastralBoundary>();
+  private IFeatureCollection<SpecificCadastralBoundary> Boundary = new FT_FeatureCollection<SpecificCadastralBoundary>();
 
   public SubParcel() {
     super();
@@ -63,7 +63,7 @@ public class SubParcel extends CG_LandUse {
 
   public IFeatureCollection<SpecificCadastralBoundary> getBorduresFond() {
     IFeatureCollection<SpecificCadastralBoundary> borduresFond = new FT_FeatureCollection<SpecificCadastralBoundary>();
-    for (SpecificCadastralBoundary b : this.bordures) {
+    for (SpecificCadastralBoundary b : this.Boundary) {
       if (b.getType() == SpecificCadastralBoundary.BOT) {
         borduresFond.add(b);
       }
@@ -74,7 +74,7 @@ public class SubParcel extends CG_LandUse {
 
   public IFeatureCollection<SpecificCadastralBoundary> getBorduresLat() {
     IFeatureCollection<SpecificCadastralBoundary> borduresLat = new FT_FeatureCollection<SpecificCadastralBoundary>();
-    for (SpecificCadastralBoundary b : this.bordures) {
+    for (SpecificCadastralBoundary b : this.Boundary) {
       if (b.getType() == SpecificCadastralBoundary.LAT) {
         borduresLat.add(b);
       }

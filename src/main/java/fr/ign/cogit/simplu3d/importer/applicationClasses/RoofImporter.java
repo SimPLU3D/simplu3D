@@ -42,17 +42,17 @@ public class RoofImporter {
     IMultiCurve<IOrientableCurve> iMS2 = new GM_MultiCurve<IOrientableCurve>();
     iMS2.addAll(cR.getFaitage(epsilonAngle));
 
-    t.setFaitage(iMS2);
+    t.setRoofing(iMS2);
 
    
 
 
 
-    t.setGouttiere(affectZEmprise(emprise,
+    t.setGutter(affectZEmprise(emprise,
         FromPolygonToLineString.convertListPolToLineStrings(mS)));
     
     IMultiCurve<IOrientableCurve> ext = new GM_MultiCurve<IOrientableCurve>();
-    ext.addAll(t.getGouttiere());
+    ext.addAll(t.setGutter());
 
     // ILineString lS = Operateurs.union(lLSExt);
 
@@ -60,11 +60,11 @@ public class RoofImporter {
     // 0.2));
 
  //   List<ILineString> lPignons = DetectPignon.detectPignon( ext, epsilonAngle);
-    List<ILineString> lPignons = DetectPignon.detectPignon(ext, t.getFaitage() ,0.2, epsilonAngle );
+    List<ILineString> lPignons = DetectPignon.detectPignon(ext, t.getRoofing() ,0.2, epsilonAngle );
 
     IMultiCurve<IOrientableCurve> pignons = new GM_MultiCurve<IOrientableCurve>();
     pignons.addAll(lPignons);
-    t.setPignons(pignons);
+    t.setGable(pignons);
 
     // IFeatureCollection<IFeature> fC = DetectPignon.detectPignon(poly
     // /*lLSExt*/, lLS , epsilonDist,epsilonAngle)

@@ -24,7 +24,7 @@ public class GenerationFacade {
 
     List<FacadeProcedural> lF = new ArrayList<FacadeProcedural>();
 
-    IMultiCurve<IOrientableCurve> iMC = t.getGouttiere();
+    IMultiCurve<IOrientableCurve> iMC = t.setGutter();
 
     int count = 0;
 

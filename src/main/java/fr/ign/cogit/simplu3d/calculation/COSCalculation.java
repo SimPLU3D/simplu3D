@@ -16,9 +16,11 @@ public class COSCalculation {
     switch (m) {
 
       case SIMPLE:
-        aireBatie = SHONCalculation.assessSimpleAireBati(p); break;
+        aireBatie = SHONCalculation.assessSimpleAireBati(p);
+        break;
       case FLOOR_CUT:
-        aireBatie = SHONCalculation.assessAireBatieFromCut(p);break;
+        aireBatie = SHONCalculation.assessAireBatieFromCut(p);
+        break;
     }
 
     return aireBatie / area;

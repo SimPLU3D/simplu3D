@@ -11,10 +11,10 @@ import fr.ign.cogit.simplu3d.calculation.RoofAngle;
 
 public class RoofSurface extends CG_RoofSurface {
 
-  private IMultiCurve<IOrientableCurve> gouttiere;
-  private IMultiCurve<IOrientableCurve> pignons;
-  private IMultiCurve<IOrientableCurve> faitage;
-  private IMultiCurve<IOrientableCurve> interiorEdge;
+  public IMultiCurve<IOrientableCurve> gutter;
+  public IMultiCurve<IOrientableCurve> gable;
+  public IMultiCurve<IOrientableCurve> roofing;
+  public IMultiCurve<IOrientableCurve> interiorEdge;
 
   public IMultiCurve<IOrientableCurve> getInteriorEdge() {
     return interiorEdge;
@@ -24,52 +24,52 @@ public class RoofSurface extends CG_RoofSurface {
     this.interiorEdge = interiorEdge;
   }
 
-  private Materiau mat;
+  private Materiau material;
 
-  private int nbPans;
+  private int numberOfSlopes;
 
-  public IMultiCurve<IOrientableCurve> getGouttiere() {
-    return gouttiere;
+  public IMultiCurve<IOrientableCurve> setGutter() {
+    return gutter;
   }
 
-  public IMultiCurve<IOrientableCurve> getPignons() {
-    return pignons;
+  public IMultiCurve<IOrientableCurve> setGable() {
+    return gable;
   }
 
-  public void setPignons(IMultiCurve<? extends IOrientableCurve> pignons) {
-    this.pignons = new GM_MultiCurve<IOrientableCurve>();
-    this.pignons.addAll(pignons);
+  public void setGable(IMultiCurve<? extends IOrientableCurve> pignons) {
+    this.gable = new GM_MultiCurve<IOrientableCurve>();
+    this.gable.addAll(pignons);
   }
 
-  public IMultiCurve<IOrientableCurve> getFaitage() {
-    return faitage;
+  public IMultiCurve<IOrientableCurve> getRoofing() {
+    return roofing;
   }
 
-  public void setFaitage(IMultiCurve<? extends IOrientableCurve> faitage) {
-    this.faitage = new GM_MultiCurve<IOrientableCurve>();
-    this.faitage.addAll(faitage);
+  public void setRoofing(IMultiCurve<? extends IOrientableCurve> faitage) {
+    this.roofing = new GM_MultiCurve<IOrientableCurve>();
+    this.roofing.addAll(faitage);
   }
 
-  public int getNbPans() {
-    return nbPans;
+  public int getNBSlopes() {
+    return numberOfSlopes;
   }
 
-  public void setNbPans(int nbPans) {
-    this.nbPans = nbPans;
+  public void setNBSlopes(int nbPans) {
+    this.numberOfSlopes = nbPans;
   }
 
   public Materiau getMat() {
-    return mat;
+    return material;
   }
 
   public void setMat(Materiau mat) {
-    this.mat = mat;
+    this.material = mat;
   }
 
-  public void setGouttiere(
+  public void setGutter(
       IMultiCurve<? extends IOrientableCurve> ligneGoutierre) {
-    this.gouttiere = new GM_MultiCurve<IOrientableCurve>();
-    this.gouttiere.addAll(ligneGoutierre);
+    this.gutter = new GM_MultiCurve<IOrientableCurve>();
+    this.gutter.addAll(ligneGoutierre);
 
   }
 
@@ -79,9 +79,9 @@ public class RoofSurface extends CG_RoofSurface {
     tCopy.setGeom((IGeometry) this.getGeom().clone());
     tCopy.setLod2MultiSurface((IMultiSurface<IOrientableSurface>) this
         .getGeom().clone());
-    tCopy.setGouttiere((IMultiCurve<IOrientableCurve>) this.getGouttiere()
+    tCopy.setGutter((IMultiCurve<IOrientableCurve>) this.setGutter()
         .clone());
-    tCopy.setFaitage((IMultiCurve<IOrientableCurve>) this.getFaitage().clone());
+    tCopy.setRoofing((IMultiCurve<IOrientableCurve>) this.getRoofing().clone());
 
     return tCopy;
 

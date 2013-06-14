@@ -20,7 +20,7 @@ public class ShapeFactor2  {
     
 
 
-    double area = b.getFootPrint().area();
+    double area = b.getFootprint().area();
     
     
     

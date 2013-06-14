@@ -20,17 +20,15 @@ import fr.ign.cogit.sig3d.convert.geom.FromPolygonToLineString;
 import fr.ign.cogit.simplu3d.generation.ToitProcedural;
 import fr.ign.cogit.simplu3d.generation.TopologieBatiment;
 import fr.ign.cogit.simplu3d.generation.TopologieBatiment.FormeToitEnum;
-import fr.ign.cogit.simplu3d.model.application.EmpriseBatiment;
 import fr.ign.cogit.simplu3d.model.application.Materiau;
 import fr.ign.cogit.simplu3d.model.application.RoofSurface;
 
 public class GenerationToit {
 
-  public static ToitProcedural generationToit(TopologieBatiment tB, double zGouttiere, double zMax,
-      Materiau m, EmpriseBatiment emprise,double angleToit) {
+  public static ToitProcedural generationToit(TopologieBatiment tB,
+      double zGouttiere, double zMax, Materiau m, IOrientableSurface poly,
+      double angleToit) {
 
-    
-    IPolygon poly =(IPolygon) emprise.getLod2MultiSurface().get(0);
     ToitProcedural t = new ToitProcedural();
 
     if (tB.getfT() == FormeToitEnum.PLAT) {
@@ -43,7 +41,8 @@ public class GenerationToit {
 
     } else if (tB.getfT() == FormeToitEnum.SYMETRIQUE) {
 
-      GenerationToitSymetrique.generate(tB, t, zGouttiere, zMax, poly,angleToit);
+      GenerationToitSymetrique.generate(tB, t, zGouttiere, zMax, (IPolygon) poly,
+          angleToit);
 
     }
 
@@ -54,7 +53,7 @@ public class GenerationToit {
   }
 
   public static void generationToitPlat(TopologieBatiment tB, RoofSurface t,
-      double zGouttiere, double zMax, IPolygon emprise) {
+      double zGouttiere, double zMax, IOrientableSurface emprise) {
 
     // On affecte le z aux sommets
     for (IDirectPosition dp : emprise.coord()) {
@@ -67,10 +66,7 @@ public class GenerationToit {
 
     // C'est la gouttière
     IMultiCurve<IOrientableCurve> iMS = new GM_MultiCurve<IOrientableCurve>();
- 
-    
-    
-    
+
     iMS.addAll(Segment.getSegmentList(ls));
 
     // C'est la géométrie du toit
@@ -82,14 +78,14 @@ public class GenerationToit {
     t.setLod2MultiSurface(iS);
 
     // On affecte les autres informations géographiques
-    t.setGouttiere(iMS);
-    t.setFaitage(new GM_MultiCurve<IOrientableCurve>());
-    t.setPignons(new GM_MultiCurve<IOrientableCurve>());
+    t.setGutter(iMS);
+    t.setRoofing(new GM_MultiCurve<IOrientableCurve>());
+    t.setGable(new GM_MultiCurve<IOrientableCurve>());
 
   }
 
-  public static RoofSurface generationToitAppentis(TopologieBatiment tB, RoofSurface t,
-      double zGouttiere, double zMax, IPolygon emprise) {
+  public static RoofSurface generationToitAppentis(TopologieBatiment tB,
+      RoofSurface t, double zGouttiere, double zMax, IOrientableSurface emprise) {
 
     // On affecte les z
 
@@ -145,10 +141,10 @@ public class GenerationToit {
     t.setLod2MultiSurface(iS);
 
     // On affecte les autres informations géographiques
-    t.setGouttiere(new GM_MultiCurve<ILineString>(FromPolygonToLineString
+    t.setGutter(new GM_MultiCurve<ILineString>(FromPolygonToLineString
         .convertPolToLineStrings(emprise)));
-    t.setFaitage(iMC);
-    t.setPignons(new GM_MultiCurve<IOrientableCurve>());
+    t.setRoofing(iMC);
+    t.setGable(new GM_MultiCurve<IOrientableCurve>());
 
     return t;
 

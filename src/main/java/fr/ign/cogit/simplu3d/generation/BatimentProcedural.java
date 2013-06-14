@@ -21,12 +21,11 @@ import fr.ign.cogit.simplu3d.calculation.StoreyCalculation;
 import fr.ign.cogit.simplu3d.generation.emprise.GenerateEmprise;
 import fr.ign.cogit.simplu3d.generation.facade.GenerationFacade;
 import fr.ign.cogit.simplu3d.generation.toit.GenerationToit;
-import fr.ign.cogit.simplu3d.model.application.Batiment;
-import fr.ign.cogit.simplu3d.model.application.EmpriseBatiment;
-import fr.ign.cogit.simplu3d.model.application.WallSurface;
+import fr.ign.cogit.simplu3d.model.application.Building;
 import fr.ign.cogit.simplu3d.model.application.Materiau;
+import fr.ign.cogit.simplu3d.model.application.SpecificWallSurface;
 
-public class BatimentProcedural extends Batiment {
+public class BatimentProcedural extends Building {
 
   TopologieBatiment tB;
   double largeur;
@@ -46,9 +45,11 @@ public class BatimentProcedural extends Batiment {
   public BatimentProcedural(TopologieBatiment tB, double largeur,
       double hauteur, double largeur2, double hauteur2, double zGouttiere,
       double zMax, Materiau materiauToit, List<Materiau> materiauFacades,
-      boolean[] facadesNonAveugles, IDirectPosition centre, double angle, double angleToit) {
+      boolean[] facadesNonAveugles, IDirectPosition centre, double angle,
+      double angleToit) {
     this(tB, largeur, hauteur, largeur2, hauteur2, zGouttiere, zMax,
-        materiauToit, materiauFacades, facadesNonAveugles, centre, angle, null,angleToit);
+        materiauToit, materiauFacades, facadesNonAveugles, centre, angle, null,
+        angleToit);
 
   }
 
@@ -56,7 +57,7 @@ public class BatimentProcedural extends Batiment {
       double hauteur, double largeur2, double hauteur2, double zGouttiere,
       double zMax, Materiau materiauToit, List<Materiau> materiauFacades,
       boolean[] facadesNonAveugles, IDirectPosition centre, double angle,
-      DTM mnt,  double angleToit) {
+      DTM mnt, double angleToit) {
     super();
     this.tB = tB;
     this.largeur = largeur;
@@ -94,14 +95,10 @@ public class BatimentProcedural extends Batiment {
     emprise = (IPolygon) emprise.translate(centre.getX(), centre.getY(), 0);
 
     // 4 On affecte l'emprise au bâtiment
-    EmpriseBatiment empriseBat = new EmpriseBatiment();
-    empriseBat.setGeom(emprise);
 
-    IMultiSurface<IOrientableSurface> mS = new GM_MultiSurface<IOrientableSurface>();
-    mS.add(emprise);
+    IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<IOrientableSurface>();
 
-    empriseBat.setLod2MultiSurface(mS);
-    this.setEmprise(empriseBat);
+    this.setFootprint(iMS);
 
     // 5 si il y a un MNT, on détermine le Z
     if (dtm != null) {
@@ -119,7 +116,7 @@ public class BatimentProcedural extends Batiment {
     double z = this.centre.getZ();
 
     try {
-      IGeometry geom = dtm.mapGeom(this.getEmprise().getGeom(), 0, true, true);
+      IGeometry geom = dtm.mapGeom(this.getFootprint(), 0, true, true);
       Box3D b = new Box3D(geom);
       z = b.getURDP().getZ();
 
@@ -136,8 +133,8 @@ public class BatimentProcedural extends Batiment {
 
     // On génère le toit et les façades
     ToitProcedural t = GenerationToit.generationToit(tB, this.centre.getZ()
-        + zGouttiere, this.centre.getZ() + zMax, materiauToit,
-        this.getEmprise(),angleToit);
+        + zGouttiere, this.centre.getZ() + zMax, materiauToit, this
+        .getFootprint().get(0), angleToit);
 
     this.setToit(t);
 
@@ -152,7 +149,7 @@ public class BatimentProcedural extends Batiment {
     IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<IOrientableSurface>();
     iMS.addAll(this.getToit().getLod2MultiSurface());
 
-    for (WallSurface f : lF) {
+    for (SpecificWallSurface f : lF) {
       iMS.addAll(f.getLod2MultiSurface());
     }
 
@@ -217,9 +214,9 @@ public class BatimentProcedural extends Batiment {
   public Set<IDirectPosition> coord() {
     Set<IDirectPosition> set = new HashSet<IDirectPosition>();
     set.addAll(this.getGeom().coord());
-    set.addAll(this.getToit().getFaitage().coord());
-    set.addAll(this.getToit().getGouttiere().coord());
-    set.addAll(this.getEmprise().getGeom().coord());
+    set.addAll(this.getToit().getRoofing().coord());
+    set.addAll(this.getToit().setGutter().coord());
+    set.addAll(this.getFootprint().coord());
 
     return set;
 
@@ -229,10 +226,9 @@ public class BatimentProcedural extends Batiment {
     // / System.out.println("Ca translate en tique");
 
     Set<IDirectPosition> set = null;
-    
+
     if (x != 0 || y != 0) {
 
-      
       set = this.coord();
 
       for (IDirectPosition dp : set) {
@@ -240,41 +236,35 @@ public class BatimentProcedural extends Batiment {
         dp.move(x, y, 0);
 
       }
-      
+
       this.centre.move(x, y);
 
     }
 
     if (dtm != null) {
-      
-
 
       double oldZ = this.centre.getZ();
 
       double newZ = determineZ();
-      
+
       System.out.println("Old Z " + oldZ + "  newZ  " + newZ);
 
       if (newZ != oldZ) {
-        
-        if(set == null){
+
+        if (set == null) {
           set = this.coord();
         }
-        
+
         this.centre.setZ(newZ);
         for (IDirectPosition dp : set) {
 
-          dp.move(0,0, newZ - oldZ);
+          dp.move(0, 0, newZ - oldZ);
 
         }
-        
-
-
 
       }
 
     }
-
 
   }
 
@@ -416,23 +406,22 @@ public class BatimentProcedural extends Batiment {
   }
 
   public double getAngleToit() {
-       return this.angleToit;
+    return this.angleToit;
   }
 
   public void changeAngleToit(double d) {
     this.angleToit = d;
-    
+
     System.out.println(d);
-    
+
     this.generationToit();
     this.generationFacade();
 
   }
-  
-  
+
   @Override
   public int getStoreysAboveGround() {
-      return StoreyCalculation.process(this);
+    return StoreyCalculation.process(this);
 
   }
 

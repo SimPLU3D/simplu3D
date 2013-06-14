@@ -6,21 +6,71 @@ import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.sig3d.model.citygml.core.CG_CityModel;
 import fr.ign.cogit.sig3d.semantic.MNTAire;
 
+/**
+ * 
+ * @author MBrasebin
+ * 
+ */
 public class Environnement extends CG_CityModel {
 
-  private IFeatureCollection<CadastralParcel> parcelles;
-  private IFeatureCollection<SubParcel> sousParcelles;
-  private IFeatureCollection<Building> batiments;
-  private IFeatureCollection<UrbaZone> zones;
-  private IFeatureCollection<Alignement> alignements;
-  private MNTAire terrain;
+  public IFeatureCollection<CadastralParcel> cadastralParcels = new FT_FeatureCollection<CadastralParcel>();
+  public IFeatureCollection<SubParcel> subParcels = new FT_FeatureCollection<SubParcel>();
+  public IFeatureCollection<_AbstractBuilding> buildings = new FT_FeatureCollection<_AbstractBuilding>();
+  public IFeatureCollection<UrbaZone> urbaZones = new FT_FeatureCollection<UrbaZone>();
+  public IFeatureCollection<Alignement> alignements = new FT_FeatureCollection<Alignement>();
+  public MNTAire terrain;
+  public IFeatureCollection<Road> voiries = new FT_FeatureCollection<Road>();
 
-  public MNTAire getTerrain() {
-    return terrain;
+  public static double DEFAULT_ZERO_Z = 139; // 41; //138
+
+  public static IDirectPosition dpTranslate = null;
+
+  public static boolean VERBOSE = false;
+  public static boolean TRANSLATE_TO_ZERO = false;
+
+  public IFeatureCollection<CadastralParcel> getParcelles() {
+    return cadastralParcels;
   }
 
-  public void setTerrain(MNTAire terrain) {
-    this.terrain = terrain;
+  public void setParcelles(IFeatureCollection<CadastralParcel> parcelles) {
+    this.cadastralParcels = parcelles;
+  }
+
+  public Environnement() {
+
+  }
+
+  public IFeatureCollection<CadastralParcel> getCadastralParcels() {
+    return cadastralParcels;
+  }
+
+  public void setCadastralParcels(
+      IFeatureCollection<CadastralParcel> cadastralParcels) {
+    this.cadastralParcels = cadastralParcels;
+  }
+
+  public IFeatureCollection<SubParcel> getSubParcels() {
+    return subParcels;
+  }
+
+  public void setSubParcels(IFeatureCollection<SubParcel> subParcels) {
+    this.subParcels = subParcels;
+  }
+
+  public IFeatureCollection<_AbstractBuilding> getBuildings() {
+    return buildings;
+  }
+
+  public void setBuildings(IFeatureCollection<_AbstractBuilding> buildings) {
+    this.buildings = buildings;
+  }
+
+  public IFeatureCollection<UrbaZone> getUrbaZones() {
+    return urbaZones;
+  }
+
+  public void setUrbaZones(IFeatureCollection<UrbaZone> urbaZones) {
+    this.urbaZones = urbaZones;
   }
 
   public IFeatureCollection<Alignement> getAlignements() {
@@ -31,63 +81,51 @@ public class Environnement extends CG_CityModel {
     this.alignements = alignements;
   }
 
-  public static double DEFAULT_ZERO_Z = 139; // 41; //138
-
-  public static IDirectPosition dpTranslate = null;
-
-  public static boolean VERBOSE = false;
-  public static boolean TRANSLATE_TO_ZERO = false;
-
-  public IFeatureCollection<CadastralParcel> getParcelles() {
-    return parcelles;
+  public MNTAire getTerrain() {
+    return terrain;
   }
 
-  public void setParcelles(IFeatureCollection<CadastralParcel> parcelles) {
-    this.parcelles = parcelles;
+  public void setTerrain(MNTAire terrain) {
+    this.terrain = terrain;
   }
 
-  private IFeatureCollection<Road> voiries;
-
-  public Environnement() {
-
+  public static double getDEFAULT_ZERO_Z() {
+    return DEFAULT_ZERO_Z;
   }
 
-  public IFeatureCollection<SubParcel> getSousParcelles() {
-    if (sousParcelles == null) {
-      sousParcelles = new FT_FeatureCollection<SubParcel>();
-    }
-    return sousParcelles;
+  public static void setDEFAULT_ZERO_Z(double dEFAULT_ZERO_Z) {
+    DEFAULT_ZERO_Z = dEFAULT_ZERO_Z;
   }
 
-  public void setSousParcelles(IFeatureCollection<SubParcel> sousParcelles) {
-    this.sousParcelles = sousParcelles;
+  public static IDirectPosition getDpTranslate() {
+    return dpTranslate;
   }
 
-  public IFeatureCollection<Building> getBuilding() {
-    
-    if(batiments == null){
-      batiments = new FT_FeatureCollection<Building>();
-    }
-    return batiments;
+  public static void setDpTranslate(IDirectPosition dpTranslate) {
+    Environnement.dpTranslate = dpTranslate;
   }
 
-  public void setBatiments(IFeatureCollection<Building> batiments) {
-    this.batiments = batiments;
+  public static boolean isVERBOSE() {
+    return VERBOSE;
   }
 
-  public IFeatureCollection<UrbaZone> getZones() {
-    return zones;
+  public static void setVERBOSE(boolean vERBOSE) {
+    VERBOSE = vERBOSE;
   }
 
-  public void setZones(IFeatureCollection<UrbaZone> zones) {
-    this.zones = zones;
+  public static boolean isTRANSLATE_TO_ZERO() {
+    return TRANSLATE_TO_ZERO;
   }
 
-  public IFeatureCollection<Road> getVoiries() {
+  public static void setTRANSLATE_TO_ZERO(boolean tRANSLATE_TO_ZERO) {
+    TRANSLATE_TO_ZERO = tRANSLATE_TO_ZERO;
+  }
+
+  public IFeatureCollection<Road> getRoads() {
     return voiries;
   }
 
-  public void setVoiries(IFeatureCollection<Road> voiries) {
+  public void setRoads(IFeatureCollection<Road> roads) {
     this.voiries = voiries;
   }
 

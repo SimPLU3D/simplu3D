@@ -19,125 +19,99 @@ import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_LineString;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Polygon;
-import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.simplu3d.calculation.AverageSlope;
-import fr.ign.cogit.simplu3d.calculation.COSCalculation;
-import fr.ign.cogit.simplu3d.calculation.SHONCalculation;
-import fr.ign.cogit.simplu3d.calculation.COSCalculation.METHOD;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
-import fr.ign.cogit.simplu3d.model.application.Batiment;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.model.application.SubParcel;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement.Theme;
 
+/**
+ * 
+ * @author MBrasebin
+ *
+ */
 public class TestPente {
-  
-  
-  
-  public static void main(String[] args) throws Exception{
-    
-    
-    ConstantRepresentation.backGroundColor = new Color(156,180,193);
-    
-    
+
+  public static void main(String[] args) throws Exception {
+
+    ConstantRepresentation.backGroundColor = new Color(156, 180, 193);
+
     String folder = "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project1/";
 
-        
-   Environnement env =  LoaderSHP.load(folder);
-   
-   
-   
- 
-   for(SubParcel sp:env.getSousParcelles()){
-     
-    double pente =  AverageSlope.averageSlope(sp, env.getTerrain());
-    
-     
-     AttributeManager.addAttribute(sp, "Pente", pente, "Double");
+    Environnement env = LoaderSHP.load(folder);
 
-   }
-   
-   List<Theme> lTheme = new ArrayList<RepEnvironnement.Theme>();
+    for (SubParcel sp : env.getSubParcels()) {
 
-   lTheme.add(Theme.SOUS_PARCELLE);
+      double pente = AverageSlope.averageSlope(sp, env.getTerrain());
 
-   Theme[] tab = lTheme.toArray(new Theme[0]);
-   
-   List<VectorLayer> vl = RepEnvironnement.represent(env,tab );
-   
-   MainWindow mW = new MainWindow();
-   
-   for(VectorLayer l:vl){
-     
-     
-     mW.getInterfaceMap3D().getCurrent3DMap().addLayer(l);
-   }
-   
-   
-   
-   mW.getInterfaceMap3D().removeLight(0);
-   mW.getInterfaceMap3D().addLight(new Color(147,147,147), 0,0,0);
-   mW.getInterfaceMap3D().moveLight(180, -15, 120,0);
-   mW.getInterfaceMap3D().addLight(new Color(147,147,147), 0,0,0);
-   mW.getInterfaceMap3D().moveLight(  -140, 3, 120,1);
-   
-   
+      AttributeManager.addAttribute(sp, "Pente", pente, "Double");
 
-   
- //  1051042.8513268954120576,6840539.0837931865826249 : 1051264.8064121364150196,6840679.2711814027279615
+    }
 
-   
-   
-  double xc = ( 1051042.8513268954120576 + 1051264.8064121364150196)/2;
-  double yc = (6840539.0837931865826249 + 6840679.2711814027279615) / 2 ;
-    
-  double z = 138;
-  
-  
-  double longueur = 1051264.8064121364150196 - 1051042.8513268954120576;
-  double largeur = 6840679.2711814027279615 - 6840539.0837931865826249;
-  
-  
-  IDirectPositionList dpl = new DirectPositionList();
-  
-  IDirectPosition dp1 = new DirectPosition(xc - longueur/2, yc-largeur/2, z);
-  IDirectPosition dp2 = new DirectPosition(xc + longueur/2, yc- largeur/2, z);
-  IDirectPosition dp3 = new DirectPosition(xc + longueur/2, yc + largeur/2, z);
-  IDirectPosition dp4 = new DirectPosition(xc - longueur/2, yc + largeur/2, z);
-   
-   
-   
-  dpl.add(dp1);
-  dpl.add(dp2);
-  dpl.add(dp3);
-  dpl.add(dp4);      
-  dpl.add(dp1);   
-   
-   
-   
-   
-   IFeatureCollection<IFeature> fc = new FT_FeatureCollection<IFeature>();
-   
-   IFeature feat = new DefaultFeature(new GM_Polygon(new GM_LineString(dpl)));
-   
-   fc.add(feat);
-   
-   
-   feat.setRepresentation(new TexturedSurface(feat, TextureManager.textureLoading( "C:/Users/mbrasebin/Desktop/Env3D/TextParcelle.png"),longueur,largeur));
-   
-   
+    List<Theme> lTheme = new ArrayList<RepEnvironnement.Theme>();
 
-   
-   
-   
-   
-   mW.getInterfaceMap3D().getCurrent3DMap().addLayer(new VectorLayer(fc,"Cool"));
-   
+    lTheme.add(Theme.SOUS_PARCELLE);
 
-    
-  
+    Theme[] tab = lTheme.toArray(new Theme[0]);
+
+    List<VectorLayer> vl = RepEnvironnement.represent(env, tab);
+
+    MainWindow mW = new MainWindow();
+
+    for (VectorLayer l : vl) {
+
+      mW.getInterfaceMap3D().getCurrent3DMap().addLayer(l);
+    }
+
+    mW.getInterfaceMap3D().removeLight(0);
+    mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
+    mW.getInterfaceMap3D().moveLight(180, -15, 120, 0);
+    mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
+    mW.getInterfaceMap3D().moveLight(-140, 3, 120, 1);
+
+    // 1051042.8513268954120576,6840539.0837931865826249 :
+    // 1051264.8064121364150196,6840679.2711814027279615
+
+    double xc = (1051042.8513268954120576 + 1051264.8064121364150196) / 2;
+    double yc = (6840539.0837931865826249 + 6840679.2711814027279615) / 2;
+
+    double z = 138;
+
+    double longueur = 1051264.8064121364150196 - 1051042.8513268954120576;
+    double largeur = 6840679.2711814027279615 - 6840539.0837931865826249;
+
+    IDirectPositionList dpl = new DirectPositionList();
+
+    IDirectPosition dp1 = new DirectPosition(xc - longueur / 2, yc - largeur
+        / 2, z);
+    IDirectPosition dp2 = new DirectPosition(xc + longueur / 2, yc - largeur
+        / 2, z);
+    IDirectPosition dp3 = new DirectPosition(xc + longueur / 2, yc + largeur
+        / 2, z);
+    IDirectPosition dp4 = new DirectPosition(xc - longueur / 2, yc + largeur
+        / 2, z);
+
+    dpl.add(dp1);
+    dpl.add(dp2);
+    dpl.add(dp3);
+    dpl.add(dp4);
+    dpl.add(dp1);
+
+    IFeatureCollection<IFeature> fc = new FT_FeatureCollection<IFeature>();
+
+    IFeature feat = new DefaultFeature(new GM_Polygon(new GM_LineString(dpl)));
+
+    fc.add(feat);
+
+    feat.setRepresentation(new TexturedSurface(feat, TextureManager
+        .textureLoading("C:/Users/mbrasebin/Desktop/Env3D/TextParcelle.png"),
+        longueur, largeur));
+
+    mW.getInterfaceMap3D().getCurrent3DMap()
+        .addLayer(new VectorLayer(fc, "Cool"));
+
   }
 
 }

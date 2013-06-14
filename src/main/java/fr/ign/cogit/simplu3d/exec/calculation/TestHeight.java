@@ -24,8 +24,8 @@ import fr.ign.cogit.simplu3d.calculation.HauteurCalculation;
 import fr.ign.cogit.simplu3d.calculation.StoreyCalculation;
 import fr.ign.cogit.simplu3d.calculation.util.PointBasType;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
-import fr.ign.cogit.simplu3d.model.application.Batiment;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
+import fr.ign.cogit.simplu3d.model.application._AbstractBuilding;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement.Theme;
 
@@ -40,30 +40,26 @@ public class TestHeight {
     Environnement env = LoaderSHP.load(folder);
 
     int nbBat = 0;
-    for (Batiment b : env.getBuilding()) {
+    for (_AbstractBuilding b : env.getBuildings()) {
 
       int nbStoreys = StoreyCalculation.process(b);
 
       double h1 = HauteurCalculation.calculate(b,
           PointBasType.PLUS_BAS_BATIMENT,
           HauteurCalculation.POINT_HAUT_TYPE.PLUS_HAUT_EGOUT);
-      
+
       double h2 = HauteurCalculation.calculate(b,
           PointBasType.EMPRISE_PUBLIQUE,
           HauteurCalculation.POINT_HAUT_TYPE.PLANCHER_PLUS_ELEVE);
-      
-      
+
       double h3 = HauteurCalculation.calculate(b,
           PointBasType.PLUS_HAUT_TERRAIN,
           HauteurCalculation.POINT_HAUT_TYPE.PLUS_HAUT_EGOUT);
-      
-      
-      
-      
-      AttributeManager.addAttribute(b.getToit(), "NBET",  nbStoreys, "Integer");
-      AttributeManager.addAttribute(b.getToit(), "H1",  h1, "Double");
-      AttributeManager.addAttribute(b.getToit(), "H2",  h2, "Double");
-      AttributeManager.addAttribute(b.getToit(), "H3",  h3, "Double");
+
+      AttributeManager.addAttribute(b.getToit(), "NBET", nbStoreys, "Integer");
+      AttributeManager.addAttribute(b.getToit(), "H1", h1, "Double");
+      AttributeManager.addAttribute(b.getToit(), "H2", h2, "Double");
+      AttributeManager.addAttribute(b.getToit(), "H3", h3, "Double");
     }
 
     System.out.println("Nombre de bâtiments chargées : " + nbBat);
@@ -72,7 +68,6 @@ public class TestHeight {
     lTheme.add(Theme.TOIT_BATIMENT);
     lTheme.add(Theme.FACADE_BATIMENT);
 
-    lTheme.add(Theme.EMPRISE_BATIMENT);
     // lTheme.add(Theme.PIGNON);
     // lTheme.add(Theme.GOUTTIERE);
     // lTheme.add(Theme.VOIRIE);

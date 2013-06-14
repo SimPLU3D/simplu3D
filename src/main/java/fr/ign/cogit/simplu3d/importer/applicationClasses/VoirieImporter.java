@@ -40,8 +40,8 @@ public class VoirieImporter {
       String type = feat.getAttribute(ATT_TYPE).toString();
 
       Road v = new Road();
-      v.setNom(nom);
-      v.setLargeur(largeur);
+      v.setName(nom);
+      v.setWidth(largeur);
       voiries.add(v);
 
       List<String> usages = new ArrayList<String>();

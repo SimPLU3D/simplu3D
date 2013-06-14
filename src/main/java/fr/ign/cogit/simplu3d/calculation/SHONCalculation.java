@@ -9,9 +9,9 @@ import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.sig3d.equation.PlanEquation;
 import fr.ign.cogit.geoxygene.sig3d.geometry.Box3D;
 import fr.ign.cogit.sig3d.calculation.CutBuilding;
-import fr.ign.cogit.simplu3d.model.application.Batiment;
-import fr.ign.cogit.simplu3d.model.application.SubParcel;
 import fr.ign.cogit.simplu3d.model.application.RoofSurface;
+import fr.ign.cogit.simplu3d.model.application.SubParcel;
+import fr.ign.cogit.simplu3d.model.application._AbstractBuilding;
 
 public class SHONCalculation {
 
@@ -44,7 +44,7 @@ public class SHONCalculation {
 
     double aireBatie = 0;
 
-    for (Batiment b : p.getBuilding()) {
+    for (_AbstractBuilding b : p.getBuildingsParts()) {
 
       aireBatie = aireBatie + assessSimpleSHON(b);
     }
@@ -57,7 +57,7 @@ public class SHONCalculation {
 
     double aireBatie = 0;
 
-    for (Batiment b : p.getBuilding()) {
+    for (_AbstractBuilding b : p.getBuildingsParts()) {
 
       aireBatie = aireBatie + assessCUTSHON(b);
     }
@@ -66,7 +66,7 @@ public class SHONCalculation {
 
   }
 
-  public static double assessSimpleSHON(Batiment bati) {
+  public static double assessSimpleSHON(_AbstractBuilding bati) {
 
     double aireBatie = 0;
 
@@ -81,15 +81,14 @@ public class SHONCalculation {
 
     int nbEtage = bati.getStoreysAboveGround();
 
-    aireBatie = bati.getEmprise().getLod2MultiSurface().area() * nbEtage
-        * COEF_PLANCHER_PAR_ETAGE;
+    aireBatie = bati.getFootprint().area() * nbEtage * COEF_PLANCHER_PAR_ETAGE;
 
     return aireBatie;
   }
 
   public static List<IOrientableSurface> DEBUG = new ArrayList<IOrientableSurface>();
 
-  public static double assessCUTSHON(Batiment bati) {
+  public static double assessCUTSHON(_AbstractBuilding bati) {
 
     double hauteurEtage = 0;
 

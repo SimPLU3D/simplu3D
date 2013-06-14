@@ -32,7 +32,7 @@ import fr.ign.cogit.geoxygene.spatial.geomcomp.GM_CompositeCurve;
 import fr.ign.cogit.geoxygene.spatial.geomprim.GM_OrientableCurve;
 import fr.ign.cogit.sig3d.convert.geom.FromGeomToSurface;
 import fr.ign.cogit.simplu3d.model.application.Building;
-import fr.ign.cogit.simplu3d.model.application.WallSurface;
+import fr.ign.cogit.simplu3d.model.application.SpecificWallSurface;
 import fr.ign.cogit.simplu3d.model.application.Materiau;
 import fr.ign.cogit.simplu3d.model.application.RoofSurface;
 
@@ -60,7 +60,7 @@ public class RepresentationBatiment extends Default3DRep {
     this.representFaitage = representFaitage;
     this.representGouttiere = representGouttiere;
     RoofSurface t = b.getToit();
-    List<WallSurface> f = b.getFacade();
+    List<SpecificWallSurface> f = b.getFacade();
 
     // /1 on s'occupe du toit
     GeometryInfo geometryInfoToit = null;
@@ -93,7 +93,7 @@ public class RepresentationBatiment extends Default3DRep {
 
     // On s'occupe des façades
 
-    for (WallSurface facade : f) {
+    for (SpecificWallSurface facade : f) {
 
       GeometryInfo geometryInfoF = null;
       Appearance appF = null;
@@ -127,7 +127,7 @@ public class RepresentationBatiment extends Default3DRep {
     // On s'occupe de la gouttière
     if (representGouttiere) {
       Shape3D gut3D = new Shape3D(geometryWithColor(Color.blue,
-          t.getGouttiere()), AppearanceLineApp());
+          t.setGutter()), AppearanceLineApp());
 
       gut3D.setCapability(Shape3D.ALLOW_APPEARANCE_READ);
       gut3D.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
@@ -142,7 +142,7 @@ public class RepresentationBatiment extends Default3DRep {
     // On s'occupe du faitage
     if (representFaitage) {
       Shape3D gut3D = new Shape3D(
-          geometryWithColor(Color.green, t.getFaitage()), AppearanceLineApp());
+          geometryWithColor(Color.green, t.getRoofing()), AppearanceLineApp());
 
       gut3D.setCapability(Shape3D.ALLOW_APPEARANCE_READ);
       gut3D.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);

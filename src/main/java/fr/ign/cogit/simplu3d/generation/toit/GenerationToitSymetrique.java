@@ -53,7 +53,7 @@ public class GenerationToitSymetrique {
     }
 
     // On affecte les pignons
-    t.setPignons(iMC);
+    t.setGable(iMC);
 
     // Les gouttières forment le countour de la forme - le toit pignon
     IMultiCurve<IOrientableCurve> gouttiere = new GM_MultiCurve<IOrientableCurve>();
@@ -181,7 +181,7 @@ public class GenerationToitSymetrique {
           }
 
         }
-        t.setFaitage(faitage);
+        t.setRoofing(faitage);
         // System.out.println("Faitage :  " + faitage.size());
       } else {
 
@@ -189,7 +189,7 @@ public class GenerationToitSymetrique {
           faitage.add((IOrientableCurve) a.getGeometrie().clone());
         }
 
-        t.setFaitage(faitage);
+        t.setRoofing(faitage);
 
       }
 
@@ -309,7 +309,7 @@ public class GenerationToitSymetrique {
       return null;
     }
 
-    t.setGouttiere(goutOut);
+    t.setGutter(goutOut);
     t.setGeom(generatedRoof);
     t.setLod2MultiSurface(generatedRoof);
 
