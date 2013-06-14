@@ -29,7 +29,7 @@ import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 import fr.ign.cogit.simplu3d.model.application.SpecificWallSurface;
 import fr.ign.cogit.simplu3d.model.application.SubParcel;
 import fr.ign.cogit.simplu3d.model.application.UrbaZone;
-import fr.ign.cogit.simplu3d.model.application._AbstractBuilding;
+import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 
 public class RepEnvironnement {
 
@@ -183,7 +183,7 @@ public class RepEnvironnement {
       Environnement env) {
     IFeatureCollection<RoofSurface> toitOut = new FT_FeatureCollection<RoofSurface>();
 
-    for (_AbstractBuilding b : env.getBuildings()) {
+    for (AbstractBuilding b : env.getBuildings()) {
 
       RoofSurface t = b.getToit();
 
@@ -206,7 +206,7 @@ public class RepEnvironnement {
 
     IFeatureCollection<SpecificWallSurface> facadesOut = new FT_FeatureCollection<SpecificWallSurface>();
 
-    for (_AbstractBuilding b : env.getBuildings()) {
+    for (AbstractBuilding b : env.getBuildings()) {
 
       List<SpecificWallSurface> facades = b.getFacade();
 
@@ -285,7 +285,7 @@ public class RepEnvironnement {
 
     IFeatureCollection<IFeature> featOut = new FT_FeatureCollection<IFeature>();
 
-    for (_AbstractBuilding b : env.getBuildings()) {
+    for (AbstractBuilding b : env.getBuildings()) {
 
       IGeometry geom = b.getToit().getRoofing();
 
@@ -314,7 +314,7 @@ public class RepEnvironnement {
 
     IFeatureCollection<IFeature> featOut = new FT_FeatureCollection<IFeature>();
 
-    for (_AbstractBuilding b : env.getBuildings()) {
+    for (AbstractBuilding b : env.getBuildings()) {
 
       IMultiCurve<IOrientableCurve> geom = b.getToit().setGable();
 
@@ -346,7 +346,7 @@ public class RepEnvironnement {
 
     IFeatureCollection<IFeature> featOut = new FT_FeatureCollection<IFeature>();
 
-    for (_AbstractBuilding b : env.getBuildings()) {
+    for (AbstractBuilding b : env.getBuildings()) {
 
       IGeometry geom = b.getToit().setGutter();
 
@@ -391,7 +391,7 @@ public class RepEnvironnement {
 
     IFeatureCollection<IFeature> pans = new FT_FeatureCollection<IFeature>();
 
-    for (_AbstractBuilding b : env.getBuildings()) {
+    for (AbstractBuilding b : env.getBuildings()) {
 
       RoofSurface t = b.getToit();
 

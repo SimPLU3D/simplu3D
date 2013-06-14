@@ -1,6 +1,6 @@
 package fr.ign.cogit.simplu3d.model.application;
 
-public class BuildingPart extends _AbstractBuilding {
+public class BuildingPart extends AbstractBuilding {
 
   
   public SubParcel sP;

@@ -8,9 +8,9 @@ import tudresden.ocl20.pivot.modelinstance.IModelInstance;
 import tudresden.ocl20.pivot.modelinstancetype.exception.TypeNotFoundInModelException;
 import tudresden.ocl20.pivot.modelinstancetype.java.internal.modelinstance.JavaModelInstance;
 import tudresden.ocl20.pivot.standalone.facade.StandaloneFacade;
+import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.model.application.SubParcel;
-import fr.ign.cogit.simplu3d.model.application._AbstractBuilding;
 
 public class ImportModelInstance {
 
@@ -77,7 +77,7 @@ public class ImportModelInstance {
 
     // Gestion des bâtiments
 
-    for (_AbstractBuilding b : env.getBuildings()) {
+    for (AbstractBuilding b : env.getBuildings()) {
       modelInstance.addModelInstanceElement(b);
     }
 

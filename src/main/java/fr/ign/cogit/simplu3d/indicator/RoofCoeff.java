@@ -2,13 +2,13 @@ package fr.ign.cogit.simplu3d.indicator;
 
 import fr.ign.cogit.simplu3d.calculation.HauteurCalculation;
 import fr.ign.cogit.simplu3d.calculation.util.PointBasType;
-import fr.ign.cogit.simplu3d.model.application._AbstractBuilding;
+import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 
 public class RoofCoeff {
 
   private double value = 0;
 
-  public RoofCoeff(_AbstractBuilding b) {
+  public RoofCoeff(AbstractBuilding b) {
 
     double h1 = HauteurCalculation.calculate(b,
         PointBasType.PLUS_BAS_BATIMENT,

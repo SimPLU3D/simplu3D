@@ -9,13 +9,13 @@ import fr.ign.cogit.geoxygene.sig3d.geometry.Box3D;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Polygon;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.sig3d.convert.geom.FromPolygonToTriangle;
-import fr.ign.cogit.simplu3d.model.application._AbstractBuilding;
+import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 
 public class Volume {
 
   private double value;
 
-  public Volume(_AbstractBuilding _AbstractBuilding) {
+  public Volume(AbstractBuilding _AbstractBuilding) {
 
     this(FromPolygonToTriangle.convertAndTriangle(_AbstractBuilding.getToit()
         .getLod2MultiSurface().getList()));

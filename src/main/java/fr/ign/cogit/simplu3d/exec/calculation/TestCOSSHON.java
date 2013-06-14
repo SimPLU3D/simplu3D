@@ -27,7 +27,7 @@ import fr.ign.cogit.simplu3d.calculation.SHONCalculation;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.model.application.SubParcel;
-import fr.ign.cogit.simplu3d.model.application._AbstractBuilding;
+import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement.Theme;
 
@@ -60,7 +60,7 @@ public class TestCOSSHON {
       nbBat = nbBat + sp.getBuildingsParts().size();
     }
 
-    for (_AbstractBuilding b : env.getBuildings()) {
+    for (AbstractBuilding b : env.getBuildings()) {
       if (b.getSousParcelles().size() > 1) {
         featC.add(b);
         System.out.println("Batiment rattaché à plus d'une sous parcelle ?");

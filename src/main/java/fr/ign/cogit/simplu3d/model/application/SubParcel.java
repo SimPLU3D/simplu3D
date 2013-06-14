@@ -42,14 +42,13 @@ public class SubParcel extends CG_LandUse {
     return area;
   }
 
-  private IFeatureCollection<_AbstractBuilding> buildingsParts = new FT_FeatureCollection<_AbstractBuilding>();
+  public IFeatureCollection<AbstractBuilding> buildingsParts = new FT_FeatureCollection<AbstractBuilding>();
   // private IFeatureCollection<Voirie> voiries = new
   // FT_FeatureCollection<Voirie>();
-  private IFeatureCollection<SpecificCadastralBoundary> Boundary = new FT_FeatureCollection<SpecificCadastralBoundary>();
+  public IFeatureCollection<SpecificCadastralBoundary> sCBoundary = new FT_FeatureCollection<SpecificCadastralBoundary>();
 
   public SubParcel() {
     super();
-
     this.setClazz(CLASSE);
 
   }
@@ -63,7 +62,7 @@ public class SubParcel extends CG_LandUse {
 
   public IFeatureCollection<SpecificCadastralBoundary> getBorduresFond() {
     IFeatureCollection<SpecificCadastralBoundary> borduresFond = new FT_FeatureCollection<SpecificCadastralBoundary>();
-    for (SpecificCadastralBoundary b : this.Boundary) {
+    for (SpecificCadastralBoundary b : this.sCBoundary) {
       if (b.getType() == SpecificCadastralBoundary.BOT) {
         borduresFond.add(b);
       }
@@ -74,7 +73,7 @@ public class SubParcel extends CG_LandUse {
 
   public IFeatureCollection<SpecificCadastralBoundary> getBorduresLat() {
     IFeatureCollection<SpecificCadastralBoundary> borduresLat = new FT_FeatureCollection<SpecificCadastralBoundary>();
-    for (SpecificCadastralBoundary b : this.Boundary) {
+    for (SpecificCadastralBoundary b : this.sCBoundary) {
       if (b.getType() == SpecificCadastralBoundary.LAT) {
         borduresLat.add(b);
       }
@@ -101,11 +100,11 @@ public class SubParcel extends CG_LandUse {
     return parcelle;
   }
 
-  public IFeatureCollection<_AbstractBuilding> getBuildingsParts() {
+  public IFeatureCollection<AbstractBuilding> getBuildingsParts() {
     return buildingsParts;
   }
 
-  public void setBuildingsParts(IFeatureCollection<_AbstractBuilding> buildingsParts) {
+  public void setBuildingsParts(IFeatureCollection<AbstractBuilding> buildingsParts) {
     this.buildingsParts = buildingsParts;
   }
 

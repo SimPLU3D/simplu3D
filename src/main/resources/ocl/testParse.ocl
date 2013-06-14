@@ -1,0 +1,25 @@
+package  fr::ign::cogit::simplu3d::model::application
+
+context Building
+inv: HauteurCalculation::calculateZBas(self,1) < 10.0
+
+
+context Building
+inv: self.destination <> 'Industrie'
+
+context AbstractBuilding 
+inv: self.destination='Habitation' implies GeomUtil::height(self,'BPp','HPr') <= 10
+
+
+context SubParcel
+inv: self.buildingsParts.footprint.area()->sum() < 2
+
+context Building
+inv: Sequence{'bureau','habitation','commerce','artisanat'}->includes(self.destination)
+
+context CadastralParcel
+inv: self.specificCB->select(type='BOT').geom->forAll(g | self.subParcels.buildingsParts.footprint.distance(g)->max() <3)
+
+
+
+endpackage

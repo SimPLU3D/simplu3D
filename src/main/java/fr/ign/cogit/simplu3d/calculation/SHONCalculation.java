@@ -11,7 +11,7 @@ import fr.ign.cogit.geoxygene.sig3d.geometry.Box3D;
 import fr.ign.cogit.sig3d.calculation.CutBuilding;
 import fr.ign.cogit.simplu3d.model.application.RoofSurface;
 import fr.ign.cogit.simplu3d.model.application.SubParcel;
-import fr.ign.cogit.simplu3d.model.application._AbstractBuilding;
+import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 
 public class SHONCalculation {
 
@@ -44,7 +44,7 @@ public class SHONCalculation {
 
     double aireBatie = 0;
 
-    for (_AbstractBuilding b : p.getBuildingsParts()) {
+    for (AbstractBuilding b : p.getBuildingsParts()) {
 
       aireBatie = aireBatie + assessSimpleSHON(b);
     }
@@ -57,7 +57,7 @@ public class SHONCalculation {
 
     double aireBatie = 0;
 
-    for (_AbstractBuilding b : p.getBuildingsParts()) {
+    for (AbstractBuilding b : p.getBuildingsParts()) {
 
       aireBatie = aireBatie + assessCUTSHON(b);
     }
@@ -66,7 +66,7 @@ public class SHONCalculation {
 
   }
 
-  public static double assessSimpleSHON(_AbstractBuilding bati) {
+  public static double assessSimpleSHON(AbstractBuilding bati) {
 
     double aireBatie = 0;
 
@@ -88,7 +88,7 @@ public class SHONCalculation {
 
   public static List<IOrientableSurface> DEBUG = new ArrayList<IOrientableSurface>();
 
-  public static double assessCUTSHON(_AbstractBuilding bati) {
+  public static double assessCUTSHON(AbstractBuilding bati) {
 
     double hauteurEtage = 0;
 

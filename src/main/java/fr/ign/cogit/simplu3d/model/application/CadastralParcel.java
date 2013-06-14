@@ -13,8 +13,8 @@ public class CadastralParcel extends CG_LandUse {
 
   public final String CLASSE = "Parcelle";
   
-  private IFeatureCollection<SubParcel> sousParcelles = new FT_FeatureCollection<SubParcel>();
-  private IFeatureCollection<SpecificCadastralBoundary> specificCB = new FT_FeatureCollection<SpecificCadastralBoundary>();
+  public IFeatureCollection<SubParcel> subParcels = new FT_FeatureCollection<SubParcel>();
+  public IFeatureCollection<SpecificCadastralBoundary> specificCB = new FT_FeatureCollection<SpecificCadastralBoundary>();
   
   
   public BasicPropertyUnit bPU;
@@ -68,11 +68,11 @@ public class CadastralParcel extends CG_LandUse {
   
   
   public IFeatureCollection<SubParcel> getSubParcel() {
-    return sousParcelles;
+    return subParcels;
   }
 
   public void setSubParcel(IFeatureCollection<SubParcel> sousParcelles) {
-    this.sousParcelles = sousParcelles;
+    this.subParcels = sousParcelles;
   }
 
   

@@ -10,7 +10,7 @@ import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.sig3d.model.citygml.building.CG_AbstractBuilding;
 import fr.ign.cogit.simplu3d.calculation.StoreyCalculation;
 
-public class _AbstractBuilding extends CG_AbstractBuilding{
+public class AbstractBuilding extends CG_AbstractBuilding{
   
   
   
@@ -18,6 +18,8 @@ public class _AbstractBuilding extends CG_AbstractBuilding{
   private RoofSurface roofSurface;
   private List<SpecificWallSurface> wallSurface;
 
+  
+  public  IOrientableSurface fotprint;
   
   private List<SubParcel> sousParcelles = new ArrayList<SubParcel>();
   private BasicPropertyUnit bPU;

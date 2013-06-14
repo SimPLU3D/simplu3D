@@ -2,7 +2,7 @@ package fr.ign.cogit.simplu3d.indicator;
 
 import fr.ign.cogit.simplu3d.calculation.HauteurCalculation;
 import fr.ign.cogit.simplu3d.calculation.util.PointBasType;
-import fr.ign.cogit.simplu3d.model.application._AbstractBuilding;
+import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 
 
 
@@ -10,7 +10,7 @@ public class ShapeFactor2  {
 
   private double value;
 
-  public ShapeFactor2(_AbstractBuilding b) {
+  public ShapeFactor2(AbstractBuilding b) {
     
     
 

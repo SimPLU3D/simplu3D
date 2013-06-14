@@ -15,7 +15,7 @@ public class Environnement extends CG_CityModel {
 
   public IFeatureCollection<CadastralParcel> cadastralParcels = new FT_FeatureCollection<CadastralParcel>();
   public IFeatureCollection<SubParcel> subParcels = new FT_FeatureCollection<SubParcel>();
-  public IFeatureCollection<_AbstractBuilding> buildings = new FT_FeatureCollection<_AbstractBuilding>();
+  public IFeatureCollection<AbstractBuilding> buildings = new FT_FeatureCollection<AbstractBuilding>();
   public IFeatureCollection<UrbaZone> urbaZones = new FT_FeatureCollection<UrbaZone>();
   public IFeatureCollection<Alignement> alignements = new FT_FeatureCollection<Alignement>();
   public MNTAire terrain;
@@ -57,11 +57,11 @@ public class Environnement extends CG_CityModel {
     this.subParcels = subParcels;
   }
 
-  public IFeatureCollection<_AbstractBuilding> getBuildings() {
+  public IFeatureCollection<AbstractBuilding> getBuildings() {
     return buildings;
   }
 
-  public void setBuildings(IFeatureCollection<_AbstractBuilding> buildings) {
+  public void setBuildings(IFeatureCollection<AbstractBuilding> buildings) {
     this.buildings = buildings;
   }
 

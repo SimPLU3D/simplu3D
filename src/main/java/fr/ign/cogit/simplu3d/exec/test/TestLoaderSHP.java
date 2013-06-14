@@ -12,7 +12,7 @@ import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 import fr.ign.cogit.simplu3d.model.application.SubParcel;
-import fr.ign.cogit.simplu3d.model.application._AbstractBuilding;
+import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 
 /**
  * 
@@ -71,14 +71,14 @@ public class TestLoaderSHP {
     IFeatureCollection<IFeature> featToits = new FT_FeatureCollection<IFeature>();
 
     System.out.println("NB emprise " + env.getBuildings().size());
-    for (_AbstractBuilding b : env.getBuildings()) {
+    for (AbstractBuilding b : env.getBuildings()) {
       featToits.add(new DefaultFeature(b.getFootprint()));
     }
 
     ShapefileWriter.write(featToits, folderOut + "emprise.shp");
 
     IFeatureCollection<IFeature> featFaitage = new FT_FeatureCollection<IFeature>();
-    for (_AbstractBuilding b : env.getBuildings()) {
+    for (AbstractBuilding b : env.getBuildings()) {
       featFaitage.add(new DefaultFeature(b.getToit().getRoofing()));
     }
 

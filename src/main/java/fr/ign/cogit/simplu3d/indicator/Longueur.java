@@ -4,13 +4,13 @@ import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.sig3d.calculation.OrientedBoundingBox;
-import fr.ign.cogit.simplu3d.model.application._AbstractBuilding;
+import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 
 public class Longueur {
 
   private double value;
 
-  public Longueur(_AbstractBuilding b) {
+  public Longueur(AbstractBuilding b) {
 
     this(b.getGeom());
 

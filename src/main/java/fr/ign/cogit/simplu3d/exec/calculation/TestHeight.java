@@ -25,7 +25,7 @@ import fr.ign.cogit.simplu3d.calculation.StoreyCalculation;
 import fr.ign.cogit.simplu3d.calculation.util.PointBasType;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
-import fr.ign.cogit.simplu3d.model.application._AbstractBuilding;
+import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement.Theme;
 
@@ -40,7 +40,7 @@ public class TestHeight {
     Environnement env = LoaderSHP.load(folder);
 
     int nbBat = 0;
-    for (_AbstractBuilding b : env.getBuildings()) {
+    for (AbstractBuilding b : env.getBuildings()) {
 
       int nbStoreys = StoreyCalculation.process(b);
 
