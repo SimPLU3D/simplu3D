@@ -18,7 +18,5 @@ public class Rule {
     this.constraint = constraint;
     this.text = text;
   }
-  
-    
 
 }

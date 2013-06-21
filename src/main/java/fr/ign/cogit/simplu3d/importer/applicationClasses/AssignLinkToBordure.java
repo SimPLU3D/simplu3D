@@ -14,17 +14,17 @@ import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 
 public class AssignLinkToBordure {
 
-  public static void process(IFeatureCollection<CadastralParcel> sousParcelles,
+  public static void process(IFeatureCollection<CadastralParcel> cadastralParcels,
       IFeatureCollection<Road> voiries) {
 
-    if (!sousParcelles.hasSpatialIndex()) {
-      sousParcelles.initSpatialIndex(Tiling.class, false);
+    if (!cadastralParcels.hasSpatialIndex()) {
+      cadastralParcels.initSpatialIndex(Tiling.class, false);
     }
     if (!voiries.hasSpatialIndex()) {
       voiries.initSpatialIndex(Tiling.class, false);
     }
 
-    for (CadastralParcel sP : sousParcelles) {
+    for (CadastralParcel sP : cadastralParcels) {
 
       IFeatureCollection<SpecificCadastralBoundary> bordures = sP
           .getSpecificCadastralBoundary();
@@ -39,7 +39,7 @@ public class AssignLinkToBordure {
         }
 
         // Sinon c'est un lien avec une autre sous Parceller
-        CadastralParcel sPOut = retrieveSousParcelle(b, sP, sousParcelles);
+        CadastralParcel sPOut = retrieveSousParcelle(b, sP, cadastralParcels);
         if (sP == null) {
 
           System.out.println("La sousParcelle est nulle Oo");

@@ -12,7 +12,7 @@ inv: self.destination='Habitation' implies GeomUtil::height(self,'BPp','HPr') <=
 
 
 context SubParcel
-inv: self.buildingsParts.footprint.area()->sum() < 2
+inv: self.buildingsParts.footprint.area()->sum() < 1000
 
 context Building
 inv: Sequence{'bureau','habitation','commerce','artisanat'}->includes(self.destination)

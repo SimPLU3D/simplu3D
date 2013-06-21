@@ -9,14 +9,16 @@ import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
+import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.sig3d.calculation.Util;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.geoxygene.util.index.Tiling;
 import fr.ign.cogit.sig3d.convert.geom.FromGeomToSurface;
+import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Building;
+import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.RoofSurface;
-import fr.ign.cogit.simplu3d.model.application.SubParcel;
 import fr.ign.cogit.simplu3d.model.application.SpecificWallSurface;
 
 public class BuildingImporter {
@@ -24,11 +26,11 @@ public class BuildingImporter {
   /**
    * Aire minimale pour considérée un polygone comme attaché à une parcelle
    */
-  public final static double RATIO_MIN = 0.1;
+  public final static double RATIO_MIN = 0.8;
 
   public static IFeatureCollection<Building> importBuilding(
       IFeatureCollection<IFeature> featBati,
-      IFeatureCollection<SubParcel> sousParcelles) {
+      IFeatureCollection<BasicPropertyUnit> collBPU) {
 
     IFeatureCollection<Building> batiments = new FT_FeatureCollection<Building>();
 
@@ -38,7 +40,8 @@ public class BuildingImporter {
       Building b = new Building();
       batiments.add(b);
       b.setGeom(batiFeat.getGeom());
-      b.setLod2MultiSurface((IMultiSurface<IOrientableSurface>) batiFeat.getGeom());
+      b.setLod2MultiSurface((IMultiSurface<IOrientableSurface>) batiFeat
+          .getGeom());
 
       // Etape 1 : détection du toit et des façades
       List<IOrientableSurface> lOS = FromGeomToSurface.convertGeom(batiFeat
@@ -52,66 +55,73 @@ public class BuildingImporter {
       SpecificWallSurface f = new SpecificWallSurface();
       f.setGeom(surfaceWall);
       f.setLod2MultiSurface(surfaceWall);
-      
+
       List<SpecificWallSurface> lF = new ArrayList<SpecificWallSurface>();
       lF.add(f);
       b.setFacade(lF);
-      
-      
+
       // Etape 2 : on créé l'emprise du bâtiment
       IPolygon poly = EmpriseGenerator.convert(surfaceRoof);
       b.setFootprint(new GM_MultiSurface<IOrientableSurface>());
-      
+
       b.getFootprint().add(poly);
-      
-      
 
       IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<IOrientableSurface>();
       iMS.add(poly);
 
-      
-      
       // Création toit
       RoofSurface t = RoofImporter.create(surfaceRoof, (IPolygon) poly.clone());
-     
 
       // Affectation
       b.setToit(t);
 
-      
-
       // Etape3 : on associe le bâtiment à la sous parcelles
-      if (!sousParcelles.hasSpatialIndex()) {
+      IFeatureCollection<IFeature> featTemp = new FT_FeatureCollection<IFeature>();
 
-        sousParcelles.initSpatialIndex(Tiling.class, false);
+      for (BasicPropertyUnit bPU : collBPU) {
+
+        IMultiSurface<IOrientableSurface> iMSTemp = new GM_MultiSurface<>();
+
+        for (CadastralParcel bP : bPU.getCadastralParcel()) {
+          iMSTemp.addAll(FromGeomToSurface.convertGeom(bP.getGeom()));
+
+        }
+        featTemp.add(new DefaultFeature(iMSTemp));
+      }
+
+      if (!featTemp.hasSpatialIndex()) {
+
+        featTemp.initSpatialIndex(Tiling.class, false);
 
       }
 
-      Iterator<SubParcel> itSP = sousParcelles.select(poly).iterator();
-      
+      Iterator<IFeature> itSP = featTemp.select(poly).iterator();
+
       double aireEmprise = poly.area();
+
+      boolean isAttached = false;
 
       while (itSP.hasNext()) {
 
-        SubParcel sp = itSP.next();
+        IFeature sp = itSP.next();
 
         double area = (poly.intersection(sp.getGeom())).area();
-        
-        
-        if(area/aireEmprise>RATIO_MIN){
-          
-          
-          //On crée les association Batiments <=> Parcelle
-          
-          sp.getBuildingsParts().add(b);
-          b.getSousParcelles().add(sp);
-          
-          
+
+        if (area / aireEmprise > RATIO_MIN) {
+
+          int index = featTemp.getElements().indexOf(sp);
+          collBPU.get(index).getBuildings().add(b);
+          isAttached = true;
+
+          break;
+
         }
 
       }
-      
 
+      if (!isAttached) {
+        System.out.println("Bâtiment hors unité foncière");
+      }
 
     }
 

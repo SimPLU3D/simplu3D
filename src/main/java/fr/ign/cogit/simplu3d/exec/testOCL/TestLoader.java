@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.test;
+package fr.ign.cogit.simplu3d.exec.testOCL;
 
 import java.io.File;
 import java.util.LinkedList;

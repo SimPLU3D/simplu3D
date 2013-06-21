@@ -7,17 +7,19 @@ import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
-import fr.ign.cogit.simplu3d.model.application.Alignement;
+import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
+import fr.ign.cogit.simplu3d.model.application.PLU;
+import fr.ign.cogit.simplu3d.model.application.Road;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 import fr.ign.cogit.simplu3d.model.application.SubParcel;
-import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
+import fr.ign.cogit.simplu3d.model.application.UrbaZone;
 
 /**
  * 
  * @author MBrasebin
- *
+ * 
  */
 public class TestLoaderSHP {
 
@@ -27,38 +29,71 @@ public class TestLoaderSHP {
 
     Environnement env = LoaderSHP.load(folder);
 
+    PLU plu = env.getPlu();
+
+    System.out.println("Nombre de zones dans le PLU : "
+        + plu.getlUrbaZone().size());
+
+    // Test 2 : la zone UB16 a elles des règles
+    for (UrbaZone z : plu.getlUrbaZone()) {
+      if (z.getName().equalsIgnoreCase("UB16")) {
+        System.out.println("Nombre de règles dans UB16 : "
+            + z.getRules().size());
+      }
+
+    }
+
     IFeatureCollection<SpecificCadastralBoundary> bordures = new FT_FeatureCollection<SpecificCadastralBoundary>();
 
     for (CadastralParcel sp : env.getParcelles()) {
 
       AttributeManager.addAttribute(sp, "ID", sp.getId(), "Integer");
 
-      bordures.addAll(sp.getSpecificCadastralBoundary());
+      for (SpecificCadastralBoundary b : sp.getSpecificCadastralBoundary()) {
+        bordures.add(b);
 
-    }
+        AttributeManager.addAttribute(b, "ID", b.getId(), "Integer");
+        AttributeManager.addAttribute(b, "Type", b.getType(), "Integer");
+        AttributeManager.addAttribute(b, "IDPar", sp.getId(), "Integer");
 
-    IFeatureCollection<Alignement> featAL = new FT_FeatureCollection<Alignement>();
+        if (b.getFeatAdj() != null) {
+          
+          if(b.getFeatAdj() instanceof CadastralParcel){
+            
+            AttributeManager.addAttribute(b, "Adj",
+                ((CadastralParcel) b.getFeatAdj()).getId(), "Integer");
+          }else if(b.getFeatAdj() instanceof Road){
+            AttributeManager.addAttribute(b, "Adj",
+                ((Road) b.getFeatAdj()).getId(), "Integer");
+          }
 
-    for (SpecificCadastralBoundary b : bordures) {
-      AttributeManager.addAttribute(b, "ID", b.getId(), "Integer");
-      AttributeManager.addAttribute(b, "Type", b.getType(), "Integer");
 
-    }
+        } else {
+          AttributeManager.addAttribute(b, "Adj", 0, "Integer");
 
-    for (Alignement a : env.getAlignements()) {
+        }
 
-      if (a != null) {
-        featAL.add(a);
-
-        AttributeManager.addAttribute(a, "ID", a.getId(), "Integer");
       }
+
     }
+
+    // Export des parcelles
 
     ShapefileWriter.write(env.getParcelles(), folderOut + "parcelles.shp");
     ShapefileWriter.write(bordures, folderOut + "bordures.shp");
 
-    System.out.println("Nombre d'alignements concernés" + featAL.size());
-    ShapefileWriter.write(featAL, folderOut + "alignements.shp");
+    /*
+     * IFeatureCollection<Alignement> featAL = new
+     * FT_FeatureCollection<Alignement>();
+     * 
+     * 
+     * 
+     * for (Alignement a : env.getAlignements()) {
+     * 
+     * if (a != null) { featAL.add(a);
+     * 
+     * AttributeManager.addAttribute(a, "ID", a.getId(), "Integer"); }
+     */
 
     System.out.println("Sous Parcelles  " + env.getSubParcels().size());
 
@@ -82,12 +117,21 @@ public class TestLoaderSHP {
       featFaitage.add(new DefaultFeature(b.getToit().getRoofing()));
     }
 
-    System.out.println("Chat qui râle");
-
     System.out.println("Faitage : " + featFaitage.size());
 
     ShapefileWriter.write(featFaitage, folderOut + "pignon.shp");
 
+    System.out.println("Chat qui râle");
+
   }
+
+  /*
+   * 
+   * 
+   * 
+   * 
+   * System.out.println("Nombre d'alignements concernés" + featAL.size());
+   * ShapefileWriter.write(featAL, folderOut + "alignements.shp");
+   */
 
 }

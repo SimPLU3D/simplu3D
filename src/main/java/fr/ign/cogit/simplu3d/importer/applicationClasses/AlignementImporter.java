@@ -17,7 +17,6 @@ import fr.ign.cogit.simplu3d.model.application.Alignement;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.Recoil;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.model.application.SubParcel;
 
 public class AlignementImporter {
 
@@ -88,25 +87,22 @@ public class AlignementImporter {
         for (IOrientableCurve c : lIOC) {
 
           Alignement a;
- 
 
           Integer type = Integer.parseInt(featTemp.getAttribute(ATT_TYPE)
               .toString());
 
           if (type == 11) {
 
-            Recoil  b = new Recoil( (int) type, (ICurve) c);
-  
-            
+            Recoil b = new Recoil((int) type, (ICurve) c);
 
             Double param = Double.parseDouble(featTemp.getAttribute(ATT_Param)
                 .toString());
 
             b.setDistance(param);
-            a=b;
-          }else{
+            a = b;
+          } else {
             a = new Alignement(type, (ICurve) c);
-            
+
           }
 
           lAlignementTemp.add(a);
@@ -117,7 +113,8 @@ public class AlignementImporter {
 
       // On a 1 feature par segment d'alignement
 
-      IFeatureCollection<SpecificCadastralBoundary> iFCVoie = sP.getSpecificCadastralBoundary();
+      IFeatureCollection<SpecificCadastralBoundary> iFCVoie = sP
+          .getSpecificCadastralBoundary();
 
       for (Alignement a : lAlignementTemp) {
         SpecificCadastralBoundary b = determineBestBordure(iFCVoie, a);
@@ -135,15 +132,7 @@ public class AlignementImporter {
 
   private static SpecificCadastralBoundary determineBestBordure(
       IFeatureCollection<SpecificCadastralBoundary> bordures, Alignement a) {
-    System.out.println("Alignement " + a.getId());
-
-    for (SpecificCadastralBoundary b : bordures) {
-
-      if (b.getId() > 165) {
-        System.out.println("STOP");
-      }
-
-    }
+  //  System.out.println("Alignement " + a.getId());
 
     double scoreMax = -1;
     SpecificCadastralBoundary bCand = null;
@@ -166,9 +155,9 @@ public class AlignementImporter {
 
       List<IOrientableCurve> lIOC = ConvertToLineString.convert(b.getGeom());
 
-      if (lIOC.size() != 1) {
-        System.out.println("Alignement : différent de 1 ???");
-      }
+//      if (lIOC.size() != 1) {
+//        System.out.println("Alignement : différent de 1 ???");
+//      }
 
       Vecteur v1 = new Vecteur(lIOC.get(0).coord().get(0), lIOC.get(0).coord()
           .get(1));
@@ -192,13 +181,13 @@ public class AlignementImporter {
         scoreDist = Math.abs(1 - Math.abs(distance - rec) / rec);
       }
 
-      if (Math.abs(scal) > 0.8) {
+    /*  if (Math.abs(scal) > 0.8) {
 
         if (scoreDist > 0.7) {
-          System.out.println("ID " + b.getId());
+   //       System.out.println("ID " + b.getId());
         }
 
-      }
+      }*/
 
       double scoreTemp = scoreDist * scal;
 
@@ -211,7 +200,7 @@ public class AlignementImporter {
 
     }
 
-    System.out.println(scoreMax);
+    // System.out.println(scoreMax);
     AttributeManager.addAttribute(a, "ID_B", bCand.getId(), "Integer");
     AttributeManager.addAttribute(a, "score", scoreMax, "Double");
     return bCand;

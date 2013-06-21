@@ -60,7 +60,14 @@ public class AssignZ {
 
     for (UrbaZone z : zones) {
 
-      IGeometry geom = dtm.mapGeom(z.getGeom(), 0, true, sursampled);
+      IGeometry geom = z.getGeom();
+      
+      if(geom == null){
+        continue;
+      }
+      
+      
+       geom = dtm.mapGeom(geom, 0, true, sursampled);
       z.setGeom(geom);
 
     }

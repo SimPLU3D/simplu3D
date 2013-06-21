@@ -1,10 +1,12 @@
 package fr.ign.cogit.simplu3d.model.application;
 
+import tudresden.ocl20.pivot.model.IModel;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.sig3d.model.citygml.core.CG_CityModel;
 import fr.ign.cogit.sig3d.semantic.MNTAire;
+import fr.ign.cogit.simplu3d.importer.model.ImportModelInstance;
 
 /**
  * 
@@ -13,13 +15,34 @@ import fr.ign.cogit.sig3d.semantic.MNTAire;
  */
 public class Environnement extends CG_CityModel {
 
+  
+  
+  
+  
+  public PLU plu;
+  
+  
+  //On charge le modèle
+  public static IModel model = ImportModelInstance
+      .getModel("target/classes/fr/ign/cogit/simplu3d/importer/model/ModelProviderClass.class");
+
+  
+  
+  
+
+
   public IFeatureCollection<CadastralParcel> cadastralParcels = new FT_FeatureCollection<CadastralParcel>();
   public IFeatureCollection<SubParcel> subParcels = new FT_FeatureCollection<SubParcel>();
   public IFeatureCollection<AbstractBuilding> buildings = new FT_FeatureCollection<AbstractBuilding>();
   public IFeatureCollection<UrbaZone> urbaZones = new FT_FeatureCollection<UrbaZone>();
   public IFeatureCollection<Alignement> alignements = new FT_FeatureCollection<Alignement>();
+  public IFeatureCollection<BasicPropertyUnit> bpU = new FT_FeatureCollection<BasicPropertyUnit>();
+  
+  
+
+
   public MNTAire terrain;
-  public IFeatureCollection<Road> voiries = new FT_FeatureCollection<Road>();
+  public IFeatureCollection<Road> roads = new FT_FeatureCollection<Road>();
 
   public static double DEFAULT_ZERO_Z = 139; // 41; //138
 
@@ -122,11 +145,27 @@ public class Environnement extends CG_CityModel {
   }
 
   public IFeatureCollection<Road> getRoads() {
-    return voiries;
+    return roads;
   }
 
   public void setRoads(IFeatureCollection<Road> roads) {
-    this.voiries = voiries;
+    this.roads = roads;
+  }
+  
+  public IFeatureCollection<BasicPropertyUnit> getBpU() {
+    return bpU;
+  }
+
+  public void setBpU(IFeatureCollection<BasicPropertyUnit> bpU) {
+    this.bpU = bpU;
+  }
+  
+  public PLU getPlu() {
+    return plu;
+  }
+
+  public void setPlu(PLU plu) {
+    this.plu = plu;
   }
 
 }

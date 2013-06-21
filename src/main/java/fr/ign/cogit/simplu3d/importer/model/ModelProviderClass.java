@@ -33,5 +33,5 @@ public class ModelProviderClass {
   protected AbstractBuilding  ab;
   protected SubParcel sP;
   protected SpecificCadastralBoundary cB;
-protected IGeometry gm;
+  protected IGeometry gm;
 }

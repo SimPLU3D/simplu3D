@@ -20,14 +20,14 @@ import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.sig3d.convert.geom.FromGeomToSurface;
 import fr.ign.cogit.simplu3d.model.application.Road;
 
-public class VoirieImporter {
+public class RoadImporter {
 
   public final static String ATT_NOM_RUE = "nom_rue_g";
   public final static String ATT_LARGEUR = "largeur";
   public final static String ATT_TYPE = "nature";
 
   @SuppressWarnings("unchecked")
-  public static IFeatureCollection<Road> importVoirie(
+  public static IFeatureCollection<Road> importRoad(
       IFeatureCollection<IFeature> voirieColl) {
 
     IFeatureCollection<Road> voiries = new FT_FeatureCollection<Road>();

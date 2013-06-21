@@ -10,7 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
-import fr.ign.cogit.simplu3d.generation.BatimentProcedural;
+import fr.ign.cogit.simplu3d.generation.ParametricBuilding;
 import fr.ign.cogit.simplu3d.generation.TopologieBatiment;
 import fr.ign.cogit.simplu3d.generation.TopologieBatiment.FormeEmpriseEnum;
 import fr.ign.cogit.simplu3d.generation.TopologieBatiment.FormeToitEnum;
@@ -196,11 +196,11 @@ public class ButtonActionPanel extends JPanel implements ActionListener {
     Object source = e.getSource();
 
     IFeatureCollection<IFeature> featColl = iMap3D.getSelection();
-    List<BatimentProcedural> bPList = new ArrayList<BatimentProcedural>();
+    List<ParametricBuilding> bPList = new ArrayList<ParametricBuilding>();
 
     for (IFeature feat : featColl) {
-      if (feat instanceof BatimentProcedural) {
-        bPList.add((BatimentProcedural) feat);
+      if (feat instanceof ParametricBuilding) {
+        bPList.add((ParametricBuilding) feat);
 
       }
 
@@ -211,7 +211,7 @@ public class ButtonActionPanel extends JPanel implements ActionListener {
       return;
     }
 
-    for (BatimentProcedural bP : bPList) {
+    for (ParametricBuilding bP : bPList) {
 
       if (source == moveNorth) {
 

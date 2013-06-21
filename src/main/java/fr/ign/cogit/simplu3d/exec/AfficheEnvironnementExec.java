@@ -19,6 +19,7 @@ import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_LineString;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Polygon;
+import fr.ign.cogit.simplu3d.gui.button.GTRUToolBar;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement;
@@ -37,14 +38,14 @@ public class AfficheEnvironnementExec {
     List<Theme> lTheme = new ArrayList<RepEnvironnement.Theme>();
     lTheme.add(Theme.TOIT_BATIMENT);
     lTheme.add(Theme.FACADE_BATIMENT);
-    lTheme.add(Theme.FAITAGE);
-    lTheme.add(Theme.PIGNON);
-    lTheme.add(Theme.GOUTTIERE);
-    lTheme.add(Theme.VOIRIE);
+    // lTheme.add(Theme.FAITAGE);
+    // lTheme.add(Theme.PIGNON);
+    // lTheme.add(Theme.GOUTTIERE);
+    // lTheme.add(Theme.VOIRIE);
     // lTheme.add(Theme.PARCELLE);
-    lTheme.add(Theme.SOUS_PARCELLE);
+    // lTheme.add(Theme.SOUS_PARCELLE);
     // lTheme.add(Theme.ZONE);
-    lTheme.add(Theme.PAN);
+    // lTheme.add(Theme.PAN);
 
     Theme[] tab = lTheme.toArray(new Theme[0]);
 
@@ -62,6 +63,10 @@ public class AfficheEnvironnementExec {
     mW.getInterfaceMap3D().moveLight(180, -15, 120, 0);
     mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
     mW.getInterfaceMap3D().moveLight(-140, 3, 120, 1);
+    
+    
+    
+    mW.getMainMenuBar().add(new GTRUToolBar(mW));
 
     // 1051042.8513268954120576,6840539.0837931865826249 :
     // 1051264.8064121364150196,6840679.2711814027279615
@@ -69,7 +74,7 @@ public class AfficheEnvironnementExec {
     double xc = (1051042.8513268954120576 + 1051264.8064121364150196) / 2;
     double yc = (6840539.0837931865826249 + 6840679.2711814027279615) / 2;
 
-    double z = 138;
+    double z = 140;
 
     double longueur = 1051264.8064121364150196 - 1051042.8513268954120576;
     double largeur = 6840679.2711814027279615 - 6840539.0837931865826249;
@@ -98,8 +103,7 @@ public class AfficheEnvironnementExec {
     fc.add(feat);
 
     feat.setRepresentation(new TexturedSurface(feat, TextureManager
-        .textureLoading("C:/Users/mbrasebin/Desktop/Env3D/TextParcelle.png"),
-        longueur, largeur));
+        .textureLoading(folder + "Env3D_86.png"), longueur, largeur));
 
     mW.getInterfaceMap3D().getCurrent3DMap()
         .addLayer(new VectorLayer(fc, "Cool"));

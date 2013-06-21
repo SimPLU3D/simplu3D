@@ -36,6 +36,11 @@ public class TestOCLValidity {
     // Fichier contenant les contraintes OCL à appliquer
     File oclConstraints = new File("src/main/resources/ocl/testParse.ocl");
 
+    
+    
+    
+    
+    
     try {
 
       System.out.println("*******************************************");

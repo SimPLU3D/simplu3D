@@ -2,24 +2,27 @@ package fr.ign.cogit.simplu3d.io.load.application;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
-import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.sig3d.util.ColorShade;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
-import fr.ign.cogit.sig3d.convert.geom.FromGeomToSurface;
 import fr.ign.cogit.sig3d.semantic.MNTAire;
 import fr.ign.cogit.simplu3d.importer.applicationClasses.AlignementImporter;
 import fr.ign.cogit.simplu3d.importer.applicationClasses.AssignLinkToBordure;
-import fr.ign.cogit.simplu3d.importer.applicationClasses.BordureImporter;
+import fr.ign.cogit.simplu3d.importer.applicationClasses.BasicPropertyUnitImporter;
 import fr.ign.cogit.simplu3d.importer.applicationClasses.BuildingImporter;
-import fr.ign.cogit.simplu3d.importer.applicationClasses.SousParcelleImporter;
-import fr.ign.cogit.simplu3d.importer.applicationClasses.VoirieImporter;
+import fr.ign.cogit.simplu3d.importer.applicationClasses.CadastralParcelLoader;
+import fr.ign.cogit.simplu3d.importer.applicationClasses.RoadImporter;
+import fr.ign.cogit.simplu3d.importer.applicationClasses.RulesImporter;
+import fr.ign.cogit.simplu3d.importer.applicationClasses.SubParcelImporter;
+import fr.ign.cogit.simplu3d.importer.applicationClasses.ZonesImporter;
 import fr.ign.cogit.simplu3d.model.application.Alignement;
+import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Building;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
+import fr.ign.cogit.simplu3d.model.application.PLU;
+import fr.ign.cogit.simplu3d.model.application.Road;
 import fr.ign.cogit.simplu3d.model.application.SubParcel;
 import fr.ign.cogit.simplu3d.model.application.UrbaZone;
-import fr.ign.cogit.simplu3d.model.application.Road;
 import fr.ign.cogit.simplu3d.util.AssignZ;
 
 public class LoaderSHP {
@@ -39,7 +42,6 @@ public class LoaderSHP {
   /*
    * Attributs du fichier zone
    */
-  public final static String NOM_ATT_TYPE_ZONE = "TYPEZONE";
 
   public static Environnement load(String folder)
       throws CloneNotSupportedException {
@@ -55,6 +57,8 @@ public class LoaderSHP {
         + NOM_FICHIER_VOIRIE);
     IFeatureCollection<IFeature> batiColl = ShapefileReader.read(folder
         + NOM_FICHIER_BATIMENTS);
+    IFeatureCollection<IFeature> prescriptions = ShapefileReader.read(folder
+        + NOM_FICHIER_PRESC_LINEAIRE);
 
     // Etape 0 : doit on translater tous les objets ?
 
@@ -90,72 +94,78 @@ public class LoaderSHP {
 
       }
 
+      for (IFeature feat : prescriptions) {
+        feat.setGeom(feat.getGeom().translate(
+            -Environnement.dpTranslate.getX(),
+            -Environnement.dpTranslate.getY(), 0));
+
+      }
     }
 
-    // Etape 1 : chargement des parcelles et créations des bordures
-    // IFeatureCollection<Parcelle> parcelles = BordureImporter
-    // .assignBordureToParcelle(parcelleColl);
-    IFeatureCollection<CadastralParcel> parcelles = BordureImporter
-        .assignBordureToParcelleWithOrientation(parcelleColl, 1.5);
+    // Etape 1 : création de l'objet PLU
+    PLU plu = new PLU();
+    env.setPlu(plu);
 
-    env.setParcelles(parcelles);
+    // Etape 2 : création des zones et assignation des règles aux zones
+    IFeatureCollection<UrbaZone> zones = ZonesImporter.importUrbaZone(zoneColl);
 
-    // Etape 2 : création des zones
-    IFeatureCollection<UrbaZone> zones = new FT_FeatureCollection<UrbaZone>();
+    for (UrbaZone z : zones) {
 
-    for (IFeature feat : zoneColl) {
-      UrbaZone z = new UrbaZone(FromGeomToSurface.convertMSGeom(feat.getGeom()).get(0));
-
-      z.setType(feat.getAttribute(NOM_ATT_TYPE_ZONE).toString());
-
-      zones.add(z);
-
+      RulesImporter.importer(folder, z);
     }
 
+    // Etape 3 : assignement des zonages au PLU
+    plu.lUrbaZone.addAll(zones);
     env.setUrbaZones(zones);
 
-    // Etape 3 : création des sous parcelles
+    // Etape 4 : chargement des parcelles et créations des bordures
+    IFeatureCollection<CadastralParcel> parcelles = CadastralParcelLoader
+        .assignBordureToParcelleWithOrientation(parcelleColl, 1);
 
-    IFeatureCollection<SubParcel> sousParcelles = SousParcelleImporter
-        .create(parcelles, zones);
+    env.setCadastralParcels(parcelles);
+
+    // Etape 5 : import des sous parcelles
+    IFeatureCollection<SubParcel> sousParcelles = SubParcelImporter.create(
+        parcelles, zones);
     env.setSubParcels(sousParcelles);
 
-    // Etape 4 : import des bâtiments
-    IFeatureCollection<Building> batiments = BuildingImporter.importBuilding(
-        batiColl, sousParcelles);
-    env.getBuildings().addAll(batiments);
+    // Etape 8 : création des unités foncirèes
+    IFeatureCollection<BasicPropertyUnit> collBPU = BasicPropertyUnitImporter
+        .importBPU(parcelles);
+    env.setBpU(collBPU);
 
-    // Etape 5 : chargement des rues
-    IFeatureCollection<Road> voiries = VoirieImporter
-        .importVoirie(voirieColl);
-    env.setRoads(voiries);
+    // Etape 7 : import des bâtiments
+    IFeatureCollection<Building> buildings = BuildingImporter.importBuilding(
+        batiColl, collBPU);
+    env.getBuildings().addAll(buildings);
 
-    // Etape 6 : on affecte les liens entres une bordure et ses objets adjacents
-    AssignLinkToBordure.process(parcelles, voiries);
+    // Etape 8 : chargement des voiries
 
-    // Etape 7 : on importe les alignements
-    IFeatureCollection<IFeature> prescriptions = ShapefileReader.read(folder
-        + NOM_FICHIER_PRESC_LINEAIRE);
+    IFeatureCollection<Road> roads = RoadImporter.importRoad(voirieColl);
+    env.setRoads(roads);
+
+    // Etape 9 : on affecte les liens entres une bordure et ses objets adjacents
+    AssignLinkToBordure.process(parcelles, roads);
+
+    // Etape 10 : on importe les alignements
     IFeatureCollection<Alignement> alignementColl = AlignementImporter
         .importRecul(prescriptions, parcelles);
     env.setAlignements(alignementColl);
 
-    System.out.println("NBRE alignement" + alignementColl.size());
-
-    // Etape 8 : on affecte des z à tout ce bon monde
-    // - parcelles, sous-parcelles route sans z, zonage, les bordures etc...
+    // Etape 11 : on affecte des z à tout ce bon monde // - parcelles,
+    // sous-parcelles route sans z, zonage, les bordures etc...
     MNTAire dtm = new MNTAire(folder + NOM_FICHIER_TERRAIN, "Terrain", true, 1,
         ColorShade.BLUE_CYAN_GREEN_YELLOW_WHITE);
     env.setTerrain(dtm);
     try {
       AssignZ.toParcelle(env.getParcelles(), dtm, SURSAMPLED);
       AssignZ.toSousParcelle(env.getSubParcels(), dtm, SURSAMPLED);
-      AssignZ.toZone(env.getUrbaZones(), dtm, false);
       AssignZ.toVoirie(env.getRoads(), dtm, SURSAMPLED);
       AssignZ.toAlignement(alignementColl, dtm, SURSAMPLED);
-    } catch (Exception e) {
-      // TODO Auto-generated catch block
+      AssignZ.toZone(env.getUrbaZones(), dtm, false);
+    } catch (Exception e) { // TODO Auto-generated catch block
       e.printStackTrace();
+
     }
 
     return env;

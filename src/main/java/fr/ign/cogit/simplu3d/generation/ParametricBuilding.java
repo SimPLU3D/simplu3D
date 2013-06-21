@@ -25,7 +25,7 @@ import fr.ign.cogit.simplu3d.model.application.Building;
 import fr.ign.cogit.simplu3d.model.application.Materiau;
 import fr.ign.cogit.simplu3d.model.application.SpecificWallSurface;
 
-public class BatimentProcedural extends Building {
+public class ParametricBuilding extends Building {
 
   TopologieBatiment tB;
   double largeur;
@@ -42,7 +42,7 @@ public class BatimentProcedural extends Building {
 
   private DTM dtm = null;
 
-  public BatimentProcedural(TopologieBatiment tB, double largeur,
+  public ParametricBuilding(TopologieBatiment tB, double largeur,
       double hauteur, double largeur2, double hauteur2, double zGouttiere,
       double zMax, Materiau materiauToit, List<Materiau> materiauFacades,
       boolean[] facadesNonAveugles, IDirectPosition centre, double angle,
@@ -53,7 +53,7 @@ public class BatimentProcedural extends Building {
 
   }
 
-  public BatimentProcedural(TopologieBatiment tB, double largeur,
+  public ParametricBuilding(TopologieBatiment tB, double largeur,
       double hauteur, double largeur2, double hauteur2, double zGouttiere,
       double zMax, Materiau materiauToit, List<Materiau> materiauFacades,
       boolean[] facadesNonAveugles, IDirectPosition centre, double angle,

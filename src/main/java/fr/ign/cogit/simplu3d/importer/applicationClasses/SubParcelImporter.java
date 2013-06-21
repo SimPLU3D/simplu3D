@@ -14,7 +14,7 @@ import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.SubParcel;
 import fr.ign.cogit.simplu3d.model.application.UrbaZone;
 
-public class SousParcelleImporter {
+public class SubParcelImporter {
 
   /**
    * Aire minimale pour une sous parcelle
@@ -131,68 +131,5 @@ public class SousParcelleImporter {
     return sousParcelles;
   }
 
-  /**
-   * Renseigne les bordures à partir d'une parcelle donnée - Si la bordure
-   * coincide avec une de la parcelle, le type est le même - sinon le type est
-   * Bordure.FICTIVE
-   * @param sp
-   * @param p
-   */
-
-  /*
-   * public static void affecteBorduresToSousParcelles(SubParcel sp,
-   * CadastralParcel p){
-   * 
-   * 
-   * IFeatureCollection<SpecificCadastralBoundary> lBordures =
-   * p.getSpecificCadastralBoundary();
-   * 
-   * 
-   * 
-   * List<IOrientableSurface> lOS = sp.getLod2MultiSurface().getList();
-   * 
-   * 
-   * for(IOrientableSurface os:lOS){
-   * 
-   * IPolygon pol = (IPolygon) os;
-   * 
-   * 
-   * List<ILineString> lLS =
-   * FromPolygonToLineString.convertPolToLineStrings(pol);
-   * 
-   * 
-   * for(ILineString ls:lLS){
-   * 
-   * SpecificCadastralBoundary b = new SpecificCadastralBoundary(ls);
-   * sp.getSpecificCadastralBoundary().add(b);
-   * 
-   * boolean isFound = false; for(SpecificCadastralBoundary b2 : lBordures){
-   * 
-   * 
-   * if(b2.getGeom().buffer(0.5).contains(ls)){
-   * 
-   * b.setTypeDroit(b2.getTypeDroit());
-   * 
-   * isFound = true; break; }
-   * 
-   * 
-   * }
-   * 
-   * if(! isFound){
-   * 
-   * b.setTypeDroit(SpecificCadastralBoundary.INTRA); }
-   * 
-   * }
-   * 
-   * 
-   * 
-   * }
-   * 
-   * 
-   * 
-   * 
-   * 
-   * }
-   */
 
 }

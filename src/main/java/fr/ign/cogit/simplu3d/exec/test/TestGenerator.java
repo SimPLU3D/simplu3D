@@ -14,7 +14,7 @@ import fr.ign.cogit.geoxygene.sig3d.semantic.VectorLayer;
 import fr.ign.cogit.geoxygene.sig3d.util.ColorShade;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 import fr.ign.cogit.sig3d.gui.toolbar.IOToolBar;
-import fr.ign.cogit.simplu3d.generation.BatimentProcedural;
+import fr.ign.cogit.simplu3d.generation.ParametricBuilding;
 import fr.ign.cogit.simplu3d.generation.TopologieBatiment;
 import fr.ign.cogit.simplu3d.generation.TopologieBatiment.FormeEmpriseEnum;
 import fr.ign.cogit.simplu3d.generation.TopologieBatiment.FormeToitEnum;
@@ -45,7 +45,7 @@ DTM dtm = new DTM("E:/mbrasebin/Donnees/test/ISERE_50_asc.asc", "Ours_vert_a_ail
     
   
     
-    BatimentProcedural bP = new BatimentProcedural(tB, 20, 30, 15, 15, 15, 24,
+    ParametricBuilding bP = new ParametricBuilding(tB, 20, 30, 15, 15, 15, 24,
         null,new ArrayList<Materiau>(),  //  Materiau.TOLE, lMatF,
         new boolean[0], new DirectPosition(0, i * 100, 0), 0,dtm, Math.PI/4);
     
@@ -68,7 +68,7 @@ DTM dtm = new DTM("E:/mbrasebin/Donnees/test/ISERE_50_asc.asc", "Ours_vert_a_ail
     
     
   
-     bP = new BatimentProcedural(tB, 20, 30, 5, 5, 15, 24,
+     bP = new ParametricBuilding(tB, 20, 30, 5, 5, 15, 24,
         null,new ArrayList<Materiau>(),  //  Materiau.TOLE, lMatF,
         new boolean[0], new DirectPosition(0, i * 100, 0), 0,dtm, Math.PI/4);
      
@@ -90,7 +90,7 @@ DTM dtm = new DTM("E:/mbrasebin/Donnees/test/ISERE_50_asc.asc", "Ours_vert_a_ail
     
     
   
-     bP = new BatimentProcedural(tB, 25, 30, 5, 5, 15, 24,
+     bP = new ParametricBuilding(tB, 25, 30, 5, 5, 15, 24,
         null,new ArrayList<Materiau>(),  //  Materiau.TOLE, lMatF,
         new boolean[0], new DirectPosition(0, i * 100, 0), 0,dtm, Math.PI/4);
      
@@ -114,7 +114,7 @@ DTM dtm = new DTM("E:/mbrasebin/Donnees/test/ISERE_50_asc.asc", "Ours_vert_a_ail
     
     
   
-     bP = new BatimentProcedural(tB, 25, 30, 5, 5, 15, 24,
+     bP = new ParametricBuilding(tB, 25, 30, 5, 5, 15, 24,
         null,new ArrayList<Materiau>(),  //  Materiau.TOLE, lMatF,
         new boolean[0], new DirectPosition(0, i * 100, 0), 0,dtm, Math.PI/8);
      
