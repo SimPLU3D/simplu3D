@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.implantation;
+package fr.ign.cogit.simplu3d.scenario;
 
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 

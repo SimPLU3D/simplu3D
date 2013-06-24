@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.implantation;
+package fr.ign.cogit.simplu3d.scenario;
 
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;

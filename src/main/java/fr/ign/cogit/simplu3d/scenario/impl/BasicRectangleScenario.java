@@ -1,8 +1,8 @@
-package fr.ign.cogit.simplu3d.implantation.scenario;
+package fr.ign.cogit.simplu3d.scenario.impl;
 
 import fr.ign.cogit.simplu3d.generation.ParametricBuilding;
-import fr.ign.cogit.simplu3d.implantation.AbstractRectangleScenario;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
+import fr.ign.cogit.simplu3d.scenario.AbstractRectangleScenario;
 
 public class BasicRectangleScenario extends AbstractRectangleScenario{
   
