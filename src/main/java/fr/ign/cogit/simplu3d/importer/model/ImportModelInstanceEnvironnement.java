@@ -12,7 +12,7 @@ import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.model.application.SubParcel;
 
-public class ImportModelInstance {
+public class ImportModelInstanceEnvironnement {
 
   public static IModel getModel(String modelPorviderURL) {
 

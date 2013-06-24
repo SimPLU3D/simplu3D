@@ -15,7 +15,7 @@ public class BasicPropertyUnitImporter {
     for (CadastralParcel c : cP) {
       BasicPropertyUnit bP = new BasicPropertyUnit();
       bP.getCadastralParcel().add(c);
-
+      c.setbPU(bP);
       bPU.add(bP);
 
     }

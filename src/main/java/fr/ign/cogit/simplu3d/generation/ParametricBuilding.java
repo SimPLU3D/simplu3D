@@ -97,7 +97,7 @@ public class ParametricBuilding extends Building {
     // 4 On affecte l'emprise au bâtiment
 
     IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<IOrientableSurface>();
-
+    iMS.add(emprise);
     this.setFootprint(iMS);
 
     // 5 si il y a un MNT, on détermine le Z
@@ -221,9 +221,12 @@ public class ParametricBuilding extends Building {
     return set;
 
   }
+  
+  public void translate(IDirectPosition dP) {
+    this.translate(dP.getX(), dP.getY());
+  }
 
   public void translate(double x, double y) {
-    // / System.out.println("Ca translate en tique");
 
     Set<IDirectPosition> set = null;
 
@@ -247,7 +250,7 @@ public class ParametricBuilding extends Building {
 
       double newZ = determineZ();
 
-      System.out.println("Old Z " + oldZ + "  newZ  " + newZ);
+   //   System.out.println("Old Z " + oldZ + "  newZ  " + newZ);
 
       if (newZ != oldZ) {
 
@@ -423,6 +426,17 @@ public class ParametricBuilding extends Building {
   public int getStoreysAboveGround() {
     return StoreyCalculation.process(this);
 
+  }
+  
+  public boolean generateAll(){
+    
+   
+    this.generationEmprise();
+    this.generationToit();
+   
+    
+    return this.generationFacade();
+    
   }
 
 }

@@ -1,6 +1,7 @@
 package fr.ign.cogit.simplu3d.util;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
+import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.sig3d.semantic.DTM;
 import fr.ign.cogit.simplu3d.model.application.Alignement;
@@ -62,13 +63,9 @@ public class AssignZ {
 
       IGeometry geom = z.getGeom();
       
-      if(geom == null){
-        continue;
+      for(IDirectPosition dp: geom.coord()){
+        dp.setZ(0);
       }
-      
-      
-       geom = dtm.mapGeom(geom, 0, true, sursampled);
-      z.setGeom(geom);
 
     }
 

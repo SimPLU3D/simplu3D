@@ -41,6 +41,8 @@ public class ZonesImporter {
 
         z.setDate(new Date(o.toString()));
       }
+      
+      z.setGeom(feat.getGeom());
 
       zones.add(z);
 

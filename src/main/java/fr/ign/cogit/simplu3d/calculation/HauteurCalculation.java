@@ -5,6 +5,7 @@ import java.util.List;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.sig3d.geometry.Box3D;
+import fr.ign.cogit.simplu3d.calculation.util.PointBasType;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
@@ -51,17 +52,14 @@ public class HauteurCalculation {
   }
 
   public static double calculateZBas(AbstractBuilding b, Integer type_pb) {
-    System.out.println(type_pb);
-    return 1.0;
-    
-    /*
+
     double zBas = -1;
 
     if (type_pb == PointBasType.EMPRISE_PUBLIQUE) {
       zBas = calculateZBasEP(b);
     } 
     
-    if (type_pb == PointBasType.PLUS_BAS__AbstractBuilding) {
+    if (type_pb == PointBasType.PLUS_BAS_BATIMENT) {
       zBas = calculateZBasPBB(b);
     }
     
@@ -75,7 +73,7 @@ public class HauteurCalculation {
 
     System.out.println(zBas);
     
-    return zBas;*/
+    return zBas;
   }
 
   // //////////////////DIFFERENTS TYPES DE ZHAUT

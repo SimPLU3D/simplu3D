@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.solver.interpreter;
+package fr.ign.cogit.simplu3d.test.solver.interpreter;
 
 /**
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *

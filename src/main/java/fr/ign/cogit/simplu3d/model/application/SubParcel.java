@@ -1,5 +1,8 @@
 package fr.ign.cogit.simplu3d.model.application;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.citygml4j.model.citygml.landuse.LandUse;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
@@ -15,6 +18,17 @@ public class SubParcel extends CG_LandUse {
 
   private double avgSlope;
   private double area;
+  private List<UrbaZone> lUZ  = new ArrayList<UrbaZone>();
+  
+  
+  
+  public List<UrbaZone> getUrbaZone() {
+    return lUZ;
+  }
+
+  public void setlUZ(List<UrbaZone> lUZ) {
+    this.lUZ = lUZ;
+  }
 
   public double builtRatio() {
     return 0;

@@ -45,7 +45,7 @@ public class LoaderSHP {
 
   public static Environnement load(String folder)
       throws CloneNotSupportedException {
-    Environnement env = new Environnement();
+    Environnement env = Environnement.getInstance();
 
     // Chargement des fichiers
 
@@ -69,7 +69,9 @@ public class LoaderSHP {
       for (IFeature feat : zoneColl) {
         feat.setGeom(feat.getGeom().translate(
             -Environnement.dpTranslate.getX(),
-            -Environnement.dpTranslate.getY(), 0));
+            -Environnement.dpTranslate.getY(),
+            
+            0));
 
       }
 

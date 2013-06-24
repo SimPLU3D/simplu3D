@@ -3,9 +3,6 @@ package fr.ign.cogit.simplu3d.generation.facade;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.ign.cogit.simplu3d.generation.FacadeProcedural;
-import fr.ign.cogit.simplu3d.model.application.Materiau;
-import fr.ign.cogit.simplu3d.model.application.RoofSurface;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.ITriangle;
@@ -16,11 +13,14 @@ import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Triangle;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
+import fr.ign.cogit.simplu3d.generation.FacadeProcedural;
+import fr.ign.cogit.simplu3d.model.application.Materiau;
+import fr.ign.cogit.simplu3d.model.application.RoofSurface;
 
 public class GenerationFacade {
 
-  public static List<FacadeProcedural> generate(RoofSurface t, List<Materiau> lMat,
-      double zMin, boolean[] facadesNonAveugles) {
+  public static List<FacadeProcedural> generate(RoofSurface t,
+      List<Materiau> lMat, double zMin, boolean[] facadesNonAveugles) {
 
     List<FacadeProcedural> lF = new ArrayList<FacadeProcedural>();
 
@@ -55,20 +55,26 @@ public class GenerationFacade {
       f.setGeom(mS);
       f.setLod2MultiSurface(mS);
 
-      if (lMat.size() == 1) {
-        f.setMat(lMat.get(0));
+      if (lMat != null) {
+
+        if (lMat.size() == 1) {
+          f.setMat(lMat.get(0));
+        }
+
+        if (count < lMat.size()) {
+
+          f.setMat(lMat.get(count));
+
+        }
+
       }
+      if (facadesNonAveugles != null) {
 
-      if (count < lMat.size()) {
-
-        f.setMat(lMat.get(count));
-
-      }
-
-      if (count < facadesNonAveugles.length) {
-        f.setAveugle(facadesNonAveugles[count]);
-      } else {
-        f.setAveugle(false);
+        if (count < facadesNonAveugles.length) {
+          f.setAveugle(facadesNonAveugles[count]);
+        } else {
+          f.setAveugle(false);
+        }
       }
 
       lF.add(f);

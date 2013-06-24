@@ -10,17 +10,19 @@ import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
 import fr.ign.cogit.sig3d.convert.geom.FromGeomToSurface;
+import fr.ign.cogit.simplu3d.exec.GTRU3D;
 import fr.ign.cogit.simplu3d.generation.ParametricBuilding;
 import fr.ign.cogit.simplu3d.generation.TopologieBatiment;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Building;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
+import fr.ign.cogit.simplu3d.model.application.Environnement;
 
 public abstract class AbstractRectangleScenario extends AbstractDefaultScenario {
 
-  private ParametricBuilding currentState = null;
+  protected ParametricBuilding currentState = null;
 
-  public static int STOP_IT_INSIDE_PARCEL = 100;
+  public static int STOP_IT_INSIDE_PARCEL = 10;
 
   public AbstractRectangleScenario(BasicPropertyUnit bPU) {
     super(bPU);
@@ -28,10 +30,11 @@ public abstract class AbstractRectangleScenario extends AbstractDefaultScenario 
   }
 
   public Building newConfiguration() {
-    int nbP = grid.size();
 
     if (currentState == null) {
       this.initBPU();
+
+      int nbP = grid.size();
 
       TopologieBatiment tB = new TopologieBatiment(
           TopologieBatiment.FormeEmpriseEnum.RECTANGLE,
@@ -39,7 +42,9 @@ public abstract class AbstractRectangleScenario extends AbstractDefaultScenario 
 
       currentState = new ParametricBuilding(tB, this.getRanLarg(),
           this.getRanLon(), 0, 0, 0, this.getRanHei(), null, null, null,
-          grid.get((int) (Math.random() * nbP)), this.getRanOrientation(), 0);
+          grid.get((int) (Math.random() * nbP)), this.getRanOrientation(),
+          Environnement.getInstance().terrain, 0);
+      currentState.generateAll();
 
     }
 
@@ -47,9 +52,10 @@ public abstract class AbstractRectangleScenario extends AbstractDefaultScenario 
 
     int it = 0;
 
-    while (!(geom.contains(currentState.footprint))) {
+    while (currentState == null || !(geom.contains(currentState.footprint))) {
 
       currentState = randomMove();
+
 
       it++;
 
@@ -65,7 +71,7 @@ public abstract class AbstractRectangleScenario extends AbstractDefaultScenario 
 
   public abstract ParametricBuilding randomMove();
 
-  private IDirectPositionList grid = null;
+  protected IDirectPositionList grid = null;
   private IMultiSurface<IOrientableSurface> geom = null;
 
   /**

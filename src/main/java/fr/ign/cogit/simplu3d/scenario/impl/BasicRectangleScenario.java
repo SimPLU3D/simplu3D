@@ -1,24 +1,21 @@
 package fr.ign.cogit.simplu3d.scenario.impl;
 
+import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
 import fr.ign.cogit.simplu3d.generation.ParametricBuilding;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.scenario.AbstractRectangleScenario;
 
-public class BasicRectangleScenario extends AbstractRectangleScenario{
-  
-
+public abstract class BasicRectangleScenario extends AbstractRectangleScenario {
 
   public BasicRectangleScenario(BasicPropertyUnit bPU, double largMin,
-      double largMax, double longMin, double longMax, double hMin, double hMax,
-      double largMin2, double largMax2, double longMin2, double longMax2,
-      double hMin2, double hMax2) {
+      double largMax, double longMin, double longMax, double hMin, double hMax) {
     super(bPU);
-    largMin = largMin2;
-    largMax = largMax2;
-    longMin = longMin2;
-    longMax = longMax2;
-    hMin = hMin2;
-    hMax = hMax2;
+    this.largMin = largMin;
+    this.largMax = largMax;
+    this.longMin = longMin;
+    this.longMax = longMax;
+    this.hMin = hMin;
+    this.hMax = hMax;
   }
 
   private double largMin;
@@ -28,10 +25,6 @@ public class BasicRectangleScenario extends AbstractRectangleScenario{
   private double hMin;
   private double hMax;
 
-  
-  
-  
-  
   public double getRanLarg() {
     return Math.random() * (largMax - largMin) + largMin;
   }
@@ -98,20 +91,36 @@ public class BasicRectangleScenario extends AbstractRectangleScenario{
     this.hMax = hMax;
   }
 
-  
-  
-  @Override
-  public double satisfcation() {
-    // TODO Auto-generated method stub
-    return 0;
-  }
-
   @Override
   public ParametricBuilding randomMove() {
-    // TODO Auto-generated method stub
-    return null;
-  }
 
-  
+    int alea = (int) (5 * Math.random());
+
+    switch (alea) {
+
+      case 0:
+        this.currentState.changeLargeur(this.getRanLarg());
+        break;
+
+      case 1:
+        this.currentState.changeLargeur(this.getRanLon());
+        break;
+      case 2:
+        this.currentState.rotate(this.getRanOrientation());
+        break;
+      case 3:
+        int nbP = grid.size();
+        this.currentState.translate(new Vecteur(this.currentState.getCentre(),
+            this.grid.get((int) (nbP * Math.random()))).getCoord());
+        break;
+      default:
+        this.currentState.moveGouttiere(this.getRanHei());
+        break;
+
+    }
+
+    return this.currentState;
+
+  }
 
 }

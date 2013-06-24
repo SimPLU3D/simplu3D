@@ -20,9 +20,9 @@ import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Triangle;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
-import fr.ign.cogit.simplu3d.importer.model.ImportModelInstance;
+import fr.ign.cogit.simplu3d.importer.model.ImportModelInstanceEnvironnement;
 import fr.ign.cogit.simplu3d.model.application.SubParcel;
-import fr.ign.cogit.simplu3d.solver.interpreter.OCLInterpreterSimplu3D;
+import fr.ign.cogit.simplu3d.test.solver.interpreter.OCLInterpreterSimplu3D;
 
 public class TestLoader {
 
@@ -76,7 +76,7 @@ public class TestLoader {
       System.out.println("************Import modèle******************");
       System.out.println("*******************************************");
 
-      IModel model = ImportModelInstance
+      IModel model = ImportModelInstanceEnvironnement
           .getModel("target/classes/fr/ign/cogit/simplu3d/importer/model/ModelProviderClass.class");
 
       System.out.println("*******************************************");

@@ -6,7 +6,7 @@ import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.sig3d.model.citygml.core.CG_CityModel;
 import fr.ign.cogit.sig3d.semantic.MNTAire;
-import fr.ign.cogit.simplu3d.importer.model.ImportModelInstance;
+import fr.ign.cogit.simplu3d.importer.model.ImportModelInstanceEnvironnement;
 
 /**
  * 
@@ -23,11 +23,11 @@ public class Environnement extends CG_CityModel {
   
   
   //On charge le modèle
-  public static IModel model = ImportModelInstance
+  public static IModel model = ImportModelInstanceEnvironnement
       .getModel("target/classes/fr/ign/cogit/simplu3d/importer/model/ModelProviderClass.class");
 
   
-  
+  private static Environnement env = null;
   
 
 
@@ -59,8 +59,16 @@ public class Environnement extends CG_CityModel {
     this.cadastralParcels = parcelles;
   }
 
-  public Environnement() {
+  private Environnement() {
 
+  }
+  
+  public static Environnement getInstance(){
+    if(env == null){
+      env = new Environnement();
+    }
+    
+    return env;
   }
 
   public IFeatureCollection<CadastralParcel> getCadastralParcels() {
