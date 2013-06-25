@@ -15,6 +15,7 @@ import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
 import fr.ign.cogit.geoxygene.sig3d.geometry.Box3D;
 import fr.ign.cogit.geoxygene.sig3d.semantic.DTM;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
+import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
 import fr.ign.cogit.geoxygene.util.algo.JtsUtil;
 import fr.ign.cogit.geoxygene.util.conversion.JtsGeOxygene;
 import fr.ign.cogit.simplu3d.calculation.StoreyCalculation;
@@ -116,10 +117,16 @@ public class ParametricBuilding extends Building {
     double z = this.centre.getZ();
 
     try {
-      IGeometry geom = dtm.mapGeom(this.getFootprint(), 0, true, true);
-      Box3D b = new Box3D(geom);
-      z = b.getURDP().getZ();
+      IGeometry geom = dtm.mapGeom(new GM_Point(this.getCentre()), 0, true , false);
+      
+      
+      z= geom.coord().get(0).getZ();
+      
+   //   Box3D b = new Box3D(geom);
+      //   z = b.getURDP().getZ();
 
+      
+      
     } catch (Exception e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -415,7 +422,7 @@ public class ParametricBuilding extends Building {
   public void changeAngleToit(double d) {
     this.angleToit = d;
 
-    System.out.println(d);
+  //  System.out.println(d);
 
     this.generationToit();
     this.generationFacade();

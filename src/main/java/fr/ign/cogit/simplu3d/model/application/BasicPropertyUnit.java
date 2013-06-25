@@ -3,7 +3,11 @@ package fr.ign.cogit.simplu3d.model.application;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
+import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
+import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
+import fr.ign.cogit.sig3d.convert.geom.FromGeomToSurface;
 
 public class BasicPropertyUnit extends DefaultFeature {
   
@@ -22,7 +26,15 @@ public class BasicPropertyUnit extends DefaultFeature {
     this.cadastralParcel = cadastralParcel;
   }
   
-  
+  public IMultiSurface<IOrientableSurface> generateGeom(){
+    IMultiSurface<IOrientableSurface>  geom = new GM_MultiSurface<IOrientableSurface>();
+    
+    
+    for (CadastralParcel cP : this.getCadastralParcel()) {
+      geom.addAll(FromGeomToSurface.convertGeom(cP.getGeom()));
+    }
+    return geom;
+  }
   
   
 

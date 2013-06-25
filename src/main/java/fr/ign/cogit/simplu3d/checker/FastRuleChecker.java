@@ -11,8 +11,8 @@ import tudresden.ocl20.pivot.modelinstance.IModelInstance;
 import tudresden.ocl20.pivot.modelinstancetype.exception.TypeNotFoundInModelException;
 import tudresden.ocl20.pivot.modelinstancetype.types.IModelInstanceObject;
 import fr.ign.cogit.simplu3d.importer.model.ImportModelInstanceBasicPropertyUnit;
+import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
-import fr.ign.cogit.simplu3d.model.application.Building;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.model.application.Rule;
@@ -65,7 +65,7 @@ public class FastRuleChecker {
               OclBoolean bool = (OclBoolean) result.getResult();
 
               if (!bool.isTrue()) {
-                System.out.println("Règle non vérifiée");
+          //      System.out.println("Règle non vérifiée");
                 return false;
               }
 
@@ -96,6 +96,7 @@ public class FastRuleChecker {
 
         IModelInstance iM = ImportModelInstanceBasicPropertyUnit
             .getModelInstance(Environnement.model, sP);
+
         try {
           ImportModelInstanceBasicPropertyUnit.importCadastralParcel(iM, cP);
         } catch (TypeNotFoundInModelException e) {
@@ -111,7 +112,8 @@ public class FastRuleChecker {
 
   }
 
-  public void addBuilding(Building b) throws TypeNotFoundInModelException {
+  public void addBuilding(AbstractBuilding b)
+      throws TypeNotFoundInModelException {
     newBuildingInstance = true;
     ImportModelInstanceBasicPropertyUnit.importBuilding(mDList.get(0), b);
   }

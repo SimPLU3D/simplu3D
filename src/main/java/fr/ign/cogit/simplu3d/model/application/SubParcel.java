@@ -17,11 +17,9 @@ public class SubParcel extends CG_LandUse {
   private CadastralParcel parcelle;
 
   private double avgSlope;
-  private double area;
-  private List<UrbaZone> lUZ  = new ArrayList<UrbaZone>();
-  
-  
-  
+  private double area = -1;
+  private List<UrbaZone> lUZ = new ArrayList<UrbaZone>();
+
   public List<UrbaZone> getUrbaZone() {
     return lUZ;
   }
@@ -53,6 +51,10 @@ public class SubParcel extends CG_LandUse {
   }
 
   public double getArea() {
+
+    if (area == -1) {
+      area = this.getGeom().area();
+    }
     return area;
   }
 
@@ -95,16 +97,14 @@ public class SubParcel extends CG_LandUse {
     }
     return borduresLat;
   }
+
   /*
-  public IFeatureCollection<Bordure> getBorduresVoies() {
-    IFeatureCollection<Bordure> bordureVoie = new FT_FeatureCollection<Bordure>();
-    for (Bordure b : this.bordures) {
-      if (b.getTypeDroit() == Bordure.VOIE) {
-        bordureVoie.add(b);
-      }
-    }
-    return bordureVoie;
-  }*/
+   * public IFeatureCollection<Bordure> getBorduresVoies() {
+   * IFeatureCollection<Bordure> bordureVoie = new
+   * FT_FeatureCollection<Bordure>(); for (Bordure b : this.bordures) { if
+   * (b.getTypeDroit() == Bordure.VOIE) { bordureVoie.add(b); } } return
+   * bordureVoie; }
+   */
 
   public void setParcelle(CadastralParcel cP) {
     this.parcelle = cP;
@@ -118,11 +118,24 @@ public class SubParcel extends CG_LandUse {
     return buildingsParts;
   }
 
-  public void setBuildingsParts(IFeatureCollection<AbstractBuilding> buildingsParts) {
+  public void setBuildingsParts(
+      IFeatureCollection<AbstractBuilding> buildingsParts) {
     this.buildingsParts = buildingsParts;
   }
 
+  public double getCES() {
+    double area = this.getArea();
+    double areaB = 0;
+    for (AbstractBuilding bP : this.buildingsParts) {
+      areaB = areaB + bP.footprint.area();
 
+    }
+
+    return areaB / area;
+
+  }
+
+  
   /*
    * public IFeatureCollection<Voirie> getVoiries() { return voiries; }
    * 
@@ -130,13 +143,10 @@ public class SubParcel extends CG_LandUse {
    * voiries; }
    */
 
-  
   /*
-  public IFeatureCollection<Bordure> getBordures() {
-    return bordures;
-  }
-
-
+   * public IFeatureCollection<Bordure> getBordures() { return bordures; }
+   * 
+   * 
    * public void setBordures(IFeatureCollection<Bordure> bordures) {
    * this.bordures = bordures; }
    * 

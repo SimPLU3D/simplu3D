@@ -36,8 +36,7 @@ public class ImportModelInstanceBasicPropertyUnit {
 
   }
 
-  public static IModelInstance getModelInstance(IModel model,
-      SubParcel sp) {
+  public static IModelInstance getModelInstance(IModel model, SubParcel sp) {
 
     try {
 

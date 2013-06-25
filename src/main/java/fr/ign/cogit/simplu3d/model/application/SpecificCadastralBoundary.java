@@ -3,7 +3,10 @@ package fr.ign.cogit.simplu3d.model.application;
 import org.citygml4j.model.citygml.core.CityObject;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
+import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
+import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
+import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
 import fr.ign.cogit.sig3d.model.citygml.core.CG_CityObject;
 
 public class SpecificCadastralBoundary extends CG_CityObject {
@@ -65,4 +68,18 @@ public class SpecificCadastralBoundary extends CG_CityObject {
     this.type = type;
   }
 
+  public boolean prospect(AbstractBuilding b, double slope, double hIni) {
+    IDirectPositionList dpl = b.getToit().getGeom().coord();
+    for (IDirectPosition dp : dpl) {
+
+      if (this.geom.distance(new GM_Point(dp)) * slope + hIni < dp.getZ()) {
+
+        return false;
+      }
+
+    }
+
+    return true;
+
+  }
 }

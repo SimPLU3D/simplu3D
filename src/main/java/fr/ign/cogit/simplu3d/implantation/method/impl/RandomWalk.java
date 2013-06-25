@@ -4,6 +4,7 @@ import tudresden.ocl20.pivot.modelinstancetype.exception.TypeNotFoundInModelExce
 import fr.ign.cogit.simplu3d.checker.FastRuleChecker;
 import fr.ign.cogit.simplu3d.exec.GTRU3D;
 import fr.ign.cogit.simplu3d.implantation.method.IImplantation;
+import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.application.Building;
 import fr.ign.cogit.simplu3d.scenario.AbstractDefaultScenario;
 import fr.ign.cogit.simplu3d.scenario.IScenario;
@@ -20,7 +21,7 @@ public class RandomWalk implements IImplantation {
   }
 
   private double currentSatisfaction = 0;
-  private Building currentBuilding = null;
+  private AbstractBuilding currentBuilding = null;
 
   @Override
   public boolean newStep() {
@@ -40,7 +41,7 @@ public class RandomWalk implements IImplantation {
 
     if (! fRC.hasNewBuildingInstance()) {
         
-      try {
+    try {
         fRC.addBuilding(b);
       } catch (TypeNotFoundInModelException e) {
         // TODO Auto-generated catch block
@@ -51,19 +52,31 @@ public class RandomWalk implements IImplantation {
 
     if (fRC.check()) {
       double satisf = aDS.satisfcation();
+      
+      
+      if (GTRU3D.DEBUG) {
+        try {
+          GTRU3D.DEBUG_FEAT.add(b.cloneGeom());
+        } catch (CloneNotSupportedException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      }
 
       if (satisf > currentSatisfaction) {
 
-        if (GTRU3D.DEBUG) {
+        
+        
+
+
+
           try {
-            GTRU3D.DEBUG_FEAT.add(b.cloneGeom());
+            currentBuilding = b.clone();
           } catch (CloneNotSupportedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
           }
-        }
 
-        currentBuilding = b;
         keep = true;
         currentSatisfaction = satisf;
       }
@@ -83,7 +96,7 @@ public class RandomWalk implements IImplantation {
   }
 
   @Override
-  public Building getBuilding() {
+  public AbstractBuilding getBestBuilding() {
     return this.currentBuilding;
   }
 

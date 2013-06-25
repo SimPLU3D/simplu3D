@@ -11,11 +11,11 @@ public class RoofCoeff {
   public RoofCoeff(AbstractBuilding b) {
 
     double h1 = HauteurCalculation.calculate(b,
-        PointBasType.PLUS_BAS_BATIMENT,
-        HauteurCalculation.POINT_HAUT_TYPE.PLUS_HAUT_FAITAGE);
+       0,
+       1);
     double h2 = HauteurCalculation.calculate(b,
-        PointBasType.PLUS_BAS_BATIMENT,
-        HauteurCalculation.POINT_HAUT_TYPE.PLUS_HAUT_EGOUT);
+        0,
+       0);
 
     value = h1 / h2 - 1;
 

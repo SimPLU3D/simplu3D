@@ -21,7 +21,7 @@ public class HauteurCalculation {
 
  
   public static double calculate(AbstractBuilding b, int type_pb,
-      POINT_HAUT_TYPE type_ph) {
+      int type_ph) {
 
     double zBas = calculateZBas(b, type_pb);
 
@@ -31,18 +31,18 @@ public class HauteurCalculation {
 
   }
 
-  public static double calculateZHaut(AbstractBuilding b, POINT_HAUT_TYPE type_ph) {
+  public static double calculateZHaut(AbstractBuilding b, int type_ph) {
 
     double zHaut = Double.NaN;
 
     switch (type_ph) {
-      case PLANCHER_PLUS_ELEVE:
+      case 0:
         zHaut = calculateZHautPPE(b);
         break;
-      case PLUS_HAUT_EGOUT:
+      case 1:
         zHaut = calculateZHautPHE(b);
         break;
-      case PLUS_HAUT_FAITAGE:
+      case 2:
         zHaut = calculateZHautPHF(b);
         break;
 
@@ -71,7 +71,7 @@ public class HauteurCalculation {
       zBas = calculateZBasPHT(b);
     }
 
-    System.out.println(zBas);
+ //   System.out.println(zBas);
     
     return zBas;
   }

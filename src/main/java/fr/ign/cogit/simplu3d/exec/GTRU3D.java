@@ -65,7 +65,7 @@ public class GTRU3D {
     // lTheme.add(Theme.GOUTTIERE);
     // lTheme.add(Theme.VOIRIE);
      lTheme.add(Theme.PARCELLE);
-    // lTheme.add(Theme.SOUS_PARCELLE);
+    lTheme.add(Theme.BORDURE);
     lTheme.add(Theme.ZONE);
     // lTheme.add(Theme.PAN);
 

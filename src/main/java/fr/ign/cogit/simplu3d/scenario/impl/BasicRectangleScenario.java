@@ -35,7 +35,7 @@ public abstract class BasicRectangleScenario extends AbstractRectangleScenario {
 
   public double getRanHei() {
 
-    return Math.random() * (hMax - hMin) + hMax;
+    return Math.random() * (hMax - hMin) + hMin;
 
   }
 
@@ -103,7 +103,7 @@ public abstract class BasicRectangleScenario extends AbstractRectangleScenario {
         break;
 
       case 1:
-        this.currentState.changeLargeur(this.getRanLon());
+        this.currentState.changeHauteur(this.getRanLon());
         break;
       case 2:
         this.currentState.rotate(this.getRanOrientation());

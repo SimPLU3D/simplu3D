@@ -16,7 +16,7 @@ public class ShapeFactor2  {
 
     double h1 = HauteurCalculation.calculate(b,
         PointBasType.PLUS_BAS_BATIMENT,
-        HauteurCalculation.POINT_HAUT_TYPE.PLUS_HAUT_FAITAGE);
+       1);
     
 
 

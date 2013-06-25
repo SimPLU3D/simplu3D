@@ -5,7 +5,6 @@ package fr.ign.cogit.simplu3d.importer.model;
 import fr.ign.cogit.appli.geopensim.feature.micro.Batiment;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.simplu3d.calculation.HauteurCalculation;
-import fr.ign.cogit.simplu3d.calculation.HauteurCalculation.POINT_HAUT_TYPE;
 import fr.ign.cogit.simplu3d.calculation.util.PointBasType;
 import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.application.Building;
@@ -27,7 +26,7 @@ public class ModelProviderClass {
   protected RoofSurface toit;
   protected HauteurCalculation vol;
   protected PointBasType pbt;
-  protected POINT_HAUT_TYPE pbh;
+ // protected POINT_HAUT_TYPE pbh;
   protected Integer inti;
   protected GeomUtil gg;
   protected AbstractBuilding  ab;

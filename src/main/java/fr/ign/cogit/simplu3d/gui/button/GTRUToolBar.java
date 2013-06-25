@@ -3,6 +3,7 @@ package fr.ign.cogit.simplu3d.gui.button;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -13,6 +14,7 @@ import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.sig3d.gui.MainWindow;
 import fr.ign.cogit.geoxygene.sig3d.semantic.VectorLayer;
+import fr.ign.cogit.sig3d.calculation.OrientedBoundingBox;
 import fr.ign.cogit.simplu3d.exec.GTRU3D;
 import fr.ign.cogit.simplu3d.gui.actionPanel.ButtonActionPanel;
 import fr.ign.cogit.simplu3d.implantation.BasicIterator;
@@ -92,13 +94,20 @@ public class GTRUToolBar extends JMenu implements ActionListener {
       IFeatureCollection<IFeature> new_Buildings = new FT_FeatureCollection<IFeature>();
 
       for (BasicPropertyUnit bpU : bPUColl) {
+        
+        
+        OrientedBoundingBox oBB = new OrientedBoundingBox(bpU.generateGeom());
+        
+        
+        System.out.println("Longueur : " + oBB.getLength());
+        System.out.println("Largeur : " + oBB.getWidth());
 
         CESBasicRectangleScenario bRS = new CESBasicRectangleScenario(bpU, 0,
-            4, 0, 4, 3, 25);
+            oBB.getWidth(), 0, oBB.getLength(), 0, 20);
 
         RandomWalk r = new RandomWalk(bRS);
 
-        BasicIterator bI = new BasicIterator(r, 50);
+        BasicIterator bI = new BasicIterator(r, 5000);
 
         new_Buildings.add(bI.getFinalBuilding());
 
