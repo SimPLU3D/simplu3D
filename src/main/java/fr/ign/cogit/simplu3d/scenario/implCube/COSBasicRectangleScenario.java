@@ -1,11 +1,11 @@
-package fr.ign.cogit.simplu3d.scenario.impl;
+package fr.ign.cogit.simplu3d.scenario.implCube;
 
 import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 
-public class CESBasicRectangleScenario extends BasicRectangleScenario {
+public class COSBasicRectangleScenario extends BasicRectangleScenario {
 
-  public CESBasicRectangleScenario(BasicPropertyUnit bPU, double largMin,
+  public COSBasicRectangleScenario(BasicPropertyUnit bPU, double largMin,
       double largMax, double longMin, double longMax, double hMin, double hMax) {
     super(bPU, largMin, largMax, longMin, longMax, hMin, hMax);
   }
@@ -16,7 +16,7 @@ public class CESBasicRectangleScenario extends BasicRectangleScenario {
     double volBuilt = 0;
 
     for (AbstractBuilding b : this.getbPU().getBuildings()) {
-      volBuilt = volBuilt + b.getFootprint().area();
+      volBuilt = volBuilt + b.getFootprint().area() * b.height(1, 2);
     }
 
     return volBuilt;

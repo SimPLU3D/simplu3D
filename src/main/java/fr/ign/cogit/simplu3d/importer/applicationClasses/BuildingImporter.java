@@ -65,6 +65,10 @@ public class BuildingImporter {
       b.setFootprint(new GM_MultiSurface<IOrientableSurface>());
 
       b.getFootprint().add(poly);
+      
+      if(poly == null){
+        System.out.println("Emprise nulle");
+      }
 
       // Création toit
       RoofSurface t = RoofImporter.create(surfaceRoof, (IPolygon) poly.clone());

@@ -12,13 +12,13 @@ import fr.ign.cogit.sig3d.model.citygml.building.CG_AbstractBuilding;
 import fr.ign.cogit.simplu3d.calculation.HauteurCalculation;
 import fr.ign.cogit.simplu3d.calculation.StoreyCalculation;
 
-public class AbstractBuilding extends CG_AbstractBuilding {
+public abstract class AbstractBuilding extends CG_AbstractBuilding {
 
   public List<BuildingPart> buildingPart = new ArrayList<BuildingPart>();
-  private RoofSurface roofSurface;
+  private RoofSurface roofSurface = null;
   private List<SpecificWallSurface> wallSurface;
 
-  public IOrientableSurface fotprint;
+  public boolean isNew = false;
 
   private List<SubParcel> sousParcelles = new ArrayList<SubParcel>();
   private BasicPropertyUnit bPU;
@@ -89,6 +89,7 @@ public class AbstractBuilding extends CG_AbstractBuilding {
   }
 
   public RoofSurface getToit() {
+
     return roofSurface;
   }
 
@@ -119,15 +120,10 @@ public class AbstractBuilding extends CG_AbstractBuilding {
   }
 
   // @TODO compléter la méthode
-  public AbstractBuilding clone() throws CloneNotSupportedException {
-
-    IFeature dF = this.cloneGeom();
-
-    Building b = new Building();
-    b.setGeom(dF.getGeom());
-
-    return b;
-
+  public abstract AbstractBuilding clone() ; 
+  
+  public double distance(AbstractBuilding b2){
+    return this.footprint.distance(b2.getFootprint());
   }
 
 }

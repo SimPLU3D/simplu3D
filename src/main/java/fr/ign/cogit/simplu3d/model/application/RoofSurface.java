@@ -108,12 +108,9 @@ public class RoofSurface extends CG_RoofSurface {
   }
 
   public double getAngleMax() {
+
     
-    if(Double.isNaN(angleMax)){
-      angleMax = RoofAngle.angleMax(this);
-    }
-    
-    return angleMax;
+    return RoofAngle.angleMax(this);
   }
 
   public void setAngleMax(double angleMax) {

@@ -10,9 +10,9 @@ import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Building;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 
-public abstract class AbstractRectangleScenario extends AbstractScenario {
+public abstract class AbstractLScenario extends AbstractScenario {
 
-  public AbstractRectangleScenario(BasicPropertyUnit bPU) {
+  public AbstractLScenario(BasicPropertyUnit bPU) {
     super(bPU);
     // TODO Auto-generated constructor stub
   }
@@ -25,12 +25,13 @@ public abstract class AbstractRectangleScenario extends AbstractScenario {
       int nbP = grid.size();
 
       TopologieBatiment tB = new TopologieBatiment(
-          TopologieBatiment.FormeEmpriseEnum.RECTANGLE,
+          TopologieBatiment.FormeEmpriseEnum.FORME_L,
           TopologieBatiment.FormeToitEnum.PLAT, null);
 
       currentState = new ParametricBuilding(tB, this.getRanLarg(),
-          this.getRanLon(), 0, 0, 0, this.getRanHei(), null, null, null,
-          grid.get((int) (Math.random() * nbP)),0,
+          this.getRanLon(), this.getRanLarg2(), this.getRanH2(), 0,
+          this.getRanHei(), null, null, null,
+          grid.get((int) (Math.random() * nbP)), this.getRanOrientation(),
           Environnement.getInstance().terrain, 0);
       currentState.generateAll();
 
@@ -67,5 +68,9 @@ public abstract class AbstractRectangleScenario extends AbstractScenario {
     return currentState;
 
   }
+
+  public abstract double getRanLarg2();
+
+  public abstract double getRanH2();
 
 }

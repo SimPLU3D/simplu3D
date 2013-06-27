@@ -20,7 +20,8 @@ public class RoofAngle {
 
   public static double angleMax(RoofSurface t) {
 
-    double angleMax = Double.POSITIVE_INFINITY;
+    double angleMax = Double.NEGATIVE_INFINITY;
+    
     for (IOrientableSurface o : t.getLod2MultiSurface()) {
 
       angleMax = Math.max(angleMax, AngleFromSurface.calculate(o));

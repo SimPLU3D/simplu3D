@@ -12,7 +12,6 @@ import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
-import fr.ign.cogit.geoxygene.sig3d.geometry.Box3D;
 import fr.ign.cogit.geoxygene.sig3d.semantic.DTM;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
@@ -27,6 +26,58 @@ import fr.ign.cogit.simplu3d.model.application.Materiau;
 import fr.ign.cogit.simplu3d.model.application.SpecificWallSurface;
 
 public class ParametricBuilding extends Building {
+
+  public void settB(TopologieBatiment tB) {
+    this.tB = tB;
+  }
+
+  public void setLargeur(double largeur) {
+    this.largeur = largeur;
+  }
+
+  public void setHauteur(double hauteur) {
+    this.hauteur = hauteur;
+  }
+
+  public void setLargeur2(double largeur2) {
+    this.largeur2 = largeur2;
+  }
+
+  public void setHauteur2(double hauteur2) {
+    this.hauteur2 = hauteur2;
+  }
+
+  public void setzGouttiere(double zGouttiere) {
+    this.zGouttiere = zGouttiere;
+  }
+
+  public void setzMax(double zMax) {
+    this.zMax = zMax;
+  }
+
+  public void setMateriauToit(Materiau materiauToit) {
+    this.materiauToit = materiauToit;
+  }
+
+  public void setMateriauFacades(List<Materiau> materiauFacades) {
+    this.materiauFacades = materiauFacades;
+  }
+
+  public void setFacadesNonAveugles(boolean[] facadesNonAveugles) {
+    this.facadesNonAveugles = facadesNonAveugles;
+  }
+
+  public void setCentre(IDirectPosition centre) {
+    this.centre = centre;
+  }
+
+  public void setAngleToit(double angleToit) {
+    this.angleToit = angleToit;
+  }
+
+  public void setAngle(double angle) {
+    this.angle = angle;
+  }
 
   TopologieBatiment tB;
   double largeur;
@@ -60,6 +111,7 @@ public class ParametricBuilding extends Building {
       boolean[] facadesNonAveugles, IDirectPosition centre, double angle,
       DTM mnt, double angleToit) {
     super();
+    this.isNew = true;
     this.tB = tB;
     this.largeur = largeur;
     this.hauteur = hauteur;
@@ -117,16 +169,14 @@ public class ParametricBuilding extends Building {
     double z = this.centre.getZ();
 
     try {
-      IGeometry geom = dtm.mapGeom(new GM_Point(this.getCentre()), 0, true , false);
-      
-      
-      z= geom.coord().get(0).getZ();
-      
-   //   Box3D b = new Box3D(geom);
-      //   z = b.getURDP().getZ();
+      IGeometry geom = dtm.mapGeom(new GM_Point(this.getCentre()), 0, true,
+          false);
 
-      
-      
+      z = geom.coord().get(0).getZ();
+
+      // Box3D b = new Box3D(geom);
+      // z = b.getURDP().getZ();
+
     } catch (Exception e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -143,7 +193,18 @@ public class ParametricBuilding extends Building {
         + zGouttiere, this.centre.getZ() + zMax, materiauToit, this
         .getFootprint().get(0), angleToit);
 
-    this.setToit(t);
+    
+    if(this.getToit() == null){
+      this.setToit(t);
+    }else{
+      this.getToit().setGeom(t.getGeom());
+      this.getToit().setGable(t.gable);
+      this.getToit().setGutter(t.gutter);
+      this.getToit().setRoofing(t.roofing);
+      this.getToit().setInteriorEdge(t.getInteriorEdge());
+      this.getToit().setLod2MultiSurface(t.getLod2MultiSurface());
+    }
+
 
     return true;
   }
@@ -228,7 +289,7 @@ public class ParametricBuilding extends Building {
     return set;
 
   }
-  
+
   public void translate(IDirectPosition dP) {
     this.translate(dP.getX(), dP.getY());
   }
@@ -257,7 +318,7 @@ public class ParametricBuilding extends Building {
 
       double newZ = determineZ();
 
-   //   System.out.println("Old Z " + oldZ + "  newZ  " + newZ);
+      // System.out.println("Old Z " + oldZ + "  newZ  " + newZ);
 
       if (newZ != oldZ) {
 
@@ -422,7 +483,7 @@ public class ParametricBuilding extends Building {
   public void changeAngleToit(double d) {
     this.angleToit = d;
 
-  //  System.out.println(d);
+    // System.out.println(d);
 
     this.generationToit();
     this.generationFacade();
@@ -434,16 +495,25 @@ public class ParametricBuilding extends Building {
     return StoreyCalculation.process(this);
 
   }
-  
-  public boolean generateAll(){
-    
-   
+
+  public boolean generateAll() {
+
     this.generationEmprise();
     this.generationToit();
-   
-    
+
     return this.generationFacade();
-    
+
+  }
+
+  public ParametricBuilding clone() {
+
+    ParametricBuilding pB = new ParametricBuilding(this.tB, this.largeur,
+        this.hauteur, this.largeur2, this.hauteur2, this.zGouttiere, this.zMax,
+        this.materiauToit, this.materiauFacades, this.facadesNonAveugles,
+        this.centre, this.angle, this.angleToit);
+    pB.generateAll();
+    return pB;
+
   }
 
 }

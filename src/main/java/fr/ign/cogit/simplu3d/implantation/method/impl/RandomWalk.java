@@ -39,44 +39,27 @@ public class RandomWalk implements IImplantation {
     aDS.getbPU().getCadastralParcel().get(0).getSubParcel().get(0)
         .getBuildingsParts().add(b);
 
-    if (! fRC.hasNewBuildingInstance()) {
-        
-    try {
+    if (!fRC.hasNewBuildingInstance()) {
+
+      try {
         fRC.addBuilding(b);
       } catch (TypeNotFoundInModelException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
-      
+
     }
 
     if (fRC.check()) {
       double satisf = aDS.satisfcation();
-      
-      
+
       if (GTRU3D.DEBUG) {
-        try {
-          GTRU3D.DEBUG_FEAT.add(b.cloneGeom());
-        } catch (CloneNotSupportedException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
+        GTRU3D.DEBUG_FEAT.add(b.clone());
+
       }
 
       if (satisf > currentSatisfaction) {
-
-        
-        
-
-
-
-          try {
-            currentBuilding = b.clone();
-          } catch (CloneNotSupportedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-          }
-
+        currentBuilding = b.clone(); // A optimiser pour plus atard
         keep = true;
         currentSatisfaction = satisf;
       }

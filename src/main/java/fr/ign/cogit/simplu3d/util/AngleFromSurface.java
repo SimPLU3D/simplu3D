@@ -6,23 +6,31 @@ import fr.ign.cogit.geoxygene.sig3d.equation.ApproximatedPlanEquation;
 
 public class AngleFromSurface {
 
+  /**
+   * 
+   * Renvoie l'angle en degré formé par un polygone et le plan horizontal
+   * @param o
+   * @return
+   */
   public static double calculate(IOrientableSurface o) {
     ApproximatedPlanEquation ep = new ApproximatedPlanEquation(o);
 
     Vecteur v = ep.getNormale();
-
     v.normalise();
 
-    double z = v.getZ();
+    
+    Vecteur vHo = new  Vecteur(v.getX(),v.getY(), 0);
 
-    v.setZ(0);
-
-    double norme = v.norme();
+    
 
     double angleTemp = 0;
-    if (norme != 0) {
-      angleTemp = Math.PI / 2 - Math.atan(z / norme);
+    if (vHo.norme() != 0) {
+      vHo.normalise();
+      angleTemp = Math.PI/2 - Math.acos(v.prodScalaire(vHo));
     }
+    
+    angleTemp = angleTemp * 180/Math.PI;
+
 
     return angleTemp;
   }

@@ -456,12 +456,14 @@ public class CadastralParcelLoader {
       carteTopo.creeTopologieArcsNoeuds(threshold);
       // La carteTopo est rendue planaire
 
+      /*
       if (!test(carteTopo)) {
         System.out.println("Error 3");
-      }
+      }*/
 
       carteTopo.rendPlanaire(threshold);
 
+      /*
       if (!test(carteTopo)) {
         System.out.println("Error 4");
       }
@@ -470,15 +472,16 @@ public class CadastralParcelLoader {
 
       if (!test(carteTopo)) {
         System.out.println("Error 5");
-      }
+      }*/
 
       // DEBUG2.addAll(carteTopo.getListeArcs());
 
       carteTopo.creeTopologieArcsNoeuds(threshold);
 
+      /*
       if (!test(carteTopo)) {
         System.out.println("Error 6");
-      }
+      }*/
 
       // carteTopo.creeTopologieFaces();
 
@@ -487,9 +490,10 @@ public class CadastralParcelLoader {
       // Création des faces de la carteTopo
       carteTopo.creeTopologieFaces();
 
+      /*
       if (!test(carteTopo)) {
         System.out.println("Error 7");
-      }
+      }*/
 
       return carteTopo;
 

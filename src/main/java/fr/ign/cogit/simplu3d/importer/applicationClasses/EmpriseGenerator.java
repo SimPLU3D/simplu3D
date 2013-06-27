@@ -67,10 +67,12 @@ public class EmpriseGenerator {
       ILineString lS = Operateurs.union(bordBatiment);
 
       if (lS == null) {
+        System.out.println("L'union des lignes extérieures est nulle");
         return null;
       }
       IDirectPositionList dplTemp = lS.coord();
       if (dplTemp.size() <= 3) {
+        System.out.println("L'emprise du bâtiment a moins de 3 sommets");
         return null;
       }
 

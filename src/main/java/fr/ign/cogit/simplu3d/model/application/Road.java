@@ -7,7 +7,7 @@ import fr.ign.cogit.sig3d.model.citygml.transportation.CG_Road;
 public class Road extends CG_Road {
 
   private IMultiCurve<ILineString> axis;
-  private String name;
+  public String name;
   private double width;
 
   public Road() {

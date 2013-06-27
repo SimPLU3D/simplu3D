@@ -8,10 +8,12 @@ import tudresden.ocl20.pivot.modelinstance.IModelInstance;
 import tudresden.ocl20.pivot.modelinstancetype.exception.TypeNotFoundInModelException;
 import tudresden.ocl20.pivot.modelinstancetype.java.internal.modelinstance.JavaModelInstance;
 import tudresden.ocl20.pivot.standalone.facade.StandaloneFacade;
+import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Building;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
+import fr.ign.cogit.simplu3d.model.application.Road;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 import fr.ign.cogit.simplu3d.model.application.SpecificWallSurface;
 import fr.ign.cogit.simplu3d.model.application.SubParcel;
@@ -54,27 +56,7 @@ public class ImportModelInstanceBasicPropertyUnit {
 
   }
 
-  private static void completeInstances(IModelInstance modelInstance,
-      BasicPropertyUnit bPU) throws TypeNotFoundInModelException {
 
-    // Import de l'unité cadastrale
-    modelInstance.addModelInstanceElement(bPU);
-
-    // Import des bâtiments
-    for (Building b : bPU.buildings) {
-      importBuilding(modelInstance, b);
-    }
-
-    for (CadastralParcel cP : bPU.getCadastralParcel()) {
-      importCadastralParcel(modelInstance, cP);
-
-      for (SubParcel sP : cP.getSubParcel()) {
-        importCadastralSubParcel(modelInstance, sP);
-      }
-
-    }
-
-  }
 
   public static void importBuilding(IModelInstance modelInstance,
       AbstractBuilding b) throws TypeNotFoundInModelException {
@@ -115,6 +97,14 @@ public class ImportModelInstanceBasicPropertyUnit {
     for (SpecificCadastralBoundary sCB : cP.getSpecificCadastralBoundary()) {
       modelInstance.addModelInstanceElement(sCB);
       modelInstance.addModelInstanceElement(sCB.getGeom());
+      
+      IFeature feat = sCB.getFeatAdj();
+      
+      if(feat !=null && feat instanceof Road){
+        modelInstance.addModelInstanceElement(feat);
+      }
+      
+
 
     }
 

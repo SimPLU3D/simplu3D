@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.scenario.impl;
+package fr.ign.cogit.simplu3d.scenario.implCube;
 
 import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
 import fr.ign.cogit.simplu3d.generation.ParametricBuilding;

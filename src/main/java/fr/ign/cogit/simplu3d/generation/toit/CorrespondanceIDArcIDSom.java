@@ -100,22 +100,19 @@ public class CorrespondanceIDArcIDSom {
 
     }
 
-
-
     if (fB.equals(FormeEmpriseEnum.CERCLE)) {
 
       if (i == 0) {
 
-        
-        for(int j=0; j < 10;j++){
+        for (int j = 0; j < 10; j++) {
           lInt.add(j);
-          lInt.add(j+1);
+          lInt.add(j + 1);
         }
       } else if (i == 1) {
-        
-        for(int j=20; j < 30;j++){
+
+        for (int j = 20; j < 30; j++) {
           lInt.add(j);
-          lInt.add(j+1);
+          lInt.add(j + 1);
         }
       }
 
@@ -128,10 +125,11 @@ public class CorrespondanceIDArcIDSom {
       List<Integer> lSIN) {
     List<Integer> lInt = new ArrayList<Integer>();
 
-    for (Integer i : lSIN) {
-      lInt.addAll(getCorrespondanceSymetrique(fB, i));
+    if (lSIN != null) {
+      for (Integer i : lSIN) {
+        lInt.addAll(getCorrespondanceSymetrique(fB, i));
+      }
     }
-
     return lInt;
 
   }
@@ -153,11 +151,10 @@ public class CorrespondanceIDArcIDSom {
     }
 
     if (fB.equals(FormeEmpriseEnum.CERCLE)) {
-        
-      
-      for(int j=0; j < 10;j++){
+
+      for (int j = 0; j < 10; j++) {
         lInt.add(j);
-        lInt.add(j+1);
+        lInt.add(j + 1);
       }
 
     }
@@ -224,19 +221,17 @@ public class CorrespondanceIDArcIDSom {
     return lInt;
 
   }
-  
-  public static List<Integer> getIDSpeed(FormeEmpriseEnum fB){
+
+  public static List<Integer> getIDSpeed(FormeEmpriseEnum fB) {
     List<Integer> lInt = new ArrayList<Integer>();
-    
-    
-    
+
     if (fB.equals(FormeEmpriseEnum.RECTANGLE)) {
-    lInt.add(1);
-    lInt.add(3);
+      lInt.add(1);
+      lInt.add(3);
     }
 
     if (fB.equals(FormeEmpriseEnum.CERCLE)) {
- 
+
     }
 
     if (fB.equals(FormeEmpriseEnum.FORME_U)) {
@@ -257,11 +252,8 @@ public class CorrespondanceIDArcIDSom {
       lInt.add(4);
 
     }
-    
-    
+
     return lInt;
   }
-  
-  
 
 }

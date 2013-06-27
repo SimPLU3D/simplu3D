@@ -41,7 +41,7 @@ public class BasicIterator {
 
     
     System.out.println("Temps en ms " + (System.currentTimeMillis() - t));
-    
+    System.out.println("Satisfaction " + impl.getCurrentSatisfaction());
     impl.getScenario().end();
     
     

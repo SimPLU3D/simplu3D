@@ -6,6 +6,7 @@ import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
+import fr.ign.cogit.geoxygene.sig3d.geometry.Box3D;
 import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
 import fr.ign.cogit.sig3d.model.citygml.core.CG_CityObject;
 
@@ -69,10 +70,17 @@ public class SpecificCadastralBoundary extends CG_CityObject {
   }
 
   public boolean prospect(AbstractBuilding b, double slope, double hIni) {
+    
+    Box3D box = new Box3D(b.getGeom());
     IDirectPositionList dpl = b.getToit().getGeom().coord();
+    
+    double zMin = box.getLLDP().getZ();
+    
+    
+    
     for (IDirectPosition dp : dpl) {
 
-      if (this.geom.distance(new GM_Point(dp)) * slope + hIni < dp.getZ()) {
+      if (this.geom.distance(new GM_Point(dp)) * slope + hIni < dp.getZ() - zMin) {
 
         return false;
       }

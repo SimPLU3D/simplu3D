@@ -82,7 +82,7 @@ public class FastRuleChecker {
 
       }
     }
-    System.out.println("Toutes les règles sont  vérifiées");
+   // System.out.println("Toutes les règles sont  vérifiées");
     return true;
 
   }

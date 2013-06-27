@@ -29,15 +29,18 @@ import fr.ign.cogit.simplu3d.representation.RepEnvironnement.Theme;
 public class GTRU3D {
 
   
+  public static final int ITERATION = 500000;
+
   public static boolean DEBUG = true;
+  
+  public static final  String folder = "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project1/";
+
   
   public static IFeatureCollection<IFeature> DEBUG_FEAT = new FT_FeatureCollection<IFeature>();
   
   
   public static void main(String[] args) throws CloneNotSupportedException {
     ConstantRepresentation.backGroundColor = new Color(156, 180, 193);
-
-    String folder = "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project1/";
 
     Environnement env = LoaderSHP.load(folder);
     
@@ -65,8 +68,8 @@ public class GTRU3D {
     // lTheme.add(Theme.GOUTTIERE);
     // lTheme.add(Theme.VOIRIE);
      lTheme.add(Theme.PARCELLE);
-    lTheme.add(Theme.BORDURE);
-    lTheme.add(Theme.ZONE);
+  //  lTheme.add(Theme.BORDURE);
+     //  lTheme.add(Theme.ZONE);
     // lTheme.add(Theme.PAN);
 
     Theme[] tab = lTheme.toArray(new Theme[0]);
@@ -86,34 +89,30 @@ public class GTRU3D {
     mW.getInterfaceMap3D().moveLight(-140, 3, 120, 1);
 
  
-
+    double z = 140;
+    // 
     // 1051042.8513268954120576,6840539.0837931865826249 :
     // 1051264.8064121364150196,6840679.2711814027279615
+    
+    IDirectPosition dpLL = new DirectPosition(1051042.8513268954120576,6840539.0837931865826249,z);
+    IDirectPosition dpUR = new DirectPosition(1051264.8064121364150196,6840679.2711814027279615,z);
 
-    double xc = (1051042.8513268954120576 + 1051264.8064121364150196) / 2;
-    double yc = (6840539.0837931865826249 + 6840679.2711814027279615) / 2;
 
-    double z = 140;
 
-    double longueur = 1051264.8064121364150196 - 1051042.8513268954120576;
-    double largeur = 6840679.2711814027279615 - 6840539.0837931865826249;
+
 
     IDirectPositionList dpl = new DirectPositionList();
 
-    IDirectPosition dp1 = new DirectPosition(xc - longueur / 2, yc - largeur
-        / 2, z);
-    IDirectPosition dp2 = new DirectPosition(xc + longueur / 2, yc - largeur
-        / 2, z);
-    IDirectPosition dp3 = new DirectPosition(xc + longueur / 2, yc + largeur
-        / 2, z);
-    IDirectPosition dp4 = new DirectPosition(xc - longueur / 2, yc + largeur
-        / 2, z);
 
-    dpl.add(dp1);
+    IDirectPosition dp2 = new DirectPosition(dpUR.getX(),dpLL.getY(), z);
+
+    IDirectPosition dp4 = new DirectPosition(dpLL.getX(), dpUR.getY(), z);
+
+    dpl.add(dpLL);
     dpl.add(dp2);
-    dpl.add(dp3);
+    dpl.add(dpUR);
     dpl.add(dp4);
-    dpl.add(dp1);
+    dpl.add(dpLL);
 
     IFeatureCollection<IFeature> fc = new FT_FeatureCollection<IFeature>();
 
@@ -122,10 +121,10 @@ public class GTRU3D {
     fc.add(feat);
 
     feat.setRepresentation(new TexturedSurface(feat, TextureManager
-        .textureLoading(folder + "Env3D_86.png"), longueur, largeur));
+        .textureLoading(folder + "Env3D_86.png"), dpUR.getX()-dpLL.getX(), dpUR.getY()-dpLL.getY()));
 
     mW.getInterfaceMap3D().getCurrent3DMap()
-        .addLayer(new VectorLayer(fc, "Cool"));
+        .addLayer(new VectorLayer(fc, "Fond"));
     
   }
 
