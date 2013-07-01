@@ -1,8 +1,12 @@
 package fr.ign.cogit.simplu3d.model.application;
 
-import fr.ign.cogit.geoxygene.api.feature.IFeature;
+import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 
 public class BuildingPart extends AbstractBuilding {
+
+  public BuildingPart(IGeometry geom) {
+    super(geom);
+  }
 
   public SubParcel sP;
 
@@ -17,15 +21,7 @@ public class BuildingPart extends AbstractBuilding {
   @Override
   public AbstractBuilding clone() {
 
-    BuildingPart b = new BuildingPart();
-    IFeature dF;
-    try {
-      dF = this.cloneGeom();
-      b.setGeom(dF.getGeom());
-    } catch (CloneNotSupportedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    BuildingPart b = new BuildingPart((IGeometry) this.getGeom().clone());
 
     return b;
 

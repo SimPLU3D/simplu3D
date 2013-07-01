@@ -5,12 +5,18 @@ import java.util.List;
 
 import org.citygml4j.model.citygml.core.CityObject;
 
-import fr.ign.cogit.geoxygene.api.feature.IFeature;
+import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
+import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
+import fr.ign.cogit.geoxygene.sig3d.calculation.Util;
+import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
+import fr.ign.cogit.sig3d.convert.geom.FromGeomToSurface;
 import fr.ign.cogit.sig3d.model.citygml.building.CG_AbstractBuilding;
 import fr.ign.cogit.simplu3d.calculation.HauteurCalculation;
 import fr.ign.cogit.simplu3d.calculation.StoreyCalculation;
+import fr.ign.cogit.simplu3d.importer.applicationClasses.EmpriseGenerator;
+import fr.ign.cogit.simplu3d.importer.applicationClasses.RoofImporter;
 
 public abstract class AbstractBuilding extends CG_AbstractBuilding {
 
@@ -22,6 +28,47 @@ public abstract class AbstractBuilding extends CG_AbstractBuilding {
 
   private List<SubParcel> sousParcelles = new ArrayList<SubParcel>();
   private BasicPropertyUnit bPU;
+
+  protected AbstractBuilding() {
+
+  }
+
+  public AbstractBuilding(IGeometry geom) {
+    this.setGeom(geom);
+    this.setLod2MultiSurface(FromGeomToSurface.convertMSGeom(geom));
+
+    // Etape 1 : détection du toit et des façades
+    List<IOrientableSurface> lOS = FromGeomToSurface.convertGeom(geom);
+    IMultiSurface<IOrientableSurface> surfaceRoof = Util.detectNonVertical(lOS,
+        0.2);
+    IMultiSurface<IOrientableSurface> surfaceWall = Util.detectVertical(lOS,
+        0.2);
+
+    // Création facade
+    SpecificWallSurface f = new SpecificWallSurface();
+    f.setGeom(surfaceWall);
+    f.setLod2MultiSurface(surfaceWall);
+
+    List<SpecificWallSurface> lF = new ArrayList<SpecificWallSurface>();
+    lF.add(f);
+    this.setFacade(lF);
+
+    // Etape 2 : on créé l'emprise du bâtiment
+    IPolygon poly = EmpriseGenerator.convert(surfaceRoof);
+    this.setFootprint(new GM_MultiSurface<IOrientableSurface>());
+
+    this.getFootprint().add(poly);
+
+    if (poly == null) {
+      System.out.println("Emprise nulle");
+    }
+
+    // Création toit
+    RoofSurface t = RoofImporter.create(surfaceRoof, (IPolygon) poly.clone());
+
+    // Affectation
+    this.setToit(t);
+  }
 
   public List<SpecificWallSurface> getFacades() {
     return wallSurface;
@@ -115,14 +162,14 @@ public abstract class AbstractBuilding extends CG_AbstractBuilding {
 
   public double height(int pB, int pH) {
     double h = HauteurCalculation.calculate(this, pB, pH);
-   // System.out.println("Hauteur calculée : " + h);
+    // System.out.println("Hauteur calculée : " + h);
     return h;
   }
 
   // @TODO compléter la méthode
-  public abstract AbstractBuilding clone() ; 
-  
-  public double distance(AbstractBuilding b2){
+  public abstract AbstractBuilding clone();
+
+  public double distance(AbstractBuilding b2) {
     return this.footprint.distance(b2.getFootprint());
   }
 

@@ -31,9 +31,9 @@ public class GTRU3D {
   
   public static final int ITERATION = 500000;
 
-  public static boolean DEBUG = true;
+  public static boolean DEBUG = false;
   
-  public static final  String folder = "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project1/";
+  public static final  String folder = "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project3/";
 
   
   public static IFeatureCollection<IFeature> DEBUG_FEAT = new FT_FeatureCollection<IFeature>();
@@ -93,12 +93,13 @@ public class GTRU3D {
     // 
     // 1051042.8513268954120576,6840539.0837931865826249 :
     // 1051264.8064121364150196,6840679.2711814027279615
-    
-    IDirectPosition dpLL = new DirectPosition(1051042.8513268954120576,6840539.0837931865826249,z);
-    IDirectPosition dpUR = new DirectPosition(1051264.8064121364150196,6840679.2711814027279615,z);
+    // Projet 1
+   // IDirectPosition dpLL = new DirectPosition(1051042.8513268954120576,6840539.0837931865826249,z);
+   // IDirectPosition dpUR = new DirectPosition(1051264.8064121364150196,6840679.2711814027279615,z);
 
-
-
+    // Projet 3
+    IDirectPosition dpLL = new DirectPosition(1051157,6840727,z);
+    IDirectPosition dpUR = new DirectPosition(1051322,6840858,z);
 
 
     IDirectPositionList dpl = new DirectPositionList();
@@ -120,8 +121,13 @@ public class GTRU3D {
 
     fc.add(feat);
 
+//    feat.setRepresentation(new TexturedSurface(feat, TextureManager
+ //       .textureLoading(folder + "Env3D_86.png"), dpUR.getX()-dpLL.getX(), dpUR.getY()-dpLL.getY()));
+    
     feat.setRepresentation(new TexturedSurface(feat, TextureManager
-        .textureLoading(folder + "Env3D_86.png"), dpUR.getX()-dpLL.getX(), dpUR.getY()-dpLL.getY()));
+        .textureLoading(folder + "env3DPrj3.png"), dpUR.getX()-dpLL.getX(), dpUR.getY()-dpLL.getY()));
+ 
+    
 
     mW.getInterfaceMap3D().getCurrent3DMap()
         .addLayer(new VectorLayer(fc, "Fond"));

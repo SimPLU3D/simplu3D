@@ -23,6 +23,7 @@ import fr.ign.cogit.simplu3d.gui.actionPanel.ButtonActionPanel;
 import fr.ign.cogit.simplu3d.implantation.BasicIterator;
 import fr.ign.cogit.simplu3d.implantation.method.impl.RandomWalk;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
+import fr.ign.cogit.simplu3d.model.application.Building;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
@@ -42,7 +43,7 @@ public class GTRUToolBar extends JMenu implements ActionListener {
   private MainWindow mW;
 
   private JMenuItem mITemActionBatiment, butProposeBuilding,
-      butGenerateProspect, butGenerateHeight;
+      butGenerateProspect, butGenerateHeight, butAsBuilding;
 
   private JMenu subMenuGenerateConstraint;
 
@@ -53,9 +54,14 @@ public class GTRUToolBar extends JMenu implements ActionListener {
     super("GTRU3D");
     this.mW = mW;
 
-    mITemActionBatiment = new JMenuItem("Action Bat");
+    mITemActionBatiment = new JMenuItem("Action Building");
     mITemActionBatiment.addActionListener(this);
     this.add(mITemActionBatiment);
+    
+    butAsBuilding = new JMenuItem("Convert as Building");
+    butAsBuilding.addActionListener(this);
+    this.add(butAsBuilding);
+
 
     this.butProposeBuilding = new JMenuItem("Propose building");
     this.butProposeBuilding.addActionListener(this);
@@ -99,6 +105,32 @@ public class GTRUToolBar extends JMenu implements ActionListener {
       return;
 
     }
+    
+    
+    if(source == butAsBuilding){
+      
+      IFeatureCollection<Building> new_Buildings = new FT_FeatureCollection<Building>();
+      
+      for(IFeature feat: sel){
+        
+
+        new_Buildings.add(new Building(feat.getGeom()));
+        
+        
+        
+      }
+      
+      
+      VectorLayer vL2 = new VectorLayer(new_Buildings, "Result : " + (++COUNT),
+          Color.green);
+      
+      this.mW.getInterfaceMap3D().getCurrent3DMap().addLayer(vL2);
+    }
+
+    
+    
+    
+    ////////////Cette partie ne concerne que les unités foncières
 
     IFeatureCollection<BasicPropertyUnit> bPUColl = new FT_FeatureCollection<BasicPropertyUnit>();
 
@@ -110,6 +142,7 @@ public class GTRUToolBar extends JMenu implements ActionListener {
       }
 
     }
+    
 
     if (source == butProposeBuilding) {
 
