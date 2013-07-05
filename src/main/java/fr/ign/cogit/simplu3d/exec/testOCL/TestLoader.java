@@ -56,7 +56,7 @@ public class TestLoader {
       
       
       
-      IMultiSurface<IOrientableSurface> ims = new GM_MultiSurface<>();
+      IMultiSurface<IOrientableSurface> ims = new GM_MultiSurface<IOrientableSurface>();
       
       
       ITriangle t = new GM_Triangle(dp1,dp2,dp3);

@@ -12,7 +12,7 @@ import fr.ign.cogit.sig3d.convert.geom.FromGeomToSurface;
 public class BasicPropertyUnit extends DefaultFeature {
   
   public List<Building> buildings = new ArrayList<Building>();
-  public List<CadastralParcel> cadastralParcel = new ArrayList<>();
+  public List<CadastralParcel> cadastralParcel = new ArrayList<CadastralParcel>();
   public List<Building> getBuildings() {
     return buildings;
   }

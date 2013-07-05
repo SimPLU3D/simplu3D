@@ -8,6 +8,7 @@ import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
+import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.sig3d.gui.MainWindow;
@@ -72,7 +73,7 @@ public class TestCOSSHON {
       }
     }
 
-    featC.add(new DefaultFeature(new GM_MultiSurface<>(SHONCalculation.DEBUG)));
+    featC.add(new DefaultFeature(new GM_MultiSurface<IOrientableSurface>(SHONCalculation.DEBUG)));
 
     System.out.println("Nombre de bâtiments chargées : " + nbBat);
 

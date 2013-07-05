@@ -247,7 +247,7 @@ public class GTRUToolBar extends JMenu implements ActionListener {
 
       if (!Double.isNaN(d)) {
 
-        IFeatureCollection<IFeature> featColl = new FT_FeatureCollection<>();
+        IFeatureCollection<IFeature> featColl = new FT_FeatureCollection<IFeature>();
 
         for (BasicPropertyUnit bPU : bPUColl) {
 
@@ -283,7 +283,7 @@ public class GTRUToolBar extends JMenu implements ActionListener {
 
       if (!Double.isNaN(hIni) && !Double.isInfinite(slope)) {
 
-        IFeatureCollection<IFeature> featColl = new FT_FeatureCollection<>();
+        IFeatureCollection<IFeature> featColl = new FT_FeatureCollection<IFeature>();
 
         for (IFeature feat : sel) {
 

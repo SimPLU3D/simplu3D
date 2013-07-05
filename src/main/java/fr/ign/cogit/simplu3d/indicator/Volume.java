@@ -4,6 +4,7 @@ import java.util.List;
 
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.ITriangle;
+import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.sig3d.calculation.Util;
 import fr.ign.cogit.geoxygene.sig3d.geometry.Box3D;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Polygon;
@@ -24,7 +25,7 @@ public class Volume {
 
   public Volume(List<ITriangle> lTriToit) {
 
-    Box3D b = new Box3D(new GM_MultiSurface<>(lTriToit));
+    Box3D b = new Box3D(new GM_MultiSurface<IOrientableSurface>(lTriToit));
 
     double zMin = b.getLLDP().getZ();
 

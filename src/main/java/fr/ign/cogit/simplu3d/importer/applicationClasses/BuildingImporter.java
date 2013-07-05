@@ -42,7 +42,7 @@ public class BuildingImporter {
 
       for (BasicPropertyUnit bPU : collBPU) {
 
-        IMultiSurface<IOrientableSurface> iMSTemp = new GM_MultiSurface<>();
+        IMultiSurface<IOrientableSurface> iMSTemp = new GM_MultiSurface<IOrientableSurface>();
 
         for (CadastralParcel bP : bPU.getCadastralParcel()) {
           iMSTemp.addAll(FromGeomToSurface.convertGeom(bP.getGeom()));
