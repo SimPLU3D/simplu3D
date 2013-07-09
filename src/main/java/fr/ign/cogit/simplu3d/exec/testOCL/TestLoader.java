@@ -22,7 +22,7 @@ import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Triangle;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.simplu3d.importer.model.ImportModelInstanceEnvironnement;
 import fr.ign.cogit.simplu3d.model.application.SubParcel;
-import fr.ign.cogit.simplu3d.test.solver.interpreter.OCLInterpreterSimplu3D;
+import fr.ign.cogit.simplu3d.solver.interpreter.OCLInterpreterSimplu3D;
 
 public class TestLoader {
 

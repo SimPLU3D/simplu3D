@@ -15,7 +15,7 @@ import tudresden.ocl20.pivot.standalone.facade.StandaloneFacade;
 import fr.ign.cogit.simplu3d.importer.model.ImportModelInstanceEnvironnement;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
-import fr.ign.cogit.simplu3d.test.solver.interpreter.OCLInterpreterSimplu3D;
+import fr.ign.cogit.simplu3d.solver.interpreter.OCLInterpreterSimplu3D;
 
 public class TestStrasbourgPLU {
 

@@ -16,7 +16,7 @@ public class UrbaDocument {
   public Date endDate;
   public String documentType;
   
-  public List<UrbaZone> lUrbaZone = new ArrayList<>();
+  public List<UrbaZone> lUrbaZone = new ArrayList<UrbaZone>();
 
   public UrbaDocument() {
     super();

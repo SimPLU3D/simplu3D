@@ -28,8 +28,6 @@ public class BasicPropertyUnit extends DefaultFeature {
   
   public IMultiSurface<IOrientableSurface> generateGeom(){
     IMultiSurface<IOrientableSurface>  geom = new GM_MultiSurface<IOrientableSurface>();
-    
-    
     for (CadastralParcel cP : this.getCadastralParcel()) {
       geom.addAll(FromGeomToSurface.convertGeom(cP.getGeom()));
     }

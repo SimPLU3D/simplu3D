@@ -13,7 +13,7 @@ import tudresden.ocl20.pivot.modelinstancetype.types.IModelInstanceObject;
 import tudresden.ocl20.pivot.pivotmodel.Constraint;
 import tudresden.ocl20.pivot.standalone.facade.StandaloneFacade;
 import fr.ign.cogit.simplu3d.importer.model.ImportModelInstanceEnvironnement;
-import fr.ign.cogit.simplu3d.test.solver.interpreter.OCLInterpreterSimplu3D;
+import fr.ign.cogit.simplu3d.solver.interpreter.OCLInterpreterSimplu3D;
 
 /**
  * Paramètres d'exécition

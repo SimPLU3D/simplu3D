@@ -17,7 +17,7 @@ import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.model.application.Rule;
 import fr.ign.cogit.simplu3d.model.application.SubParcel;
-import fr.ign.cogit.simplu3d.test.solver.interpreter.OCLInterpreterSimplu3D;
+import fr.ign.cogit.simplu3d.solver.interpreter.OCLInterpreterSimplu3D;
 
 public class FastRuleChecker {
 
