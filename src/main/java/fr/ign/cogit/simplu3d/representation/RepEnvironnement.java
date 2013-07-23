@@ -348,7 +348,7 @@ public class RepEnvironnement {
 
     for (AbstractBuilding b : env.getBuildings()) {
 
-      IGeometry geom = b.getToit().setGutter();
+      IGeometry geom = b.getToit().getGutter();
 
       if (geom == null || geom.isEmpty()) {
         continue;

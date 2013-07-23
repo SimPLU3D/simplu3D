@@ -149,9 +149,8 @@ public class ParametricBuilding extends Building {
 
     // 4 On affecte l'emprise au bâtiment
 
-    IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<IOrientableSurface>();
-    iMS.add(emprise);
-    this.setFootprint(iMS);
+
+    this.setFootprint(emprise);
 
     // 5 si il y a un MNT, on détermine le Z
     if (dtm != null) {
@@ -191,7 +190,7 @@ public class ParametricBuilding extends Building {
     // On génère le toit et les façades
     ToitProcedural t = GenerationToit.generationToit(tB, this.centre.getZ()
         + zGouttiere, this.centre.getZ() + zMax, materiauToit, this
-        .getFootprint().get(0), angleToit);
+        .getFootprint(), angleToit);
 
     
     if(this.getToit() == null){
@@ -283,7 +282,7 @@ public class ParametricBuilding extends Building {
     Set<IDirectPosition> set = new HashSet<IDirectPosition>();
     set.addAll(this.getGeom().coord());
     set.addAll(this.getToit().getRoofing().coord());
-    set.addAll(this.getToit().setGutter().coord());
+    set.addAll(this.getToit().getGutter().coord());
     set.addAll(this.getFootprint().coord());
 
     return set;

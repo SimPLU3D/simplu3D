@@ -127,7 +127,7 @@ public class RepresentationBatiment extends Default3DRep {
     // On s'occupe de la gouttière
     if (representGouttiere) {
       Shape3D gut3D = new Shape3D(geometryWithColor(Color.blue,
-          t.setGutter()), AppearanceLineApp());
+          t.getGutter()), AppearanceLineApp());
 
       gut3D.setCapability(Shape3D.ALLOW_APPEARANCE_READ);
       gut3D.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);

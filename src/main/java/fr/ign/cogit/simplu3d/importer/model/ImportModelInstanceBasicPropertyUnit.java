@@ -2,16 +2,16 @@ package fr.ign.cogit.simplu3d.importer.model;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 
 import tudresden.ocl20.pivot.model.IModel;
 import tudresden.ocl20.pivot.modelinstance.IModelInstance;
 import tudresden.ocl20.pivot.modelinstancetype.exception.TypeNotFoundInModelException;
 import tudresden.ocl20.pivot.modelinstancetype.java.internal.modelinstance.JavaModelInstance;
+import tudresden.ocl20.pivot.modelinstancetype.types.IModelInstanceObject;
 import tudresden.ocl20.pivot.standalone.facade.StandaloneFacade;
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
-import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
-import fr.ign.cogit.simplu3d.model.application.Building;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.Road;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
@@ -38,13 +38,12 @@ public class ImportModelInstanceBasicPropertyUnit {
 
   }
 
-  public static IModelInstance getModelInstance(IModel model, SubParcel sp) {
+  public static IModelInstance generateModelInstance(IModel model) {
 
     try {
 
       IModelInstance modelInstance = new JavaModelInstance(model);
 
-      importCadastralSubParcel(modelInstance, sp);
 
       return modelInstance;
 
@@ -55,8 +54,6 @@ public class ImportModelInstanceBasicPropertyUnit {
     return null;
 
   }
-
-
 
   public static void importBuilding(IModelInstance modelInstance,
       AbstractBuilding b) throws TypeNotFoundInModelException {
@@ -76,9 +73,9 @@ public class ImportModelInstanceBasicPropertyUnit {
 
   }
 
-  public static void importCadastralSubParcel(IModelInstance modelInstance,
+  public static IModelInstanceObject importCadastralSubParcel(IModelInstance modelInstance,
       SubParcel sP) throws TypeNotFoundInModelException {
-
+    IModelInstanceObject iMS = (IModelInstanceObject)modelInstance.addModelInstanceElement(sP);
     modelInstance.addModelInstanceElement(sP.getGeom());
 
     for (AbstractBuilding aB : sP.getBuildingsParts()) {
@@ -86,10 +83,13 @@ public class ImportModelInstanceBasicPropertyUnit {
 
     }
 
+    return iMS;
   }
 
   public static void importCadastralParcel(IModelInstance modelInstance,
       CadastralParcel cP) throws TypeNotFoundInModelException {
+    
+
 
     modelInstance.addModelInstanceElement(cP);
     modelInstance.addModelInstanceElement(cP.getGeom());
@@ -97,14 +97,12 @@ public class ImportModelInstanceBasicPropertyUnit {
     for (SpecificCadastralBoundary sCB : cP.getSpecificCadastralBoundary()) {
       modelInstance.addModelInstanceElement(sCB);
       modelInstance.addModelInstanceElement(sCB.getGeom());
-      
+
       IFeature feat = sCB.getFeatAdj();
-      
-      if(feat !=null && feat instanceof Road){
+
+      if (feat != null && feat instanceof Road) {
         modelInstance.addModelInstanceElement(feat);
       }
-      
-
 
     }
 

@@ -9,6 +9,9 @@ import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.sig3d.geometry.Box3D;
 import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
 import fr.ign.cogit.sig3d.model.citygml.core.CG_CityObject;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.Cuboid;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.Cuboid2;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.CuboidSnap;
 
 public class SpecificCadastralBoundary extends CG_CityObject {
 
@@ -70,17 +73,47 @@ public class SpecificCadastralBoundary extends CG_CityObject {
   }
 
   public boolean prospect(AbstractBuilding b, double slope, double hIni) {
-    
-    Box3D box = new Box3D(b.getGeom());
-    IDirectPositionList dpl = b.getToit().getGeom().coord();
-    
-    double zMin = box.getLLDP().getZ();
-    
-    
-    
+
+    double zMin = 0;
+    IDirectPositionList dpl = null;
+
+    double shift = 0;
+
+    if (b instanceof Cuboid) {
+
+      dpl = b.getFootprint().coord();
+      zMin = ((Cuboid) b).getZmin();
+
+      shift = zMin;
+
+    } else if (b instanceof Cuboid2) {
+
+      dpl = b.getFootprint().coord();
+      zMin = ((Cuboid2) b).getZmin();
+
+      shift = zMin;
+
+    } else if (b instanceof CuboidSnap) {
+
+      dpl = b.getFootprint().coord();
+      zMin = ((CuboidSnap) b).getZmin();
+
+      shift = zMin;
+
+
+    } else {
+
+      Box3D box = new Box3D(b.getGeom());
+      dpl = b.getToit().getGeom().coord();
+
+      zMin = box.getLLDP().getZ();
+
+    }
+
     for (IDirectPosition dp : dpl) {
 
-      if (this.geom.distance(new GM_Point(dp)) * slope + hIni < dp.getZ() - zMin) {
+      if (this.geom.distance(new GM_Point(dp)) * slope + hIni < shift
+          + dp.getZ() - zMin) {
 
         return false;
       }

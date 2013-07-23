@@ -42,7 +42,6 @@ public class RoadImporter {
       Road v = new Road();
       v.setName(nom);
       v.setWidth(largeur);
-      voiries.add(v);
 
       List<String> usages = new ArrayList<String>();
       usages.add(type);
@@ -110,6 +109,8 @@ public class RoadImporter {
 
       v.setLod2MultiSurface(surfVoie);
       v.setGeom(surfVoie);
+
+      voiries.add(v);
     }
 
     return voiries;

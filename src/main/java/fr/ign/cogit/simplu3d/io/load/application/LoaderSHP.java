@@ -46,6 +46,7 @@ public class LoaderSHP {
   public static Environnement load(String folder)
       throws CloneNotSupportedException {
     Environnement env = Environnement.getInstance();
+    env.folder = folder;
 
     // Chargement des fichiers
 

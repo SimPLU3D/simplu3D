@@ -3,6 +3,7 @@ package fr.ign.cogit.simplu3d.importer.model;
 import fr.ign.cogit.appli.geopensim.feature.micro.Batiment;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
+import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Polygon;
 import fr.ign.cogit.simplu3d.calculation.HauteurCalculation;
 import fr.ign.cogit.simplu3d.calculation.util.PointBasType;
 import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
@@ -16,6 +17,7 @@ import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 import fr.ign.cogit.simplu3d.model.application.SpecificWallSurface;
 import fr.ign.cogit.simplu3d.model.application.SubParcel;
 import fr.ign.cogit.simplu3d.model.application.UrbaZone;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.CuboidSnap;
 
 public class ModelProviderClass {
   protected UrbaZone zone;
@@ -37,5 +39,12 @@ public class ModelProviderClass {
   protected BasicPropertyUnit bUP;
   protected IOrientableSurface oS;
   protected Road r;
+  protected GM_Polygon poly;
+
+  /*
+   * protected Cuboid c; protected Cuboid2 c2;
+   */
+
+  protected CuboidSnap c;
 
 }

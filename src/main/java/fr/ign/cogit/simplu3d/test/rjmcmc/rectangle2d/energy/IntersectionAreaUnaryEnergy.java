@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.rjmcmc.energy;
+package fr.ign.cogit.simplu3d.test.rjmcmc.rectangle2d.energy;
 
 import com.vividsolutions.jts.geom.Geometry;
 

@@ -52,7 +52,7 @@ public class RoofImporter {
         FromPolygonToLineString.convertListPolToLineStrings(mS)));
     
     IMultiCurve<IOrientableCurve> ext = new GM_MultiCurve<IOrientableCurve>();
-    ext.addAll(t.setGutter());
+    ext.addAll(t.getGutter());
 
     // ILineString lS = Operateurs.union(lLSExt);
 

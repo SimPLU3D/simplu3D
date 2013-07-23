@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.rjmcmc;
+package fr.ign.cogit.simplu3d.test.rjmcmc.rectangle2d;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +12,8 @@ import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
-import fr.ign.cogit.simplu3d.rjmcmc.energy.DifferenceAreaUnaryEnergy;
-import fr.ign.cogit.simplu3d.rjmcmc.energy.IntersectionAreaUnaryEnergy;
+import fr.ign.cogit.simplu3d.test.rjmcmc.rectangle2d.energy.DifferenceAreaUnaryEnergy;
+import fr.ign.cogit.simplu3d.test.rjmcmc.rectangle2d.energy.IntersectionAreaUnaryEnergy;
 import fr.ign.geometry.Rectangle2D;
 import fr.ign.geometry.Vector2D;
 import fr.ign.mpp.DirectSampler;
@@ -48,7 +48,7 @@ import fr.ign.simulatedannealing.visitor.OutputStreamVisitor;
 import fr.ign.simulatedannealing.visitor.ShapefileVisitor;
 import fr.ign.simulatedannealing.visitor.Visitor;
 
-public class OCLBuildings<O, C extends Configuration<O>, S extends Sampler<O, C, SimpleTemperature>, V extends Visitor<O, C, SimpleTemperature, S>> {
+public class TestBuildingsRectangle<O, C extends Configuration<O>, S extends Sampler<O, C, SimpleTemperature>, V extends Visitor<O, C, SimpleTemperature, S>> {
 
   // [building_footprint_rectangle_init_visitor
   static void init_visitor(Parameters p, Visitor<?, ?, ?, ?> v) {
@@ -133,7 +133,7 @@ public class OCLBuildings<O, C extends Configuration<O>, S extends Sampler<O, C,
     kernels.add(Kernel.make_uniform_modification_kernel(builder,
         new RectangleCornerTranslationTransform(), 0.4));
 
-    Sampler<Rectangle2D, Configuration<Rectangle2D>, SimpleTemperature> s = new OCLSampler<Rectangle2D, Configuration<Rectangle2D>, PoissonDistribution, SimpleTemperature, UniformBirth<Rectangle2D, Configuration<Rectangle2D>, Modification<Rectangle2D, Configuration<Rectangle2D>>>>(
+    Sampler<Rectangle2D, Configuration<Rectangle2D>, SimpleTemperature> s = new TestSampler<Rectangle2D, Configuration<Rectangle2D>, PoissonDistribution, SimpleTemperature, UniformBirth<Rectangle2D, Configuration<Rectangle2D>, Modification<Rectangle2D, Configuration<Rectangle2D>>>>(
         ds, new MetropolisAcceptance<SimpleTemperature>(), kernels);
     return s;
   }

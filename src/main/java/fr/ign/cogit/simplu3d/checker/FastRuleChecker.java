@@ -53,8 +53,20 @@ public class FastRuleChecker {
         for (IModelInstanceObject imiObject : mDList.get(i)
             .getAllModelInstanceObjects()) {
 
-          IInterpretationResult result = interpreter.interpretConstraint(
-              r.constraint, imiObject);
+          IInterpretationResult result = null;
+          
+          try {
+             result = interpreter.interpretConstraint(
+                r.constraint, imiObject);
+          } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(0);
+          }
+          
+          
+ 
+         
+  
 
           // System.out.println("Contrainte : " + r.constraint.toString());
 
@@ -64,8 +76,27 @@ public class FastRuleChecker {
 
               OclBoolean bool = (OclBoolean) result.getResult();
 
+              if(bool.oclIsInvalid().isTrue()){
+                System.out.println("  " + result.getModelObject() + " ("
+                    + result.getConstraint().getKind() + ": "
+                    + result.getConstraint().getSpecification().getBody() + "): "
+                    + result.getResult());
+
+              }
+              
+              
               if (!bool.isTrue()) {
-          //      System.out.println("Règle non vérifiée");
+            //    System.out.println("Règle non vérifiée");
+                
+   //             System.out.println(imiObject);
+                
+                
+           /*   System.out.println("  " + result.getModelObject() + " ("
+                    + result.getConstraint().getKind() + ": "
+                    + result.getConstraint().getSpecification().getBody() + "): "
+                    + result.getResult());*/
+
+                
                 return false;
               }
 
@@ -95,10 +126,14 @@ public class FastRuleChecker {
         sPList.add(sP);
 
         IModelInstance iM = ImportModelInstanceBasicPropertyUnit
-            .getModelInstance(Environnement.model, sP);
+            .generateModelInstance(Environnement.model);
 
         try {
+          
+          ImportModelInstanceBasicPropertyUnit.importCadastralSubParcel(iM, sP);
+          
           ImportModelInstanceBasicPropertyUnit.importCadastralParcel(iM, cP);
+          iM.addModelInstanceElement(bPU);
         } catch (TypeNotFoundInModelException e) {
           // TODO Auto-generated catch block
           e.printStackTrace();
@@ -118,4 +153,32 @@ public class FastRuleChecker {
     ImportModelInstanceBasicPropertyUnit.importBuilding(mDList.get(0), b);
   }
 
+  public boolean isNewBuildingInstance() {
+    return newBuildingInstance;
+  }
+
+  public List<SubParcel> getsPList() {
+    return sPList;
+  }
+
+  public List<IModelInstance> getmDList() {
+    return mDList;
+  }
+
+  public BasicPropertyUnit getbPU() {
+    return bPU;
+  }
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 }

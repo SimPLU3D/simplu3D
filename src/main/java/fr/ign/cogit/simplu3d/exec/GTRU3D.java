@@ -20,8 +20,10 @@ import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_LineString;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Polygon;
 import fr.ign.cogit.sig3d.gui.toolbar.IOToolBar;
+import fr.ign.cogit.simplu3d.checker.FastRuleChecker;
 import fr.ign.cogit.simplu3d.gui.button.GTRUToolBar;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
+import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement.Theme;
@@ -29,7 +31,7 @@ import fr.ign.cogit.simplu3d.representation.RepEnvironnement.Theme;
 public class GTRU3D {
 
   
-  public static final int ITERATION = 500000;
+  public static final int ITERATION = 5000;
 
   public static boolean DEBUG = false;
   
@@ -43,8 +45,7 @@ public class GTRU3D {
     ConstantRepresentation.backGroundColor = new Color(156, 180, 193);
 
     Environnement env = LoaderSHP.load(folder);
-    
-    
+
 
     MainWindow mW = new MainWindow();
     

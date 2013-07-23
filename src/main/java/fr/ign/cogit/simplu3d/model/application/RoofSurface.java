@@ -28,7 +28,7 @@ public class RoofSurface extends CG_RoofSurface {
 
   private int numberOfSlopes;
 
-  public IMultiCurve<IOrientableCurve> setGutter() {
+  public IMultiCurve<IOrientableCurve> getGutter() {
     return gutter;
   }
 
@@ -79,7 +79,7 @@ public class RoofSurface extends CG_RoofSurface {
     tCopy.setGeom((IGeometry) this.getGeom().clone());
     tCopy.setLod2MultiSurface((IMultiSurface<IOrientableSurface>) this
         .getGeom().clone());
-    tCopy.setGutter((IMultiCurve<IOrientableCurve>) this.setGutter()
+    tCopy.setGutter((IMultiCurve<IOrientableCurve>) this.getGutter()
         .clone());
     tCopy.setRoofing((IMultiCurve<IOrientableCurve>) this.getRoofing().clone());
 

@@ -52,11 +52,14 @@ public class SubParcelImporter {
         IMultiSurface<IOrientableSurface> ms = FromGeomToSurface
             .convertMSGeom(geom);
 
+        sp.setGeom(ms);
+        
+        /*
         if (ms.size() == 1) {
           sp.setGeom(ms.get(0));
         } else {
           sp.setGeom(ms);
-        }
+        }*/
 
         sp.setLod2MultiSurface(FromGeomToSurface.convertMSGeom(geom));
 
@@ -70,8 +73,8 @@ public class SubParcelImporter {
           z.getSubParcels().add(sp);
           sp.getUrbaZone().add(z);
 
-        }else{
-          if(zonesTemp.size() == 0){
+        } else {
+          if (zonesTemp.size() == 0) {
             System.out.println("Zero zone");
           }
         }
@@ -116,9 +119,27 @@ public class SubParcelImporter {
         continue;
       }
       SubParcel sP = new SubParcel();
+
+      IMultiSurface<IOrientableSurface> iMS = FromGeomToSurface
+          .convertMSGeom(geomInter);
+
+      int nbContrib = iMS.size();
+
+      for (int i = 0; i < nbContrib; i++) {
+
+        IOrientableSurface os = iMS.get(i);
+
+        if (os == null || os.isEmpty()) {
+          iMS.remove(i);
+          i--;
+          nbContrib--;
+        }
+
+      }
+
       // Onaffecte les géométries
-      sP.setGeom(geomInter);
-      sP.setLod2MultiSurface(FromGeomToSurface.convertMSGeom(geomInter));
+      sP.setGeom(iMS);
+      sP.setLod2MultiSurface(iMS);
 
       // Lien sousParcelle <=> Parcelle
       p.getSubParcel().add(sP);
@@ -135,6 +156,5 @@ public class SubParcelImporter {
 
     return sousParcelles;
   }
-
 
 }

@@ -18,7 +18,7 @@ public class Environnement extends CG_CityModel {
   
   
   
-  
+  public String folder;
   public PLU plu;
   
   

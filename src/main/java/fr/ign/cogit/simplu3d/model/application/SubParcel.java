@@ -123,13 +123,19 @@ public class SubParcel extends CG_LandUse {
     this.buildingsParts = buildingsParts;
   }
 
-  public double getCES() {
+  public double getces() {
+    
+
+    
+
     double area = this.getArea();
     double areaB = 0;
     for (AbstractBuilding bP : this.buildingsParts) {
-      areaB = areaB + bP.footprint.area();
+      areaB = areaB + bP.getFootprint().area();
 
     }
+
+  //  System.out.println(areaB / area);
 
     return areaB / area;
 

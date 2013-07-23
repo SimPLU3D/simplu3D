@@ -10,7 +10,6 @@ import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.sig3d.calculation.Util;
-import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.sig3d.convert.geom.FromGeomToSurface;
 import fr.ign.cogit.sig3d.model.citygml.building.CG_AbstractBuilding;
 import fr.ign.cogit.simplu3d.calculation.HauteurCalculation;
@@ -54,17 +53,15 @@ public abstract class AbstractBuilding extends CG_AbstractBuilding {
     this.setFacade(lF);
 
     // Etape 2 : on créé l'emprise du bâtiment
-    IPolygon poly = EmpriseGenerator.convert(surfaceRoof);
-    this.setFootprint(new GM_MultiSurface<IOrientableSurface>());
+    footprint = EmpriseGenerator.convert(surfaceRoof);
 
-    this.getFootprint().add(poly);
-
-    if (poly == null) {
+    if (footprint == null) {
       System.out.println("Emprise nulle");
     }
 
     // Création toit
-    RoofSurface t = RoofImporter.create(surfaceRoof, (IPolygon) poly.clone());
+    RoofSurface t = RoofImporter.create(surfaceRoof,
+        (IPolygon) footprint.clone());
 
     // Affectation
     this.setToit(t);
@@ -99,7 +96,7 @@ public abstract class AbstractBuilding extends CG_AbstractBuilding {
   }
 
   public String destination;
-  public IMultiSurface<IOrientableSurface> footprint;
+  public IOrientableSurface footprint;
 
   public String getDestination() {
     return destination;
@@ -109,11 +106,7 @@ public abstract class AbstractBuilding extends CG_AbstractBuilding {
     this.destination = destination;
   }
 
-  public IMultiSurface<IOrientableSurface> getFootprint() {
-    return footprint;
-  }
-
-  public void setFootprint(IMultiSurface<IOrientableSurface> footprint) {
+  public void setFootprint(IOrientableSurface footprint) {
     this.footprint = footprint;
   }
 
@@ -162,7 +155,7 @@ public abstract class AbstractBuilding extends CG_AbstractBuilding {
 
   public double height(int pB, int pH) {
     double h = HauteurCalculation.calculate(this, pB, pH);
-    // System.out.println("Hauteur calculée : " + h);
+     System.out.println("Hauteur calculée : " + h);
     return h;
   }
 
@@ -171,6 +164,22 @@ public abstract class AbstractBuilding extends CG_AbstractBuilding {
 
   public double distance(AbstractBuilding b2) {
     return this.footprint.distance(b2.getFootprint());
+  }
+
+  public RoofSurface getRoofSurface() {
+    return roofSurface;
+  }
+
+  public List<SpecificWallSurface> getWallSurface() {
+    return wallSurface;
+  }
+
+  public boolean isNew() {
+    return isNew;
+  }
+
+  public IOrientableSurface getFootprint() {
+    return footprint;
   }
 
 }

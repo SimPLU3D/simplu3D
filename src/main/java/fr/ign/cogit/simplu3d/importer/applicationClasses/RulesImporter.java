@@ -33,12 +33,11 @@ public class RulesImporter {
 
         }
 
-      } catch (IOException e) {
+      } catch (Exception e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
-      } catch (ParseException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+      
+        System.exit(1);
       }
 
     }
