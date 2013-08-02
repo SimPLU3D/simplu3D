@@ -121,7 +121,7 @@ public class CuboidSnap extends Building implements Primitive, SimpleObject {
   }
 
   public double height(int a, int b) {
-    return heightGut;
+    return height;
   }
 
   @Override

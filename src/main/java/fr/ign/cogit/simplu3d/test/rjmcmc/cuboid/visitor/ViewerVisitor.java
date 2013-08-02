@@ -65,9 +65,11 @@ public class ViewerVisitor<O, C extends Configuration<O>, T extends Temperature,
   public void begin(C config, S sampler, T t) {
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public void end(C config, S sampler, T t) {
 
+    this.addInformationToMainWindow((GraphConfiguration<Cuboid>) config);
   }
 
   private void addInformationToMainWindow(GraphConfiguration<Cuboid> config) {

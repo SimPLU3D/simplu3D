@@ -19,8 +19,12 @@ import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.CuboidSnap;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.ParameterCuboidSNAP;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeHeight;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeLength;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeLengthSNAP;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeWidth;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeWidthSNAP;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.MoveCuboid2;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.MoveCuboidSnap;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.StatsV⁮isitor;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.ViewerVisitor;
 import fr.ign.mpp.DirectSampler;
 import fr.ign.mpp.configuration.Configuration;
@@ -89,10 +93,16 @@ public class OCLBuildingsCuboidBao<O, C extends Configuration<O>, S extends Samp
 
     ViewerVisitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>> visitorViewer = new ViewerVisitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>>();
 
+    StatsV⁮isitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>> statsViewer = new StatsV⁮isitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>>("Énergie");
+
+    
     List<Visitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>>> list = new ArrayList<Visitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>>>();
     list.add(visitor);
     list.add(visitorViewer);
+    list.add(statsViewer);
     // list.add(shpVisitor);
+    
+    
 
     CompositeVisitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>> mVisitor = new CompositeVisitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>>(
         list);
@@ -267,16 +277,16 @@ public class OCLBuildingsCuboidBao<O, C extends Configuration<O>, S extends Samp
      */
 
     kernels.add(Kernel.make_uniform_modification_kernel(builder,
-        new ChangeWidth(mindim, maxdim), 0.2));
+        new ChangeWidthSNAP(mindim, maxdim), 0.2));
 
     kernels.add(Kernel.make_uniform_modification_kernel(builder,
-        new ChangeLength(mindim, maxdim), 0.2));
+        new ChangeLengthSNAP(mindim, maxdim), 0.2));
 
     kernels.add(Kernel.make_uniform_modification_kernel(builder,
         new ChangeHeight(minheight, maxheight), 0.2));
 
     kernels.add(Kernel.make_uniform_modification_kernel(builder,
-        new MoveCuboid2(), 0.2));
+        new MoveCuboidSnap(), 0.2));
 
     Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature> s = new SimpleGreenSampler<CuboidSnap, Configuration<CuboidSnap>, PoissonDistribution, SimpleTemperature, UniformBirth<CuboidSnap, Configuration<CuboidSnap>, Modification<CuboidSnap, Configuration<CuboidSnap>>>>(
         ds, new MetropolisAcceptance<SimpleTemperature>(), kernels, bpU);
