@@ -3,7 +3,7 @@
 	<parameters>
 		<param key="temp" value="10000" />
 		<param key="deccoef" value="0.999999" />
-		<param key="nbiter" value="2000000" />
+		<param key="nbiter" value="4000000" />
 		<param key="nbdump" value="10000" />
 		<param key="nbsave" value="100000" />
 		<param key="poisson" value="200" />
@@ -17,7 +17,7 @@
 		<param key="ymin" value="0" />
 		<param key="xmax" value="1000000" />
 		<param key="ymax" value="1000000" />
-		<param key="energy" value="500" />
+		<param key="energy" value="2000" />
 		<param key="ponderation_volume" value="1" />
 		<param key="ponderation_difference" value="3" />
 		<param key="ponderation_surface" value="1" />
