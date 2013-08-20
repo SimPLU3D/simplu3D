@@ -20,19 +20,19 @@ public class CuboidSnap extends Building implements Primitive, SimpleObject {
   public int length;
   public int width;
   public double height;
-  public double heightGut;
+
 
   public boolean isNew = true;
 
   public CuboidSnap(double centerx, double centery, double length,
-      double width, double height, double heightGut) {
+      double width, double height) {
     super();
     this.centerx = (int) centerx;
     this.centery = (int) centery;
     this.length = (int) length;
     this.width = (int) width;
     this.height = height;
-    this.heightGut= heightGut;
+
   }
 
   Polygon geom = null;
@@ -96,12 +96,12 @@ public class CuboidSnap extends Building implements Primitive, SimpleObject {
   @Override
   public Object[] toArray() {
     return new Object[] { (double) this.centerx, (double) this.centery,
-        (double) this.length, (double) this.width, (double) this.height , this.heightGut };
+        (double) this.length, (double) this.width, (double) this.height  };
   }
 
   @Override
   public int size() {
-    return 6;
+    return 5;
   }
 
   @Override
@@ -150,13 +150,13 @@ public class CuboidSnap extends Building implements Primitive, SimpleObject {
 
   private Rectangle2D rectangle = null;
 
-  private Rectangle2D getRectangle2D() {
+  public Rectangle2D getRectangle2D() {
 
     if (rectangle == null) {
       rectangle = new Rectangle2D(ParameterCuboidSNAP.X0 + this.centerx
           * ParameterCuboidSNAP.SNAPX, ParameterCuboidSNAP.Y0 + this.centery
-          * ParameterCuboidSNAP.SNAPY, length * ParameterCuboidSNAP.SNAPX, 0,
-          width / length);
+          * ParameterCuboidSNAP.SNAPY, length * ParameterCuboidSNAP.SNAPX / 2, 0,
+         ( width * ParameterCuboidSNAP.SNAPY) / (length* ParameterCuboidSNAP.SNAPX));
     }
     return rectangle;
   }

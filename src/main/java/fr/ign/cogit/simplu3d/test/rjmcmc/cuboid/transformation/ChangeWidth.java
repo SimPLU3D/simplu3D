@@ -6,11 +6,11 @@ import fr.ign.rjmcmc.kernel.Transform;
 
 public class ChangeWidth implements Transform {
   
-  private double mindim, maxdim;
+  private double amplitude;
   
-  public ChangeWidth(double mindim, double maxdim){
-    this.mindim = mindim;
-    this.maxdim = maxdim;
+  public ChangeWidth(double amplitude){
+    this.amplitude = amplitude;
+
   }
   
   
@@ -20,19 +20,17 @@ public class ChangeWidth implements Transform {
     double y = in[1];
     double length = in[2];
     double width = in[3];
-    double orientation = in[4];
-    double height = in[5];
-    double dl = in[6];
+    double height = in[4];
+    double dl = in[5];
 
 
     // res = Rectangle_2(c+v+u, n+v,r);
     out[0] = x;
     out[1] = y;
     out[2] = length;
-    out[3] = width + dl;
-    out[4] = orientation;
-    out[5] = height;
-    out[6] = -dl;
+    out[3] = width + ( 0.5 - dl ) * amplitude;
+    out[4] = height;
+    out[5] = 1-dl;
 
   }
 
@@ -56,7 +54,7 @@ public class ChangeWidth implements Transform {
   @Override
   public int dimension() {
     // TODO Auto-generated method stub
-    return 7;
+    return 6;
   }
 
 }

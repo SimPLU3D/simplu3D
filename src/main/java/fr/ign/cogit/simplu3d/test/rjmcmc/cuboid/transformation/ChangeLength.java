@@ -4,11 +4,10 @@ import fr.ign.rjmcmc.kernel.Transform;
 
 public class ChangeLength  implements Transform {
   
-  private double mindim, maxdim;
+  private double amplitude;
   
-  public ChangeLength(double mindim, double maxdim){
-    this.mindim = mindim;
-    this.maxdim = maxdim;
+  public ChangeLength(double amplitude){
+    this.amplitude = amplitude;
   }
   
   
@@ -18,19 +17,17 @@ public class ChangeLength  implements Transform {
     double y = in[1];
     double length = in[2];
     double width = in[3];
-    double orientation = in[4];
-    double height = in[5];
-    double dl = in[6];
+    double height = in[4];
+    double dl = in[5];
 
 
     // res = Rectangle_2(c+v+u, n+v,r);
     out[0] = x;
     out[1] = y;
-    out[2] = length+ dl;
+    out[2] = length+ (0.5 - dl ) * amplitude;
     out[3] = width ;
-    out[4] = orientation;
-    out[5] = height;
-    out[6] = -dl;
+    out[4] = height;
+    out[5] = 1-dl;
 
   }
 
@@ -54,7 +51,7 @@ public class ChangeLength  implements Transform {
   @Override
   public int dimension() {
     // TODO Auto-generated method stub
-    return 7;
+    return 6;
   }
 
 

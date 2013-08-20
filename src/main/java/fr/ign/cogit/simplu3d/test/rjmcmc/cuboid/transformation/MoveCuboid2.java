@@ -4,6 +4,11 @@ import fr.ign.rjmcmc.kernel.Transform;
 
 public class MoveCuboid2  implements Transform {
 
+  private double amplitudeMove;
+  
+  public MoveCuboid2(double amplitudeMove){
+    this.amplitudeMove = amplitudeMove;
+  }
 
 
   @Override
@@ -12,20 +17,18 @@ public class MoveCuboid2  implements Transform {
     double y = in[1];
     double length = in[2];
     double width = in[3];
-    double orientation = in[4];
-    double height = in[5];
-    double dx = in[6];
-    double dy = in[7];
+    double height = in[4];
+    double dx = in[5];
+    double dy = in[6];
 
     // res = Rectangle_2(c+v+u, n+v,r);
-    out[0] = x + dx;
-    out[1] = y + dy;
+    out[0] = x + ( 0.5 - dx) * amplitudeMove;
+    out[1] = y + (0.5 - dy) * amplitudeMove;
     out[2] = length;
     out[3] = width;
-    out[4] = orientation;
-    out[5] = height;
-    out[6] = -dx;
-    out[7] = -dy;
+    out[4] = height;
+    out[5] = 1-dx;
+    out[6] = 1-dy;
   }
 
   @Override
@@ -48,7 +51,7 @@ public class MoveCuboid2  implements Transform {
   @Override
   public int dimension() {
     // TODO Auto-generated method stub
-    return 8;
+    return 7;
   }
 
 }

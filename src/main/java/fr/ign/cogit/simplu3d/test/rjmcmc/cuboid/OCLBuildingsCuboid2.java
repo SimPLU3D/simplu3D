@@ -12,8 +12,8 @@ import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboid2.DifferenceAreaUnaryEnergy;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboid2.IntersectionAreaBinaryEnergy;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboid2.DifferenceVolumeUnaryEnergy;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboid2.IntersectionVolumeBinaryEnergy;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboid2.VolumeUnaryEnergy;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.Cuboid2;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeHeight;
@@ -21,6 +21,7 @@ import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeLength;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeWidth;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.MoveCuboid2;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.RotateCuboid2;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.StatsV⁮isitor;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.ViewerVisitor;
 import fr.ign.mpp.DirectSampler;
 import fr.ign.mpp.configuration.Configuration;
@@ -39,8 +40,6 @@ import fr.ign.rjmcmc.energy.MultipliesUnaryEnergy;
 import fr.ign.rjmcmc.energy.PlusUnaryEnergy;
 import fr.ign.rjmcmc.energy.UnaryEnergy;
 import fr.ign.rjmcmc.kernel.Kernel;
-import fr.ign.rjmcmc.kernel.RectangleCornerTranslationTransform;
-import fr.ign.rjmcmc.kernel.RectangleScaledEdgeTransform;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.SimulatedAnnealing;
 import fr.ign.simulatedannealing.endtest.EndTest;
@@ -97,9 +96,13 @@ public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sample
 
     ViewerVisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> visitorViewer = new ViewerVisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>();
 
+    StatsV⁮isitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> statsViewer = new StatsV⁮isitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>(
+        "Énergie");
+
     List<Visitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>> list = new ArrayList<Visitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>>();
     list.add(visitor);
     list.add(visitorViewer);
+    list.add(statsViewer);
     // list.add(shpVisitor);
 
     CompositeVisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> mVisitor = new CompositeVisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>(
@@ -127,12 +130,11 @@ public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sample
     // Énergie constante : à la création d'un nouvel objet
     ConstantEnergy<Cuboid2, Cuboid2> energyCreation = new ConstantEnergy<Cuboid2, Cuboid2>(
         Double.parseDouble(p.get("energy")));
+
     // Énergie constante : pondération de l'intersection
     ConstantEnergy<Cuboid2, Cuboid2> ponderationVolume = new ConstantEnergy<Cuboid2, Cuboid2>(
         Double.parseDouble(p.get("ponderation_volume")));
-    // Énergie constante : pondération de la différence
-    ConstantEnergy<Cuboid2, Cuboid2> ponderationDifference = new ConstantEnergy<Cuboid2, Cuboid2>(
-        Double.parseDouble(p.get("ponderation_difference")));
+
     // Énergie unaire : aire dans la parcelle
     UnaryEnergy<Cuboid2> energyVolume = new VolumeUnaryEnergy<Cuboid2>();
     // Multiplication de l'énergie d'intersection et de l'aire
@@ -142,16 +144,20 @@ public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sample
     // On retire de l'énergie de création, l'énergie de l'aire
     UnaryEnergy<Cuboid2> u3 = new MinusUnaryEnergy<Cuboid2>(energyCreation,
         energyVolumePondere);
+
+    // Énergie constante : pondération de la différence
+    ConstantEnergy<Cuboid2, Cuboid2> ponderationDifference = new ConstantEnergy<Cuboid2, Cuboid2>(
+        Double.parseDouble(p.get("ponderation_difference_ext")));
     // On ajoute l'énergie de différence : la zone en dehors de la parcelle
-    UnaryEnergy<Cuboid2> u4 = new DifferenceAreaUnaryEnergy<Cuboid2>(bpu);
+    UnaryEnergy<Cuboid2> u4 = new DifferenceVolumeUnaryEnergy<Cuboid2>(bpu);
     UnaryEnergy<Cuboid2> u5 = new MultipliesUnaryEnergy<Cuboid2>(
         ponderationDifference, u4);
     UnaryEnergy<Cuboid2> u6 = new PlusUnaryEnergy<Cuboid2>(u3, u5);
 
     // Énergie binaire : intersection entre deux rectangles
     ConstantEnergy<Cuboid2, Cuboid2> c3 = new ConstantEnergy<Cuboid2, Cuboid2>(
-        Double.parseDouble(p.get("ponderation_surface")));
-    BinaryEnergy<Cuboid2, Cuboid2> b1 = new IntersectionAreaBinaryEnergy<Cuboid2>();
+        Double.parseDouble(p.get("ponderation_volume_inter")));
+    BinaryEnergy<Cuboid2, Cuboid2> b1 = new IntersectionVolumeBinaryEnergy<Cuboid2>();
     BinaryEnergy<Cuboid2, Cuboid2> b2 = new MultipliesBinaryEnergy<Cuboid2, Cuboid2>(
         c3, b1);
     // empty initial configuration*/
@@ -173,7 +179,6 @@ public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sample
 
     // Un vecteur ?????
 
-    
     double mindim = Double.parseDouble(p.get("mindim"));
     double maxdim = Double.parseDouble(p.get("maxdim"));
 
@@ -184,12 +189,12 @@ public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sample
       @Override
       public Cuboid2 build(double[] coordinates) {
         return new Cuboid2(coordinates[0], coordinates[1], coordinates[2],
-            coordinates[3], coordinates[4], coordinates[5]);
+            coordinates[3], coordinates[4]);
       }
 
       @Override
       public int size() {
-        return 6;
+        return 5;
       }
 
       @Override
@@ -198,20 +203,14 @@ public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sample
         coordinates[1] = t.centery;
         coordinates[2] = t.length;
         coordinates[3] = t.width;
-        coordinates[4] = t.orientation;
-        coordinates[5] = t.height;
+        coordinates[4] = t.height;
       }
     };
 
-    
-    
-    
-
     // Sampler de naissance
     UniformBirth<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>> birth = new UniformBirth<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>(
-        new Cuboid2(r.minX(), r.minY(), mindim, mindim, 0, minheight),
-        new Cuboid2(r.maxX(), r.maxY(), maxdim, maxdim, Math.PI, maxheight),
-        builder);
+        new Cuboid2(r.minX(), r.minY(), mindim, mindim, minheight),
+        new Cuboid2(r.maxX(), r.maxY(), maxdim, maxdim, maxheight), builder);
 
     // Distribution de poisson
     PoissonDistribution distribution = new PoissonDistribution(
@@ -226,47 +225,63 @@ public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sample
     kernels.add(Kernel.make_uniform_birth_death_kernel(builder, birth,
         Double.parseDouble(p.get("pbirth")),
         Double.parseDouble(p.get("pdeath"))));
-    
-    
+
     /*
-    kernels.add(Kernel.make_uniform_modification_kernel(builder,
-        new RectangleScaledEdgeTransform(), 0.4));
-    kernels.add(Kernel.make_uniform_modification_kernel(builder,
-        new RectangleCornerTranslationTransform(), 0.4));*/
-    /*
-    kernels.add(Kernel.make_uniform_modification_kernel(builder,
-        new MoveCuboid2(), 0.2));
+     * kernels.add(Kernel.make_uniform_modification_kernel(builder, new
+     * RectangleScaledEdgeTransform(), 0.4));
+     * kernels.add(Kernel.make_uniform_modification_kernel(builder, new
+     * RectangleCornerTranslationTransform(), 0.4));
+     */
     
+    
+/*
+    kernels.add(Kernel.make_uniform_modification_kernel(builder,        new MoveCuboid2(), 0.2));
+
     kernels.add(Kernel.make_uniform_modification_kernel(builder,
         new ChangeWidth(), 0.2));
-    
-    kernels.add(Kernel.make_uniform_modification_kernel(builder,
-        new ChangeHeight(), 0.2));
 
 
-    
+
     kernels.add(Kernel.make_uniform_modification_kernel(builder,
         new MoveCuboid2(), 0.2));
-    
+
     kernels.add(Kernel.make_uniform_modification_kernel(builder,
-        new ChangeWidth(), 0.2));    */
+        new ChangeWidth(), 0.2));
+*/
+    double amplitudeMax = 1;
+    double amplitudeHeight = 1;
+    double amplitudeMove = 1;
+
+    /*
+     * kernels.add(Kernel.make_uniform_modification_kernel(builder, new
+     * RotateCuboid2(), 0.2));
+     */
+
+    /*
+     * 
+     * kernels.add(Kernel.make_uniform_modification_kernel(builder, new
+     * ChangeWidth(amplitudeMax), 0.2));
+     * 
+     * kernels.add(Kernel.make_uniform_modification_kernel(builder, new
+     * ChangeLength(amplitudeMax), 0.2));
+     * 
+     * 
+     * 
+     * 
+     * kernels.add(Kernel.make_uniform_modification_kernel(builder, new
+     * MoveCuboid2(amplitudeMove), 0.2));
+     * 
+     */
     
-    kernels.add(Kernel.make_uniform_modification_kernel(builder,
-        new ChangeWidth(mindim, maxdim), 0.2)); 
-    
-    kernels.add(Kernel.make_uniform_modification_kernel(builder,
-        new ChangeLength(mindim, maxdim), 0.2)); 
-    
-    kernels.add(Kernel.make_uniform_modification_kernel(builder,
-        new ChangeHeight(minheight, maxheight), 0.2));
-    
-    kernels.add(Kernel.make_uniform_modification_kernel(builder,
-        new RotateCuboid2(), 0.2));
-    
-    kernels.add(Kernel.make_uniform_modification_kernel(builder,
-        new MoveCuboid2(), 0.2));
-    
-    
+    kernels.add(Kernel.make_uniform_modification_kernel(builder, new
+         ChangeWidth(amplitudeMax), 0.2));
+         
+        kernels.add(Kernel.make_uniform_modification_kernel(builder, new
+        ChangeLength(amplitudeMax), 0.2));
+    kernels.add(Kernel.make_uniform_modification_kernel(builder, new
+         MoveCuboid2(amplitudeMove), 0.2));
+    kernels.add(Kernel.make_uniform_modification_kernel(builder, new 
+         ChangeHeight(amplitudeHeight), 0.2));
 
     Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature> s = new SimpleGreenSampler<Cuboid2, Configuration<Cuboid2>, PoissonDistribution, SimpleTemperature, UniformBirth<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>>(
         ds, new MetropolisAcceptance<SimpleTemperature>(), kernels, bpU);

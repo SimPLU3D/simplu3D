@@ -19,7 +19,7 @@ public class Cuboid2 extends Building implements Primitive, SimpleObject {
   public double centery;
   public double length;
   public double width;
-  public double orientation;
+  private double orientation = 0;
   public double height;
 
   public boolean isNew = true;
@@ -29,14 +29,14 @@ public class Cuboid2 extends Building implements Primitive, SimpleObject {
   }
   
   public Cuboid2(double centerx, double centery, double length, double width,
-      double orientation, double height) {
+    double height) {
     super();
     this.centerx = centerx;
     this.centery = centery;
     this.length = length;
     this.width = width;
-    this.orientation = orientation;
     this.height = height;
+
   }
 
   Polygon geom = null;
@@ -106,13 +106,12 @@ public class Cuboid2 extends Building implements Primitive, SimpleObject {
 
   @Override
   public Object[] toArray() {
-    return new Object[] { this.centerx, this.centery, this.length, this.width,
-        this.orientation, this.height };
+    return new Object[] { this.centerx, this.centery, this.length, this.width, this.height };
   }
 
   @Override
   public int size() {
-    return 6;
+    return 5;
   }
 
   @Override
@@ -147,7 +146,7 @@ public class Cuboid2 extends Building implements Primitive, SimpleObject {
   }
 
   public String toString() {
-    return "Cuboid : " +" Centre " + this.centerx +"; " + this.centery + "  hauteur "+ this.height ;
+    return "Cuboid : " +" Centre " + this.centerx +"; " + this.centery + "  hauteur "+ this.height+ " largeur  " + this.width + "   longueur  " + this.width ;
 
   }
 

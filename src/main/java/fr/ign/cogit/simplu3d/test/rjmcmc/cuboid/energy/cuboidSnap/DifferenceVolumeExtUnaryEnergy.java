@@ -6,10 +6,10 @@ import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.CuboidSnap;
 import fr.ign.geometry.Rectangle2D;
 import fr.ign.rjmcmc.energy.UnaryEnergy;
 
-public class DifferenceAreaUnaryEnergy<T> implements UnaryEnergy<T> {
+public class DifferenceVolumeExtUnaryEnergy<T> implements UnaryEnergy<T> {
   Geometry bpu;
 
-  public DifferenceAreaUnaryEnergy(Geometry p) {
+  public DifferenceVolumeExtUnaryEnergy(Geometry p) {
     this.bpu = p;
   }
 

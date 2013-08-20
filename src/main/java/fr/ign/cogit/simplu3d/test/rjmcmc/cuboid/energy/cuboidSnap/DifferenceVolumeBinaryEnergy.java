@@ -9,6 +9,7 @@ public class DifferenceVolumeBinaryEnergy<T, U> implements BinaryEnergy<T, U> {
   public double getValue(T t, U u) {
 
     if (!(t instanceof CuboidSnap) || !(u instanceof CuboidSnap)) {
+      System.out.println("Problem");
       return 0;
     }
 
@@ -16,6 +17,8 @@ public class DifferenceVolumeBinaryEnergy<T, U> implements BinaryEnergy<T, U> {
     CuboidSnap c2 = (CuboidSnap) u;
 
     if (CuboidSnap.do_intersect(c1, c2)) {
+      
+      
       double area = CuboidSnap.intersection_area(c1, c2);
 
       return area * Math.min(c1.height, c2.height);

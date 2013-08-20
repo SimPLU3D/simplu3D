@@ -5,10 +5,10 @@ import fr.ign.rjmcmc.kernel.Transform;
 public class ChangeHeight implements Transform {
   
   
-  private double min, max;
-  public ChangeHeight(double min, double max){
-    this.min = min;
-    this.max = max;
+  private double    amplitude;
+  public ChangeHeight(double amplitude){
+    this.amplitude = amplitude;
+ 
   }
   
   @Override
@@ -17,18 +17,16 @@ public class ChangeHeight implements Transform {
     double y = in[1];
     double length = in[2];
     double width = in[3];
-    double orientation = in[4];
-    double height = in[5];
-    double dh = in[6];
+    double height = in[4];
+    double dh = in[5];
 
     // res = Rectangle_2(c+v+u, n+v,r);
     out[0] = x;
     out[1] = y;
     out[2] = length;
     out[3] = width ;
-    out[4] = orientation;
-    out[5] = height + dh;
-    out[6] = -dh;
+    out[4] = height + (0.5 - dh) * amplitude;
+    out[5] = 1 -dh;
 
     
   }
@@ -53,7 +51,7 @@ public class ChangeHeight implements Transform {
   @Override
   public int dimension() {
 
-    return 7;
+    return 6;
   }
 
 

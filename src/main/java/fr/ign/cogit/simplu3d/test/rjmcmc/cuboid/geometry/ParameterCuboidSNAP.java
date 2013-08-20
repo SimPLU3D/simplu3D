@@ -2,7 +2,7 @@ package fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry;
 
 public class ParameterCuboidSNAP {
   
-  public static double SNAPPING_FACTOR = 3.0/100.0;
+  public static double SNAPPING_FACTOR = 0.3/100.0;
   
   
   

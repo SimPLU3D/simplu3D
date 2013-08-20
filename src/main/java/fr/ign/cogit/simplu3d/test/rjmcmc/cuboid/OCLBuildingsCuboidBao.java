@@ -12,18 +12,16 @@ import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboidSnap.DifferenceAreaUnaryEnergy;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboidSnap.DifferenceVolumeBinaryEnergy;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboidSnap.DifferenceVolumeExtUnaryEnergy;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboidSnap.VolumeUnaryEnergy;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.CuboidSnap;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.ParameterCuboidSNAP;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeHeight;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeLength;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeLengthSNAP;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeWidth;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeWidthSNAP;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.MoveCuboid2;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.MoveCuboidSnap;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.ShapefileVisitorCuboidSnap;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.StatsV⁮isitor;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.ViewerVisitor;
 import fr.ign.mpp.DirectSampler;
@@ -52,6 +50,7 @@ import fr.ign.simulatedannealing.schedule.Schedule;
 import fr.ign.simulatedannealing.temperature.SimpleTemperature;
 import fr.ign.simulatedannealing.visitor.CompositeVisitor;
 import fr.ign.simulatedannealing.visitor.OutputStreamVisitor;
+import fr.ign.simulatedannealing.visitor.ShapefileVisitor;
 import fr.ign.simulatedannealing.visitor.Visitor;
 
 public class OCLBuildingsCuboidBao<O, C extends Configuration<O>, S extends Sampler<O, C, SimpleTemperature>, V extends Visitor<O, C, SimpleTemperature, S>> {
@@ -83,26 +82,19 @@ public class OCLBuildingsCuboidBao<O, C extends Configuration<O>, S extends Samp
 
     Visitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>> visitor = new OutputStreamVisitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>>(
         System.out);
-    // Visitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature,
-    // Sampler<CuboidSnap,
-    // Configuration<CuboidSnap>, SimpleTemperature>> shpVisitor = new
-    // ShapefileVisitor<CuboidSnap, Configuration<CuboidSnap>,
-    // SimpleTemperature,
-    // Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>>(
-    // "result");
+    Visitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>> shpVisitor = new ShapefileVisitorCuboidSnap<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>>(
+        "result");
 
     ViewerVisitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>> visitorViewer = new ViewerVisitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>>();
 
-    StatsV⁮isitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>> statsViewer = new StatsV⁮isitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>>("Énergie");
+    StatsV⁮isitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>> statsViewer = new StatsV⁮isitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>>(
+        "Énergie");
 
-    
     List<Visitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>>> list = new ArrayList<Visitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>>>();
     list.add(visitor);
     list.add(visitorViewer);
     list.add(statsViewer);
-    // list.add(shpVisitor);
-    
-    
+    list.add(shpVisitor);
 
     CompositeVisitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>> mVisitor = new CompositeVisitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>>(
         list);
@@ -152,9 +144,10 @@ public class OCLBuildingsCuboidBao<O, C extends Configuration<O>, S extends Samp
     UnaryEnergy<CuboidSnap> u3 = new MinusUnaryEnergy<CuboidSnap>(
         energyCreation, energyVolumePondere);
 
-    UnaryEnergy<CuboidSnap> uDiff = new DifferenceAreaUnaryEnergy<>(bpu);
+    UnaryEnergy<CuboidSnap> uDiff = new DifferenceVolumeExtUnaryEnergy<CuboidSnap>(
+        bpu);
     ConstantEnergy<CuboidSnap, CuboidSnap> ponderationDifference = new ConstantEnergy<CuboidSnap, CuboidSnap>(
-        Double.parseDouble(p.get("ponderation_difference")));
+        Double.parseDouble(p.get("ponderation_difference_ext")));
 
     UnaryEnergy<CuboidSnap> energydiffPondere = new MultipliesUnaryEnergy<CuboidSnap>(
         uDiff, ponderationDifference);
@@ -164,7 +157,7 @@ public class OCLBuildingsCuboidBao<O, C extends Configuration<O>, S extends Samp
 
     // Énergie binaire : intersection entre deux rectangles
     ConstantEnergy<CuboidSnap, CuboidSnap> c3 = new ConstantEnergy<CuboidSnap, CuboidSnap>(
-        Double.parseDouble(p.get("ponderation_surface")));
+        Double.parseDouble(p.get("ponderation_volume_inter")));
     BinaryEnergy<CuboidSnap, CuboidSnap> b1 = new DifferenceVolumeBinaryEnergy<CuboidSnap, CuboidSnap>();
     BinaryEnergy<CuboidSnap, CuboidSnap> b2 = new MultipliesBinaryEnergy<CuboidSnap, CuboidSnap>(
         c3, b1);
@@ -209,12 +202,12 @@ public class OCLBuildingsCuboidBao<O, C extends Configuration<O>, S extends Samp
       @Override
       public CuboidSnap build(double[] coordinates) {
         return new CuboidSnap(coordinates[0], coordinates[1], coordinates[2],
-            coordinates[3], coordinates[4], coordinates[5]);
+            coordinates[3], coordinates[4]);
       }
 
       @Override
       public int size() {
-        return 6;
+        return 5;
       }
 
       @Override
@@ -224,18 +217,18 @@ public class OCLBuildingsCuboidBao<O, C extends Configuration<O>, S extends Samp
         coordinates[2] = t.length;
         coordinates[3] = t.width;
         coordinates[4] = t.height;
-        coordinates[5] = t.heightGut;
+
       }
     };
 
     // Sampler de naissance
     UniformBirth<CuboidSnap, Configuration<CuboidSnap>, Modification<CuboidSnap, Configuration<CuboidSnap>>> birth = new UniformBirth<CuboidSnap, Configuration<CuboidSnap>, Modification<CuboidSnap, Configuration<CuboidSnap>>>(
-        new CuboidSnap(0, 0, mindim / ParameterCuboidSNAP.SNAPX, mindim
-            / ParameterCuboidSNAP.SNAPY, minheight,minheight), new CuboidSnap(
+        new CuboidSnap(0.0, 0.0, mindim / ParameterCuboidSNAP.SNAPX, mindim
+            / ParameterCuboidSNAP.SNAPY, minheight), new CuboidSnap(
             1 + (int) (deltaXParcel / ParameterCuboidSNAP.SNAPX),
             1 + (int) (deltaYParcel / ParameterCuboidSNAP.SNAPY), maxdim
                 / ParameterCuboidSNAP.SNAPX,
-            maxdim / ParameterCuboidSNAP.SNAPX, maxheight, maxheight), builder);
+            maxdim / ParameterCuboidSNAP.SNAPX, maxheight), builder);
 
     // Distribution de poisson
     PoissonDistribution distribution = new PoissonDistribution(
@@ -283,7 +276,7 @@ public class OCLBuildingsCuboidBao<O, C extends Configuration<O>, S extends Samp
         new ChangeLengthSNAP(mindim, maxdim), 0.2));
 
     kernels.add(Kernel.make_uniform_modification_kernel(builder,
-        new ChangeHeight(minheight, maxheight), 0.2));
+        new ChangeHeight(2), 0.2));
 
     kernels.add(Kernel.make_uniform_modification_kernel(builder,
         new MoveCuboidSnap(), 0.2));

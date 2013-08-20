@@ -2,9 +2,9 @@ package fr.ign.cogit.simplu3d.io.load.application;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
+import fr.ign.cogit.geoxygene.sig3d.semantic.DTMArea;
 import fr.ign.cogit.geoxygene.sig3d.util.ColorShade;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
-import fr.ign.cogit.sig3d.semantic.MNTAire;
 import fr.ign.cogit.simplu3d.importer.applicationClasses.AlignementImporter;
 import fr.ign.cogit.simplu3d.importer.applicationClasses.AssignLinkToBordure;
 import fr.ign.cogit.simplu3d.importer.applicationClasses.BasicPropertyUnitImporter;
@@ -157,7 +157,7 @@ public class LoaderSHP {
 
     // Etape 11 : on affecte des z à tout ce bon monde // - parcelles,
     // sous-parcelles route sans z, zonage, les bordures etc...
-    MNTAire dtm = new MNTAire(folder + NOM_FICHIER_TERRAIN, "Terrain", true, 1,
+    DTMArea dtm = new DTMArea(folder + NOM_FICHIER_TERRAIN, "Terrain", true, 1,
         ColorShade.BLUE_CYAN_GREEN_YELLOW_WHITE);
     env.setTerrain(dtm);
     try {
