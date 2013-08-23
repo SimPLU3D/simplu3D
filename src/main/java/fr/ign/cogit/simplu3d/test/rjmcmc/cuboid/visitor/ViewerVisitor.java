@@ -41,6 +41,9 @@ public class ViewerVisitor<O, C extends Configuration<O>, T extends Temperature,
   private int save;
   private int iter;
 
+  private GraphConfiguration<Cuboid> bestConfig = null;
+  private double bestValue = Double.POSITIVE_INFINITY;
+
   public ViewerVisitor() {
     mW = new MainWindow();
     represent(Environnement.getInstance(), mW);
@@ -56,6 +59,13 @@ public class ViewerVisitor<O, C extends Configuration<O>, T extends Temperature,
   @Override
   public void visit(C config, S sampler, T t) {
     ++iter;
+
+    if (config.getEnergy() < bestValue) {
+      bestValue = config.getEnergy();
+      bestConfig = (GraphConfiguration<Cuboid>)config;
+
+    }
+
     if ((save > 0) && (iter % save == 0)) {
       this.addInformationToMainWindow((GraphConfiguration<Cuboid>) config);
     }
@@ -69,7 +79,7 @@ public class ViewerVisitor<O, C extends Configuration<O>, T extends Temperature,
   @Override
   public void end(C config, S sampler, T t) {
 
-    this.addInformationToMainWindow((GraphConfiguration<Cuboid>) config);
+    this.addInformationToMainWindow(bestConfig);
   }
 
   private void addInformationToMainWindow(GraphConfiguration<Cuboid> config) {
@@ -83,20 +93,18 @@ public class ViewerVisitor<O, C extends Configuration<O>, T extends Temperature,
       Object o = v.getValue();
 
       if (v.getValue() instanceof Cuboid) {
-        geom = GenerateSolidFromCuboid.generate((Cuboid)o);
+        geom = GenerateSolidFromCuboid.generate((Cuboid) o);
 
       } else if (v.getValue() instanceof Cuboid2) {
-        geom = GenerateSolidFromCuboid.generate((Cuboid2)o);
+        geom = GenerateSolidFromCuboid.generate((Cuboid2) o);
       } else if (v.getValue() instanceof CuboidSnap) {
-        geom = GenerateSolidFromCuboid.generate((CuboidSnap)o);
+        geom = GenerateSolidFromCuboid.generate((CuboidSnap) o);
       }
 
-      
-      if(geom == null){
+      if (geom == null) {
         continue;
       }
-      
-      
+
       DefaultFeature df = new DefaultFeature(geom);
       AttributeManager.addAttribute(df, "Energy", v.getEnergy(), "Double");
       feat.add(df);
@@ -144,14 +152,14 @@ public class ViewerVisitor<O, C extends Configuration<O>, T extends Temperature,
     // 1051042.8513268954120576,6840539.0837931865826249 :
     // 1051264.8064121364150196,6840679.2711814027279615
     // Projet 1
-    // IDirectPosition dpLL = new
-    // DirectPosition(1051042.8513268954120576,6840539.0837931865826249,z);
-    // IDirectPosition dpUR = new
-    // DirectPosition(1051264.8064121364150196,6840679.2711814027279615,z);
+     IDirectPosition dpLL = new
+     DirectPosition(1051042.8513268954120576,6840539.0837931865826249,z);
+     IDirectPosition dpUR = new
+     DirectPosition(1051264.8064121364150196,6840679.2711814027279615,z);
 
     // Projet 3
-    IDirectPosition dpLL = new DirectPosition(1051157, 6840727, z);
-    IDirectPosition dpUR = new DirectPosition(1051322, 6840858, z);
+  //  IDirectPosition dpLL = new DirectPosition(1051157, 6840727, z);
+//    IDirectPosition dpUR = new DirectPosition(1051322, 6840858, z);
 
     IDirectPositionList dpl = new DirectPositionList();
 

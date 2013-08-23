@@ -20,7 +20,7 @@ import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeHeight;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeLength;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeWidth;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.MoveCuboid2;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.RotateCuboid2;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.ShapefileVisitorCuboid2;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.StatsV⁮isitor;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.ViewerVisitor;
 import fr.ign.mpp.DirectSampler;
@@ -49,6 +49,7 @@ import fr.ign.simulatedannealing.schedule.Schedule;
 import fr.ign.simulatedannealing.temperature.SimpleTemperature;
 import fr.ign.simulatedannealing.visitor.CompositeVisitor;
 import fr.ign.simulatedannealing.visitor.OutputStreamVisitor;
+import fr.ign.simulatedannealing.visitor.ShapefileVisitor;
 import fr.ign.simulatedannealing.visitor.Visitor;
 
 public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sampler<O, C, SimpleTemperature>, V extends Visitor<O, C, SimpleTemperature, S>> {
@@ -87,12 +88,12 @@ public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sample
 
     Visitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> visitor = new OutputStreamVisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>(
         System.out);
-    // Visitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature,
-    // Sampler<Cuboid2,
-    // Configuration<Cuboid2>, SimpleTemperature>> shpVisitor = new
-    // ShapefileVisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature,
-    // Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>(
-    // "result");
+     Visitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature,
+     Sampler<Cuboid2,
+     Configuration<Cuboid2>, SimpleTemperature>> shpVisitor = new
+         ShapefileVisitorCuboid2<Cuboid2, Configuration<Cuboid2>, SimpleTemperature,
+     Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>(
+     "result");
 
     ViewerVisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> visitorViewer = new ViewerVisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>();
 
@@ -103,7 +104,7 @@ public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sample
     list.add(visitor);
     list.add(visitorViewer);
     list.add(statsViewer);
-    // list.add(shpVisitor);
+     list.add(shpVisitor);
 
     CompositeVisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> mVisitor = new CompositeVisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>(
         list);
@@ -248,9 +249,9 @@ public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sample
     kernels.add(Kernel.make_uniform_modification_kernel(builder,
         new ChangeWidth(), 0.2));
 */
-    double amplitudeMax = 1;
-    double amplitudeHeight = 1;
-    double amplitudeMove = 1;
+    double amplitudeMax = 6;
+    double amplitudeHeight = 4;
+    double amplitudeMove = 4;
 
     /*
      * kernels.add(Kernel.make_uniform_modification_kernel(builder, new
@@ -273,15 +274,19 @@ public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sample
      * 
      */
     
+
+    
     kernels.add(Kernel.make_uniform_modification_kernel(builder, new
-         ChangeWidth(amplitudeMax), 0.2));
-         
+         ChangeWidth(amplitudeMax), 2));
+     
         kernels.add(Kernel.make_uniform_modification_kernel(builder, new
-        ChangeLength(amplitudeMax), 0.2));
+        ChangeLength(amplitudeMax), 2));
+        
     kernels.add(Kernel.make_uniform_modification_kernel(builder, new
-         MoveCuboid2(amplitudeMove), 0.2));
+         MoveCuboid2(amplitudeMove), 2));
+    
     kernels.add(Kernel.make_uniform_modification_kernel(builder, new 
-         ChangeHeight(amplitudeHeight), 0.2));
+         ChangeHeight(amplitudeHeight), 2));
 
     Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature> s = new SimpleGreenSampler<Cuboid2, Configuration<Cuboid2>, PoissonDistribution, SimpleTemperature, UniformBirth<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>>(
         ds, new MetropolisAcceptance<SimpleTemperature>(), kernels, bpU);

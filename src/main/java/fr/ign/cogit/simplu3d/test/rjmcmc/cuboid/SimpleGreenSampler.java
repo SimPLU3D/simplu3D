@@ -43,67 +43,15 @@ public class SimpleGreenSampler<O extends SimpleObject, C extends Configuration<
 
   }
 
+
+  
   protected boolean checkConfiguration(
       KernelFunctor<O, C, Modification<O, C>> kf) {
-    /*
-     * for (AbstractBuilding aB : (List<AbstractBuilding>) kf.getModif()
-     * .getBirth()) {
-     * 
-     * IDirectPositionList dpl = aB.getFootprint().coord();
-     * 
-     * for (IDirectPosition dp : dpl) {
-     * 
-     * try { if (!vFR .getbPU() .getGeomJTS() .contains(
-     * geometryFactory.createPoint(new Coordinate(dp.getX(), dp .getY())))) {
-     * 
-     * return false; } } catch (Exception e) { // TODO Auto-generated catch
-     * block e.printStackTrace(); }
-     * 
-     * }
-     * 
-     * }
-     */
-    // return true;
-    // On applique les modifications
-    /*
-     * cMI.update((List<AbstractBuilding>) kf.getModif().getBirth(),
-     * (List<AbstractBuilding>) kf.getModif().getDeath());
-     */
 
     List<IModelInstanceObject> lst = cMI.update((List<AbstractBuilding>) kf
         .getModif().getBirth(), (List<AbstractBuilding>) kf.getModif()
         .getDeath());
-    /*
-    for (IModelInstanceObject ins : lst) {
 
-      Object o = ins.getObject();
-
-      if (o instanceof Building) {
-        System.out.println("BPU : " + ((Building) o).getbPU());
-
-        if (((Building) o).getbPU() == null) {
-
-          cMI.update((List<AbstractBuilding>) kf.getModif().getDeath(),
-              (List<AbstractBuilding>) kf.getModif().getBirth());
-          List<IModelInstanceObject> lst2 = cMI.update(
-              (List<AbstractBuilding>) kf.getModif().getBirth(),
-              (List<AbstractBuilding>) kf.getModif().getDeath());
-
-          for (IModelInstanceObject ins2 : lst2) {
-
-            Object o2 = ins2.getObject();
-
-            if (o2 instanceof Building) {
-              System.out.println("BPU : " + ((Building) o2).getbPU());
-
-            }
-
-          }
-        }
-
-      }
-
-    }*/
 
     boolean isCheck = vFR.check(lst);
 

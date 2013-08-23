@@ -71,7 +71,7 @@ public class Cuboid2 extends Building implements Primitive, SimpleObject {
     if (geom == null) {
       GeometryFactory geomFact = new GeometryFactory();
       Coordinate[] pts = new Coordinate[5];
-
+      /*
       double cosOrient = Math.cos(orientation);
       double sinOrient = Math.sin(orientation);
 
@@ -82,7 +82,7 @@ public class Cuboid2 extends Building implements Primitive, SimpleObject {
       
       double c = sinOrient * length / 2;
       double d = cosOrient * width / 2;
-          
+      
 
       pts[0] = new Coordinate(this.centerx   - a + b,
           this.centery  - c - d, height);
@@ -94,7 +94,23 @@ public class Cuboid2 extends Building implements Primitive, SimpleObject {
           this.centery +  c + d, height);
 
       pts[3] = new Coordinate(this.centerx  - a - b,
-          this.centery   - c + d, height);
+          this.centery   - c + d, height);*/
+          
+      
+      double hLength = length/2;
+      double hWidth = width/2;
+
+      pts[0] = new Coordinate(this.centerx   - hLength,
+          this.centery  -hWidth );
+
+      pts[1] = new Coordinate(this.centerx  + hLength,
+          this.centery - hWidth, height);
+
+      pts[2] = new Coordinate(this.centerx +   hLength,
+          this.centery + hWidth);
+
+      pts[3] = new Coordinate(this.centerx  - hLength,
+          this.centery  + hWidth, height);
 
       pts[4] = new Coordinate(pts[0]);
       LinearRing ring = geomFact.createLinearRing(pts);
@@ -152,12 +168,11 @@ public class Cuboid2 extends Building implements Primitive, SimpleObject {
 
   private Rectangle2D rectangle = null;
 
-  private Rectangle2D getRectangle2D() {
+  public Rectangle2D getRectangle2D() {
 
     if (rectangle == null) {
       rectangle = new Rectangle2D(this.centerx, this.centery,
-          Math.cos(orientation) * length, Math.sin(orientation) * length, width
-              / length);
+          Math.cos(orientation) * length / 2 , Math.sin(orientation) * length / 2 , width    / length);
     }
     return rectangle;
   }
