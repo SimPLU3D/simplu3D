@@ -21,7 +21,8 @@ public class ChangeWidth implements Transform {
     double length = in[2];
     double width = in[3];
     double height = in[4];
-    double dl = in[5];
+    double orientation = in[5];
+    double dl = in[6];
 
 
     // res = Rectangle_2(c+v+u, n+v,r);
@@ -30,7 +31,8 @@ public class ChangeWidth implements Transform {
     out[2] = length;
     out[3] = width + ( 0.5 - dl ) * amplitude;
     out[4] = height;
-    out[5] = 1-dl;
+    out[5] = orientation;
+    out[6] = 1-dl;
 
   }
 
@@ -54,7 +56,7 @@ public class ChangeWidth implements Transform {
   @Override
   public int dimension() {
     // TODO Auto-generated method stub
-    return 6;
+    return 7;
   }
 
 }

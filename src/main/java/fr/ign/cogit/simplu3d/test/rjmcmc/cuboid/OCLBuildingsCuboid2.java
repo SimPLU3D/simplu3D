@@ -20,6 +20,7 @@ import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeHeight;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeLength;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeWidth;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.MoveCuboid2;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.RotateCuboid2;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.ShapefileVisitorCuboid2;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.StatsV⁮isitor;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.ViewerVisitor;
@@ -190,12 +191,12 @@ public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sample
       @Override
       public Cuboid2 build(double[] coordinates) {
         return new Cuboid2(coordinates[0], coordinates[1], coordinates[2],
-            coordinates[3], coordinates[4]);
+            coordinates[3], coordinates[4], coordinates[5]);
       }
 
       @Override
       public int size() {
-        return 5;
+        return 6;
       }
 
       @Override
@@ -205,13 +206,14 @@ public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sample
         coordinates[2] = t.length;
         coordinates[3] = t.width;
         coordinates[4] = t.height;
+        coordinates[5] = t.orientation;
       }
     };
 
     // Sampler de naissance
     UniformBirth<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>> birth = new UniformBirth<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>(
-        new Cuboid2(r.minX(), r.minY(), mindim, mindim, minheight),
-        new Cuboid2(r.maxX(), r.maxY(), maxdim, maxdim, maxheight), builder);
+        new Cuboid2(r.minX(), r.minY(), mindim, mindim, minheight, 0),
+        new Cuboid2(r.maxX(), r.maxY(), maxdim, maxdim, maxheight,  2 * Math.PI), builder);
 
     // Distribution de poisson
     PoissonDistribution distribution = new PoissonDistribution(
@@ -252,6 +254,8 @@ public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sample
     double amplitudeMax = 6;
     double amplitudeHeight = 4;
     double amplitudeMove = 4;
+    
+    double amplitudeRotate = 10 * Math.PI /180;
 
     /*
      * kernels.add(Kernel.make_uniform_modification_kernel(builder, new
@@ -277,16 +281,19 @@ public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sample
 
     
     kernels.add(Kernel.make_uniform_modification_kernel(builder, new
-         ChangeWidth(amplitudeMax), 2));
+         ChangeWidth(amplitudeMax), 0.2));
      
         kernels.add(Kernel.make_uniform_modification_kernel(builder, new
-        ChangeLength(amplitudeMax), 2));
+        ChangeLength(amplitudeMax), 0.2));
         
     kernels.add(Kernel.make_uniform_modification_kernel(builder, new
-         MoveCuboid2(amplitudeMove), 2));
+         MoveCuboid2(amplitudeMove), 0.2));
     
     kernels.add(Kernel.make_uniform_modification_kernel(builder, new 
-         ChangeHeight(amplitudeHeight), 2));
+         ChangeHeight(amplitudeHeight), 0.2));
+    
+    kernels.add(Kernel.make_uniform_modification_kernel(builder, new 
+        RotateCuboid2(amplitudeRotate), 0.2));
 
     Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature> s = new SimpleGreenSampler<Cuboid2, Configuration<Cuboid2>, PoissonDistribution, SimpleTemperature, UniformBirth<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>>(
         ds, new MetropolisAcceptance<SimpleTemperature>(), kernels, bpU);

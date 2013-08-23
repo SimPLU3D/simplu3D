@@ -18,8 +18,9 @@ public class MoveCuboid2  implements Transform {
     double length = in[2];
     double width = in[3];
     double height = in[4];
-    double dx = in[5];
-    double dy = in[6];
+    double orientation = in[5];
+    double dx = in[6];
+    double dy = in[7];
 
     // res = Rectangle_2(c+v+u, n+v,r);
     out[0] = x + ( 0.5 - dx) * amplitudeMove;
@@ -27,8 +28,9 @@ public class MoveCuboid2  implements Transform {
     out[2] = length;
     out[3] = width;
     out[4] = height;
-    out[5] = 1-dx;
-    out[6] = 1-dy;
+    out[5] = orientation;
+    out[6] = 1-dx;
+    out[7] = 1-dy;
   }
 
   @Override
@@ -51,7 +53,7 @@ public class MoveCuboid2  implements Transform {
   @Override
   public int dimension() {
     // TODO Auto-generated method stub
-    return 7;
+    return 8;
   }
 
 }

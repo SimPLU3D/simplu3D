@@ -152,14 +152,14 @@ public class ViewerVisitor<O, C extends Configuration<O>, T extends Temperature,
     // 1051042.8513268954120576,6840539.0837931865826249 :
     // 1051264.8064121364150196,6840679.2711814027279615
     // Projet 1
-     IDirectPosition dpLL = new
+    /* IDirectPosition dpLL = new
      DirectPosition(1051042.8513268954120576,6840539.0837931865826249,z);
      IDirectPosition dpUR = new
-     DirectPosition(1051264.8064121364150196,6840679.2711814027279615,z);
+     DirectPosition(1051264.8064121364150196,6840679.2711814027279615,z);*/
 
     // Projet 3
-  //  IDirectPosition dpLL = new DirectPosition(1051157, 6840727, z);
-//    IDirectPosition dpUR = new DirectPosition(1051322, 6840858, z);
+   IDirectPosition dpLL = new DirectPosition(1051157, 6840727, z);
+  IDirectPosition dpUR = new DirectPosition(1051322, 6840858, z);
 
     IDirectPositionList dpl = new DirectPositionList();
 

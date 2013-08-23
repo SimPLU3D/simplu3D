@@ -4,6 +4,12 @@ import fr.ign.rjmcmc.kernel.Transform;
 
 public class RotateCuboid2 implements Transform {
   
+  private double amplitudeRotate;
+  
+  public RotateCuboid2(double amp){
+    amplitudeRotate = amp;
+  }
+  
   @Override
   public void apply(double[] in, double[] out) {
     double x = in[0];
@@ -21,8 +27,19 @@ public class RotateCuboid2 implements Transform {
     out[1] = y;
     out[2] = length;
     out[3] = width ;
-    out[4] = orientation + dor * Math.PI;
-    out[5] = height;
+    out[4] = height;
+    
+    
+    double newAngle =  orientation + dor * amplitudeRotate;
+    
+    double modulo = newAngle % (2*Math.PI);
+    
+    
+    if(modulo < 0){
+      modulo = Math.PI * 2 + modulo;
+    }
+    
+    out[5] = modulo;
     out[6] = -dor;
 
   }
