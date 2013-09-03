@@ -17,7 +17,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
 
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.Cuboid;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.mpp.configuration.Configuration;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.rjmcmc.sampler.Sampler;

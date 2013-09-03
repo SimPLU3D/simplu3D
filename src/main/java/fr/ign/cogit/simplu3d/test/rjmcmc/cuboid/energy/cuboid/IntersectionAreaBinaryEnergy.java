@@ -1,6 +1,6 @@
 package fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboid;
 
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.Cuboid;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.geometry.Primitive;
 import fr.ign.geometry.Rectangle2D;
 import fr.ign.rjmcmc.energy.BinaryEnergy;

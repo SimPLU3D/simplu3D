@@ -17,7 +17,7 @@ import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 import fr.ign.cogit.simplu3d.model.application.SpecificWallSurface;
 import fr.ign.cogit.simplu3d.model.application.SubParcel;
 import fr.ign.cogit.simplu3d.model.application.UrbaZone;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.CuboidSnap;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.CuboidSnap;
 
 public class ModelProviderClass {
   protected UrbaZone zone;

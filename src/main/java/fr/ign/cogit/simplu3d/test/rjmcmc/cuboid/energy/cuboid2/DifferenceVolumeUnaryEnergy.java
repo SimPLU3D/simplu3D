@@ -3,9 +3,9 @@ package fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboid2;
 import com.vividsolutions.jts.geom.Geometry;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.Cuboid;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.Cuboid2;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.CuboidSnap;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid2;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.CuboidSnap;
 import fr.ign.geometry.Rectangle2D;
 import fr.ign.rjmcmc.energy.UnaryEnergy;
 

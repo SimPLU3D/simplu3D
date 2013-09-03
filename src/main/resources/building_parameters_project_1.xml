@@ -1,28 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <parameter-configuration>
 	<parameters>
-		<param key="temp" value="1000" />
-		<param key="deccoef" value="0.999999" />
-		<param key="nbiter" value="5000000" />
+		<param key="temp" value="2000" />
+		<param key="deccoef" value="0.99999" />
+		<param key="nbiter" value="10000000" />
 		<param key="nbdump" value="10000" />
 		<param key="nbsave" value="1000000" />
 		<param key="poisson" value="200" />
-        <param key="mindim" value="5" />
-		<param key="maxdim" value="30" />
+        <param key="mindim" value="2" />
+		<param key="maxdim" value="15" />
 		<param key="pbirth" value="0.1" />
 		<param key="pdeath" value="0.1" />
 		<param key="minheight" value ="3" />
-		<param key="maxheight" value="16" />
+		<param key="maxheight" value="13" />
 		<param key="xmin" value="0" />
 		<param key="ymin" value="0" />
 		<param key="xmax" value="1000000" />
 		<param key="ymax" value="1000000" />
-		<param key="energy" value="300" />
+		<param key="energy" value="50" />
 		<param key="ponderation_volume" value="1" />
 		<param key="ponderation_difference_ext" value="3" />
 		<param key="ponderation_volume_inter" value="1" />
         <param key="ponderation_intersection" value="5" />
 		<param key="folder" value="E:/mbrasebin/Donnees/Strasbourg/GTRU/Project1/"/>
 		<param key="bpu" value="18"/>
+        <param key="load_existing_config" value="0" />
+        <param key="config_shape_file" value="" />
 	</parameters>
 </parameter-configuration>

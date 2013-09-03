@@ -32,11 +32,11 @@ public class RotateCuboid2 implements Transform {
     
     double newAngle =  orientation + dor * amplitudeRotate;
     
-    double modulo = newAngle % (2*Math.PI);
+    double modulo = newAngle % (Math.PI);
     
     
     if(modulo < 0){
-      modulo = Math.PI * 2 + modulo;
+      modulo = Math.PI + modulo;
     }
     
     out[5] = modulo;

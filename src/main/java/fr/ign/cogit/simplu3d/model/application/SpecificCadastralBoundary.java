@@ -9,9 +9,9 @@ import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.sig3d.geometry.Box3D;
 import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
 import fr.ign.cogit.sig3d.model.citygml.core.CG_CityObject;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.Cuboid;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.Cuboid2;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.CuboidSnap;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid2;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.CuboidSnap;
 
 public class SpecificCadastralBoundary extends CG_CityObject {
 
@@ -78,10 +78,22 @@ public class SpecificCadastralBoundary extends CG_CityObject {
     IDirectPositionList dpl = null;
 
     double shift = 0;
-
+    double h = -1;
+    
+    double distance = -1;
+    
     if (b instanceof Cuboid) {
 
       dpl = b.getFootprint().coord();
+      
+      
+      
+     h =  ((Cuboid) b).height;
+      
+      
+      
+      
+      distance = b.getFootprint().distance(this.getGeom());
       zMin = ((Cuboid) b).getZmin();
 
       shift = zMin;
@@ -89,26 +101,30 @@ public class SpecificCadastralBoundary extends CG_CityObject {
     } else if (b instanceof Cuboid2) {
 
       dpl = b.getFootprint().coord();
+      
+      distance = b.getFootprint().distance(this.getGeom());
+      
+      h = ((Cuboid2) b).height;
+      
+      
       zMin = ((Cuboid2) b).getZmin();
 
       shift = zMin;
 
-    } else if (b instanceof CuboidSnap) {
-
-      dpl = b.getFootprint().coord();
-      zMin = ((CuboidSnap) b).getZmin();
-
-      shift = zMin;
-
-
-    } else {
-
-      Box3D box = new Box3D(b.getGeom());
-      dpl = b.getToit().getGeom().coord();
-
-      zMin = box.getLLDP().getZ();
-
     }
+    
+    //cas des cuboid
+    if(distance > 0 ){
+      
+      
+      return distance * slope + hIni >  h;
+      
+    }
+    
+    Box3D box = new Box3D(b.getGeom());
+    dpl = b.getToit().getGeom().coord();
+
+    zMin = box.getLLDP().getZ();
 
     for (IDirectPosition dp : dpl) {
 

@@ -45,8 +45,33 @@ public class SimpleGreenSampler<O extends SimpleObject, C extends Configuration<
 
 
   
-  protected boolean checkConfiguration(
+  public boolean checkNonUpdateConfiguration(
       KernelFunctor<O, C, Modification<O, C>> kf) {
+    
+
+
+    List<IModelInstanceObject> lst = cMI.update((List<AbstractBuilding>) kf
+        .getModif().getBirth(), (List<AbstractBuilding>) kf.getModif()
+        .getDeath());
+
+
+    boolean isCheck = vFR.check(lst);
+
+
+      // Ce n'est pas vérifié, on fait marche arrière
+      cMI.update((List<AbstractBuilding>) kf.getModif().getDeath(),
+          (List<AbstractBuilding>) kf.getModif().getBirth());
+
+
+
+    return isCheck;
+  }
+  
+  
+  public boolean checkConfiguration(
+      KernelFunctor<O, C, Modification<O, C>> kf) {
+    
+
 
     List<IModelInstanceObject> lst = cMI.update((List<AbstractBuilding>) kf
         .getModif().getBirth(), (List<AbstractBuilding>) kf.getModif()
@@ -64,4 +89,9 @@ public class SimpleGreenSampler<O extends SimpleObject, C extends Configuration<
 
     return isCheck;
   }
+  
+  public List<Kernel<O, C, Modification<O, C>>> getKernels(){
+    return this.kernels;
+  }
+
 }

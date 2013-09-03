@@ -2,7 +2,7 @@ package fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboidSnap;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.CuboidSnap;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.CuboidSnap;
 import fr.ign.geometry.Rectangle2D;
 import fr.ign.rjmcmc.energy.UnaryEnergy;
 

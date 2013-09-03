@@ -15,8 +15,8 @@ import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboidSnap.DifferenceVolumeBinaryEnergy;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboidSnap.DifferenceVolumeExtUnaryEnergy;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboidSnap.VolumeUnaryEnergy;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.CuboidSnap;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.ParameterCuboidSNAP;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.CuboidSnap;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.ParameterCuboidSNAP;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeHeight;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeLengthSNAP;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeWidthSNAP;
@@ -85,7 +85,7 @@ public class OCLBuildingsCuboidBao<O, C extends Configuration<O>, S extends Samp
    // Visitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>> shpVisitor = new ShapefileVisitorCuboidSnap<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>>(
     //    "result");
 
-    ViewerVisitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>> visitorViewer = new ViewerVisitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>>();
+    ViewerVisitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>> visitorViewer = new ViewerVisitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>>(0+"");
 
     StatsV⁮isitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>> statsViewer = new StatsV⁮isitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>>(
         "Énergie");

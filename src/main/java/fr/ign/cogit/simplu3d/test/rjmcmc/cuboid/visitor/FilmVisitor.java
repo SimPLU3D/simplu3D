@@ -9,6 +9,7 @@ import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
+import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.sig3d.gui.MainWindow;
@@ -34,33 +35,41 @@ import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.Temperature;
 import fr.ign.simulatedannealing.visitor.Visitor;
 
-public class ViewerVisitor<O, C extends Configuration<O>, T extends Temperature, S extends Sampler<O, C, T>>
+public class FilmVisitor<O, C extends Configuration<O>, T extends Temperature, S extends Sampler<O, C, T>>
     implements Visitor<O, C, T, S> {
 
-  private static MainWindow mW = null;
+  private MainWindow mW = null;
   private int save;
   private int iter;
 
   private final static String PREFIX_NAME_STRING = "Étape";
-  private String prefix = "";
   private final static int MIN_LAYER = 3;
 
   private GraphConfiguration<Cuboid> bestConfig = null;
   private double bestValue = Double.POSITIVE_INFINITY;
 
-  public ViewerVisitor(String prefixe) {
-    prefix = prefixe;
-    if(mW == null){
-      mW = new MainWindow();
-      represent(Environnement.getInstance(), mW);
-    }
-
+  private IDirectPosition dp;
+  private Vecteur vectOrientation;
+  private String folder;
+  private int count = 0;
+private Color col;
+  public FilmVisitor(IDirectPosition dp, Vecteur vectOrientation, String folder, Color col) {
+    mW = new MainWindow();
+    represent(Environnement.getInstance(), mW);
+    this.dp = dp;
+    this.vectOrientation = vectOrientation;
+    this.folder = folder;
+    this.col = col;
   }
 
   @Override
   public void init(int dump, int save) {
     this.iter = 0;
     this.save = save;
+
+    mW.getInterfaceMap3D().zoomOn(dp.getX(), dp.getY(), dp.getZ(),
+        vectOrientation);
+
   }
 
   @SuppressWarnings("unchecked")
@@ -70,7 +79,7 @@ public class ViewerVisitor<O, C extends Configuration<O>, T extends Temperature,
 
     if (config.getEnergy() < bestValue) {
       bestValue = config.getEnergy();
-      bestConfig = (GraphConfiguration<Cuboid>)config;
+      bestConfig = (GraphConfiguration<Cuboid>) config;
 
     }
 
@@ -120,26 +129,40 @@ public class ViewerVisitor<O, C extends Configuration<O>, T extends Temperature,
     }
 
     if (!feat.isEmpty()) {
-      VectorLayer vl = new VectorLayer(feat, PREFIX_NAME_STRING + prefix +" : " + iter,
-          ColorRandom.getRandomColor());
-      
-      int nbLayer = mW.getInterfaceMap3D().getCurrent3DMap().getLayerList().size();
-      
-      if(nbLayer > MIN_LAYER){
-        mW.getInterfaceMap3D().getCurrent3DMap().getLayerList().get(nbLayer -1).setVisible(false); 
+      VectorLayer vl = new VectorLayer(feat, PREFIX_NAME_STRING + " : " + iter,
+          col);
+
+      int nbLayer = mW.getInterfaceMap3D().getCurrent3DMap().getLayerList()
+          .size();
+
+      if (nbLayer > MIN_LAYER) {
+        mW.getInterfaceMap3D().getCurrent3DMap().getLayerList()
+            .get(nbLayer - 1).setVisible(false);
+        mW.getInterfaceMap3D()
+            .getCurrent3DMap()
+            .removeLayer(
+                mW.getInterfaceMap3D().getCurrent3DMap().getLayerList()
+                    .get(nbLayer - 1).getLayerName());
       }
-      
-      
-      
+
       mW.getInterfaceMap3D().getCurrent3DMap().addLayer(vl);
+
     }
 
+    boolean works = mW.getInterfaceMap3D().screenCapture(folder, "img" + (count++)+ ".jpg");
+
+    if (!works) {
+      System.out.println("Not work");
+    }
   }
 
   private static void represent(Environnement env, MainWindow mW) {
+    
+   
+    
     List<Theme> lTheme = new ArrayList<RepEnvironnement.Theme>();
-   // lTheme.add(Theme.TOIT_BATIMENT);
-    lTheme.add(Theme.VOIRIE);
+    lTheme.add(Theme.TOIT_BATIMENT);
+    lTheme.add(Theme.FACADE_BATIMENT);
     // lTheme.add(Theme.FAITAGE);
     // lTheme.add(Theme.PIGNON);
     // lTheme.add(Theme.GOUTTIERE);
@@ -160,23 +183,25 @@ public class ViewerVisitor<O, C extends Configuration<O>, T extends Temperature,
 
     mW.getInterfaceMap3D().removeLight(0);
     mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
-    mW.getInterfaceMap3D().moveLight(180, -15, 120, 0);
+    mW.getInterfaceMap3D().moveLight(1051157, 6840727, 160, 0);
     mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
-    mW.getInterfaceMap3D().moveLight(-140, 3, 120, 1);
+    mW.getInterfaceMap3D().moveLight(1051257, 6840827, 160, 1);
 
     double z = 140;
     //
     // 1051042.8513268954120576,6840539.0837931865826249 :
     // 1051264.8064121364150196,6840679.2711814027279615
     // Projet 1
-     IDirectPosition dpLL = new
-     DirectPosition(1051042.8513268954120576,6840539.0837931865826249,z);
-     IDirectPosition dpUR = new
-     DirectPosition(1051264.8064121364150196,6840679.2711814027279615,z);
+    /*
+     * IDirectPosition dpLL = new
+     * DirectPosition(1051042.8513268954120576,6840539.0837931865826249,z);
+     * IDirectPosition dpUR = new
+     * DirectPosition(1051264.8064121364150196,6840679.2711814027279615,z);
+     */
 
     // Projet 3
-  // IDirectPosition dpLL = new DirectPosition(1051157, 6840727, z);
-    // IDirectPosition dpUR = new DirectPosition(1051322, 6840858, z);
+    IDirectPosition dpLL = new DirectPosition(1051157, 6840727, z);
+    IDirectPosition dpUR = new DirectPosition(1051322, 6840858, z);
 
     IDirectPositionList dpl = new DirectPositionList();
 

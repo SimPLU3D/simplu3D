@@ -3,7 +3,7 @@ package fr.ign.cogit.simplu3d.test.rjmcmc.rectangle2d.energy;
 import com.vividsolutions.jts.geom.Geometry;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.Cuboid;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.geometry.Rectangle2D;
 import fr.ign.rjmcmc.energy.UnaryEnergy;
 

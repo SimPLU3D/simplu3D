@@ -5,8 +5,8 @@ import java.util.List;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.ITriangle;
 import fr.ign.cogit.geoxygene.sig3d.calculation.Calculation3D;
 import fr.ign.cogit.geoxygene.sig3d.calculation.Util;
+import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromPolygonToTriangle;
 import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Solid;
-import fr.ign.cogit.sig3d.convert.geom.FromPolygonToTriangle;
 import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 
 public class Compacity {

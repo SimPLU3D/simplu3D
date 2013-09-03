@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry;
+package fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl;
 
 public class ParameterCuboidSNAP {
   

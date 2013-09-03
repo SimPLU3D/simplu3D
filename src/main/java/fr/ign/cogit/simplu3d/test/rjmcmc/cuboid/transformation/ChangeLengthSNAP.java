@@ -1,6 +1,6 @@
 package fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation;
 
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.ParameterCuboidSNAP;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.ParameterCuboidSNAP;
 import fr.ign.rjmcmc.kernel.Transform;
 
 public class ChangeLengthSNAP  implements Transform {

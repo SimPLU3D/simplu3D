@@ -1,6 +1,9 @@
-package fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry;
+package fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.convert;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import org.osgi.framework.hooks.service.ListenerHook.ListenerInfo;
 
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
@@ -12,7 +15,9 @@ import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_LineString;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Polygon;
 import fr.ign.cogit.geoxygene.spatial.geomprim.GM_OrientableSurface;
 import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Solid;
-import fr.ign.cogit.simplu3d.model.application.Environnement;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid2;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.CuboidSnap;
 
 public class GenerateSolidFromCuboid {
 
@@ -91,9 +96,94 @@ public class GenerateSolidFromCuboid {
 }
 
   
+  private static GM_Solid createCube(IDirectPosition p1, IDirectPosition p2,
+      IDirectPosition p3, IDirectPosition p4, double zmin) {
+    
+    //Polygone p1,p2,p3,p4 représente la face supérieure dans cet ordre
+    
+    
+    List<IDirectPositionList> lDpl = new ArrayList<IDirectPositionList>();
+    
+    
+    
+    IDirectPositionList dpl1 = new DirectPositionList();
+    dpl1.add(p1);
+    dpl1.add(p2);
+    dpl1.add(p3);
+    dpl1.add(p4);
+    dpl1.add(p1);
+    lDpl.add(dpl1);
+    
+    
+    
+    IDirectPosition p1bas = new DirectPosition(p1.getX(), p1.getY(), zmin);
+    IDirectPosition p2bas =  new DirectPosition(p2.getX(), p2.getY(), zmin);
+    IDirectPosition p3bas =  new DirectPosition(p3.getX(), p3.getY(), zmin);
+    IDirectPosition p4bas =  new DirectPosition(p4.getX(), p4.getY(), zmin);
+    
+    
+    
+    IDirectPositionList dpl2 = new DirectPositionList();
+    dpl2.add(p2);
+    dpl2.add(p1);
+    dpl2.add(p1bas);
+    dpl2.add(p2bas);
+    dpl2.add(p2);
+    lDpl.add(dpl2);
+
+    
+    
+    
+    IDirectPositionList dpl3 = new DirectPositionList();
+    dpl3.add(p3);
+    dpl3.add(p2);
+    dpl3.add(p2bas);
+    dpl3.add(p3bas);
+    dpl3.add(p3);
+    lDpl.add(dpl3);
+
+    
+    
+    IDirectPositionList dpl4 = new DirectPositionList();
+    dpl4.add(p4);
+    dpl4.add(p3);
+    dpl4.add(p3bas);
+    dpl4.add(p4bas);
+    dpl4.add(p4);
+    lDpl.add(dpl4);
+
+    
+    
+    IDirectPositionList dpl5 = new DirectPositionList();
+    dpl5.add(p1);
+    dpl5.add(p4);
+    dpl5.add(p4bas);
+    dpl5.add(p1bas);
+    dpl5.add(p1);
+    lDpl.add(dpl5);
+    
+    
+    IDirectPositionList dpl6 = new DirectPositionList();
+    dpl6.add(p1bas);
+    dpl6.add(p4bas);
+    dpl6.add(p3bas);
+    dpl6.add(p2bas);
+    dpl6.add(p1bas);
+    lDpl.add(dpl6);
+
+    List<IOrientableSurface> lOS = new ArrayList<>(); 
+    for(IDirectPositionList dpl: lDpl){
+      
+      
+      lOS.add(new GM_Polygon(new GM_LineString(dpl)));
+      
+    }
+    
+    return new GM_Solid(lOS);
+    
+  }
   
-  
-  
+  /*
   private static GM_Solid createCube(IDirectPosition p4, IDirectPosition p3,
       IDirectPosition p7, IDirectPosition p8, double zmin) {
     // On crée les 6 sommets du cube
@@ -180,5 +270,5 @@ public class GenerateSolidFromCuboid {
     LFace.add(surf6);
     return new GM_Solid(LFace);
 
-  }
+  }*/
 }

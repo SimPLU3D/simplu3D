@@ -1,6 +1,6 @@
 package fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboidSnap;
 
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.CuboidSnap;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.CuboidSnap;
 import fr.ign.rjmcmc.energy.BinaryEnergy;
 
 public class DifferenceVolumeBinaryEnergy<T, U> implements BinaryEnergy<T, U> {

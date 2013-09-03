@@ -1,7 +1,7 @@
 package fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboidSnap;
 
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.CuboidSnap;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.ParameterCuboidSNAP;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.CuboidSnap;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.ParameterCuboidSNAP;
 import fr.ign.rjmcmc.energy.UnaryEnergy;
 
 public class VolumeUnaryEnergy<T> implements UnaryEnergy<T> {

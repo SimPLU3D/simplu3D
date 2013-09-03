@@ -184,7 +184,7 @@ public class CacheModelInstance {
       int ind = lAB.indexOf(a);
 
       if (ind == -1) {
-        System.out.println("Je passe là");
+        System.out.println(CacheModelInstance.class.getCanonicalName() + " : Objet à tuer absent du cache");
         continue;
 
       }

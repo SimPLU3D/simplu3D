@@ -15,14 +15,13 @@ import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboid2.DifferenceVolumeUnaryEnergy;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboid2.IntersectionVolumeBinaryEnergy;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboid2.VolumeUnaryEnergy;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.Cuboid2;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid2;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.loader.LoaderCuboid2;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeHeight;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeLength;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeWidth;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.MoveCuboid2;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.RotateCuboid2;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.ShapefileVisitorCuboid2;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.StatsV⁮isitor;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.ViewerVisitor;
 import fr.ign.mpp.DirectSampler;
 import fr.ign.mpp.configuration.Configuration;
@@ -50,7 +49,6 @@ import fr.ign.simulatedannealing.schedule.Schedule;
 import fr.ign.simulatedannealing.temperature.SimpleTemperature;
 import fr.ign.simulatedannealing.visitor.CompositeVisitor;
 import fr.ign.simulatedannealing.visitor.OutputStreamVisitor;
-import fr.ign.simulatedannealing.visitor.ShapefileVisitor;
 import fr.ign.simulatedannealing.visitor.Visitor;
 
 public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sampler<O, C, SimpleTemperature>, V extends Visitor<O, C, SimpleTemperature, S>> {
@@ -60,6 +58,104 @@ public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sample
   // nbsave => sauvegarde en shapefile
   static void init_visitor(Parameters p, Visitor<?, ?, ?, ?> v) {
     v.init(Integer.parseInt(p.get("nbdump")), Integer.parseInt(p.get("nbsave")));
+  }
+
+  public static Configuration<Cuboid2> process(BasicPropertyUnit bpu, Parameters p,
+      Environnement env, int id) {
+
+    IGeometry geom = bpu.generateGeom().buffer(1);
+
+    /*
+     * < Before launching the optimization process, we create all the required
+     * stuffs: a configuration, a sampler, a schedule scheme and an end test >
+     */
+    Configuration<Cuboid2> conf = null;
+    try {
+      conf = create_configuration(p,
+          AdapterFactory.toGeometry(new GeometryFactory(), geom));
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+    Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature> samp = create_sampler(
+        p, bpu);
+    Schedule<SimpleTemperature> sch = create_schedule(p);
+
+    int loadExistingConfig = Integer.parseInt(p.get("load_existing_config"));
+
+    if (loadExistingConfig == 1) {
+
+      String configPath = p.get("config_shape_file").toString();
+
+      List<Cuboid2> lCuboid = LoaderCuboid2.loadFromShapeFile(configPath);
+      Modification<Cuboid2, Configuration<Cuboid2>> m = new Modification<>();
+
+      for (Cuboid2 c : lCuboid) {
+
+        m.insertBirth(c);
+
+      }
+
+      conf.deltaEnergy(m);
+
+      conf.apply(m);
+
+      ((SimpleGreenSampler<Cuboid2, Configuration<Cuboid2>, PoissonDistribution, SimpleTemperature, UniformBirth<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>>) samp).cMI
+          .update(lCuboid, new ArrayList<Cuboid2>());
+
+    }
+
+    EndTest<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> end = create_end_test(p);
+
+    Visitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> visitor = new OutputStreamVisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>(
+        System.out);
+
+    /*
+     * Visitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature,
+     * Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> shpVisitor =
+     * new ShapefileVisitorCuboid2<Cuboid2, Configuration<Cuboid2>,
+     * SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>,
+     * SimpleTemperature>>( "result");
+     */
+
+    ViewerVisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> visitorViewer = new ViewerVisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>(""+id);
+
+    /*
+     * IDirectPosition dpCentre = new DirectPosition(1051180.7261527262,
+     * 6840750.337137596, 160); Vecteur viewTo = new Vecteur(-15,-20,15);
+     * 
+     * 
+     * 
+     * FilmVisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature,
+     * Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>
+     * visitorViewer = new FilmVisitor<Cuboid2, Configuration<Cuboid2>,
+     * SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>,
+     * SimpleTemperature>>(dpCentre,viewTo,"E:/temp/", Color.LIGHT_GRAY);
+     * 
+     * StatsV⁮isitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature,
+     * Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> statsViewer
+     * = new StatsV⁮isitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature,
+     * Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>( "Énergie");
+     */
+
+    List<Visitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>> list = new ArrayList<Visitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>>();
+    list.add(visitor);
+    list.add(visitorViewer);
+    // list.add(statsViewer);
+    // list.add(shpVisitor);
+
+    CompositeVisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> mVisitor = new CompositeVisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>(
+        list);
+    init_visitor(p, mVisitor);
+
+    /*
+     * < This is the way to launch the optimization process. Here, the magic
+     * happen... >
+     */
+    SimulatedAnnealing.optimize(conf, samp, sch, end, mVisitor);
+
+    return conf;
   }
 
   // ]
@@ -73,49 +169,29 @@ public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sample
      */
     Parameters p = initialize_parameters();
     Environnement env = LoaderSHP.load(p.get("folder"));
+ 
+    
+    
+    /*
     BasicPropertyUnit bpu = env.getBpU().get(Integer.parseInt(p.get("bpu")));
-    IGeometry geom = bpu.generateGeom().buffer(1);
+    process(bpu, p, env,0);
+    
+    */
+    
+    int nb = env.getBpU().size();
+    
+    
+    for(int i=0;i<nb;i++){
+      Configuration<Cuboid2>  cc= process(env.getBpU().get(i),p , env, i);
+          System.out.println("      i     " +  cc.size() );
+    }
 
-    /*
-     * < Before launching the optimization process, we create all the required
-     * stuffs: a configuration, a sampler, a schedule scheme and an end test >
-     */
-    Configuration<Cuboid2> conf = create_configuration(p,
-        AdapterFactory.toGeometry(new GeometryFactory(), geom));
-    Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature> samp = create_sampler(
-        p, bpu);
-    Schedule<SimpleTemperature> sch = create_schedule(p);
-    EndTest<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> end = create_end_test(p);
+    
+    
+    
 
-    Visitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> visitor = new OutputStreamVisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>(
-        System.out);
-     Visitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature,
-     Sampler<Cuboid2,
-     Configuration<Cuboid2>, SimpleTemperature>> shpVisitor = new
-         ShapefileVisitorCuboid2<Cuboid2, Configuration<Cuboid2>, SimpleTemperature,
-     Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>(
-     "result");
 
-    ViewerVisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> visitorViewer = new ViewerVisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>();
 
-    StatsV⁮isitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> statsViewer = new StatsV⁮isitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>(
-        "Énergie");
-
-    List<Visitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>> list = new ArrayList<Visitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>>();
-    list.add(visitor);
-    list.add(visitorViewer);
-    list.add(statsViewer);
-     list.add(shpVisitor);
-
-    CompositeVisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> mVisitor = new CompositeVisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>(
-        list);
-    init_visitor(p, mVisitor);
-    /*
-     * < This is the way to launch the optimization process. Here, the magic
-     * happen... >
-     */
-    SimulatedAnnealing.optimize(conf, samp, sch, end, mVisitor);
-    return;
   }
 
   // Création de la configuration
@@ -154,16 +230,20 @@ public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sample
     UnaryEnergy<Cuboid2> u4 = new DifferenceVolumeUnaryEnergy<Cuboid2>(bpu);
     UnaryEnergy<Cuboid2> u5 = new MultipliesUnaryEnergy<Cuboid2>(
         ponderationDifference, u4);
-    UnaryEnergy<Cuboid2> u6 = new PlusUnaryEnergy<Cuboid2>(u3, u5);
+    UnaryEnergy<Cuboid2> unaryEnergy = new PlusUnaryEnergy<Cuboid2>(u3, u5);
 
     // Énergie binaire : intersection entre deux rectangles
     ConstantEnergy<Cuboid2, Cuboid2> c3 = new ConstantEnergy<Cuboid2, Cuboid2>(
         Double.parseDouble(p.get("ponderation_volume_inter")));
     BinaryEnergy<Cuboid2, Cuboid2> b1 = new IntersectionVolumeBinaryEnergy<Cuboid2>();
-    BinaryEnergy<Cuboid2, Cuboid2> b2 = new MultipliesBinaryEnergy<Cuboid2, Cuboid2>(
+    BinaryEnergy<Cuboid2, Cuboid2> binaryEnergy = new MultipliesBinaryEnergy<Cuboid2, Cuboid2>(
         c3, b1);
     // empty initial configuration*/
-    return new GraphConfiguration<Cuboid2>(u6, b2);
+
+    Configuration<Cuboid2> conf = new GraphConfiguration<Cuboid2>(unaryEnergy,
+        binaryEnergy);
+
+    return conf;
   }
 
   // ]
@@ -213,7 +293,8 @@ public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sample
     // Sampler de naissance
     UniformBirth<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>> birth = new UniformBirth<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>(
         new Cuboid2(r.minX(), r.minY(), mindim, mindim, minheight, 0),
-        new Cuboid2(r.maxX(), r.maxY(), maxdim, maxdim, maxheight,  2 * Math.PI), builder);
+        new Cuboid2(r.maxX(), r.maxY(), maxdim, maxdim, maxheight, 2 * Math.PI),
+        builder);
 
     // Distribution de poisson
     PoissonDistribution distribution = new PoissonDistribution(
@@ -235,27 +316,27 @@ public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sample
      * kernels.add(Kernel.make_uniform_modification_kernel(builder, new
      * RectangleCornerTranslationTransform(), 0.4));
      */
-    
-    
-/*
-    kernels.add(Kernel.make_uniform_modification_kernel(builder,        new MoveCuboid2(), 0.2));
 
-    kernels.add(Kernel.make_uniform_modification_kernel(builder,
-        new ChangeWidth(), 0.2));
-
-
-
-    kernels.add(Kernel.make_uniform_modification_kernel(builder,
-        new MoveCuboid2(), 0.2));
-
-    kernels.add(Kernel.make_uniform_modification_kernel(builder,
-        new ChangeWidth(), 0.2));
-*/
+    /*
+     * kernels.add(Kernel.make_uniform_modification_kernel(builder, new
+     * MoveCuboid2(), 0.2));
+     * 
+     * kernels.add(Kernel.make_uniform_modification_kernel(builder, new
+     * ChangeWidth(), 0.2));
+     * 
+     * 
+     * 
+     * kernels.add(Kernel.make_uniform_modification_kernel(builder, new
+     * MoveCuboid2(), 0.2));
+     * 
+     * kernels.add(Kernel.make_uniform_modification_kernel(builder, new
+     * ChangeWidth(), 0.2));
+     */
     double amplitudeMax = 6;
     double amplitudeHeight = 4;
     double amplitudeMove = 4;
-    
-    double amplitudeRotate = 10 * Math.PI /180;
+
+    double amplitudeRotate = 10 * Math.PI / 180;
 
     /*
      * kernels.add(Kernel.make_uniform_modification_kernel(builder, new
@@ -275,25 +356,22 @@ public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sample
      * 
      * kernels.add(Kernel.make_uniform_modification_kernel(builder, new
      * MoveCuboid2(amplitudeMove), 0.2));
-     * 
      */
-    
 
-    
-    kernels.add(Kernel.make_uniform_modification_kernel(builder, new
-         ChangeWidth(amplitudeMax), 0.2));
-     
-        kernels.add(Kernel.make_uniform_modification_kernel(builder, new
-        ChangeLength(amplitudeMax), 0.2));
-        
-    kernels.add(Kernel.make_uniform_modification_kernel(builder, new
-         MoveCuboid2(amplitudeMove), 0.2));
-    
-    kernels.add(Kernel.make_uniform_modification_kernel(builder, new 
-         ChangeHeight(amplitudeHeight), 0.2));
-    
-    kernels.add(Kernel.make_uniform_modification_kernel(builder, new 
-        RotateCuboid2(amplitudeRotate), 0.2));
+    kernels.add(Kernel.make_uniform_modification_kernel(builder,
+        new ChangeWidth(amplitudeMax), 0.2));
+
+    kernels.add(Kernel.make_uniform_modification_kernel(builder,
+        new ChangeLength(amplitudeMax), 0.2));
+
+    kernels.add(Kernel.make_uniform_modification_kernel(builder,
+        new MoveCuboid2(amplitudeMove), 0.2));
+
+    kernels.add(Kernel.make_uniform_modification_kernel(builder,
+        new ChangeHeight(amplitudeHeight), 0.2));
+
+    kernels.add(Kernel.make_uniform_modification_kernel(builder,
+        new RotateCuboid2(amplitudeRotate), 0.2));
 
     Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature> s = new SimpleGreenSampler<Cuboid2, Configuration<Cuboid2>, PoissonDistribution, SimpleTemperature, UniformBirth<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>>(
         ds, new MetropolisAcceptance<SimpleTemperature>(), kernels, bpU);
@@ -314,7 +392,7 @@ public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sample
 
   private static Parameters initialize_parameters() {
     return Parameters
-        .unmarshall("./src/main/resources/building_parameters2.xml");
+        .unmarshall("./src/main/resources/building_parameters_project_1.xml");
   }
   // ]
 }

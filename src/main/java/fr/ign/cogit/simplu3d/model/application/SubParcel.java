@@ -5,9 +5,12 @@ import java.util.List;
 
 import org.citygml4j.model.citygml.landuse.LandUse;
 
+import com.vividsolutions.jts.geom.Geometry;
+
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
+import fr.ign.cogit.geoxygene.util.conversion.JtsGeOxygene;
 import fr.ign.cogit.sig3d.model.citygml.landuse.CG_LandUse;
 
 public class SubParcel extends CG_LandUse {
@@ -124,24 +127,40 @@ public class SubParcel extends CG_LandUse {
   }
 
   public double getces() {
-    
-
-    
 
     double area = this.getArea();
-    double areaB = 0;
-    for (AbstractBuilding bP : this.buildingsParts) {
-      areaB = areaB + bP.getFootprint().area();
 
+    int bP = this.getBuildingsParts().size();
+
+    if (bP == 0) {
+      return 0;
     }
 
-  //  System.out.println(areaB / area);
+    Geometry geom = null;
+    try {
+      geom = JtsGeOxygene
+          .makeJtsGeom(this.getBuildingsParts().get(0).getFootprint());
 
-    return areaB / area;
+      for (int i = 0; i < bP; i++) {
+        geom = geom.union(JtsGeOxygene.makeJtsGeom(this.getBuildingsParts()
+            .get(i).getFootprint()));
+
+      }
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+    if (geom == null) {
+      return 0;
+    }
+
+    // System.out.println(areaB / area);
+
+    return geom.getArea() / area;
 
   }
 
-  
   /*
    * public IFeatureCollection<Voirie> getVoiries() { return voiries; }
    * 

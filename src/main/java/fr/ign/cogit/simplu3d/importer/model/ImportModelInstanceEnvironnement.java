@@ -65,6 +65,7 @@ public class ImportModelInstanceEnvironnement {
         System.out.println("Patata");
       }
       modelInstance.addModelInstanceElement(sp.getLod2MultiSurface());
+      modelInstance.addModelInstanceElement(sp.getGeom());
 
       // Gestion des bordures
       /*

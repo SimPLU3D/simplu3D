@@ -15,7 +15,7 @@ import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboid.IntersectionAreaBinaryEnergy;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboid.VolumeUnaryEnergy;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.Cuboid;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.ViewerVisitor;
 import fr.ign.cogit.simplu3d.test.rjmcmc.rectangle2d.energy.DifferenceAreaUnaryEnergy;
 import fr.ign.geometry.Vector2D;
@@ -94,7 +94,7 @@ public class OCLBuildings<O, C extends Configuration<O>, S extends Sampler<O, C,
     // Sampler<Cuboid, Configuration<Cuboid>, SimpleTemperature>>(
     // "result");
 
-    ViewerVisitor<Cuboid, Configuration<Cuboid>, SimpleTemperature, Sampler<Cuboid, Configuration<Cuboid>, SimpleTemperature>> visitorViewer = new ViewerVisitor<Cuboid, Configuration<Cuboid>, SimpleTemperature, Sampler<Cuboid, Configuration<Cuboid>, SimpleTemperature>>();
+    ViewerVisitor<Cuboid, Configuration<Cuboid>, SimpleTemperature, Sampler<Cuboid, Configuration<Cuboid>, SimpleTemperature>> visitorViewer = new ViewerVisitor<Cuboid, Configuration<Cuboid>, SimpleTemperature, Sampler<Cuboid, Configuration<Cuboid>, SimpleTemperature>>(0+"");
 
     List<Visitor<Cuboid, Configuration<Cuboid>, SimpleTemperature, Sampler<Cuboid, Configuration<Cuboid>, SimpleTemperature>>> list = new ArrayList<Visitor<Cuboid, Configuration<Cuboid>, SimpleTemperature, Sampler<Cuboid, Configuration<Cuboid>, SimpleTemperature>>>();
     list.add(visitor);

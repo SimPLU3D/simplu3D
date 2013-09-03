@@ -19,7 +19,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.CuboidSnap;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.CuboidSnap;
 import fr.ign.mpp.configuration.Configuration;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.rjmcmc.sampler.Sampler;

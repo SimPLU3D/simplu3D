@@ -12,7 +12,7 @@ public class Modulo {
     
     
     
-    System.out.println( (angleTest % (Math.PI*2))/Math.PI );
+    System.out.println( (angleTest % (Math.PI))/Math.PI );
     
 
   }

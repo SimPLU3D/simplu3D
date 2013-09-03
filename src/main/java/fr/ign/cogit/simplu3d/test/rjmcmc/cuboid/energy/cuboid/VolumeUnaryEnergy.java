@@ -1,6 +1,6 @@
 package fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboid;
 
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.Cuboid;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.rjmcmc.energy.UnaryEnergy;
 
 public class VolumeUnaryEnergy<T> implements UnaryEnergy<T> {
