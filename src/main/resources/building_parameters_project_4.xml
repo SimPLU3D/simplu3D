@@ -25,6 +25,6 @@
 		<param key="folder" value="E:/mbrasebin/Donnees/Strasbourg/GTRU/Project4/"/>
 		<param key="bpu" value="1"/>
 		<param key="load_existing_config" value="0" />
-        <param key="config_shape_file" value="C:/Users/mbrasebin/Pictures/Experimentations/ExpCont/Exp4Conf.shp" />
+        <param key="config_shape_file" value="C:/Users/mbrasebin/Pictures/Experimentations/ExpCont/ExpRot1.shp" />
 	</parameters>
 </parameter-configuration>

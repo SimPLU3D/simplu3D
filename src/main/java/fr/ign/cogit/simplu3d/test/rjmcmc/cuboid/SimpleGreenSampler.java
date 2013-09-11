@@ -27,7 +27,7 @@ public class SimpleGreenSampler<O extends SimpleObject, C extends Configuration<
 
   VeryFastRuleChecker vFR;
 
-  CacheModelInstance cMI;
+ public CacheModelInstance cMI;
 
   public SimpleGreenSampler(DirectSampler<O, C, D, S> d, Acceptance<T> a,
       List<Kernel<O, C, Modification<O, C>>> k, BasicPropertyUnit bPU) {

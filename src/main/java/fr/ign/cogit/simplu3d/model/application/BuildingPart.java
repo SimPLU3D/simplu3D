@@ -22,6 +22,7 @@ public class BuildingPart extends AbstractBuilding {
   public AbstractBuilding clone() {
 
     BuildingPart b = new BuildingPart((IGeometry) this.getGeom().clone());
+    b.isNew = this.isNew;
 
     return b;
 

@@ -11,6 +11,7 @@ import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.sig3d.calculation.Util;
 import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToSurface;
+import fr.ign.cogit.sig3d.analysis.RoofDetection;
 import fr.ign.cogit.sig3d.model.citygml.building.CG_AbstractBuilding;
 import fr.ign.cogit.simplu3d.calculation.HauteurCalculation;
 import fr.ign.cogit.simplu3d.calculation.StoreyCalculation;
@@ -38,8 +39,10 @@ public abstract class AbstractBuilding extends CG_AbstractBuilding {
 
     // Etape 1 : détection du toit et des façades
     List<IOrientableSurface> lOS = FromGeomToSurface.convertGeom(geom);
-    IMultiSurface<IOrientableSurface> surfaceRoof = Util.detectNonVertical(lOS,
-        0.2);
+    IMultiSurface<IOrientableSurface> surfaceRoof = (IMultiSurface<IOrientableSurface>) RoofDetection.detectRoof(this, 0.2, true) ;
+    
+    //Util.detectRoof(lOS,
+      //  0.2);
     IMultiSurface<IOrientableSurface> surfaceWall = Util.detectVertical(lOS,
         0.2);
 

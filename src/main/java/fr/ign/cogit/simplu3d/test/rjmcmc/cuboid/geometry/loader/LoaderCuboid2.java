@@ -9,7 +9,6 @@ import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
-import fr.ign.cogit.geoxygene.api.spatial.geomprim.ISolid;
 import fr.ign.cogit.geoxygene.contrib.geometrie.Angle;
 import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
 import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToSurface;
@@ -39,34 +38,20 @@ public class LoaderCuboid2 {
 
   public static Cuboid2 transformFeature(IFeature feat) {
 
-    
+    IMultiSurface<IOrientableSurface> iMS = FromGeomToSurface
+        .convertMSGeom(feat.getGeom());
 
-    IMultiSurface<IOrientableSurface> iMS = FromGeomToSurface.convertMSGeom(feat.getGeom());
-
-    
-    
     OrientedBoundingBox oBB = new OrientedBoundingBox(iMS);
-    
-    
-    
 
     IPolygon poly = oBB.getPoly();
-    
-    
-    ApproximatedPlanEquation ap = new ApproximatedPlanEquation(poly);
-    
-    if(ap.getNormale().getZ() < 0){
-      
-      poly = (IPolygon) poly.reverse();
-      
-    }
-    
-    
-    
 
-    
-    
-    
+    ApproximatedPlanEquation ap = new ApproximatedPlanEquation(poly);
+
+    if (ap.getNormale().getZ() < 0) {
+
+      poly = (IPolygon) poly.reverse();
+
+    }
 
     IDirectPositionList dpl = poly.coord();
 
@@ -80,7 +65,6 @@ public class LoaderCuboid2 {
         - centreX, (dpl.get(1).getY() + dpl.get(2).getY()) / 2 - centreY);
 
     Angle a = v.direction();
-
 
     return new Cuboid2(centreX, centreY, l, w, oBB.getzMax() - oBB.getzMin(),
         a.getValeur());

@@ -37,7 +37,7 @@ public class Cuboid2 extends Building implements Primitive, SimpleObject {
 
   }
 
-  Polygon geom = null;
+  Polygon geomJTS = null;
 
   @Override
   public double intersectionArea(Primitive p) {
@@ -66,7 +66,7 @@ public class Cuboid2 extends Building implements Primitive, SimpleObject {
 
   @Override
   public Polygon toGeometry() {
-    if (geom == null) {
+    if (geomJTS == null) {
       GeometryFactory geomFact = new GeometryFactory();
       Coordinate[] pts = new Coordinate[5];
 
@@ -111,9 +111,9 @@ public class Cuboid2 extends Building implements Primitive, SimpleObject {
 
       LinearRing ring = geomFact.createLinearRing(pts);
       Polygon poly = geomFact.createPolygon(ring, null);
-      this.geom = poly;
+      this.geomJTS = poly;
     }
-    return this.geom;
+    return this.geomJTS;
   }
 
   @Override
