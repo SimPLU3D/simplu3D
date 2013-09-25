@@ -2,6 +2,9 @@ package fr.ign.cogit.simplu3d.exec.test;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
+import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
+import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
+import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
@@ -24,9 +27,12 @@ import fr.ign.cogit.simplu3d.model.application.UrbaZone;
 public class TestLoaderSHP {
 
   public static void main(String[] args) throws CloneNotSupportedException {
-    String folder = "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project4/";
-    String folderOut = "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project4/out/";
+    String folder = "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project1/";
+    String folderOut = "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project1/out/";
 
+    
+    double valShiftB = 0.5;
+    
     Environnement env = LoaderSHP.load(folder);
 
     PLU plu = env.getPlu();
@@ -43,9 +49,16 @@ public class TestLoaderSHP {
 
     }
 
+    IFeatureCollection<IFeature> bordures_translated = new FT_FeatureCollection<>();
     IFeatureCollection<SpecificCadastralBoundary> bordures = new FT_FeatureCollection<SpecificCadastralBoundary>();
 
+    int count = 0;
+    
     for (CadastralParcel sp : env.getParcelles()) {
+      
+      count = count + sp.getSpecificCadastralBoundary().size();
+      
+      IDirectPosition centroidParcel = sp.getGeom().centroid();
 
       AttributeManager.addAttribute(sp, "ID", sp.getId(), "Integer");
 
@@ -73,15 +86,70 @@ public class TestLoaderSHP {
 
         }
 
+        
+        
+        IDirectPosition centroidGeom = b.getGeom().coord().get(0);
+        
+        Vecteur v = new Vecteur(centroidParcel, centroidGeom);
+        
+        Vecteur v2 = new Vecteur(b.getGeom().coord().get(0),b.getGeom().coord().get(b.getGeom().coord().size()-1));
+        v2.setZ(0);
+        v2.normalise();
+        
+        Vecteur vOut = v2.prodVectoriel(new Vecteur(0,0,1));
+        
+  
+     
+    
+        IGeometry geom = ((IGeometry) b.getGeom().clone());
+        
+        
+        if(v.prodScalaire(vOut) < 0){
+          vOut = vOut.multConstante(-1);
+        }
+        
+        
+        
+        IGeometry geom2 =  geom.translate(valShiftB * vOut.getX(), valShiftB * vOut.getY(),0);
+        
+        
+        if(! geom2.intersects(sp.getGeom())){
+          geom2 =  geom.translate(- valShiftB * vOut.getX(), -  valShiftB * vOut.getY(),0);
+        }
+        
+        
+        
+        IFeature feat = new DefaultFeature(geom2);
+        
+        
+        AttributeManager.addAttribute(feat, "Type", b.getType() ,"Integer");
+        bordures_translated.add(feat);
+        
+        
+        
+        
       }
 
     }
+    
+    
+    
+    
+    
+    
+    System.out.println("Nombre sbordurs" + count);
+    
+
+    
+    
+    
 
     // Export des parcelles
 
    
     ShapefileWriter.write(env.getParcelles(), folderOut + "parcelles.shp");
     ShapefileWriter.write(bordures, folderOut + "bordures.shp");
+    ShapefileWriter.write(bordures_translated, folderOut + "bordures_translated.shp");
     
     
     System.out.println("Nombre de bpu : " + env.getBpU().size());

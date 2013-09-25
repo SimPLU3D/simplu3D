@@ -6,11 +6,15 @@ import java.util.List;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
+import fr.ign.cogit.geoxygene.api.spatial.coordgeom.ITriangle;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
+import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToSurface;
+import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromPolygonToTriangle;
+import fr.ign.cogit.geoxygene.sig3d.equation.PlanEquation;
 import fr.ign.cogit.geoxygene.sig3d.geometry.topology.Triangle;
 import fr.ign.cogit.geoxygene.sig3d.representation.basic.Object1d;
 import fr.ign.cogit.geoxygene.sig3d.representation.basic.Object2d;
@@ -20,7 +24,9 @@ import fr.ign.cogit.geoxygene.sig3d.util.ColorRandom;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.sig3d.analysis.ClassifyRoof;
 import fr.ign.cogit.sig3d.representation.color.ColorLocalRandom;
+import fr.ign.cogit.sig3d.representation.noLight.Object2dNoLight;
 import fr.ign.cogit.sig3d.representation.rendering.CartooMod2;
+import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.model.application.Road;
@@ -29,15 +35,14 @@ import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 import fr.ign.cogit.simplu3d.model.application.SpecificWallSurface;
 import fr.ign.cogit.simplu3d.model.application.SubParcel;
 import fr.ign.cogit.simplu3d.model.application.UrbaZone;
-import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 
 public class RepEnvironnement {
 
   public enum Theme {
-    BORDURE("Bordure"),  TOIT_BATIMENT("Toit"), FACADE_BATIMENT(
-        "Facade"), VOIRIE("Voirie"), ZONE("Zone"), PARCELLE("Parcelle"), SOUS_PARCELLE(
+    BORDURE("Bordure"), TOIT_BATIMENT("Toit"), FACADE_BATIMENT("Facade"), VOIRIE(
+        "Voirie"), ZONE("Zone"), PARCELLE("Parcelle"), SOUS_PARCELLE(
         "SousParcelle"), FAITAGE("FAITAGE"), PIGNON("Pignon"), GOUTTIERE(
-        "GOUTIERRE"), PAN("PAN");
+        "GOUTIERRE"), PAN("PAN"), PAN_MUR("PAN_MUR");
 
     private String nomCouche;
 
@@ -110,6 +115,9 @@ public class RepEnvironnement {
       case PAN:
         featC = generateRoofSlopesRepresentation(env);
         break;
+      case PAN_MUR:
+        featC = generateWallPaneRepresentation(env);
+        break;
       default:
         break;
     }
@@ -117,10 +125,6 @@ public class RepEnvironnement {
     return new VectorLayer(featC, t.getNomCouche());
 
   }
-
-  /*
-   * -------------- STYLE BORDURE ---------------
-   */
 
   private static final Color BORDURE_FICTIVE = new Color(204, 0, 204);
   private static final Color BORDURE_FOND = new Color(0, 0, 189);
@@ -398,13 +402,79 @@ public class RepEnvironnement {
       ClassifyRoof cR = new ClassifyRoof(t, 0.2, 1);
       List<List<Triangle>> llTri = cR.getTriangleGroup();
 
+      if (llTri == null) {
+        continue;
+      }
+
       for (List<Triangle> lTri : llTri) {
 
-        Color c = ColorRandom.getRandomColor();
+        Color c = ColorLocalRandom.getRandomColor(Color.LIGHT_GRAY, 50, 50, 50);
 
         IFeature feat = new DefaultFeature(new GM_MultiSurface<Triangle>(lTri));
-        feat.setRepresentation(new ObjectCartoon(feat, c));
+        feat.setRepresentation(new Object2dNoLight(feat, c));
         pans.add(feat);
+
+      }
+
+    }
+
+    return pans;
+  }
+
+  /*
+   * -------------- STYLE BORDURE ---------------
+   */
+
+  private static IFeatureCollection<? extends IFeature> generateWallPaneRepresentation(
+      Environnement env) {
+    IFeatureCollection<IFeature> pans = new FT_FeatureCollection<IFeature>();
+
+    for (AbstractBuilding b : env.getBuildings()) {
+
+      List<SpecificWallSurface> f = b.getWallSurface();
+
+      for (SpecificWallSurface sWS : f) {
+
+        List<ITriangle> lST = FromPolygonToTriangle
+            .convertAndTriangle(FromGeomToSurface.convertGeom(sWS.getGeom()));
+
+        List<List<ITriangle>> lTT = new ArrayList<>();
+        List<PlanEquation> lV = new ArrayList<>();
+
+        tri: for (ITriangle t : lST) {
+
+          int nbV = lV.size();
+
+          for (int i = 0; i < nbV; i++) {
+
+            PlanEquation vTemp = lV.get(i);
+
+            if (Math.abs(vTemp.equationValue(t.getCorners(0).getDirect())) < 0.9) {
+              if (Math.abs(vTemp.equationValue(t.getCorners(1).getDirect())) < 0.9) {
+                if (Math.abs(vTemp.equationValue(t.getCorners(2).getDirect())) < 0.9) {
+                lTT.get(i).add(t);
+                continue tri;
+              }
+            }
+            }
+          }
+
+          List<ITriangle> lT = new ArrayList<>();
+          lT.add(t);
+
+          lTT.add(lT);
+          lV.add(new PlanEquation(t));
+
+        }
+
+        for (List<ITriangle> lT : lTT) {
+
+          IFeature feat = new DefaultFeature(new GM_MultiSurface<Triangle>(lT));
+          feat.setRepresentation(new Object2dNoLight(feat, ColorLocalRandom
+              .getRandomColor(Color.white, 50, 50, 50)));
+          pans.add(feat);
+
+        }
 
       }
 

@@ -6,6 +6,8 @@ import java.util.List;
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.feature.IPopulation;
+import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
+import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.ILineString;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiCurve;
@@ -15,11 +17,17 @@ import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.contrib.cartetopo.Arc;
 import fr.ign.cogit.geoxygene.contrib.cartetopo.CarteTopo;
 import fr.ign.cogit.geoxygene.contrib.cartetopo.Face;
+import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToSurface;
 import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromPolygonToLineString;
+import fr.ign.cogit.geoxygene.sig3d.equation.LineEquation;
+import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
+import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_LineString;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.geoxygene.util.algo.SmallestSurroundingRectangleComputation;
+import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
+import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 
@@ -38,12 +46,14 @@ public class CadastralParcelLoader {
   public static final int LATERAL_TEMP = 98;
 
   public static IFeatureCollection<CadastralParcel> assignBordureToParcelleWithOrientation(
-      IFeatureCollection<IFeature> parcelCollection, double threshold) {
+      IFeatureCollection<IFeature> parcelCollection, double thresholdIni) {
+
+    IFeatureCollection<IFeature> featCollDebu = new FT_FeatureCollection<>();
 
     System.out.println("NB Parcelles : " + parcelCollection.size());
 
     // On créer une carte topo avec les parcelles
-    CarteTopo cT = newCarteTopo("Parcelles", parcelCollection, 0.1);
+    CarteTopo cT = newCarteTopo("Parcelles", parcelCollection, 0.2);
 
     // On parcourt les arcs (futures limites de parcelles)
     IPopulation<Arc> arcsParcelles = cT.getPopArcs();
@@ -99,6 +109,8 @@ public class CadastralParcelLoader {
 
     for (Face f : facesParcelles) {
 
+      double threshold = determineThreshol(f, thresholdIni);
+
       IMultiSurface<IOrientableSurface> ms = FromGeomToSurface.convertMSGeom(f
           .getGeom());
 
@@ -111,15 +123,22 @@ public class CadastralParcelLoader {
 
       List<Arc> listArcLat = new ArrayList<Arc>();
 
-      // On classe les arcs
+      List<Arc> listArcTemp = new ArrayList<>();
+
       for (Arc a : listArc) {
+
+        if (a.getOrientation() == SpecificCadastralBoundary.LAT) {
+          listArcTemp.add(a);
+        }
+
+      }
+
+      // On classe les arcs
+      for (Arc a : listArcTemp) {
 
         System.out.println("Classement des arcs");
 
-        // C'est une voie on le garde
-        if (a.getOrientation() == SpecificCadastralBoundary.ROAD) {
-          continue;
-        }
+        // On ne garde que les arcs latéraux
 
         if (a.getOrientation() != SpecificCadastralBoundary.LAT) {
           continue;
@@ -127,6 +146,25 @@ public class CadastralParcelLoader {
 
         // On a un arc latéral
         listArcLat.add(a);
+
+        // On détermine le sommet initial : celui qui donne sur la voirie
+        IDirectPosition somInitial = null;
+        IDirectPosition somFinal = null;
+
+        for (Arc aTemp : a.getNoeudIni().arcs()) {
+
+          if (aTemp.getOrientation() == SpecificCadastralBoundary.LAT) {
+            somInitial = a.getNoeudIni().getCoord();
+            somFinal = a.getNoeudFin().getCoord();
+            break;
+          }
+
+        }
+
+        if (somInitial == null) {
+          somFinal = a.getNoeudIni().getCoord();
+          somInitial = a.getNoeudFin().getCoord();
+        }
 
         while (true) {
           List<Arc> arcsATraites = new ArrayList<Arc>();
@@ -177,19 +215,47 @@ public class CadastralParcelLoader {
 
           // Nous n'avons qu'un candidat ... normalement
           Arc aCandidat = arcsATraites.remove(0);
+
+          double largeur = 999;
+          double area = iMC.convexHull().area();
+          // if (area > 0.001) {
+
+          if (aCandidat.getNoeudIni().getCoord().distance(somInitial) > aCandidat
+              .getNoeudFin().getCoord().distance(somInitial)) {
+
+            somFinal = aCandidat.getNoeudIni().getCoord();
+
+          } else {
+            somFinal = aCandidat.getNoeudFin().getCoord();
+          }
+
+          LineEquation lE = new LineEquation(somInitial, somFinal);
+
+          double dist1 = lE.distance(aCandidat.getNoeudIni().getCoord());
+
+          double dist2 = lE.distance(aCandidat.getNoeudFin().getCoord());
+
+          largeur = Double.NEGATIVE_INFINITY;
+
           iMC.add(aCandidat.getGeometrie());
 
-          double largeur = 0;
-          double area = iMC.convexHull().area();
-          if (area > 0.001) {
+          for (IDirectPosition dp : iMC.coord()) {
 
-            IPolygon poly = SmallestSurroundingRectangleComputation.getSSR(iMC);
-            double l1 = poly.coord().get(0).distance2D(poly.coord().get(1));
-            double l2 = poly.coord().get(1).distance2D(poly.coord().get(2));
-
-            largeur = Math.min(l1, l2);
+            largeur = Math.max(largeur, lE.distance(dp));
 
           }
+
+          IDirectPositionList dpl = new DirectPositionList();
+          dpl.add(lE.valueAt(0));
+          dpl.add(lE.valueAt(1));
+
+          IFeature feat = new DefaultFeature(new GM_LineString(dpl));
+          AttributeManager.addAttribute(feat, "Dist", largeur, "Double");
+          featCollDebu.add(feat);
+
+          // }
+
+
 
           if (largeur < threshold) {
 
@@ -242,38 +308,58 @@ public class CadastralParcelLoader {
       Face f = facesParcelles.get(i);
       CadastralParcel parc = parcelles.get(i);
 
-      
       List<Arc> lArc = f.arcs();
       int nbArcs = lArc.size();
-      
-      for (int j = 0 ; j <nbArcs ; j++) {
-        
+
+      for (int j = 0; j < nbArcs; j++) {
+
         Arc a = lArc.get(j);
-        SpecificCadastralBoundary sCB = parc.getSpecificCadastralBoundary().get(j);
-        
-        
-       
-        if(sCB.getType() == SpecificCadastralBoundary.ROAD){
+        SpecificCadastralBoundary sCB = parc.getSpecificCadastralBoundary()
+            .get(j);
+
+        if (sCB.getType() == SpecificCadastralBoundary.ROAD) {
           continue;
-              
+
         }
-        
+
         Face fCand = a.getFaceDroite();
-      
-        if(fCand == f){
+
+        if (fCand == f) {
           fCand = a.getFaceGauche();
         }
-       
+
         int indexFCand = facesParcelles.getElements().indexOf(fCand);
         sCB.setFeatAdj(parcelles.get(indexFCand));
 
-        
       }
 
     }
 
+    ShapefileWriter.write(featCollDebu,
+        "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project1/out/featshp.shp");
+
     return parcelles;
 
+  }
+
+  private static double determineThreshol(Face f, double thresholdIni) {
+    IPolygon poly = SmallestSurroundingRectangleComputation.getSSR(f
+        .getGeometrie());
+    double l1 = poly.coord().get(0).distance2D(poly.coord().get(1));
+    double l2 = poly.coord().get(1).distance2D(poly.coord().get(2));
+
+    double largeur = Math.min(l1, l2);
+
+    System.out.println(largeur);
+
+    if (largeur / 2 < thresholdIni) {
+
+      System.out.println("j'y passe");
+
+      return largeur / 10;
+    }
+
+    return thresholdIni;
   }
 
   @Deprecated
@@ -447,9 +533,9 @@ public class CadastralParcelLoader {
         System.out.println("Error 2");
       }
 
-      // carteTopo.fusionNoeuds(threshold);
+      carteTopo.fusionNoeuds(threshold);
 
-      // carteTopo.filtreArcsDoublons();
+      carteTopo.filtreArcsDoublons();
 
       // Création de la topologie Arcs Noeuds
 
@@ -457,33 +543,28 @@ public class CadastralParcelLoader {
       // La carteTopo est rendue planaire
 
       /*
-      if (!test(carteTopo)) {
-        System.out.println("Error 3");
-      }*/
+       * if (!test(carteTopo)) { System.out.println("Error 3"); }
+       */
 
       carteTopo.rendPlanaire(threshold);
 
       /*
-      if (!test(carteTopo)) {
-        System.out.println("Error 4");
-      }
-
-      carteTopo.filtreArcsDoublons();
-
-      if (!test(carteTopo)) {
-        System.out.println("Error 5");
-      }*/
+       * if (!test(carteTopo)) { System.out.println("Error 4"); }
+       * 
+       * carteTopo.filtreArcsDoublons();
+       * 
+       * if (!test(carteTopo)) { System.out.println("Error 5"); }
+       */
 
       // DEBUG2.addAll(carteTopo.getListeArcs());
 
       carteTopo.creeTopologieArcsNoeuds(threshold);
 
       /*
-      if (!test(carteTopo)) {
-        System.out.println("Error 6");
-      }*/
+       * if (!test(carteTopo)) { System.out.println("Error 6"); }
+       */
 
-      // carteTopo.creeTopologieFaces();
+      carteTopo.creeTopologieFaces();
 
       // carteTopo.filtreNoeudsSimples();
 
@@ -491,9 +572,8 @@ public class CadastralParcelLoader {
       carteTopo.creeTopologieFaces();
 
       /*
-      if (!test(carteTopo)) {
-        System.out.println("Error 7");
-      }*/
+       * if (!test(carteTopo)) { System.out.println("Error 7"); }
+       */
 
       return carteTopo;
 

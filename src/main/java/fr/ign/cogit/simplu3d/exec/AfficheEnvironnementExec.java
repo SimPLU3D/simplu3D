@@ -12,6 +12,7 @@ import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.sig3d.gui.MainWindow;
 import fr.ign.cogit.geoxygene.sig3d.representation.ConstantRepresentation;
+import fr.ign.cogit.geoxygene.sig3d.representation.basic.Object1d;
 import fr.ign.cogit.geoxygene.sig3d.representation.texture.TextureManager;
 import fr.ign.cogit.geoxygene.sig3d.representation.texture.TexturedSurface;
 import fr.ign.cogit.geoxygene.sig3d.semantic.VectorLayer;
@@ -28,6 +29,8 @@ import fr.ign.cogit.simplu3d.representation.RepEnvironnement.Theme;
 public class AfficheEnvironnementExec {
 
   public static void main(String[] args) throws CloneNotSupportedException {
+    
+    Object1d.width = 4.0f;
 
     ConstantRepresentation.backGroundColor = new Color(156, 180, 193);
 
@@ -36,16 +39,17 @@ public class AfficheEnvironnementExec {
     Environnement env = LoaderSHP.load(folder);
 
     List<Theme> lTheme = new ArrayList<RepEnvironnement.Theme>();
-    lTheme.add(Theme.TOIT_BATIMENT);
-    lTheme.add(Theme.FACADE_BATIMENT);
-    // lTheme.add(Theme.FAITAGE);
-    // lTheme.add(Theme.PIGNON);
-    // lTheme.add(Theme.GOUTTIERE);
+   // lTheme.add(Theme.TOIT_BATIMENT);
+    // lTheme.add(Theme.FACADE_BATIMENT);
+     lTheme.add(Theme.FAITAGE);
+     lTheme.add(Theme.PIGNON);
+     lTheme.add(Theme.GOUTTIERE);
     // lTheme.add(Theme.VOIRIE);
     // lTheme.add(Theme.PARCELLE);
     // lTheme.add(Theme.SOUS_PARCELLE);
     // lTheme.add(Theme.ZONE);
-    // lTheme.add(Theme.PAN);
+     lTheme.add(Theme.PAN);
+     lTheme.add(Theme.PAN_MUR);
 
     Theme[] tab = lTheme.toArray(new Theme[0]);
 
@@ -58,12 +62,7 @@ public class AfficheEnvironnementExec {
       mW.getInterfaceMap3D().getCurrent3DMap().addLayer(l);
     }
 
-    mW.getInterfaceMap3D().removeLight(0);
-    mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
-    mW.getInterfaceMap3D().moveLight(180, -15, 120, 0);
-    mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
-    mW.getInterfaceMap3D().moveLight(-140, 3, 120, 1);
-    
+
     
     
     mW.getMainMenuBar().add(new GTRUToolBar(mW));
@@ -103,10 +102,19 @@ public class AfficheEnvironnementExec {
     fc.add(feat);
 
     feat.setRepresentation(new TexturedSurface(feat, TextureManager
-        .textureLoading(folder + "Env3D_86.png"), longueur, largeur));
+        .textureLoading(folder + "env3DPrj3.png"), longueur, largeur));
 
     mW.getInterfaceMap3D().getCurrent3DMap()
         .addLayer(new VectorLayer(fc, "Cool"));
+    
+ 
+    
+    mW.getInterfaceMap3D().removeLight(0);
+    /* mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
+    mW.getInterfaceMap3D().moveLight(180, -15, 120, 0);
+    mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
+    mW.getInterfaceMap3D().moveLight(-140, 3, 120, 1);*/
+    
 
   }
 

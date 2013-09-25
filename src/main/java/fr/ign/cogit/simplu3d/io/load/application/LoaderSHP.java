@@ -123,7 +123,7 @@ public class LoaderSHP {
 
     // Etape 4 : chargement des parcelles et créations des bordures
     IFeatureCollection<CadastralParcel> parcelles = CadastralParcelLoader
-        .assignBordureToParcelleWithOrientation(parcelleColl, 1);
+        .assignBordureToParcelleWithOrientation(parcelleColl, 3);
 
     env.setCadastralParcels(parcelles);
 
@@ -132,7 +132,7 @@ public class LoaderSHP {
         parcelles, zones);
     env.setSubParcels(sousParcelles);
 
-    // Etape 8 : création des unités foncirèes
+    // Etape 6 : création des unités foncirèes
     IFeatureCollection<BasicPropertyUnit> collBPU = BasicPropertyUnitImporter
         .importBPU(parcelles);
     env.setBpU(collBPU);
