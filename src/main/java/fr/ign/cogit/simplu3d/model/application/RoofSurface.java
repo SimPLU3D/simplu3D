@@ -116,6 +116,10 @@ public class RoofSurface extends CG_RoofSurface {
   public void setAngleMax(double angleMax) {
     this.angleMax = angleMax;
   }
+
+  public IMultiCurve<IOrientableCurve> getGable() {
+    return gable;
+  }
   
 
 }

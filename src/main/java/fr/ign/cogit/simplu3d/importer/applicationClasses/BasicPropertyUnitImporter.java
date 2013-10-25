@@ -1,6 +1,7 @@
 package fr.ign.cogit.simplu3d.importer.applicationClasses;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
+import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
@@ -21,6 +22,13 @@ public class BasicPropertyUnitImporter {
       bP.getCadastralParcel().add(c);
       c.setbPU(bP);
       bPU.add(bP);
+      
+      
+      
+      
+      bP.setpol2D((IPolygon)FromGeomToSurface.convertGeom(c.getGeom()).get(0));
+      
+      
 
       IMultiSurface<IOrientableSurface> geom = new GM_MultiSurface<>();
       geom.addAll(FromGeomToSurface.convertGeom(c.getGeom()));

@@ -25,6 +25,9 @@ import fr.ign.cogit.simplu3d.model.application.UrbaZone;
  * 
  */
 public class TestLoaderSHP {
+  
+  
+  public static IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
 
   public static void main(String[] args) throws CloneNotSupportedException {
     String folder = "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project1/";
@@ -150,6 +153,11 @@ public class TestLoaderSHP {
     ShapefileWriter.write(env.getParcelles(), folderOut + "parcelles.shp");
     ShapefileWriter.write(bordures, folderOut + "bordures.shp");
     ShapefileWriter.write(bordures_translated, folderOut + "bordures_translated.shp");
+    
+    
+    ShapefileWriter.write(featC, folderOut + "buffer.shp");
+    
+    
     
     
     System.out.println("Nombre de bpu : " + env.getBpU().size());

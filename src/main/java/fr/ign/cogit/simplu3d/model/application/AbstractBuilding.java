@@ -32,6 +32,10 @@ public abstract class AbstractBuilding extends CG_AbstractBuilding {
   protected AbstractBuilding() {
 
   }
+  
+  public  double height(String s, String s2){
+    return 0;
+  }
 
   public AbstractBuilding(IGeometry geom) {
     this.setGeom(geom);
@@ -185,4 +189,28 @@ public abstract class AbstractBuilding extends CG_AbstractBuilding {
     return footprint;
   }
 
+  /**
+   * @TODO : à implémenter
+   * @return
+   */
+  public List<AbstractBuilding> getBuildingsParts(){
+      return null;
+  }
+  
+  
+  /**
+   * @TODO : à implémenter
+   * @return
+   */
+  public List<AbstractBuilding> bandEpsilon(IGeometry geom, double d1, double d2){
+      return null;
+  }
+  
+  
+  
+  public boolean prospect(IGeometry geom, double hIni, double slope){
+    return false;
+  }
+  
+  
 }

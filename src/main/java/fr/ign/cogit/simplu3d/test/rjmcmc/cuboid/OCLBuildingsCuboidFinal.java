@@ -26,6 +26,7 @@ import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeLength;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeWidth;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.MoveCuboid2;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.RotateCuboid2;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.birth.UniformBirthInGeom;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.CountVisitor;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.FilmVisitor;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.ShapefileVisitorCuboid2;
@@ -36,10 +37,9 @@ import fr.ign.mpp.configuration.Configuration;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.mpp.configuration.Modification;
 import fr.ign.mpp.kernel.ObjectBuilder;
-import fr.ign.mpp.kernel.UniformBirth;
 import fr.ign.parameters.Parameters;
 import fr.ign.rjmcmc.acceptance.MetropolisAcceptance;
-import fr.ign.rjmcmc.distribution.PoissonDistribution;
+import fr.ign.rjmcmc.distribution.UniformDistribution;
 import fr.ign.rjmcmc.energy.BinaryEnergy;
 import fr.ign.rjmcmc.energy.ConstantEnergy;
 import fr.ign.rjmcmc.energy.MinusUnaryEnergy;
@@ -48,6 +48,10 @@ import fr.ign.rjmcmc.energy.MultipliesUnaryEnergy;
 import fr.ign.rjmcmc.energy.PlusUnaryEnergy;
 import fr.ign.rjmcmc.energy.UnaryEnergy;
 import fr.ign.rjmcmc.kernel.Kernel;
+import fr.ign.rjmcmc.kernel.NullView;
+import fr.ign.rjmcmc.kernel.SimpleObject;
+import fr.ign.rjmcmc.kernel.UniformView;
+import fr.ign.rjmcmc.kernel.Variate;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.SimulatedAnnealing;
 import fr.ign.simulatedannealing.endtest.EndTest;
@@ -59,11 +63,11 @@ import fr.ign.simulatedannealing.visitor.CompositeVisitor;
 import fr.ign.simulatedannealing.visitor.OutputStreamVisitor;
 import fr.ign.simulatedannealing.visitor.Visitor;
 
-public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sampler<O, C, SimpleTemperature>, V extends Visitor<O, C, SimpleTemperature, S>> {
+public class OCLBuildingsCuboidFinal<O, C extends Configuration<O>, S extends Sampler<O, C, SimpleTemperature>, V extends Visitor<O, C, SimpleTemperature, S>> {
 
   private double coeffDec = Double.NaN;
 
-  public OCLBuildingsCuboid2() {
+  public OCLBuildingsCuboidFinal() {
 
   }
 
@@ -113,7 +117,7 @@ public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sample
 
       conf.apply(m);
 
-      ((SimpleGreenSampler<Cuboid2, Configuration<Cuboid2>, PoissonDistribution, SimpleTemperature, UniformBirth<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>>) samp).cMI
+      ((SimpleGreenSampler<Cuboid2, Configuration<Cuboid2>, UniformDistribution, SimpleTemperature, UniformBirthInGeom<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>>) samp).cMI
           .update(lCuboid, new ArrayList<Cuboid2>());
 
     }
@@ -308,24 +312,20 @@ public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sample
     };
 
     // Sampler de naissance
-    UniformBirth<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>> birth = new UniformBirth<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>(
-        new Cuboid2(r.minX(), r.minY(), mindim, mindim, minheight, 0),
-        new Cuboid2(r.maxX(), r.maxY(), maxdim, maxdim, maxheight, 2 * Math.PI),
-        builder);
+    UniformBirthInGeom<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>> birth = new UniformBirthInGeom<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>(
+        new Cuboid2(0, 1, mindim, mindim, minheight, 0), new Cuboid2(0, 1,
+            maxdim, maxdim, maxheight, 2 * Math.PI), builder, bpU.getpol2D());
 
     // Distribution de poisson
-    PoissonDistribution distribution = new PoissonDistribution(
-        Double.parseDouble(p.get("poisson")));
 
-    DirectSampler<Cuboid2, Configuration<Cuboid2>, PoissonDistribution, UniformBirth<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>> ds = new DirectSampler<Cuboid2, Configuration<Cuboid2>, PoissonDistribution, UniformBirth<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>>(
-        distribution, birth);
+    DirectSampler<Cuboid2, Configuration<Cuboid2>, UniformDistribution, UniformBirthInGeom<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>> ds = new DirectSampler<Cuboid2, Configuration<Cuboid2>, UniformDistribution, UniformBirthInGeom<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>>(
+        new UniformDistribution(0, 1), birth);
 
     // Probabilité de naissance-morts modifications
     List<Kernel<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>> kernels = new ArrayList<Kernel<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>>(
         3);
-    
-    
-    kernels.add(Kernel.make_uniform_birth_death_kernel(builder, birth,
+
+    kernels.add(make_uniform_birth_death_kernel_with_geom(builder, birth,
         Double.parseDouble(p.get("pbirth")),
         Double.parseDouble(p.get("pdeath"))));
 
@@ -393,9 +393,17 @@ public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sample
     kernels.add(Kernel.make_uniform_modification_kernel(builder,
         new RotateCuboid2(amplitudeRotate), 0.2));
 
-    Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature> s = new SimpleGreenSampler<Cuboid2, Configuration<Cuboid2>, PoissonDistribution, SimpleTemperature, UniformBirth<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>>(
+    Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature> s = new SimpleGreenSampler<Cuboid2, Configuration<Cuboid2>, UniformDistribution, SimpleTemperature, UniformBirthInGeom<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>>(
         ds, new MetropolisAcceptance<SimpleTemperature>(), kernels, bpU);
     return s;
+  }
+
+  private static <T extends SimpleObject, C extends Configuration<T>, M extends Modification<T, C>> Kernel<T, C, M> make_uniform_birth_death_kernel_with_geom(
+      ObjectBuilder<T> builder, UniformBirthInGeom<T, C, M> b, double pbirth,
+      double pdeath) {
+    return new Kernel<T, C, M>(new NullView<T, C, M>(),
+        new UniformView<T, C, M>(builder), b.getVariate(),
+        new Variate<T, C, M>(0), b.getTransform(), pbirth, pdeath);
   }
 
   private static EndTest<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> create_end_test(

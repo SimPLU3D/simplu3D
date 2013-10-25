@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.exec;
+package fr.ign.cogit.simplu3d.exec.test;
 
 import java.awt.Color;
 import java.util.List;
@@ -15,7 +15,7 @@ import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.convert.GenerateSolidFr
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid2;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.loader.LoaderCuboid2;
 
-public class CuboidRep {
+public class CuboidRepartition {
 
   /**
    * @param args

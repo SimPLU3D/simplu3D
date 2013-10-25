@@ -28,6 +28,8 @@ import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.geoxygene.util.algo.SmallestSurroundingRectangleComputation;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
+import fr.ign.cogit.simplu3d.exec.test.TestLoaderSHP;
+import fr.ign.cogit.simplu3d.exec.testOCL.TestLoader;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 
@@ -48,7 +50,7 @@ public class CadastralParcelLoader {
   public static IFeatureCollection<CadastralParcel> assignBordureToParcelleWithOrientation(
       IFeatureCollection<IFeature> parcelCollection, double thresholdIni) {
 
-    IFeatureCollection<IFeature> featCollDebu = new FT_FeatureCollection<>();
+
 
     System.out.println("NB Parcelles : " + parcelCollection.size());
 
@@ -129,6 +131,17 @@ public class CadastralParcelLoader {
 
         if (a.getOrientation() == SpecificCadastralBoundary.LAT) {
           listArcTemp.add(a);
+          
+          DefaultFeature df = new DefaultFeature();
+
+
+          df.setGeom(a.getGeom().buffer(threshold));
+          AttributeManager.addAttribute(df, "OK", 0, "Integer");
+          
+
+          TestLoaderSHP.featC.add(df);
+          
+          
         }
 
       }
@@ -153,7 +166,7 @@ public class CadastralParcelLoader {
 
         for (Arc aTemp : a.getNoeudIni().arcs()) {
 
-          if (aTemp.getOrientation() == SpecificCadastralBoundary.LAT) {
+          if (aTemp.getOrientation() == SpecificCadastralBoundary.ROAD) {
             somInitial = a.getNoeudIni().getCoord();
             somFinal = a.getNoeudFin().getCoord();
             break;
@@ -251,7 +264,7 @@ public class CadastralParcelLoader {
 
           IFeature feat = new DefaultFeature(new GM_LineString(dpl));
           AttributeManager.addAttribute(feat, "Dist", largeur, "Double");
-          featCollDebu.add(feat);
+ 
 
           // }
 
@@ -262,9 +275,38 @@ public class CadastralParcelLoader {
             a = aCandidat;
 
             // Le candidat est une limite latérale
+            
+            DefaultFeature df = new DefaultFeature();
+            IDirectPositionList dplTemp = new DirectPositionList();
+            dplTemp.add(somInitial);
+            dplTemp.add(somFinal);
+            
+
+            df.setGeom((new GM_LineString(dplTemp)).buffer(threshold));
+            AttributeManager.addAttribute(df, "OK", 0, "Integer");
+            
+            
+            
+            
+            TestLoaderSHP.featC.add(df);
 
             listArcLat.add(aCandidat);
           } else {
+            
+            
+            DefaultFeature df = new DefaultFeature();
+            IDirectPositionList dplTemp = new DirectPositionList();
+            dplTemp.add(somInitial);
+            dplTemp.add(somFinal);
+            
+            df.setGeom((new GM_LineString(dplTemp)).buffer(threshold));
+            AttributeManager.addAttribute(df, "OK", 1, "Integer");
+            
+            
+            
+            
+            TestLoaderSHP.featC.add(df);
+
 
             // Le candidat est un fond de parcelle
             break;
@@ -335,8 +377,6 @@ public class CadastralParcelLoader {
 
     }
 
-    ShapefileWriter.write(featCollDebu,
-        "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project1/out/featshp.shp");
 
     return parcelles;
 

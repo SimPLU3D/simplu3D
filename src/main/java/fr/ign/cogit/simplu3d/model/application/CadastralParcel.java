@@ -86,4 +86,8 @@ public class CadastralParcel extends CG_LandUse {
   }
 
   
+  public Building getBuilding(){
+    return null;
+  }
+  
 }

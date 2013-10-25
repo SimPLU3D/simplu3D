@@ -33,6 +33,14 @@ public class SpecificCadastralBoundary extends CG_CityObject {
   public IFeature getFeatAdj() {
     return featAdj;
   }
+  
+  public CadastralParcel getCadastralCadastralParcel(){
+    return null;
+  }
+  
+  public SubParcel getSubParcel(){
+    return null;
+  }
 
   public void setFeatAdj(IFeature featAdj) {
     this.featAdj = featAdj;

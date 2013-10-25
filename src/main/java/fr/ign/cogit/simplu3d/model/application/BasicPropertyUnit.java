@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.vividsolutions.jts.geom.Geometry;
 
+import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
@@ -54,6 +55,27 @@ public class BasicPropertyUnit extends DefaultFeature {
 
     return geom;
   }
+  
+  
+  
+  private IPolygon pol2D = null;
+  
+  public IPolygon getpol2D(){
+    
+    
+    
+    
+    
+    
+    return pol2D;
+  }
+  
+  
+  
+  public void setpol2D(IPolygon pol){
+    pol2D = pol;
+  }
+  
 
   Geometry geomjts = null;
 

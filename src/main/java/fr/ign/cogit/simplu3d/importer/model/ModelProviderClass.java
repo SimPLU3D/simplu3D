@@ -9,8 +9,11 @@ import fr.ign.cogit.simplu3d.calculation.util.PointBasType;
 import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Building;
+import fr.ign.cogit.simplu3d.model.application.BuildingPart;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.GeomUtil;
+import fr.ign.cogit.simplu3d.model.application.Prescription_SURF;
+import fr.ign.cogit.simplu3d.model.application.PublicSpace;
 import fr.ign.cogit.simplu3d.model.application.Road;
 import fr.ign.cogit.simplu3d.model.application.RoofSurface;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
@@ -34,13 +37,14 @@ public class ModelProviderClass {
   protected GeomUtil gg;
   protected AbstractBuilding ab;
   protected SubParcel sP;
-  protected SpecificCadastralBoundary cB;
   protected IGeometry gm;
   protected BasicPropertyUnit bUP;
   protected IOrientableSurface oS;
   protected Road r;
   protected GM_Polygon poly;
-
+  protected Prescription_SURF ps;
+  protected PublicSpace pss;
+  protected BuildingPart bp;
   /*
    * protected Cuboid c; protected Cuboid2 c2;
    */

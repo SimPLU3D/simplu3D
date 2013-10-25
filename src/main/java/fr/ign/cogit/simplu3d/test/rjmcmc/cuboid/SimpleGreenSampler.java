@@ -6,7 +6,6 @@ import tudresden.ocl20.pivot.modelinstancetype.types.IModelInstanceObject;
 import fr.ign.cogit.simplu3d.checker.VeryFastRuleChecker;
 import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
-import fr.ign.cogit.simplu3d.model.application.Building;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.cache.CacheModelInstance;
 import fr.ign.mpp.DirectSampler;
 import fr.ign.mpp.configuration.Configuration;
@@ -27,7 +26,7 @@ public class SimpleGreenSampler<O extends SimpleObject, C extends Configuration<
 
   VeryFastRuleChecker vFR;
 
- public CacheModelInstance cMI;
+  public CacheModelInstance cMI;
 
   public SimpleGreenSampler(DirectSampler<O, C, D, S> d, Acceptance<T> a,
       List<Kernel<O, C, Modification<O, C>>> k, BasicPropertyUnit bPU) {
@@ -37,46 +36,33 @@ public class SimpleGreenSampler<O extends SimpleObject, C extends Configuration<
 
     // fRC = new FastRuleChecker(bPU);
 
-    // cMI = new CacheModelInstance(fRC.getBPu(), fRC.getMi());
+    // cMI = new CacheModelInstance(fRC.getBPu(), fRC.getMi());:!
 
     cMI = new CacheModelInstance(vFR.getbPU(), vFR.getlModeInstance().get(0));
 
   }
 
-
-  
   public boolean checkNonUpdateConfiguration(
       KernelFunctor<O, C, Modification<O, C>> kf) {
-    
-
 
     List<IModelInstanceObject> lst = cMI.update((List<AbstractBuilding>) kf
         .getModif().getBirth(), (List<AbstractBuilding>) kf.getModif()
         .getDeath());
-
 
     boolean isCheck = vFR.check(lst);
 
-
-      // Ce n'est pas vérifié, on fait marche arrière
-      cMI.update((List<AbstractBuilding>) kf.getModif().getDeath(),
-          (List<AbstractBuilding>) kf.getModif().getBirth());
-
-
+    // Ce n'est pas vérifié, on fait marche arrière
+    cMI.update((List<AbstractBuilding>) kf.getModif().getDeath(),
+        (List<AbstractBuilding>) kf.getModif().getBirth());
 
     return isCheck;
   }
-  
-  
-  public boolean checkConfiguration(
-      KernelFunctor<O, C, Modification<O, C>> kf) {
-    
 
+  public boolean checkConfiguration(KernelFunctor<O, C, Modification<O, C>> kf) {
 
     List<IModelInstanceObject> lst = cMI.update((List<AbstractBuilding>) kf
         .getModif().getBirth(), (List<AbstractBuilding>) kf.getModif()
         .getDeath());
-
 
     boolean isCheck = vFR.check(lst);
 
@@ -89,8 +75,8 @@ public class SimpleGreenSampler<O extends SimpleObject, C extends Configuration<
 
     return isCheck;
   }
-  
-  public List<Kernel<O, C, Modification<O, C>>> getKernels(){
+
+  public List<Kernel<O, C, Modification<O, C>>> getKernels() {
     return this.kernels;
   }
 

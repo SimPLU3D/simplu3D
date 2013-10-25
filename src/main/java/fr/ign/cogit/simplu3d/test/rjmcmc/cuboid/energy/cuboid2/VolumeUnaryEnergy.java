@@ -7,23 +7,17 @@ public class VolumeUnaryEnergy<T> implements UnaryEnergy<T> {
 
   @Override
   public double getValue(T t) {
-    
-    
 
 
     if (!(t instanceof Cuboid2)) {
+      System.out.println("Probleme : volume unary energy");
       return 0;
     }
     Cuboid2 c = (Cuboid2) t;
 
     
-    
-    
-    
     double volume= c.width * c.length * c.height;
 
-
-    
     return volume;
 
   }

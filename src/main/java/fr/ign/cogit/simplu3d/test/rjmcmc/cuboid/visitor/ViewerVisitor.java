@@ -43,7 +43,7 @@ public class ViewerVisitor<O, C extends Configuration<O>, T extends Temperature,
 
   private final static String PREFIX_NAME_STRING = "Étape";
   private String prefix = "";
-  private final static int MIN_LAYER = 3;
+  private  static int MIN_LAYER = 3;
 
   private GraphConfiguration<Cuboid> bestConfig = null;
   private double bestValue = Double.POSITIVE_INFINITY;
@@ -53,6 +53,7 @@ public class ViewerVisitor<O, C extends Configuration<O>, T extends Temperature,
     if(mW == null){
       mW = new MainWindow();
       represent(Environnement.getInstance(), mW);
+      MIN_LAYER = mW.getInterfaceMap3D().getCurrent3DMap().getLayerList().size();
     }
 
   }

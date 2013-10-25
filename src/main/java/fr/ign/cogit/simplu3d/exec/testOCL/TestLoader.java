@@ -33,7 +33,7 @@ public class TestLoader {
   public static void main(String[] args) throws Exception {
 
     oclConstraints = new File(
-        "src/main/resources/ocl/simple_allConstraints.ocl");
+        "src/main/resources/ocl/simple_allConstraintsThese.ocl");
 //    String folderEnv = "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project1/";
 
     try {
@@ -116,6 +116,8 @@ public class TestLoader {
       List<Constraint> constraintList = StandaloneFacade.INSTANCE
           .parseOclConstraints(model, oclConstraints);
 
+      /*
+       * 
       System.out.println("*******************************************");
       System.out.println("**Interprétation des contraintes OCL*******");
       System.out.println("*******************************************");
@@ -127,7 +129,7 @@ public class TestLoader {
             + result.getResult());
       }
 
-      /*
+    
        * IOcl2DeclSettings settings = Ocl2DeclCodeFactory.getInstance()
        * .createOcl2DeclCodeSettings();
        * settings.setSourceDirectory("src-gen/simple/");
