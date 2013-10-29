@@ -321,7 +321,7 @@ public class CadastralParcelLoader {
       for (Arc a : listArc) {
         SpecificCadastralBoundary cB = new SpecificCadastralBoundary(
             a.getGeom());
-        p.getSpecificCadastralBoundary().add(cB);
+        p.getBoundary().add(cB);
 
         if (a.getOrientation() == SpecificCadastralBoundary.ROAD) {
           cB.setType(SpecificCadastralBoundary.ROAD);
@@ -356,7 +356,7 @@ public class CadastralParcelLoader {
       for (int j = 0; j < nbArcs; j++) {
 
         Arc a = lArc.get(j);
-        SpecificCadastralBoundary sCB = parc.getSpecificCadastralBoundary()
+        SpecificCadastralBoundary sCB = parc.getBoundary()
             .get(j);
 
         if (sCB.getType() == SpecificCadastralBoundary.ROAD) {
@@ -518,7 +518,7 @@ public class CadastralParcelLoader {
         SpecificCadastralBoundary b = new SpecificCadastralBoundary(a.getGeom());
         b.setType(a.getOrientation());
 
-        p.getSpecificCadastralBoundary().add(b);
+        p.getBoundary().add(b);
 
       }
 
@@ -609,7 +609,7 @@ public class CadastralParcelLoader {
       // carteTopo.filtreNoeudsSimples();
 
       // Création des faces de la carteTopo
-      carteTopo.creeTopologieFaces();
+   //   carteTopo.creeTopologieFaces();
 
       /*
        * if (!test(carteTopo)) { System.out.println("Error 7"); }

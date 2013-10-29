@@ -112,6 +112,7 @@ public class LoaderSHP {
     // Etape 2 : création des zones et assignation des règles aux zones
     IFeatureCollection<UrbaZone> zones = ZonesImporter.importUrbaZone(zoneColl);
 
+    
     for (UrbaZone z : zones) {
 
       RulesImporter.importer(folder, z);

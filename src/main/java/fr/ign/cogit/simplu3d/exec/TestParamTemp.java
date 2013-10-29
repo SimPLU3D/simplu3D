@@ -27,7 +27,7 @@ public class TestParamTemp {
 
     String folderName = "./src/main/resources/scenario/";
 
-    String fileName = "building_parameters_project_4.xml";
+    String fileName = "building_parameters_project_expthese_1.xml";
 
     String csvFile = "E:/Experimentation/export.csv";
     
@@ -40,21 +40,23 @@ public class TestParamTemp {
     List<Double> ld = new ArrayList<>();
     
     
-    for(int i=0;i<nbInter){
+    for(int i=0;i<nbInter;i++){
       
+      
+      ld.add( i * (bMax-bMin)/nbInter + bMin);
       
       
       
     }
     
-    
+    ld.add(bMax);
     
     
     
     
     
 
-    double[] valCoeff = { 0.999, 0.9995, 0.9999 };
+    Object[] valCoeff = ld.toArray();
 
     int nbIt = 50;
 
@@ -88,7 +90,7 @@ public class TestParamTemp {
         
 
         OCLBuildingsCuboid2 ocb = new OCLBuildingsCuboid2();
-        ocb.setCoeffDec(valCoeff[i]);
+        ocb.setCoeffDec( (double) valCoeff[i]);
 
         double timeMs =  System.currentTimeMillis();
         

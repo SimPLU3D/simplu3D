@@ -68,7 +68,13 @@
         <!-- Sortie console -->
         <param key="outputstreamvisitor" value="false" />
         <!-- Sortie viewer 3D -->
-        <param key="visitorviewer" value="false" />
+        <param key="visitorviewer" value="true" />
+        <param key="showbackground" value="true" />
+        <param key="xminbg" value="1051042.8513" />
+        <param key="xmaxbg" value="1051264.8064" />
+        <param key="yminbg" value="6840539.0838" />
+        <param key="ymaxbg" value="6840679.2712" />
+        <param key="z" value="140" />
         <!-- Sortie ShapeFileWriter -->
         <param key="shapefilewriter" value="false" />   
         <!-- Sortie Statsvisitor -->

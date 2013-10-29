@@ -5,12 +5,16 @@ import java.util.List;
 
 import org.citygml4j.model.citygml.core.CityObject;
 
+import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
+import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.sig3d.calculation.Util;
 import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToSurface;
+import fr.ign.cogit.geoxygene.sig3d.geometry.Box3D;
+import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
 import fr.ign.cogit.sig3d.analysis.RoofDetection;
 import fr.ign.cogit.sig3d.model.citygml.building.CG_AbstractBuilding;
 import fr.ign.cogit.simplu3d.calculation.HauteurCalculation;
@@ -32,8 +36,8 @@ public abstract class AbstractBuilding extends CG_AbstractBuilding {
   protected AbstractBuilding() {
 
   }
-  
-  public  double height(String s, String s2){
+
+  public double height(String s, String s2) {
     return 0;
   }
 
@@ -43,10 +47,11 @@ public abstract class AbstractBuilding extends CG_AbstractBuilding {
 
     // Etape 1 : détection du toit et des façades
     List<IOrientableSurface> lOS = FromGeomToSurface.convertGeom(geom);
-    IMultiSurface<IOrientableSurface> surfaceRoof = (IMultiSurface<IOrientableSurface>) RoofDetection.detectRoof(this, 0.2, true) ;
-    
-    //Util.detectRoof(lOS,
-      //  0.2);
+    IMultiSurface<IOrientableSurface> surfaceRoof = (IMultiSurface<IOrientableSurface>) RoofDetection
+        .detectRoof(this, 0.2, true);
+
+    // Util.detectRoof(lOS,
+    // 0.2);
     IMultiSurface<IOrientableSurface> surfaceWall = Util.detectVertical(lOS,
         0.2);
 
@@ -162,7 +167,7 @@ public abstract class AbstractBuilding extends CG_AbstractBuilding {
 
   public double height(int pB, int pH) {
     double h = HauteurCalculation.calculate(this, pB, pH);
-     System.out.println("Hauteur calculée : " + h);
+    System.out.println("Hauteur calculée : " + h);
     return h;
   }
 
@@ -193,24 +198,51 @@ public abstract class AbstractBuilding extends CG_AbstractBuilding {
    * @TODO : à implémenter
    * @return
    */
-  public List<AbstractBuilding> getBuildingsParts(){
-      return null;
+  public List<AbstractBuilding> getBuildingsParts() {
+    return null;
   }
-  
-  
+
   /**
    * @TODO : à implémenter
    * @return
    */
-  public List<AbstractBuilding> bandEpsilon(IGeometry geom, double d1, double d2){
-      return null;
+  public List<AbstractBuilding> bandEpsilon(IGeometry geom, double d1, double d2) {
+    return null;
   }
-  
-  
-  
-  public boolean prospect(IGeometry geom, double hIni, double slope){
-    return false;
+
+  public List<AbstractBuilding> bandEpsilon(IGeometry geom, double d1) {
+    return bandEpsilon(geom, d1, Double.POSITIVE_INFINITY);
   }
-  
-  
+
+  public List<AbstractBuilding> bandEpsilon(CadastralParcel cP, double distMin,
+      double distMax) {
+    return null;
+  }
+
+  public boolean prospect(IGeometry geom, double slope, double hIni) {
+
+    double zMin = 0;
+    IDirectPositionList dpl = null;
+
+    double shift = 0;
+
+    Box3D box = new Box3D(this.getGeom());
+    dpl = this.getToit().getGeom().coord();
+
+    zMin = box.getLLDP().getZ();
+
+    for (IDirectPosition dp : dpl) {
+
+      if (geom.distance(new GM_Point(dp)) * slope + hIni < shift
+          + dp.getZ() - zMin) {
+
+        return false;
+      }
+
+    }
+
+    return true;
+
+  }
+
 }

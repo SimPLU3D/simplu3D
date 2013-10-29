@@ -85,7 +85,7 @@ public class OCLBuildingsCuboidBao<O, C extends Configuration<O>, S extends Samp
    // Visitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>> shpVisitor = new ShapefileVisitorCuboidSnap<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>>(
     //    "result");
 
-    ViewerVisitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>> visitorViewer = new ViewerVisitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>>(0+"");
+    ViewerVisitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>> visitorViewer = new ViewerVisitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>>(0+"",p);
 
     StatsV⁮isitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>> statsViewer = new StatsV⁮isitor<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature, Sampler<CuboidSnap, Configuration<CuboidSnap>, SimpleTemperature>>(
         "Énergie");

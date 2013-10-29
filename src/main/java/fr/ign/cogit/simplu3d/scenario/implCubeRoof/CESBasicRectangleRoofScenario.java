@@ -60,7 +60,7 @@ public class CESBasicRectangleRoofScenario extends BasicRectangleRoofScenario {
 
     for (CadastralParcel cP : this.getbPU().getCadastralParcel()) {
 
-      for (SpecificCadastralBoundary s : cP.getSpecificCadastralBoundary()) {
+      for (SpecificCadastralBoundary s : cP.getBoundary()) {
         if (s.getType() == 4) {
           sCB.add(s);
         }

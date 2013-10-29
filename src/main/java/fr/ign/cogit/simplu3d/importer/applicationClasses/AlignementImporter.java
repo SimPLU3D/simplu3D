@@ -114,7 +114,7 @@ public class AlignementImporter {
       // On a 1 feature par segment d'alignement
 
       IFeatureCollection<SpecificCadastralBoundary> iFCVoie = sP
-          .getSpecificCadastralBoundary();
+          .getBoundary();
 
       for (Alignement a : lAlignementTemp) {
         SpecificCadastralBoundary b = determineBestBordure(iFCVoie, a);

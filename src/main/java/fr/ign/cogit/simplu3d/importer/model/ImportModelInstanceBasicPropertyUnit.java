@@ -75,8 +75,21 @@ public class ImportModelInstanceBasicPropertyUnit {
 
   public static IModelInstanceObject importCadastralSubParcel(IModelInstance modelInstance,
       SubParcel sP) throws TypeNotFoundInModelException {
+    
     IModelInstanceObject iMS = (IModelInstanceObject)modelInstance.addModelInstanceElement(sP);
     modelInstance.addModelInstanceElement(sP.getGeom());
+
+    
+    
+    for(SpecificCadastralBoundary cCB : sP.sCBoundary ){
+      
+      modelInstance.addModelInstanceElement(cCB);
+      modelInstance.addModelInstanceElement(cCB.getGeom());
+      
+      
+      
+    }
+    
 
     for (AbstractBuilding aB : sP.getBuildingsParts()) {
       importBuilding(modelInstance, aB);
@@ -90,11 +103,17 @@ public class ImportModelInstanceBasicPropertyUnit {
       CadastralParcel cP) throws TypeNotFoundInModelException {
     
 
+    
+
 
     modelInstance.addModelInstanceElement(cP);
     modelInstance.addModelInstanceElement(cP.getGeom());
+    
+    modelInstance.addModelInstanceElement(cP.getConsLine());
 
-    for (SpecificCadastralBoundary sCB : cP.getSpecificCadastralBoundary()) {
+    for (SpecificCadastralBoundary sCB : cP.getBoundary()) {
+      
+      
       modelInstance.addModelInstanceElement(sCB);
       modelInstance.addModelInstanceElement(sCB.getGeom());
 

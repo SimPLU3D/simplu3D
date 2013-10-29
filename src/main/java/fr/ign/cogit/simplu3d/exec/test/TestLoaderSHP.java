@@ -30,11 +30,11 @@ public class TestLoaderSHP {
   public static IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
 
   public static void main(String[] args) throws CloneNotSupportedException {
-    String folder = "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project1/";
-    String folderOut = "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project1/out/";
+    String folder = "E:/mbrasebin/Donnees/Strasbourg/GTRU/ProjectT1/";
+    String folderOut =folder + "out/";
 
     
-    double valShiftB = 0.5;
+    double valShiftB = 1.5;
     
     Environnement env = LoaderSHP.load(folder);
 
@@ -57,15 +57,17 @@ public class TestLoaderSHP {
 
     int count = 0;
     
+    System.out.println("nb Parcelles : " + env.getParcelles().size());
+    
     for (CadastralParcel sp : env.getParcelles()) {
       
-      count = count + sp.getSpecificCadastralBoundary().size();
+      count = count + sp.getBoundary().size();
       
       IDirectPosition centroidParcel = sp.getGeom().centroid();
 
       AttributeManager.addAttribute(sp, "ID", sp.getId(), "Integer");
 
-      for (SpecificCadastralBoundary b : sp.getSpecificCadastralBoundary()) {
+      for (SpecificCadastralBoundary b : sp.getBoundary()) {
         bordures.add(b);
 
         AttributeManager.addAttribute(b, "ID", b.getId(), "Integer");
@@ -203,6 +205,43 @@ public class TestLoaderSHP {
     System.out.println("Faitage : " + featFaitage.size());
 
     ShapefileWriter.write(featFaitage, folderOut + "pignon.shp");
+    
+    
+    
+    
+    
+    IFeatureCollection<IFeature> featRoute = new FT_FeatureCollection<>();
+    
+    for(Road r : env.getRoads()){
+      
+      AttributeManager.addAttribute(r, "Nom", r.getName(), "String");
+      featRoute.add(r);
+      
+    }
+
+    
+    
+    ShapefileWriter.write(featRoute, folderOut + "roads.shp");
+    
+    
+    
+    
+    IFeatureCollection<IFeature> featOutTestCons = new FT_FeatureCollection<>();
+    for (CadastralParcel sp : env.getCadastralParcels()) {
+      
+      featOutTestCons.add(new DefaultFeature(sp.getConsLine()));
+      
+      
+      System.out.println(sp.getBoundary().size());
+      
+    }
+    
+    
+    ShapefileWriter.write(featOutTestCons,folderOut + "featConsF.shp");
+    
+    
+    
+    
 
     System.out.println("Chat qui râle");
 

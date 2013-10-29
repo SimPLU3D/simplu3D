@@ -30,6 +30,7 @@ import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid2;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.CuboidSnap;
 import fr.ign.mpp.configuration.Configuration;
 import fr.ign.mpp.configuration.GraphConfiguration;
+import fr.ign.parameters.Parameters;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.Temperature;
 import fr.ign.simulatedannealing.visitor.Visitor;
@@ -43,17 +44,18 @@ public class ViewerVisitor<O, C extends Configuration<O>, T extends Temperature,
 
   private final static String PREFIX_NAME_STRING = "Étape";
   private String prefix = "";
-  private  static int MIN_LAYER = 3;
+  private static int MIN_LAYER = 3;
 
   private GraphConfiguration<Cuboid> bestConfig = null;
   private double bestValue = Double.POSITIVE_INFINITY;
 
-  public ViewerVisitor(String prefixe) {
+  public ViewerVisitor(String prefixe, Parameters p) {
     prefix = prefixe;
-    if(mW == null){
+    if (mW == null) {
       mW = new MainWindow();
-      represent(Environnement.getInstance(), mW);
-      MIN_LAYER = mW.getInterfaceMap3D().getCurrent3DMap().getLayerList().size();
+      represent(Environnement.getInstance(), mW, p);
+      MIN_LAYER = mW.getInterfaceMap3D().getCurrent3DMap().getLayerList()
+          .size();
     }
 
   }
@@ -71,7 +73,7 @@ public class ViewerVisitor<O, C extends Configuration<O>, T extends Temperature,
 
     if (config.getEnergy() < bestValue) {
       bestValue = config.getEnergy();
-      bestConfig = (GraphConfiguration<Cuboid>)config;
+      bestConfig = (GraphConfiguration<Cuboid>) config;
 
     }
 
@@ -121,31 +123,31 @@ public class ViewerVisitor<O, C extends Configuration<O>, T extends Temperature,
     }
 
     if (!feat.isEmpty()) {
-      VectorLayer vl = new VectorLayer(feat, PREFIX_NAME_STRING + prefix +" : " + iter,
-          ColorRandom.getRandomColor());
-      
-      int nbLayer = mW.getInterfaceMap3D().getCurrent3DMap().getLayerList().size();
-      
-      if(nbLayer > MIN_LAYER){
-        mW.getInterfaceMap3D().getCurrent3DMap().getLayerList().get(nbLayer -1).setVisible(false); 
+      VectorLayer vl = new VectorLayer(feat, PREFIX_NAME_STRING + prefix
+          + " : " + iter, ColorRandom.getRandomColor());
+
+      int nbLayer = mW.getInterfaceMap3D().getCurrent3DMap().getLayerList()
+          .size();
+
+      if (nbLayer > MIN_LAYER) {
+        mW.getInterfaceMap3D().getCurrent3DMap().getLayerList()
+            .get(nbLayer - 1).setVisible(false);
       }
-      
-      
-      
+
       mW.getInterfaceMap3D().getCurrent3DMap().addLayer(vl);
     }
 
   }
 
-  private static void represent(Environnement env, MainWindow mW) {
+  private static void represent(Environnement env, MainWindow mW, Parameters p) {
     List<Theme> lTheme = new ArrayList<RepEnvironnement.Theme>();
-   // lTheme.add(Theme.TOIT_BATIMENT);
+    // lTheme.add(Theme.TOIT_BATIMENT);
     lTheme.add(Theme.VOIRIE);
     // lTheme.add(Theme.FAITAGE);
     // lTheme.add(Theme.PIGNON);
     // lTheme.add(Theme.GOUTTIERE);
     // lTheme.add(Theme.VOIRIE);
-    // lTheme.add(Theme.PARCELLE);
+    //lTheme.add(Theme.PARCELLE);
     // lTheme.add(Theme.BORDURE);
     // lTheme.add(Theme.ZONE);
     // lTheme.add(Theme.PAN);
@@ -165,18 +167,26 @@ public class ViewerVisitor<O, C extends Configuration<O>, T extends Temperature,
     mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
     mW.getInterfaceMap3D().moveLight(-140, 3, 120, 1);
 
-    double z = 140;
+    if (!Boolean.parseBoolean(p.get("showbackground"))) {
+      return;
+    }
+
+    double z = Double.parseDouble(p.get("z"));
+
+    double xmin = Double.parseDouble(p.get("xminbg"));
+    double xmax = Double.parseDouble(p.get("xmaxbg"));
+    double ymin = Double.parseDouble(p.get("yminbg"));
+    double ymax = Double.parseDouble(p.get("ymaxbg"));
+
     //
     // 1051042.8513268954120576,6840539.0837931865826249 :
     // 1051264.8064121364150196,6840679.2711814027279615
     // Projet 1
-     IDirectPosition dpLL = new
-     DirectPosition(1051042.8513268954120576,6840539.0837931865826249,z);
-     IDirectPosition dpUR = new
-     DirectPosition(1051264.8064121364150196,6840679.2711814027279615,z);
+    IDirectPosition dpLL = new DirectPosition(xmin, ymin, z);
+    IDirectPosition dpUR = new DirectPosition(xmax, ymax, z);
 
     // Projet 3
-  // IDirectPosition dpLL = new DirectPosition(1051157, 6840727, z);
+    // IDirectPosition dpLL = new DirectPosition(1051157, 6840727, z);
     // IDirectPosition dpUR = new DirectPosition(1051322, 6840858, z);
 
     IDirectPositionList dpl = new DirectPositionList();
@@ -200,9 +210,13 @@ public class ViewerVisitor<O, C extends Configuration<O>, T extends Temperature,
     // feat.setRepresentation(new TexturedSurface(feat, TextureManager
     // .textureLoading(folder + "Env3D_86.png"), dpUR.getX()-dpLL.getX(),
     // dpUR.getY()-dpLL.getY()));
+    
+    
+    
+    
 
     feat.setRepresentation(new TexturedSurface(feat, TextureManager
-        .textureLoading(env.folder + "env3DPrj3.png"), dpUR.getX()
+        .textureLoading(env.folder + "background3D.png"), dpUR.getX()
         - dpLL.getX(), dpUR.getY() - dpLL.getY()));
 
     mW.getInterfaceMap3D().getCurrent3DMap()

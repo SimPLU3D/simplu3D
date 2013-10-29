@@ -59,6 +59,8 @@ import fr.ign.simulatedannealing.visitor.CompositeVisitor;
 import fr.ign.simulatedannealing.visitor.OutputStreamVisitor;
 import fr.ign.simulatedannealing.visitor.Visitor;
 
+
+@Deprecated
 public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sampler<O, C, SimpleTemperature>, V extends Visitor<O, C, SimpleTemperature, S>> {
 
   private double coeffDec = Double.NaN;
@@ -146,7 +148,7 @@ public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sample
 
     if (Boolean.parseBoolean(p.get("visitorviewer"))) {
       ViewerVisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> visitorViewer = new ViewerVisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>(
-          "" + id);
+          "" + id,p);
 
       list.add(visitorViewer);
     }

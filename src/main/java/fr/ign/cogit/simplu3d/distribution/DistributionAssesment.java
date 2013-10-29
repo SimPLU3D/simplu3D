@@ -69,7 +69,7 @@ public class DistributionAssesment {
      */
     Parameters p = initialize_parameters();
     Environnement env = LoaderSHP.load(p.get("folder"));
-    BasicPropertyUnit bpu = env.getBpU().get(Integer.parseInt(p.get("bpu")));
+    BasicPropertyUnit bpu = env.getBpU().get(1);
 
     SimpleGreenSampler<Cuboid2, Configuration<Cuboid2>, UniformDistribution, SimpleTemperature, UniformBirthInGeom<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>> samp = create_sampler(
         p, bpu);
@@ -221,6 +221,6 @@ public class DistributionAssesment {
 
   private static Parameters initialize_parameters() {
     return Parameters
-        .unmarshall("./src/main/resources/building_parameters_project_4.xml");
+        .unmarshall("./src/main/resources/scenario/building_parameters_project_expthese_1.xml");
   }
 }

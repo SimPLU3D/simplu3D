@@ -1,15 +1,26 @@
 package fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
+import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
+import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToSurface;
+import fr.ign.cogit.geoxygene.sig3d.convert.transform.Extrusion2DObject;
 import fr.ign.cogit.geoxygene.util.conversion.JtsGeOxygene;
+import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.application.Building;
+import fr.ign.cogit.simplu3d.model.application.BuildingPart;
+import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
+import fr.ign.cogit.simplu3d.model.application.FastBuildingPart;
 import fr.ign.geometry.Primitive;
 import fr.ign.geometry.Rectangle2D;
 import fr.ign.rjmcmc.kernel.SimpleObject;
@@ -23,7 +34,6 @@ public class Cuboid2 extends Building implements Primitive, SimpleObject {
   public double height;
 
   public boolean isNew = true;
-
 
   public Cuboid2(double centerx, double centery, double length, double width,
       double height, double orientation) {
@@ -90,7 +100,7 @@ public class Cuboid2 extends Building implements Primitive, SimpleObject {
 
       pts[3] = new Coordinate(this.centerx - a - b, this.centery - c + d,
           height);
-      
+
       pts[4] = new Coordinate(pts[0]);
 
       /*
@@ -207,6 +217,155 @@ public class Cuboid2 extends Building implements Primitive, SimpleObject {
 
     return Rectangle2D
         .intersection_area(a.getRectangle2D(), b.getRectangle2D());
+  }
+
+  public List<AbstractBuilding> bandEpsilon(Geometry geom, double distMin,
+      double distMax) {
+
+    List<AbstractBuilding> lPolygonOut = new ArrayList<>();
+
+    double d = geom.distance(geomJTS);
+
+    if (d > distMax) {
+      return lPolygonOut;
+    }
+
+    if (d < distMin) {
+      return lPolygonOut;
+    }
+
+    Geometry geomOut = Double.isNaN(distMax) ? geomJTS : geom.buffer(distMax)
+        .intersection(geomJTS);
+
+    geomOut = geomOut.difference(geom.buffer(distMin));
+    
+    
+    List <AbstractBuilding> fBP =getFastBuildingPart(distMin, distMax);
+    
+    
+    if(fBP != null){
+      return fBP;
+    }
+
+    
+    
+
+    List<IOrientableSurface> lS;
+    try {
+      lS = FromGeomToSurface.convertGeom(JtsGeOxygene
+          .makeGeOxygeneGeom(geomOut));
+
+      for (IOrientableSurface oS : lS) {
+        
+        if(oS == null || oS.isEmpty()){
+          continue;
+        }
+        
+        
+      
+        
+
+            lDMin.add(distMin);
+            lDMax.add(distMax);
+            lPolygonOut.add(new FastBuildingPart((IPolygon) oS,this.height + this.getZmin()));
+            lFP.add(fBP);
+          
+
+            
+            
+            
+
+        
+
+
+        
+      }
+
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    
+    
+    lFP.add(lPolygonOut);
+
+    return lPolygonOut;
+  }
+  
+  
+  
+  private List<Double> lDMin = new ArrayList<>();
+  private List<Double> lDMax = new ArrayList<>();
+  private List<List<AbstractBuilding>> lFP = new ArrayList<>();
+  
+  
+  private List<AbstractBuilding> getFastBuildingPart(double dMin, double dMax){
+    
+    
+    int nbLDmin = lDMin.size();
+    
+    
+    for(int i=0;i<nbLDmin;i++){
+      
+      if(lDMin.get(i) == dMin && lDMax.get(i) == dMax){
+        return lFP.get(i);
+      }
+      
+      
+      
+    }
+    
+    
+    return null;
+    
+  }
+  
+  
+  
+  
+  
+  
+
+  public List<AbstractBuilding> bandEpsilon(CadastralParcel cP, double distMin,
+      double distMax) {
+    try {
+      return bandEpsilon(JtsGeOxygene.makeJtsGeom(cP.getConsLine()), distMin,
+          distMax);
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return null;
+
+  }
+
+  public List<AbstractBuilding> bandEpsilon(IGeometry geom, double distMin,
+      double distMax) {
+    try {
+      return bandEpsilon(JtsGeOxygene.makeJtsGeom(geom), distMin, distMax);
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return null;
+
+  }
+
+  public double height() {
+    return height;
+  }
+
+  public boolean prospect(IGeometry geom, double slope, double hIni) {
+
+    double h = -1;
+
+    double distance = this.getFootprint().distance(geom);
+
+    h = ((Cuboid2) this).height;
+
+
+    return distance * slope + hIni > h;
+
   }
 
 }

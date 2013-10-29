@@ -3,6 +3,7 @@ package fr.ign.cogit.simplu3d.exec;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.OCLBuildingsCuboid2;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.OCLBuildingsCuboidFinal;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid2;
 import fr.ign.mpp.configuration.Configuration;
 import fr.ign.parameters.Parameters;
@@ -18,7 +19,7 @@ public class BigFuckingUltimateBuildingGeneratorDeluxe {
 
     String folderName = "./src/main/resources/scenario/";
     
-    String fileName ="building_parameters_project_4.xml";
+    String fileName ="building_parameters_project_expthese_1.xml";
 
     Parameters p = initialize_parameters(folderName+fileName);
 

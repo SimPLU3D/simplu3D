@@ -8,6 +8,10 @@ public class BuildingPart extends AbstractBuilding {
     super(geom);
   }
 
+  public BuildingPart() {
+    // TODO Auto-generated constructor stub
+  }
+
   public SubParcel sP;
 
   public SubParcel getsP() {

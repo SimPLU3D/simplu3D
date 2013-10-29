@@ -34,7 +34,7 @@ public class AfficheEnvironnementExec {
 
     ConstantRepresentation.backGroundColor = new Color(156, 180, 193);
 
-    String folder = "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project1/";
+    String folder = "E:/mbrasebin/Donnees/Strasbourg/GTRU/ProjectT1/";
 
     Environnement env = LoaderSHP.load(folder);
 
@@ -44,8 +44,8 @@ public class AfficheEnvironnementExec {
      lTheme.add(Theme.FAITAGE);
      lTheme.add(Theme.PIGNON);
      lTheme.add(Theme.GOUTTIERE);
-    // lTheme.add(Theme.VOIRIE);
-    // lTheme.add(Theme.PARCELLE);
+     lTheme.add(Theme.VOIRIE);
+     lTheme.add(Theme.PARCELLE);
     // lTheme.add(Theme.SOUS_PARCELLE);
     // lTheme.add(Theme.ZONE);
      lTheme.add(Theme.PAN);
@@ -70,13 +70,13 @@ public class AfficheEnvironnementExec {
     // 1051042.8513268954120576,6840539.0837931865826249 :
     // 1051264.8064121364150196,6840679.2711814027279615
 
-    double xc = (1051042.8513268954120576 + 1051264.8064121364150196) / 2;
-    double yc = (6840539.0837931865826249 + 6840679.2711814027279615) / 2;
+    double xc = (1052353.72956 + 1052592.48956) / 2;
+    double yc = (6841006.49397 + 6840777.25897) / 2;
 
     double z = 140;
 
-    double longueur = 1051264.8064121364150196 - 1051042.8513268954120576;
-    double largeur = 6840679.2711814027279615 - 6840539.0837931865826249;
+    double longueur = 1052592.48956 - 1052353.72956;
+    double largeur = 6840777.25897 - 6841006.49397;
 
     IDirectPositionList dpl = new DirectPositionList();
 
@@ -102,7 +102,7 @@ public class AfficheEnvironnementExec {
     fc.add(feat);
 
     feat.setRepresentation(new TexturedSurface(feat, TextureManager
-        .textureLoading(folder + "env3DPrj3.png"), longueur, largeur));
+        .textureLoading(folder + "env3D.tiff"), longueur, largeur));
 
     mW.getInterfaceMap3D().getCurrent3DMap()
         .addLayer(new VectorLayer(fc, "Cool"));

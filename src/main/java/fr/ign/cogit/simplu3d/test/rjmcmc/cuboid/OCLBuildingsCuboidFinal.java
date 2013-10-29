@@ -150,7 +150,7 @@ public class OCLBuildingsCuboidFinal<O, C extends Configuration<O>, S extends Sa
 
     if (Boolean.parseBoolean(p.get("visitorviewer"))) {
       ViewerVisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> visitorViewer = new ViewerVisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>(
-          "" + id);
+          "" + id,p);
 
       list.add(visitorViewer);
     }
@@ -224,7 +224,7 @@ public class OCLBuildingsCuboidFinal<O, C extends Configuration<O>, S extends Sa
    *         prise en compte
    */
   public static Configuration<Cuboid2> create_configuration(Parameters p,
-      Geometry bpu) {
+      Geometry geom) {
 
     // Énergie constante : à la création d'un nouvel objet
     ConstantEnergy<Cuboid2, Cuboid2> energyCreation = new ConstantEnergy<Cuboid2, Cuboid2>(
@@ -248,7 +248,7 @@ public class OCLBuildingsCuboidFinal<O, C extends Configuration<O>, S extends Sa
     ConstantEnergy<Cuboid2, Cuboid2> ponderationDifference = new ConstantEnergy<Cuboid2, Cuboid2>(
         Double.parseDouble(p.get("ponderation_difference_ext")));
     // On ajoute l'énergie de différence : la zone en dehors de la parcelle
-    UnaryEnergy<Cuboid2> u4 = new DifferenceVolumeUnaryEnergy<Cuboid2>(bpu);
+    UnaryEnergy<Cuboid2> u4 = new DifferenceVolumeUnaryEnergy<Cuboid2>(geom);
     UnaryEnergy<Cuboid2> u5 = new MultipliesUnaryEnergy<Cuboid2>(
         ponderationDifference, u4);
     UnaryEnergy<Cuboid2> unaryEnergy = new PlusUnaryEnergy<Cuboid2>(u3, u5);
@@ -278,7 +278,6 @@ public class OCLBuildingsCuboidFinal<O, C extends Configuration<O>, S extends Sa
   static Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature> create_sampler(
       Parameters p, BasicPropertyUnit bpU) {
 
-    IEnvelope r = bpU.generateGeom().envelope();
 
     // Un vecteur ?????
 
@@ -313,8 +312,9 @@ public class OCLBuildingsCuboidFinal<O, C extends Configuration<O>, S extends Sa
 
     // Sampler de naissance
     UniformBirthInGeom<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>> birth = new UniformBirthInGeom<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>(
-        new Cuboid2(0, 1, mindim, mindim, minheight, 0), new Cuboid2(0, 1,
-            maxdim, maxdim, maxheight, 2 * Math.PI), builder, bpU.getpol2D());
+        new Cuboid2(0, 0, mindim, mindim, minheight, 0), new Cuboid2(1, 1,
+            maxdim, maxdim, maxheight, Math.PI), builder, bpU.getpol2D());
+    
 
     // Distribution de poisson
 

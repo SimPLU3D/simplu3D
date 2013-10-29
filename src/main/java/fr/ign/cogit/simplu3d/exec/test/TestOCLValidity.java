@@ -34,7 +34,7 @@ public class TestOCLValidity {
   public static void main(String[] args) {
 
     // Fichier contenant les contraintes OCL à appliquer
-    File oclConstraints = new File("src/main/resources/ocl/testParse.ocl");
+    File oclConstraints = new File("E:/mbrasebin/Donnees/Strasbourg/GTRU/ProjectT1/UXL3.ocl");
 
     
     

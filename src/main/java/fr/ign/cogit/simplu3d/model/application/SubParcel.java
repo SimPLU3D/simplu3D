@@ -9,7 +9,6 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.util.conversion.JtsGeOxygene;
 import fr.ign.cogit.sig3d.model.citygml.landuse.CG_LandUse;
@@ -67,11 +66,10 @@ public class SubParcel extends CG_LandUse {
   // FT_FeatureCollection<Voirie>();
   public IFeatureCollection<SpecificCadastralBoundary> sCBoundary = new FT_FeatureCollection<SpecificCadastralBoundary>();
 
-  public List<SpecificCadastralBoundary> getBoundary(){
+  public List<SpecificCadastralBoundary> getBoundary() {
     return sCBoundary.getElements();
   }
-  
-  
+
   public SubParcel() {
     super();
     this.setClazz(CLASSE);
@@ -119,11 +117,12 @@ public class SubParcel extends CG_LandUse {
     this.parcelle = cP;
   }
 
-  public CadastralParcel getParcelle() {
+  public CadastralParcel getParcel() {
     return parcelle;
   }
 
   public IFeatureCollection<AbstractBuilding> getBuildingsParts() {
+    // System.out.println("NB BP : " + buildingsParts.size());
     return buildingsParts;
   }
 
@@ -132,10 +131,6 @@ public class SubParcel extends CG_LandUse {
     this.buildingsParts = buildingsParts;
   }
 
-  public IGeometry getConsLine(){
-    return null;
-  }
-  
   public double getces() {
 
     double area = this.getArea();
@@ -148,8 +143,8 @@ public class SubParcel extends CG_LandUse {
 
     Geometry geom = null;
     try {
-      geom = JtsGeOxygene
-          .makeJtsGeom(this.getBuildingsParts().get(0).getFootprint());
+      geom = JtsGeOxygene.makeJtsGeom(this.getBuildingsParts().get(0)
+          .getFootprint());
 
       for (int i = 0; i < bP; i++) {
         geom = geom.union(JtsGeOxygene.makeJtsGeom(this.getBuildingsParts()

@@ -94,7 +94,7 @@ public class OCLBuildings<O, C extends Configuration<O>, S extends Sampler<O, C,
     // Sampler<Cuboid, Configuration<Cuboid>, SimpleTemperature>>(
     // "result");
 
-    ViewerVisitor<Cuboid, Configuration<Cuboid>, SimpleTemperature, Sampler<Cuboid, Configuration<Cuboid>, SimpleTemperature>> visitorViewer = new ViewerVisitor<Cuboid, Configuration<Cuboid>, SimpleTemperature, Sampler<Cuboid, Configuration<Cuboid>, SimpleTemperature>>(0+"");
+    ViewerVisitor<Cuboid, Configuration<Cuboid>, SimpleTemperature, Sampler<Cuboid, Configuration<Cuboid>, SimpleTemperature>> visitorViewer = new ViewerVisitor<Cuboid, Configuration<Cuboid>, SimpleTemperature, Sampler<Cuboid, Configuration<Cuboid>, SimpleTemperature>>(0+"",p);
 
     List<Visitor<Cuboid, Configuration<Cuboid>, SimpleTemperature, Sampler<Cuboid, Configuration<Cuboid>, SimpleTemperature>>> list = new ArrayList<Visitor<Cuboid, Configuration<Cuboid>, SimpleTemperature, Sampler<Cuboid, Configuration<Cuboid>, SimpleTemperature>>>();
     list.add(visitor);
