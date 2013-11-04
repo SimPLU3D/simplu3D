@@ -123,7 +123,7 @@ public class SubParcel extends CG_LandUse {
 
   public IFeatureCollection<AbstractBuilding> getBuildingsParts() {
     // System.out.println("NB BP : " + buildingsParts.size());
-    return buildingsParts;
+       return buildingsParts;
   }
 
   public void setBuildingsParts(

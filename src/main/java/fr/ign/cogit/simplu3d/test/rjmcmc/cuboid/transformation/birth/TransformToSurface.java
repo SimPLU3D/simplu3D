@@ -40,14 +40,14 @@ public class TransformToSurface implements Transform {
     this.delta = new double[d.length];
     this.inv = new double[d.length];
     this.determinant = 1.;
-    for (int i = 0; i < d.length; ++i) {
+    for (int i = 2; i < d.length; ++i) {
       double dvalue = d[i];
       determinant *= dvalue;
       mat[i] = dvalue;
       inv[i] = 1 / dvalue;
       delta[i] = v[i];
     }
-    this.absDeterminant = Math.abs(determinant);
+    this.absDeterminant = 1;//Math.abs(determinant);
   }
 
   private EquiSurfaceDistribution eq;
@@ -111,17 +111,17 @@ public class TransformToSurface implements Transform {
   public void apply(double[] in, double[] out) {
     
     IDirectPosition dp = eq.sample(in[0],in[1]);
-    
-    out[0] = dp.getX();
-    out[1] = dp.getY();
+    if(dp == null){
+      out[0] = 0;
+      out[1] = 0;
+    }else{
+      out[0] = dp.getX();
+      out[1] = dp.getY();
+    }
+
   
     
-    
-    lastx =  out[0];
-    lasty =  out[1];
-    lastpx = in[0];
-    lastpx = in[1];
-    
+   
     
     for (int i = 2; i < out.length; i++) {
       out[i] = in[i] * mat[i] + delta[i];
@@ -129,24 +129,27 @@ public class TransformToSurface implements Transform {
     // const T *m = m_mat, *d = m_delta;
     // for(T *oit = out;oit<out+N;++oit) *oit = (*in++)*(*m++) + (*d++);
   }
-  
-  
-  double lastx, lasty;
-  double lastpx, lastpy;
-  
-  
+
   
   
 
   @Override
   public void inverse(double[] in, double[] out) {
     
-    out[0] = lastpx;
-    out[1] = lastpy;
     
-    if(in[0] != lastx){
-      System.out.println("Error system");
+    IDirectPosition dp = eq.inversample(in[0], in [1]);
+    
+    
+    if(dp == null){
+      out[0] = 0;
+      out[1] = 0;
+    }else{
+      out[0] = dp.getX();
+      out[1] = dp.getY();
     }
+
+    
+
     
     
     for (int i = 2; i < out.length; i++) {
