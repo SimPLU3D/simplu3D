@@ -137,12 +137,12 @@ public class TestProjectedShadow {
 
 		
 
-		List<IGeometry> lGeom2 = ProjectedShadow.process(env.getBatiments(), env
-				.getSousParcelles(), (IPolygon) feat.getGeom(), new Vecteur(0,
+		List<IGeometry> lGeom2 = ProjectedShadow.process(env.getBuildings(), env
+				.getSubParcels(), (IPolygon) feat.getGeom(), new Vecteur(0,
 				1, -0.4), -2, 15,
 				ProjectedShadow.POSSIBLE_RESULT.PROJECTED_VOLUME, true); 
 		
-		List<IGeometry> lGeom = InverseProjection.process(env.getBatiments(), 4, new Vecteur(0,1, -0.4), 20);
+		List<IGeometry> lGeom = InverseProjection.process(env.getBuildings(), 4, new Vecteur(0,1, -0.4), 20);
 		
 
 		
