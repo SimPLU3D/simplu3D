@@ -1,11 +1,5 @@
-package fr.ign.cogit.simplu3d.exec;
+package fr.ign.cogit.simplu3d.exec.test;
 
-import java.io.BufferedWriter;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +10,7 @@ import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid2;
 import fr.ign.mpp.configuration.Configuration;
 import fr.ign.parameters.Parameters;
 
-public class TestParamTemp {
+public class Test {
 
   /**
    * @param args
@@ -59,6 +53,8 @@ public class TestParamTemp {
       // writer.append(valCoeff[i] + ";");
 
       for (int j = 0; j < nbIt; j++) {
+        
+        System.out.println("i" + (double) valCoeff[i] + "  " + count);
         Environnement env = LoaderSHP.load(p.get("folder"));
 
         OCLBuildingsCuboidFinal ocb = new OCLBuildingsCuboidFinal();
@@ -77,7 +73,7 @@ public class TestParamTemp {
         
         count++;
         
-        System.out.println("État itération : " + count + "  / " + (valCoeff.length *nbIt));
+
 
 
 
@@ -90,4 +86,5 @@ public class TestParamTemp {
   private static Parameters initialize_parameters(String name) {
     return Parameters.unmarshall(name);
   }
+
 }

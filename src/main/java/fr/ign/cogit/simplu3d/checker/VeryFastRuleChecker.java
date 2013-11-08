@@ -12,7 +12,6 @@ import tudresden.ocl20.pivot.modelinstancetype.exception.TypeNotFoundInModelExce
 import tudresden.ocl20.pivot.modelinstancetype.types.IModelInstanceElement;
 import tudresden.ocl20.pivot.modelinstancetype.types.IModelInstanceObject;
 import tudresden.ocl20.pivot.pivotmodel.Constraint;
-import tudresden.ocl20.pivot.pivotmodel.Type;
 import fr.ign.cogit.simplu3d.importer.model.ImportModelInstanceBasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
@@ -33,28 +32,42 @@ public class VeryFastRuleChecker {
   private List<IModelInstanceObject> lRelevantObjects = new ArrayList<>();
 
   private List<IOclInterpreter> lModelInterpreter = new ArrayList<>();
-  
+
   private List<IModelInstance> lModeInstance = new ArrayList<>();
+
+  public int evalCount = 0;
+  public int evalFalse = 0;
+
+  public List<List<Integer>> lFalseArray = new ArrayList<>();
+
+  public int getEvalCount() {
+    return evalCount;
+  }
+
+  public int getEvalFalse() {
+    return evalFalse;
+  }
+
+  public List<List<Integer>> getlFalseArray() {
+    return lFalseArray;
+  }
 
   public VeryFastRuleChecker(BasicPropertyUnit bPU) {
     this.bPU = bPU;
     init(bPU);
-
   }
-  
-  
+
   private BasicPropertyUnit bPU;
 
   public boolean check(List<IModelInstanceObject> newBuildings) {
 
-//  System.out.println(lModeInstance.get(0).getAllModelInstanceObjects().size());
-    
-    /*
-    for(Type t : lModeInstance.get(0).getAllImplementedTypes()){
-      System.out.println("Type : " + t + "  " +lModeInstance.get(0).getAllInstances(t).size());
-    }*/
-    
+    // System.out.println(lModeInstance.get(0).getAllModelInstanceObjects().size());
 
+    /*
+     * for(Type t : lModeInstance.get(0).getAllImplementedTypes()){
+     * System.out.println("Type : " + t + "  "
+     * +lModeInstance.get(0).getAllInstances(t).size()); }
+     */
 
     int nbInt = sPList.size();
 
@@ -62,7 +75,13 @@ public class VeryFastRuleChecker {
 
       SubParcel sP = sPList.get(i);
 
+      evalCount++;
+      
+      int count =0;
+
       for (Rule r : sP.getUrbaZone().get(0).getRules()) {
+        
+
 
         for (IModelInstanceObject imiObject : lRelevantObjects) {
 
@@ -70,6 +89,11 @@ public class VeryFastRuleChecker {
               r.constraint);
 
           if (!isOk) {
+            
+            lFalseArray.get(i).set(count,  lFalseArray.get(i).get(count)+1);
+
+            evalFalse++;
+            
             return false;
           }
         }
@@ -80,9 +104,18 @@ public class VeryFastRuleChecker {
               r.constraint);
 
           if (!isOk) {
+            
+            lFalseArray.get(i).set(count,  lFalseArray.get(i).get(count)+1);
+            
+            evalFalse++;
+            
             return false;
           }
         }
+        
+        
+        count++;
+        
       }
 
     }
@@ -92,7 +125,7 @@ public class VeryFastRuleChecker {
   }
 
   private void init(BasicPropertyUnit bPU) {
-    
+
     new OclInterpreterPlugin();
 
     for (CadastralParcel cP : bPU.getCadastralParcel()) {
@@ -103,7 +136,6 @@ public class VeryFastRuleChecker {
         IModelInstance iM = ImportModelInstanceBasicPropertyUnit
             .generateModelInstance(Environnement.model);
 
-        
         lModeInstance.add(iM);
         try {
 
@@ -122,6 +154,19 @@ public class VeryFastRuleChecker {
 
         lModelInterpreter.add(new OCLInterpreterSimplu3D(iM));
 
+      }
+
+    }
+
+    int nbInt = sPList.size();
+
+    for (int i = 0; i < nbInt; i++) {
+
+      lFalseArray.add(new ArrayList<Integer>());
+      int sizeTemp = sPList.get(i).getUrbaZone().get(0).getRules().size();
+
+      for (int j = 0; j < sizeTemp; j++) {
+        lFalseArray.get(i).add(0);
       }
 
     }
@@ -188,9 +233,6 @@ public class VeryFastRuleChecker {
     return bPU;
   }
 
-  
-  
-
   public List<IModelInstance> getlModeInstance() {
     return lModeInstance;
   }
@@ -198,6 +240,5 @@ public class VeryFastRuleChecker {
   public List<SubParcel> getsPList() {
     return sPList;
   }
-
 
 }

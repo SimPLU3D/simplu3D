@@ -20,80 +20,91 @@ import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_LineString;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Polygon;
+import fr.ign.cogit.sig3d.COGITLauncher3D;
 import fr.ign.cogit.simplu3d.gui.button.GTRUToolBar;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement.Theme;
+import fr.ign.parameters.Parameters;
 
 public class AfficheEnvironnementExec {
 
   public static void main(String[] args) throws CloneNotSupportedException {
-    
+
     Object1d.width = 4.0f;
 
     ConstantRepresentation.backGroundColor = new Color(156, 180, 193);
 
-    String folder = "E:/mbrasebin/Donnees/Strasbourg/GTRU/ProjectT1/";
+    String folderName = "./src/main/resources/scenario/";
+
+    String fileName = "building_parameters_project_expthese_1.xml";
+
+    Parameters p = initialize_parameters(folderName + fileName);
+
+    String folder = p.get("folder");
 
     Environnement env = LoaderSHP.load(folder);
 
     List<Theme> lTheme = new ArrayList<RepEnvironnement.Theme>();
-   // lTheme.add(Theme.TOIT_BATIMENT);
+    // lTheme.add(Theme.TOIT_BATIMENT);
     // lTheme.add(Theme.FACADE_BATIMENT);
-     lTheme.add(Theme.FAITAGE);
-     lTheme.add(Theme.PIGNON);
-     lTheme.add(Theme.GOUTTIERE);
-     lTheme.add(Theme.VOIRIE);
-     lTheme.add(Theme.PARCELLE);
+    // lTheme.add(Theme.FAITAGE);
+    // lTheme.add(Theme.PIGNON);
+    // lTheme.add(Theme.GOUTTIERE);
+    lTheme.add(Theme.VOIRIE);
+    // lTheme.add(Theme.PARCELLE);
     // lTheme.add(Theme.SOUS_PARCELLE);
     // lTheme.add(Theme.ZONE);
-     lTheme.add(Theme.PAN);
-     lTheme.add(Theme.PAN_MUR);
+    // lTheme.add(Theme.PAN);
+    // lTheme.add(Theme.PAN_MUR);
 
     Theme[] tab = lTheme.toArray(new Theme[0]);
 
     List<VectorLayer> vl = RepEnvironnement.represent(env, tab);
 
-    MainWindow mW = new MainWindow();
+    COGITLauncher3D mW = new COGITLauncher3D();
 
     for (VectorLayer l : vl) {
 
       mW.getInterfaceMap3D().getCurrent3DMap().addLayer(l);
     }
 
-
-    
-    
     mW.getMainMenuBar().add(new GTRUToolBar(mW));
 
+    if (!Boolean.parseBoolean(p.get("showbackground"))) {
+      return;
+    }
+
+    double z = Double.parseDouble(p.get("z"));
+
+    double xmin = Double.parseDouble(p.get("xminbg"));
+    double xmax = Double.parseDouble(p.get("xmaxbg"));
+    double ymin = Double.parseDouble(p.get("yminbg"));
+    double ymax = Double.parseDouble(p.get("ymaxbg"));
+
+    //
     // 1051042.8513268954120576,6840539.0837931865826249 :
     // 1051264.8064121364150196,6840679.2711814027279615
+    // Projet 1
+    IDirectPosition dpLL = new DirectPosition(xmin, ymin, z);
+    IDirectPosition dpUR = new DirectPosition(xmax, ymax, z);
 
-    double xc = (1052353.72956 + 1052592.48956) / 2;
-    double yc = (6841006.49397 + 6840777.25897) / 2;
-
-    double z = 140;
-
-    double longueur = 1052592.48956 - 1052353.72956;
-    double largeur = 6840777.25897 - 6841006.49397;
+    // Projet 3
+    // IDirectPosition dpLL = new DirectPosition(1051157, 6840727, z);
+    // IDirectPosition dpUR = new DirectPosition(1051322, 6840858, z);
 
     IDirectPositionList dpl = new DirectPositionList();
 
-    IDirectPosition dp1 = new DirectPosition(xc - longueur / 2, yc - largeur
-        / 2, z);
-    IDirectPosition dp2 = new DirectPosition(xc + longueur / 2, yc - largeur
-        / 2, z);
-    IDirectPosition dp3 = new DirectPosition(xc + longueur / 2, yc + largeur
-        / 2, z);
-    IDirectPosition dp4 = new DirectPosition(xc - longueur / 2, yc + largeur
-        / 2, z);
+    IDirectPosition dp2 = new DirectPosition(dpUR.getX(), dpLL.getY(), z);
 
-    dpl.add(dp1);
+    IDirectPosition dp4 = new DirectPosition(dpLL.getX(), dpUR.getY(), z);
+
+    dpl.add(dpLL);
     dpl.add(dp2);
-    dpl.add(dp3);
+    dpl.add(dpUR);
     dpl.add(dp4);
-    dpl.add(dp1);
+    dpl.add(dpLL);
 
     IFeatureCollection<IFeature> fc = new FT_FeatureCollection<IFeature>();
 
@@ -101,21 +112,22 @@ public class AfficheEnvironnementExec {
 
     fc.add(feat);
 
+    // feat.setRepresentation(new TexturedSurface(feat, TextureManager
+    // .textureLoading(folder + "Env3D_86.png"), dpUR.getX()-dpLL.getX(),
+    // dpUR.getY()-dpLL.getY()));
+
     feat.setRepresentation(new TexturedSurface(feat, TextureManager
-        .textureLoading(folder + "env3D.tiff"), longueur, largeur));
+        .textureLoading(env.folder + "background3D.png"), dpUR.getX()
+        - dpLL.getX(), dpUR.getY() - dpLL.getY()));
 
     mW.getInterfaceMap3D().getCurrent3DMap()
-        .addLayer(new VectorLayer(fc, "Cool"));
-    
- 
-    
-    mW.getInterfaceMap3D().removeLight(0);
-    /* mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
-    mW.getInterfaceMap3D().moveLight(180, -15, 120, 0);
-    mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
-    mW.getInterfaceMap3D().moveLight(-140, 3, 120, 1);*/
-    
+        .addLayer(new VectorLayer(fc, "Fond"));
 
+
+  }
+
+  private static Parameters initialize_parameters(String name) {
+    return Parameters.unmarshall(name);
   }
 
 }

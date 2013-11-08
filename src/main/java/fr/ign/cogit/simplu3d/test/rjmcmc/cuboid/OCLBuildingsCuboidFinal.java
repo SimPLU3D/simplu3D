@@ -27,6 +27,8 @@ import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeWidth;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.MoveCuboid2;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.RotateCuboid2;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.birth.UniformBirthInGeom;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.CSVendStats;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.CSVvisitor;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.CountVisitor;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.FilmVisitor;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.ShapefileVisitorCuboid2;
@@ -145,13 +147,13 @@ public class OCLBuildingsCuboidFinal<O, C extends Configuration<O>, S extends Sa
 
     if (Boolean.parseBoolean(p.get("shapefilewriter"))) {
       Visitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> shpVisitor = new ShapefileVisitorCuboid2<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>(
-          "result");
+          p.get("result").toString() + "result");
       list.add(shpVisitor);
     }
 
     if (Boolean.parseBoolean(p.get("visitorviewer"))) {
       ViewerVisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> visitorViewer = new ViewerVisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>(
-          "" + id,p);
+          "" + id, p);
 
       list.add(visitorViewer);
     }
@@ -180,6 +182,24 @@ public class OCLBuildingsCuboidFinal<O, C extends Configuration<O>, S extends Sa
     if (Boolean.parseBoolean(p.get("statsvisitor"))) {
       StatsV⁮isitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> statsViewer = new StatsV⁮isitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>(
           "Énergie");
+      list.add(statsViewer);
+
+    }
+
+    if (Boolean.parseBoolean(p.get("csvvisitorend"))) {
+
+      String fileName = p.get("result").toString() + p.get("csvfilenamend");
+      CSVendStats<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> statsViewer = new CSVendStats<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>(
+          fileName);
+      list.add(statsViewer);
+    }
+
+    if (Boolean.parseBoolean(p.get("csvvisitor"))) {
+
+      String fileName = p.get("result").toString() + p.get("csvfilename");
+
+      CSVvisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> statsViewer = new CSVvisitor<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>(
+          fileName);
       list.add(statsViewer);
 
     }
@@ -247,10 +267,10 @@ public class OCLBuildingsCuboidFinal<O, C extends Configuration<O>, S extends Sa
 
     // Énergie constante : pondération de la différence
     ConstantEnergy<Cuboid2, Cuboid2> ponderationDifference = new ConstantEnergy<Cuboid2, Cuboid2>(
-       Double.parseDouble(p.get("ponderation_difference_ext")));
-   // On ajoute l'énergie de différence : la zone en dehors de la parcelle
+        Double.parseDouble(p.get("ponderation_difference_ext")));
+    // On ajoute l'énergie de différence : la zone en dehors de la parcelle
     UnaryEnergy<Cuboid2> u4 = new DifferenceVolumeUnaryEnergy<Cuboid2>(geom);
-   UnaryEnergy<Cuboid2> u5 = new MultipliesUnaryEnergy<Cuboid2>(
+    UnaryEnergy<Cuboid2> u5 = new MultipliesUnaryEnergy<Cuboid2>(
         ponderationDifference, u4);
     UnaryEnergy<Cuboid2> unaryEnergy = new PlusUnaryEnergy<Cuboid2>(u3, u5);
 
@@ -278,7 +298,6 @@ public class OCLBuildingsCuboidFinal<O, C extends Configuration<O>, S extends Sa
    */
   static Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature> create_sampler(
       Parameters p, BasicPropertyUnit bpU) {
-
 
     // Un vecteur ?????
 
@@ -314,9 +333,9 @@ public class OCLBuildingsCuboidFinal<O, C extends Configuration<O>, S extends Sa
     IEnvelope env = bpU.getGeom().envelope();
     // Sampler de naissance
     UniformBirthInGeom<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>> birth = new UniformBirthInGeom<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>(
-        new Cuboid2(env.minX(), env.minY(), mindim, mindim, minheight, 0), new Cuboid2(env.maxX(), env.maxY(),
-            maxdim, maxdim, maxheight, Math.PI), builder, bpU.getpol2D());
-    
+        new Cuboid2(env.minX(), env.minY(), mindim, mindim, minheight, 0),
+        new Cuboid2(env.maxX(), env.maxY(), maxdim, maxdim, maxheight, Math.PI),
+        builder, bpU.getpol2D());
 
     // Distribution de poisson
     PoissonDistribution distribution = new PoissonDistribution(
@@ -382,8 +401,6 @@ public class OCLBuildingsCuboidFinal<O, C extends Configuration<O>, S extends Sa
      * MoveCuboid2(amplitudeMove), 0.2));
      */
 
-    
-    /*
     kernels.add(Kernel.make_uniform_modification_kernel(builder,
         new ChangeWidth(amplitudeMaxDim), 0.2));
 
@@ -397,7 +414,7 @@ public class OCLBuildingsCuboidFinal<O, C extends Configuration<O>, S extends Sa
         new ChangeHeight(amplitudeHeight), 0.2));
 
     kernels.add(Kernel.make_uniform_modification_kernel(builder,
-        new RotateCuboid2(amplitudeRotate), 0.2));*/
+        new RotateCuboid2(amplitudeRotate), 0.2));
 
     Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature> s = new SimpleGreenSampler<Cuboid2, Configuration<Cuboid2>, PoissonDistribution, SimpleTemperature, UniformBirthInGeom<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>>(
         ds, new MetropolisAcceptance<SimpleTemperature>(), kernels, bpU);
@@ -407,8 +424,9 @@ public class OCLBuildingsCuboidFinal<O, C extends Configuration<O>, S extends Sa
   private static <T extends SimpleObject, C extends Configuration<T>, M extends Modification<T, C>> Kernel<T, C, M> make_uniform_birth_death_kernel_with_geom(
       ObjectBuilder<T> builder, UniformBirthInGeom<T, C, M> b, double pbirth,
       double pdeath) {
-    return new Kernel<T, C, M>(new NullView<T, C, M>(),new UniformView(builder), b.getVariate(),
-        new Variate<T, C, M>(0), b.getTransform(), pbirth, pdeath);
+    return new Kernel<T, C, M>(new NullView<T, C, M>(),
+        new UniformView(builder), b.getVariate(), new Variate<T, C, M>(0),
+        b.getTransform(), pbirth, pdeath);
   }
 
   private static EndTest<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> create_end_test(

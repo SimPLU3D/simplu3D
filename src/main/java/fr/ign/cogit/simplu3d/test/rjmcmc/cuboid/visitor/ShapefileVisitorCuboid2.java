@@ -18,6 +18,11 @@ import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
+import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
+import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
+import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
+import fr.ign.cogit.geoxygene.util.conversion.JtsGeOxygene;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCuboid;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid2;
 import fr.ign.mpp.configuration.Configuration;
 import fr.ign.mpp.configuration.GraphConfiguration;
@@ -68,7 +73,7 @@ public class ShapefileVisitorCuboid2<O, C extends Configuration<O>, T extends Te
   private void writeShapefile(String aFileName, GraphConfiguration<Cuboid2> config) {
     try {
       ShapefileDataStore store = new ShapefileDataStore(new File(aFileName).toURI().toURL());
-      String specs = "geom:Polygon,energy:double"; //$NON-NLS-1$
+      String specs = "geom:MultiPolygon,energy:double"; //$NON-NLS-1$
       String featureTypeName = "Building"; //$NON-NLS-1$
       SimpleFeatureType type = DataUtilities.createType(featureTypeName, specs);
       store.createSchema(type);
@@ -80,8 +85,13 @@ public class ShapefileVisitorCuboid2<O, C extends Configuration<O>, T extends Te
       int i = 1;
       GraphConfiguration<Cuboid2> graph = (GraphConfiguration<Cuboid2>) config;
       for (GraphConfiguration<Cuboid2>.GraphVertex v : graph.getGraph().vertexSet()) {
-        List<Object> liste = new ArrayList<Object>(0);
-        liste.add(v.getValue().getRectangle2D().toGeometry());
+
+        List<Object> liste = new ArrayList<>();
+        
+        IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<>();
+        iMS.addAll(GenerateSolidFromCuboid.generate(v.getValue()).getFacesList());
+        
+        liste.add(JtsGeOxygene.makeJtsGeom(iMS));
         liste.add(v.getEnergy());
         SimpleFeature simpleFeature = SimpleFeatureBuilder.build(type, liste.toArray(), String
             .valueOf(i++));
@@ -96,6 +106,9 @@ public class ShapefileVisitorCuboid2<O, C extends Configuration<O>, T extends Te
     } catch (SchemaException e) {
       e.printStackTrace();
     } catch (IOException e) {
+      e.printStackTrace();
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
