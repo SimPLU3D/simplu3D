@@ -26,7 +26,8 @@ public class BigFuckingUltimateBuildingGeneratorDeluxe {
     Environnement env = LoaderSHP.load(p.get("folder"));
 
 
-    OCLBuildingsCuboidFinal oCB = new OCLBuildingsCuboidFinal();
+  //  OCLBuildingsCuboidFinal oCB = new OCLBuildingsCuboidFinal();
+    OCLBuildingsCuboid2 oCB = new OCLBuildingsCuboid2();
 
       Configuration<Cuboid2> cc = oCB.process(
           env.getBpU().get(1), p, env, 1);

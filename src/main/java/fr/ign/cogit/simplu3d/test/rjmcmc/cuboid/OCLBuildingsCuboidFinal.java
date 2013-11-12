@@ -69,6 +69,7 @@ import fr.ign.simulatedannealing.visitor.Visitor;
 public class OCLBuildingsCuboidFinal<O, C extends Configuration<O>, S extends Sampler<O, C, SimpleTemperature>, V extends Visitor<O, C, SimpleTemperature, S>> {
 
   private double coeffDec = Double.NaN;
+  private double deltaConf = Double.NaN;
 
   public OCLBuildingsCuboidFinal() {
 
@@ -76,6 +77,11 @@ public class OCLBuildingsCuboidFinal<O, C extends Configuration<O>, S extends Sa
 
   public void setCoeffDec(double coeffDec) {
     this.coeffDec = coeffDec;
+  }
+
+  public void setDeltaConf(double deltaConf) {
+    this.deltaConf = deltaConf;
+
   }
 
   public Configuration<Cuboid2> process(BasicPropertyUnit bpu, Parameters p,
@@ -435,10 +441,19 @@ public class OCLBuildingsCuboidFinal<O, C extends Configuration<O>, S extends Sa
         Integer.parseInt(p.get("nbiter")));
   }
 
-  private static EndTest<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> create_end_test_stability(
+  private EndTest<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> create_end_test_stability(
       Parameters p) {
+    double loc_deltaconf;
+    if (Double.isNaN(this.deltaConf)) {
+
+      loc_deltaconf = Double.parseDouble(p.get("delta"));
+
+    } else {
+      loc_deltaconf = this.deltaConf;
+    }
+
     return new StabilityEndTest<Cuboid2, Configuration<Cuboid2>, SimpleTemperature, Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>>(
-        Integer.parseInt(p.get("nbiter")), Double.parseDouble(p.get("delta")));
+        Integer.parseInt(p.get("nbiter")), loc_deltaconf);
   }
 
   private Schedule<SimpleTemperature> create_schedule(Parameters p) {
