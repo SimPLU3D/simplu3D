@@ -381,7 +381,7 @@ public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sample
      */
 
     
-    /*
+
     kernels.add(Kernel.make_uniform_modification_kernel(builder,
         new ChangeWidth(amplitudeMaxDim), 0.2));
 
@@ -395,7 +395,7 @@ public class OCLBuildingsCuboid2<O, C extends Configuration<O>, S extends Sample
         new ChangeHeight(amplitudeHeight), 0.2));
 
     kernels.add(Kernel.make_uniform_modification_kernel(builder,
-        new RotateCuboid2(amplitudeRotate), 0.2));*/
+        new RotateCuboid2(amplitudeRotate), 0.2));
 
     Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature> s = new SimpleGreenSampler<Cuboid2, Configuration<Cuboid2>, PoissonDistribution, SimpleTemperature, UniformBirth<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>>(
         ds, new MetropolisAcceptance<SimpleTemperature>(), kernels, bpU);

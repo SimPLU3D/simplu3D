@@ -387,25 +387,6 @@ public class OCLBuildingsCuboidFinal<O, C extends Configuration<O>, S extends Sa
     double amplitudeRotate = Double.parseDouble(p.get("amplitudeRotate"))
         * Math.PI / 180;
 
-    /*
-     * kernels.add(Kernel.make_uniform_modification_kernel(builder, new
-     * RotateCuboid2(), 0.2));
-     */
-
-    /*
-     * 
-     * kernels.add(Kernel.make_uniform_modification_kernel(builder, new
-     * ChangeWidth(amplitudeMax), 0.2));
-     * 
-     * kernels.add(Kernel.make_uniform_modification_kernel(builder, new
-     * ChangeLength(amplitudeMax), 0.2));
-     * 
-     * 
-     * 
-     * 
-     * kernels.add(Kernel.make_uniform_modification_kernel(builder, new
-     * MoveCuboid2(amplitudeMove), 0.2));
-     */
 
     kernels.add(Kernel.make_uniform_modification_kernel(builder,
         new ChangeWidth(amplitudeMaxDim), 0.2));

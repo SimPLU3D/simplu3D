@@ -36,17 +36,36 @@ public class InflueCritConv {
       int count = 0;
 
       List<Double> ld = new ArrayList<>();
+
       
+      /*
+      ld.add(5.0);
+
       ld.add(0.5);
+
+
+      ld.add(50.0);
+
+      ld.add(100.0);
+
+*/
+      ld.add(200.0);
+
+      ld.add(500.0);
+      ld.add(1000.0);
+
+      ld.add(2000.0);
+      ld.add(5000.0);
+      ld.add(10000.0);
+      /*
       ld.add(1.0);
       ld.add(3.0);
-      ld.add(5.0);
-      ld.add(10.0);
       ld.add(20.0);
-      ld.add(50.0);
+      ld.add(75.0);
+      ld.add(10.0);
+    */
       
-
-
+      
       int nbIt = 5;
 
       for (int i =0; i < ld.size(); i++) {

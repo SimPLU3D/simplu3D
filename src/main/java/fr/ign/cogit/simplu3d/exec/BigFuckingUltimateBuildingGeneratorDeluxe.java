@@ -27,7 +27,7 @@ public class BigFuckingUltimateBuildingGeneratorDeluxe {
 
 
   //  OCLBuildingsCuboidFinal oCB = new OCLBuildingsCuboidFinal();
-    OCLBuildingsCuboid2 oCB = new OCLBuildingsCuboid2();
+    OCLBuildingsCuboidFinal oCB = new OCLBuildingsCuboidFinal();
 
       Configuration<Cuboid2> cc = oCB.process(
           env.getBpU().get(1), p, env, 1);
