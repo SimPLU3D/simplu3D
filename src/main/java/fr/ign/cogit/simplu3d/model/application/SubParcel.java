@@ -9,6 +9,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
+import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.util.conversion.JtsGeOxygene;
 import fr.ign.cogit.sig3d.model.citygml.landuse.CG_LandUse;
@@ -166,6 +167,11 @@ public class SubParcel extends CG_LandUse {
 
   }
 
+  
+  public IGeometry getConsLine(){
+    SubParcel.getLogger().error("Empty method getConsline()");
+    return null;
+  }
   /*
    * public IFeatureCollection<Voirie> getVoiries() { return voiries; }
    * 

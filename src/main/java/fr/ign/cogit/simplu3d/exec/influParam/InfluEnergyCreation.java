@@ -71,7 +71,7 @@ public class InfluEnergyCreation {
 
 				OCLBuildingsCuboidFinal ocb = new OCLBuildingsCuboidFinal();
 
-				ocb.setEnergyCreation(ld.get(i));
+		//		ocb.setEnergyCreation(ld.get(i));
 
 				double timeMs = System.currentTimeMillis();
 
