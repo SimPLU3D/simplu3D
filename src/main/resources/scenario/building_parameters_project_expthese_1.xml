@@ -42,7 +42,7 @@
         <!-- Température initiale !-->
 		<param key="temp" value="14000" />
         <!-- Température initiale !-->
-		<param key="deccoef" value="0.99999" />
+		<param key="deccoef" value="1.0" />
         
         <!-- Reprise d'une configuration existante !-->
         <!-- 0 = non 1 = oui !-->
@@ -58,16 +58,16 @@
 		<param key="nbiter" value="100000" />
         <param key="delta" value="5" />
         
-                <param key="poisson" value="20" />
+        <param key="poisson" value="20" />
         
         <!-- Paramètres relatifs aux visiteur!-->
          <!-- Nombre d'itérations de dump!-->
 		<param key="nbdump" value="5000" />
          <!-- Nombre d'itérations de save!-->
-		<param key="nbsave" value="50000" />
+		<param key="nbsave" value="500000" />
         <!-- Visiteurs utilisés-->
         <!-- Sortie console -->
-        <param key="outputstreamvisitor" value="false" />
+        <param key="outputstreamvisitor" value="true" />
         <!-- Sortie viewer 3D -->
         <param key="visitorviewer" value="false" />
         <param key="showbackground" value="true" />
@@ -80,7 +80,7 @@
         <!-- Sortie ShapeFileWriter -->
         <param key="shapefilewriter" value="false" />   
         <!-- Sortie Statsvisitor -->
-        <param key="statsvisitor" value="false" />      
+        <param key="statsvisitor" value="true" />      
         <!-- Sortie FilmVisitor -->
         <param key="filmvisitor" value="false" />
         <param key="filmvisitorx" value="1051180.7261527262" />
