@@ -2,7 +2,7 @@
 <parameter-configuration>
 	<parameters>
         <!-- Dossier contenant l'environnement géon il contient bati.shp, parcelle.shp, route.shp, zonage.shp, PRESRIPTION_SURF.shp-->
-        <param key="folder" value="E:/mbrasebin/Donnees/Strasbourg/GTRU/Project1/"/>
+        <param key="folder" value="H:/workspace/geoxygene-cogit/data/cogit-data/simplu3d/ProjectT1/"/>
         <!-- Paramètres relatifs à l'énergie -->
         <!-- Énergie de création d'un cube dans une configuration m^3-->
         <param key="energy" value="15" />
@@ -91,7 +91,7 @@
         <param key="filmvisitorg" value="180" />   
         <param key="filmvisitorb" value="180" />  
         <!-- Dossier des sorties des visiteur -->
-        <param key="result" value="E:/temp/" />           
+        <param key="result" value="H:/Temp/" />           
         
 
 	</parameters>

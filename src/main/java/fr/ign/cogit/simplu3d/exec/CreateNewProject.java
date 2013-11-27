@@ -1,8 +1,6 @@
 package fr.ign.cogit.simplu3d.exec;
 
 import fr.ign.cogit.contrib.util.DecoupageVecteur;
-import fr.ign.cogit.geoxygene.api.feature.IFeature;
-import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 
 public class CreateNewProject {

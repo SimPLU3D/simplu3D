@@ -73,6 +73,7 @@ public class RoofSurface extends CG_RoofSurface {
 
   }
 
+  @SuppressWarnings("unchecked")
   public Object clone() {
     RoofSurface tCopy = new RoofSurface();
 
@@ -89,7 +90,7 @@ public class RoofSurface extends CG_RoofSurface {
 
 
   private double angleMin = Double.NaN;
-  private double angleMax = Double.NaN;
+//  private double angleMax = Double.NaN;
   
   
   
@@ -113,9 +114,9 @@ public class RoofSurface extends CG_RoofSurface {
     return RoofAngle.angleMax(this);
   }
 
-  public void setAngleMax(double angleMax) {
-    this.angleMax = angleMax;
-  }
+//  public void setAngleMax(double angleMax) {
+//    this.angleMax = angleMax;
+//  }
 
   public IMultiCurve<IOrientableCurve> getGable() {
     return gable;

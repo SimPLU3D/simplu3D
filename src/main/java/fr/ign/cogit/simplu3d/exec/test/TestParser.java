@@ -27,52 +27,45 @@ public class TestParser {
 
   /**
    * @param args
-   * @throws ParseException 
-   * @throws IOException 
+   * @throws ParseException
+   * @throws IOException
    */
   public static void main(String[] args) throws IOException, ParseException {
 
     // Fichier contenant les contraintes OCL à appliquer
     File oclConstraints = new File("src/main/resources/ocl/UB16.ocl");
 
+    System.out.println("*******************************************");
+    System.out.println("************Import modèle******************");
+    System.out.println("*******************************************");
 
-      System.out.println("*******************************************");
-      System.out.println("************Import modèle******************");
-      System.out.println("*******************************************");
+    IModel model = ImportModelInstanceEnvironnement
+        .getModel("target/classes/fr/ign/cogit/simplu3d/importer/model/ModelProviderClass.class");
 
-      IModel model = ImportModelInstanceEnvironnement
-          .getModel("target/classes/fr/ign/cogit/simplu3d/importer/model/ModelProviderClass.class");
+    System.out.println("*******************************************");
+    System.out.println("****Chargement des contraintes OCL*********");
+    System.out.println("*******************************************");
 
-      System.out.println("*******************************************");
-      System.out.println("****Chargement des contraintes OCL*********");
-      System.out.println("*******************************************");
+    List<Constraint> lC = StandaloneFacade.INSTANCE.parseOclConstraints(model, oclConstraints);
+    Constraint c = lC.get(0);
 
-      List<Constraint> lC = StandaloneFacade.INSTANCE.parseOclConstraints(
-          model, oclConstraints);
-      Constraint c = lC.get(0);
-      
-      afficheConstraint(c);
-      
-      
-      
-      ConstraintImpl c1 = (ConstraintImpl) c.clone();
+    afficheConstraint(c);
 
-      
-      AbstractTreeIterator<EObject> aTI = (AbstractTreeIterator<EObject>) c1.eAllContents();
-      
-      while (aTI.hasNext()) {
-        
-        EObject e = aTI.next();
-  
-      }
-      
-      afficheConstraint((Constraint)c1);
-      
+    ConstraintImpl c1 = (ConstraintImpl) c.clone();
 
+    AbstractTreeIterator<EObject> aTI = (AbstractTreeIterator<EObject>) c1.eAllContents();
+
+    while (aTI.hasNext()) {
+
+      /* EObject e = */aTI.next();
+
+    }
+
+    afficheConstraint((Constraint) c1);
 
   }
-  
-  public static void afficheConstraint(Constraint c){
+
+  public static void afficheConstraint(Constraint c) {
 
     TreeIterator<EObject> ti = c.eAllContents();
 
@@ -92,7 +85,6 @@ public class TestParser {
 
     }
 
-
   }
 
   public static String toString(EObject eo) {
@@ -104,49 +96,56 @@ public class TestParser {
 
       return oCEI.getReferredOperation().getName().toString();
 
-    } else if (eo instanceof PropertyCallExpImpl) {
+    } else
+      if (eo instanceof PropertyCallExpImpl) {
 
-      PropertyCallExpImpl oCEI = (PropertyCallExpImpl) eo;
+        PropertyCallExpImpl oCEI = (PropertyCallExpImpl) eo;
 
-      return oCEI.getReferredProperty().getName().toString();
+        return oCEI.getReferredProperty().getName().toString();
 
-    } else if (eo instanceof VariableExpImpl) {
+      } else
+        if (eo instanceof VariableExpImpl) {
 
-      VariableExpImpl oCEI = (VariableExpImpl) eo;
+          VariableExpImpl oCEI = (VariableExpImpl) eo;
 
-      return oCEI.getReferredVariable().getName().toString();
+          return oCEI.getReferredVariable().getName().toString();
 
-    } else if (eo instanceof TypeLiteralExpImpl) {
+        } else
+          if (eo instanceof TypeLiteralExpImpl) {
 
-      TypeLiteralExpImpl oCEI = (TypeLiteralExpImpl) eo;
+            TypeLiteralExpImpl oCEI = (TypeLiteralExpImpl) eo;
 
-      return oCEI.getReferredType().getName().toString();
+            return oCEI.getReferredType().getName().toString();
 
-    } else if (eo instanceof IntegerLiteralExpImpl) {
+          } else
+            if (eo instanceof IntegerLiteralExpImpl) {
 
-      IntegerLiteralExpImpl oCEI = (IntegerLiteralExpImpl) eo;
+              IntegerLiteralExpImpl oCEI = (IntegerLiteralExpImpl) eo;
 
-      return oCEI.getIntegerSymbol() + "";
+              return oCEI.getIntegerSymbol() + "";
 
-    } else if (eo instanceof VariableImpl) {
+            } else
+              if (eo instanceof VariableImpl) {
 
-      VariableImpl oCEI = (VariableImpl) eo;
+                VariableImpl oCEI = (VariableImpl) eo;
 
-      return oCEI.getType().toString();
+                return oCEI.getType().toString();
 
-    } else if (eo instanceof IteratorExpImpl) {
+              } else
+                if (eo instanceof IteratorExpImpl) {
 
-      IteratorExpImpl oCEI = (IteratorExpImpl) eo;
+                  IteratorExpImpl oCEI = (IteratorExpImpl) eo;
 
-      return oCEI.getName();
+                  return oCEI.getName();
 
-    } else if (eo instanceof ExpressionInOclImpl) {
+                } else
+                  if (eo instanceof ExpressionInOclImpl) {
 
-      ExpressionInOclImpl oCEI = (ExpressionInOclImpl) eo;
+                    ExpressionInOclImpl oCEI = (ExpressionInOclImpl) eo;
 
-      return oCEI.getBodyExpression().toString();
+                    return oCEI.getBodyExpression().toString();
 
-    }
+                  }
 
     return notfound + "   " + eo.getClass();
 

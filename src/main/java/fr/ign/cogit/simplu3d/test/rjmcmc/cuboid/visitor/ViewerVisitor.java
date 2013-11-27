@@ -29,15 +29,15 @@ import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.convert.GenerateSolidFr
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid2;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.CuboidSnap;
-import fr.ign.mpp.configuration.Configuration;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
+import fr.ign.rjmcmc.configuration.Configuration;
+import fr.ign.rjmcmc.kernel.SimpleObject;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.Temperature;
 import fr.ign.simulatedannealing.visitor.Visitor;
 
-public class ViewerVisitor<O, C extends Configuration<O>, T extends Temperature, S extends Sampler<O, C, T>>
-    implements Visitor<O, C, T, S> {
+public class ViewerVisitor<O extends SimpleObject> implements Visitor<O> {
 
   private static MainWindow mW = null;
   private int save;
@@ -56,8 +56,7 @@ public class ViewerVisitor<O, C extends Configuration<O>, T extends Temperature,
       mW = new MainWindow();
       mW.getMainMenuBar().add(new IOToolBar(mW));
       represent(Environnement.getInstance(), mW, p);
-      MIN_LAYER = mW.getInterfaceMap3D().getCurrent3DMap().getLayerList()
-          .size();
+      MIN_LAYER = mW.getInterfaceMap3D().getCurrent3DMap().getLayerList().size();
     }
 
   }
@@ -70,7 +69,7 @@ public class ViewerVisitor<O, C extends Configuration<O>, T extends Temperature,
 
   @SuppressWarnings("unchecked")
   @Override
-  public void visit(C config, S sampler, T t) {
+  public void visit(Configuration<O> config, Sampler<O> sampler, Temperature t) {
     ++iter;
 
     if (config.getEnergy() < bestValue) {
@@ -85,12 +84,11 @@ public class ViewerVisitor<O, C extends Configuration<O>, T extends Temperature,
   }
 
   @Override
-  public void begin(C config, S sampler, T t) {
+  public void begin(Configuration<O> config, Sampler<O> sampler, Temperature t) {
   }
 
-  @SuppressWarnings("unchecked")
   @Override
-  public void end(C config, S sampler, T t) {
+  public void end(Configuration<O> config, Sampler<O> sampler, Temperature t) {
 
     this.addInformationToMainWindow(bestConfig);
   }
@@ -108,11 +106,13 @@ public class ViewerVisitor<O, C extends Configuration<O>, T extends Temperature,
       if (v.getValue() instanceof Cuboid) {
         geom = GenerateSolidFromCuboid.generate((Cuboid) o);
 
-      } else if (v.getValue() instanceof Cuboid2) {
-        geom = GenerateSolidFromCuboid.generate((Cuboid2) o);
-      } else if (v.getValue() instanceof CuboidSnap) {
-        geom = GenerateSolidFromCuboid.generate((CuboidSnap) o);
-      }
+      } else
+        if (v.getValue() instanceof Cuboid2) {
+          geom = GenerateSolidFromCuboid.generate((Cuboid2) o);
+        } else
+          if (v.getValue() instanceof CuboidSnap) {
+            geom = GenerateSolidFromCuboid.generate((CuboidSnap) o);
+          }
 
       if (geom == null) {
         continue;
@@ -125,15 +125,13 @@ public class ViewerVisitor<O, C extends Configuration<O>, T extends Temperature,
     }
 
     if (!feat.isEmpty()) {
-      VectorLayer vl = new VectorLayer(feat, PREFIX_NAME_STRING + prefix
-          + " : " + iter, ColorRandom.getRandomColor());
+      VectorLayer vl = new VectorLayer(feat, PREFIX_NAME_STRING + prefix + " : " + iter,
+          ColorRandom.getRandomColor());
 
-      int nbLayer = mW.getInterfaceMap3D().getCurrent3DMap().getLayerList()
-          .size();
+      int nbLayer = mW.getInterfaceMap3D().getCurrent3DMap().getLayerList().size();
 
       if (nbLayer > MIN_LAYER) {
-        mW.getInterfaceMap3D().getCurrent3DMap().getLayerList()
-            .get(nbLayer - 1).setVisible(false);
+        mW.getInterfaceMap3D().getCurrent3DMap().getLayerList().get(nbLayer - 1).setVisible(false);
       }
 
       mW.getInterfaceMap3D().getCurrent3DMap().addLayer(vl);
@@ -149,9 +147,9 @@ public class ViewerVisitor<O, C extends Configuration<O>, T extends Temperature,
     // lTheme.add(Theme.PIGNON);
     // lTheme.add(Theme.GOUTTIERE);
     // lTheme.add(Theme.VOIRIE);
-    //lTheme.add(Theme.PARCELLE);
-    // lTheme.add(Theme.BORDURE);
-    // lTheme.add(Theme.ZONE);
+     lTheme.add(Theme.PARCELLE);
+     lTheme.add(Theme.BORDURE);
+     lTheme.add(Theme.ZONE);
     // lTheme.add(Theme.PAN);
 
     Theme[] tab = lTheme.toArray(new Theme[0]);
@@ -212,17 +210,11 @@ public class ViewerVisitor<O, C extends Configuration<O>, T extends Temperature,
     // feat.setRepresentation(new TexturedSurface(feat, TextureManager
     // .textureLoading(folder + "Env3D_86.png"), dpUR.getX()-dpLL.getX(),
     // dpUR.getY()-dpLL.getY()));
-    
-    
-    
-    
 
-    feat.setRepresentation(new TexturedSurface(feat, TextureManager
-        .textureLoading(env.folder + "background3D.png"), dpUR.getX()
-        - dpLL.getX(), dpUR.getY() - dpLL.getY()));
+    feat.setRepresentation(new TexturedSurface(feat, TextureManager.textureLoading(env.folder
+        + "background3D.png"), dpUR.getX() - dpLL.getX(), dpUR.getY() - dpLL.getY()));
 
-    mW.getInterfaceMap3D().getCurrent3DMap()
-        .addLayer(new VectorLayer(fc, "Fond"));
+    mW.getInterfaceMap3D().getCurrent3DMap().addLayer(new VectorLayer(fc, "Fond"));
 
   }
 }

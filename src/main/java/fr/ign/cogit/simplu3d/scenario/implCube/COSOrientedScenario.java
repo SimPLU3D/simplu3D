@@ -1,21 +1,7 @@
 package fr.ign.cogit.simplu3d.scenario.implCube;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.vividsolutions.jts.geom.Geometry;
-
-import fr.ign.cogit.geoxygene.api.feature.IFeature;
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.ILineString;
-import fr.ign.cogit.geoxygene.util.algo.JtsUtil;
-import fr.ign.cogit.geoxygene.util.algo.MesureOrientationFeuille;
-import fr.ign.cogit.geoxygene.util.algo.MesureOrientationV2;
-import fr.ign.cogit.geoxygene.util.conversion.JtsGeOxygene;
 import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
-import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
-import fr.ign.cogit.simplu3d.model.application.Road;
-import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 
 public class COSOrientedScenario extends BasicRectangleScenario {
 

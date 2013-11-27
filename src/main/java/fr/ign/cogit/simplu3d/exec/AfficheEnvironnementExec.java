@@ -10,7 +10,6 @@ import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
-import fr.ign.cogit.geoxygene.sig3d.gui.MainWindow;
 import fr.ign.cogit.geoxygene.sig3d.representation.ConstantRepresentation;
 import fr.ign.cogit.geoxygene.sig3d.representation.basic.Object1d;
 import fr.ign.cogit.geoxygene.sig3d.representation.texture.TextureManager;
@@ -119,11 +118,8 @@ public class AfficheEnvironnementExec {
     feat.setRepresentation(new TexturedSurface(feat, TextureManager
         .textureLoading(env.folder + "background3D.png"), dpUR.getX()
         - dpLL.getX(), dpUR.getY() - dpLL.getY()));
-
     mW.getInterfaceMap3D().getCurrent3DMap()
         .addLayer(new VectorLayer(fc, "Fond"));
-
-
   }
 
   private static Parameters initialize_parameters(String name) {

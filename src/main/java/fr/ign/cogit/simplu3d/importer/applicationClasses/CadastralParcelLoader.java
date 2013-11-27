@@ -27,20 +27,15 @@ import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_LineString;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.geoxygene.util.algo.SmallestSurroundingRectangleComputation;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
-import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.exec.test.TestLoaderSHP;
-import fr.ign.cogit.simplu3d.exec.testOCL.TestLoader;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 
 /**
  * Assigne les bordures aux parcelles
- * 
  * 3 types de bordure (voirie, fond ou latéral) en fonction du voisinage d'une
  * bo
- * 
  * @author MBrasebin
- * 
  */
 public class CadastralParcelLoader {
 
@@ -49,8 +44,6 @@ public class CadastralParcelLoader {
 
   public static IFeatureCollection<CadastralParcel> assignBordureToParcelleWithOrientation(
       IFeatureCollection<IFeature> parcelCollection, double thresholdIni) {
-
-
 
     System.out.println("NB Parcelles : " + parcelCollection.size());
 
@@ -113,8 +106,7 @@ public class CadastralParcelLoader {
 
       double threshold = determineThreshol(f, thresholdIni);
 
-      IMultiSurface<IOrientableSurface> ms = FromGeomToSurface.convertMSGeom(f
-          .getGeom());
+      IMultiSurface<IOrientableSurface> ms = FromGeomToSurface.convertMSGeom(f.getGeom());
 
       // On a la parcelle
       CadastralParcel p = new CadastralParcel(ms);
@@ -131,17 +123,14 @@ public class CadastralParcelLoader {
 
         if (a.getOrientation() == SpecificCadastralBoundary.LAT) {
           listArcTemp.add(a);
-          
-          DefaultFeature df = new DefaultFeature();
 
+          DefaultFeature df = new DefaultFeature();
 
           df.setGeom(a.getGeom().buffer(threshold));
           AttributeManager.addAttribute(df, "OK", 0, "Integer");
-          
 
           TestLoaderSHP.featC.add(df);
-          
-          
+
         }
 
       }
@@ -230,11 +219,11 @@ public class CadastralParcelLoader {
           Arc aCandidat = arcsATraites.remove(0);
 
           double largeur = 999;
-          double area = iMC.convexHull().area();
+          /* double area = */iMC.convexHull().area();
           // if (area > 0.001) {
 
-          if (aCandidat.getNoeudIni().getCoord().distance(somInitial) > aCandidat
-              .getNoeudFin().getCoord().distance(somInitial)) {
+          if (aCandidat.getNoeudIni().getCoord().distance(somInitial) > aCandidat.getNoeudFin()
+              .getCoord().distance(somInitial)) {
 
             somFinal = aCandidat.getNoeudIni().getCoord();
 
@@ -244,9 +233,9 @@ public class CadastralParcelLoader {
 
           LineEquation lE = new LineEquation(somInitial, somFinal);
 
-          double dist1 = lE.distance(aCandidat.getNoeudIni().getCoord());
+          /* double dist1 = */lE.distance(aCandidat.getNoeudIni().getCoord());
 
-          double dist2 = lE.distance(aCandidat.getNoeudFin().getCoord());
+          /* double dist2 = */lE.distance(aCandidat.getNoeudFin().getCoord());
 
           largeur = Double.NEGATIVE_INFINITY;
 
@@ -264,49 +253,37 @@ public class CadastralParcelLoader {
 
           IFeature feat = new DefaultFeature(new GM_LineString(dpl));
           AttributeManager.addAttribute(feat, "Dist", largeur, "Double");
- 
 
           // }
-
-
 
           if (largeur < threshold) {
 
             a = aCandidat;
 
             // Le candidat est une limite latérale
-            
+
             DefaultFeature df = new DefaultFeature();
             IDirectPositionList dplTemp = new DirectPositionList();
             dplTemp.add(somInitial);
             dplTemp.add(somFinal);
-            
 
             df.setGeom((new GM_LineString(dplTemp)).buffer(threshold));
             AttributeManager.addAttribute(df, "OK", 0, "Integer");
-            
-            
-            
-            
+
             TestLoaderSHP.featC.add(df);
 
             listArcLat.add(aCandidat);
           } else {
-            
-            
+
             DefaultFeature df = new DefaultFeature();
             IDirectPositionList dplTemp = new DirectPositionList();
             dplTemp.add(somInitial);
             dplTemp.add(somFinal);
-            
+
             df.setGeom((new GM_LineString(dplTemp)).buffer(threshold));
             AttributeManager.addAttribute(df, "OK", 1, "Integer");
-            
-            
-            
-            
-            TestLoaderSHP.featC.add(df);
 
+            TestLoaderSHP.featC.add(df);
 
             // Le candidat est un fond de parcelle
             break;
@@ -319,8 +296,7 @@ public class CadastralParcelLoader {
 
       // Tous les arcs ont été mis dans une liste sauf les fonds de parcelle
       for (Arc a : listArc) {
-        SpecificCadastralBoundary cB = new SpecificCadastralBoundary(
-            a.getGeom());
+        SpecificCadastralBoundary cB = new SpecificCadastralBoundary(a.getGeom());
         p.getBoundary().add(cB);
 
         if (a.getOrientation() == SpecificCadastralBoundary.ROAD) {
@@ -356,8 +332,7 @@ public class CadastralParcelLoader {
       for (int j = 0; j < nbArcs; j++) {
 
         Arc a = lArc.get(j);
-        SpecificCadastralBoundary sCB = parc.getBoundary()
-            .get(j);
+        SpecificCadastralBoundary sCB = parc.getBoundary().get(j);
 
         if (sCB.getType() == SpecificCadastralBoundary.ROAD) {
           continue;
@@ -377,14 +352,12 @@ public class CadastralParcelLoader {
 
     }
 
-
     return parcelles;
 
   }
 
   private static double determineThreshol(Face f, double thresholdIni) {
-    IPolygon poly = SmallestSurroundingRectangleComputation.getSSR(f
-        .getGeometrie());
+    IPolygon poly = SmallestSurroundingRectangleComputation.getSSR(f.getGeometrie());
     double l1 = poly.coord().get(0).distance2D(poly.coord().get(1));
     double l2 = poly.coord().get(1).distance2D(poly.coord().get(2));
 
@@ -502,8 +475,7 @@ public class CadastralParcelLoader {
     // Toutes les arretes sont supposées être affectées à un type
     for (Face f : facesParcelles) {
 
-      IMultiSurface<IOrientableSurface> ms = FromGeomToSurface.convertMSGeom(f
-          .getGeom());
+      IMultiSurface<IOrientableSurface> ms = FromGeomToSurface.convertMSGeom(f.getGeom());
 
       // On a la parcelle
       CadastralParcel p = new CadastralParcel(ms);
@@ -541,8 +513,8 @@ public class CadastralParcelLoader {
       for (IFeature feature : collection) {
 
         List<ILineString> lLLS = FromPolygonToLineString
-            .convertPolToLineStrings((IPolygon) FromGeomToSurface.convertGeom(
-                feature.getGeom()).get(0));
+            .convertPolToLineStrings((IPolygon) FromGeomToSurface.convertGeom(feature.getGeom())
+                .get(0));
 
         for (ILineString ls : lLLS) {
 
@@ -590,9 +562,7 @@ public class CadastralParcelLoader {
 
       /*
        * if (!test(carteTopo)) { System.out.println("Error 4"); }
-       * 
        * carteTopo.filtreArcsDoublons();
-       * 
        * if (!test(carteTopo)) { System.out.println("Error 5"); }
        */
 
@@ -609,7 +579,7 @@ public class CadastralParcelLoader {
       // carteTopo.filtreNoeudsSimples();
 
       // Création des faces de la carteTopo
-   //   carteTopo.creeTopologieFaces();
+      // carteTopo.creeTopologieFaces();
 
       /*
        * if (!test(carteTopo)) { System.out.println("Error 7"); }

@@ -13,6 +13,7 @@ public class ConvertToLineString {
 
     if (geom instanceof IMultiCurve<?>) {
 
+      @SuppressWarnings("unchecked")
       IMultiCurve<IOrientableCurve> iMC = (IMultiCurve<IOrientableCurve>) geom;
 
       return iMC.getList();

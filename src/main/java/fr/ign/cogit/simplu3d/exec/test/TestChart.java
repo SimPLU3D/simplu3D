@@ -27,6 +27,11 @@ import org.jfree.ui.RefineryUtilities;
  */
 public class TestChart extends ApplicationFrame implements ActionListener {
 
+    /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
+
     /** The time series data. */
     private TimeSeries series;
 

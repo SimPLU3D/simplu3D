@@ -8,13 +8,12 @@ import com.vividsolutions.jts.geom.Polygon;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.util.conversion.JtsGeOxygene;
-import fr.ign.cogit.simplu3d.model.application.Building;
+import fr.ign.cogit.simplu3d.model.application.AbstractSimpleBuilding;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.geometry.Primitive;
 import fr.ign.geometry.Rectangle2D;
-import fr.ign.rjmcmc.kernel.SimpleObject;
 
-public class CuboidSnap extends Building implements Primitive, SimpleObject {
+public class CuboidSnap extends AbstractSimpleBuilding implements Primitive {
   public int centerx;
   public int centery;
   public int length;

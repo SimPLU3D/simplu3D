@@ -1,20 +1,15 @@
 package fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor;
 
-import java.io.PrintStream;
-import java.util.Calendar;
-import java.util.Formatter;
-
-import fr.ign.mpp.configuration.Configuration;
+import fr.ign.rjmcmc.configuration.Configuration;
+import fr.ign.rjmcmc.kernel.SimpleObject;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.Temperature;
 import fr.ign.simulatedannealing.visitor.Visitor;
 
-public class CountVisitor<O, C extends Configuration<O>, T extends Temperature, S extends Sampler<O, C, T>>
-    implements Visitor<O, C, T, S> {
-
+public class CountVisitor<O extends SimpleObject> implements Visitor<O> {
 
   private int count = 0;
-  
+
   public CountVisitor() {
 
   }
@@ -25,24 +20,22 @@ public class CountVisitor<O, C extends Configuration<O>, T extends Temperature, 
   }
 
   @Override
-  public void begin(C config, S sampler, T t) {
+  public void begin(Configuration<O> config, Sampler<O> sampler, Temperature t) {
   }
 
   @Override
-  public void end(C config, S sampler, T t) {
+  public void end(Configuration<O> config, Sampler<O> sampler, Temperature t) {
 
   }
 
   @Override
-  public void visit(C config, S sampler, T t) {
-    
-      count ++;
-    }
-  
-  
-  public int getCount(){
+  public void visit(Configuration<O> config, Sampler<O> sampler, Temperature t) {
+
+    count++;
+  }
+
+  public int getCount() {
     return count;
   }
-  
-  
+
 }

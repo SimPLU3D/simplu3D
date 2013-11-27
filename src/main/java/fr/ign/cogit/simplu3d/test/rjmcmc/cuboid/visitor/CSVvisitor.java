@@ -9,32 +9,26 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.SimpleGreenSampler;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid2;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.birth.UniformBirthInGeom;
-import fr.ign.mpp.configuration.Configuration;
-import fr.ign.mpp.configuration.Modification;
-import fr.ign.rjmcmc.distribution.UniformDistribution;
+import fr.ign.cogit.simplu3d.model.application.AbstractSimpleBuilding;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.configuration.ModelInstanceGraphConfigurationPredicate;
+import fr.ign.rjmcmc.configuration.Configuration;
 import fr.ign.rjmcmc.sampler.Sampler;
-import fr.ign.simulatedannealing.temperature.SimpleTemperature;
 import fr.ign.simulatedannealing.temperature.Temperature;
 import fr.ign.simulatedannealing.visitor.Visitor;
 
-public class CSVvisitor<O, C extends Configuration<O>, T extends Temperature, S extends Sampler<O, C, T>>
-    implements Visitor<O, C, T, S> {
+public class CSVvisitor<O extends AbstractSimpleBuilding> implements Visitor<O> {
   private int dump;
   private int save;
   private int iter;
   private BufferedWriter writer;
   private String textSeparator = ";";
+  ModelInstanceGraphConfigurationPredicate<O> predicate;
 
-  public CSVvisitor(String fileName) {
-
+  public CSVvisitor(String fileName, ModelInstanceGraphConfigurationPredicate<O> predicate) {
+    this.predicate = predicate;
     Path path = Paths.get(fileName);
-
     try {
-      writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8,
-          StandardOpenOption.CREATE);
+      writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -49,15 +43,12 @@ public class CSVvisitor<O, C extends Configuration<O>, T extends Temperature, S 
   }
 
   @Override
-  public void begin(C config, S sampler, T t) {
+  public void begin(Configuration<O> config, Sampler<O> sampler, Temperature t) {
 
-    String s = "Iteration" + textSeparator + "NBCube" + textSeparator
-        + "ENERGIE" + textSeparator + "ENERGIE_MOY" + textSeparator + "NB_EVAL"
-        + textSeparator + "NB_FALSE";
+    String s = "Iteration" + textSeparator + "NBCube" + textSeparator + "ENERGIE" + textSeparator
+        + "ENERGIE_MOY" + textSeparator + "NB_EVAL" + textSeparator + "NB_FALSE";
 
-    SimpleGreenSampler<Cuboid2, Configuration<Cuboid2>, UniformDistribution, SimpleTemperature, UniformBirthInGeom<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>> sGS = (SimpleGreenSampler<Cuboid2, Configuration<Cuboid2>, UniformDistribution, SimpleTemperature, UniformBirthInGeom<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>>) sampler;
-
-    List<List<Integer>> llInt = sGS.getvFR().getlFalseArray();
+    List<List<Integer>> llInt = predicate.getRuleChecker().getlFalseArray();
 
     double max = 0;
 
@@ -79,9 +70,8 @@ public class CSVvisitor<O, C extends Configuration<O>, T extends Temperature, S 
 
   }
 
-  @SuppressWarnings({ "unchecked" })
   @Override
-  public void end(C config, S sampler, T t) {
+  public void end(Configuration<O> config, Sampler<O> sampler, Temperature t) {
     try {
       writer.flush();
       writer.close();
@@ -96,9 +86,8 @@ public class CSVvisitor<O, C extends Configuration<O>, T extends Temperature, S 
 
   double energyMoy = 0;
 
-  @SuppressWarnings({ "unchecked" })
   @Override
-  public void visit(C config, S sampler, T t) {
+  public void visit(Configuration<O> config, Sampler<O> sampler, Temperature t) {
 
     ++iter;
 
@@ -119,7 +108,7 @@ public class CSVvisitor<O, C extends Configuration<O>, T extends Temperature, S 
 
   }
 
-  public void doWrite(C config, S sampler) {
+  public void doWrite(Configuration<O> config, Sampler<O> sampler) {
 
     StringBuffer sB = new StringBuffer();
 
@@ -134,15 +123,13 @@ public class CSVvisitor<O, C extends Configuration<O>, T extends Temperature, S 
     sB.append(energyMoy);
     sB.append(textSeparator);
 
-    SimpleGreenSampler<Cuboid2, Configuration<Cuboid2>, UniformDistribution, SimpleTemperature, UniformBirthInGeom<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>> sGS = (SimpleGreenSampler<Cuboid2, Configuration<Cuboid2>, UniformDistribution, SimpleTemperature, UniformBirthInGeom<Cuboid2, Configuration<Cuboid2>, Modification<Cuboid2, Configuration<Cuboid2>>>>) sampler;
-
-    sB.append(sGS.getvFR().evalCount);
+    sB.append(predicate.getRuleChecker().evalCount);
     sB.append(textSeparator);
 
-    sB.append(sGS.getvFR().evalFalse);
+    sB.append(predicate.getRuleChecker().evalFalse);
     sB.append(textSeparator);
 
-    for (Integer i : sGS.getvFR().getlFalseArray().get(0)) {
+    for (Integer i : predicate.getRuleChecker().getlFalseArray().get(0)) {
       sB.append(i);
       sB.append(textSeparator);
 

@@ -23,17 +23,13 @@ import fr.ign.cogit.simplu3d.solver.interpreter.OCLInterpreterSimplu3D;
 /**
  * Comme le Fast Rule Checker, mais en plus rapide. Du moins, je l'espère
  * @author MBrasebin
- * 
  */
 public class VeryFastRuleChecker {
 
   private List<SubParcel> sPList = new ArrayList<SubParcel>();
-
   private List<IModelInstanceObject> lRelevantObjects = new ArrayList<>();
-
   private List<IOclInterpreter> lModelInterpreter = new ArrayList<>();
-
-  private List<IModelInstance> lModeInstance = new ArrayList<>();
+  private List<IModelInstance> lModelInstance = new ArrayList<>();
 
   public int evalCount = 0;
   public int evalFalse = 0;
@@ -60,172 +56,102 @@ public class VeryFastRuleChecker {
   private BasicPropertyUnit bPU;
 
   public boolean check(List<IModelInstanceObject> newBuildings) {
-
     // System.out.println(lModeInstance.get(0).getAllModelInstanceObjects().size());
-
     /*
      * for(Type t : lModeInstance.get(0).getAllImplementedTypes()){
      * System.out.println("Type : " + t + "  "
      * +lModeInstance.get(0).getAllInstances(t).size()); }
      */
-
-    int nbInt = sPList.size();
-
-    for (int i = 0; i < nbInt; i++) {
-
-      SubParcel sP = sPList.get(i);
-
+    int numberOfSubParcels = sPList.size();
+    for (int sPIndex = 0; sPIndex < numberOfSubParcels; sPIndex++) {
+      SubParcel sP = sPList.get(sPIndex);
       evalCount++;
-      
-      int count =0;
-
-      for (Rule r : sP.getUrbaZone().get(0).getRules()) {
-        
-
-
+      int count = 0;
+      for (Rule rule : sP.getUrbaZone().get(0).getRules()) {
         for (IModelInstanceObject imiObject : lRelevantObjects) {
-
-          boolean isOk = interpret(imiObject, lModelInterpreter.get(i),
-              r.constraint);
-
+          boolean isOk = interpret(imiObject, lModelInterpreter.get(sPIndex), rule.constraint);
           if (!isOk) {
-            
-            lFalseArray.get(i).set(count,  lFalseArray.get(i).get(count)+1);
-
+            lFalseArray.get(sPIndex).set(count, lFalseArray.get(sPIndex).get(count) + 1);
             evalFalse++;
-            
             return false;
           }
         }
-
         for (IModelInstanceObject imiObject : newBuildings) {
-
-          boolean isOk = interpret(imiObject, lModelInterpreter.get(i),
-              r.constraint);
-
+          boolean isOk = interpret(imiObject, lModelInterpreter.get(sPIndex), rule.constraint);
           if (!isOk) {
-            
-            lFalseArray.get(i).set(count,  lFalseArray.get(i).get(count)+1);
-            
+            lFalseArray.get(sPIndex).set(count, lFalseArray.get(sPIndex).get(count) + 1);
             evalFalse++;
-            
             return false;
           }
         }
-        
-        
         count++;
-        
       }
-
     }
-    // System.out.println("Toutes les règles sont  vérifiées");
     return true;
-
   }
 
   private void init(BasicPropertyUnit bPU) {
-
     new OclInterpreterPlugin();
-
     for (CadastralParcel cP : bPU.getCadastralParcel()) {
-
       for (SubParcel sP : cP.getSubParcel()) {
         sPList.add(sP);
-
         IModelInstance iM = ImportModelInstanceBasicPropertyUnit
             .generateModelInstance(Environnement.model);
-
-        lModeInstance.add(iM);
+        lModelInstance.add(iM);
         try {
-
           lRelevantObjects.add(ImportModelInstanceBasicPropertyUnit
               .importCadastralSubParcel(iM, sP));
-
-          lRelevantObjects.add((IModelInstanceObject) iM
-              .addModelInstanceElement(bPU));
-
+          lRelevantObjects.add((IModelInstanceObject) iM.addModelInstanceElement(bPU));
           ImportModelInstanceBasicPropertyUnit.importCadastralParcel(iM, cP);
-
         } catch (TypeNotFoundInModelException e) {
-          // TODO Auto-generated catch block
           e.printStackTrace();
         }
-
         lModelInterpreter.add(new OCLInterpreterSimplu3D(iM));
-
       }
-
     }
-
     int nbInt = sPList.size();
-
     for (int i = 0; i < nbInt; i++) {
-
       lFalseArray.add(new ArrayList<Integer>());
       int sizeTemp = sPList.get(i).getUrbaZone().get(0).getRules().size();
-
       for (int j = 0; j < sizeTemp; j++) {
         lFalseArray.get(i).add(0);
       }
-
     }
-
   }
 
-  public boolean interpret(IModelInstanceElement imiObject,
-      IOclInterpreter interpret, Constraint c) {
-
+  public boolean interpret(IModelInstanceElement imiObject, IOclInterpreter interpret, Constraint c) {
     IInterpretationResult result = null;
-
     try {
       result = interpret.interpretConstraint(c, imiObject);
     } catch (Exception e) {
       e.printStackTrace();
       System.exit(0);
     }
-
-    // System.out.println("Contrainte : " + r.constraint.toString());
-
     if (result != null) {
-
       if (result.getResult() instanceof OclBoolean) {
-
         OclBoolean bool = (OclBoolean) result.getResult();
-
         if (bool.oclIsInvalid().isTrue()) {
           System.out.println("  " + result.getModelObject() + " ("
               + result.getConstraint().getKind() + ": "
-              + result.getConstraint().getSpecification().getBody() + "): "
-              + result.getResult());
-
+              + result.getConstraint().getSpecification().getBody() + "): " + result.getResult());
         }
-
         if (!bool.isTrue()) {
           // System.out.println("Règle non vérifiée");
-
           // System.out.println(imiObject);
-
           /*
            * System.out.println("  " + result.getModelObject() + " (" +
            * result.getConstraint().getKind() + ": " +
            * result.getConstraint().getSpecification().getBody() + "): " +
            * result.getResult());
            */
-
           return false;
         }
-
       } else {
-        System.out.println("  " + result.getModelObject() + " ("
-            + result.getConstraint().getKind() + ": "
-            + result.getConstraint().getSpecification().getBody() + "): "
+        System.out.println("  " + result.getModelObject() + " (" + result.getConstraint().getKind()
+            + ": " + result.getConstraint().getSpecification().getBody() + "): "
             + result.getResult());
-
       }
-
     }
-
     return true;
   }
 
@@ -234,7 +160,7 @@ public class VeryFastRuleChecker {
   }
 
   public List<IModelInstance> getlModeInstance() {
-    return lModeInstance;
+    return lModelInstance;
   }
 
   public List<SubParcel> getsPList() {

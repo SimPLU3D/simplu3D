@@ -16,7 +16,6 @@ import fr.ign.cogit.geoxygene.sig3d.gui.MainWindow;
 import fr.ign.cogit.geoxygene.sig3d.representation.texture.TextureManager;
 import fr.ign.cogit.geoxygene.sig3d.representation.texture.TexturedSurface;
 import fr.ign.cogit.geoxygene.sig3d.semantic.VectorLayer;
-import fr.ign.cogit.geoxygene.sig3d.util.ColorRandom;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_LineString;
@@ -29,14 +28,14 @@ import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.convert.GenerateSolidFr
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid2;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.CuboidSnap;
-import fr.ign.mpp.configuration.Configuration;
 import fr.ign.mpp.configuration.GraphConfiguration;
+import fr.ign.rjmcmc.configuration.Configuration;
+import fr.ign.rjmcmc.kernel.SimpleObject;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.Temperature;
 import fr.ign.simulatedannealing.visitor.Visitor;
 
-public class FilmVisitor<O, C extends Configuration<O>, T extends Temperature, S extends Sampler<O, C, T>>
-    implements Visitor<O, C, T, S> {
+public class FilmVisitor<O extends SimpleObject> implements Visitor<O> {
 
   private MainWindow mW = null;
   private int save;
@@ -52,7 +51,8 @@ public class FilmVisitor<O, C extends Configuration<O>, T extends Temperature, S
   private Vecteur vectOrientation;
   private String folder;
   private int count = 0;
-private Color col;
+  private Color col;
+
   public FilmVisitor(IDirectPosition dp, Vecteur vectOrientation, String folder, Color col) {
     mW = new MainWindow();
     represent(Environnement.getInstance(), mW);
@@ -67,14 +67,13 @@ private Color col;
     this.iter = 0;
     this.save = save;
 
-    mW.getInterfaceMap3D().zoomOn(dp.getX(), dp.getY(), dp.getZ(),
-        vectOrientation);
+    mW.getInterfaceMap3D().zoomOn(dp.getX(), dp.getY(), dp.getZ(), vectOrientation);
 
   }
 
   @SuppressWarnings("unchecked")
   @Override
-  public void visit(C config, S sampler, T t) {
+  public void visit(Configuration<O> config, Sampler<O> sampler, Temperature t) {
     ++iter;
 
     if (config.getEnergy() < bestValue) {
@@ -89,12 +88,11 @@ private Color col;
   }
 
   @Override
-  public void begin(C config, S sampler, T t) {
+  public void begin(Configuration<O> config, Sampler<O> sampler, Temperature t) {
   }
 
-  @SuppressWarnings("unchecked")
   @Override
-  public void end(C config, S sampler, T t) {
+  public void end(Configuration<O> config, Sampler<O> sampler, Temperature t) {
 
     this.addInformationToMainWindow(bestConfig);
   }
@@ -112,11 +110,13 @@ private Color col;
       if (v.getValue() instanceof Cuboid) {
         geom = GenerateSolidFromCuboid.generate((Cuboid) o);
 
-      } else if (v.getValue() instanceof Cuboid2) {
-        geom = GenerateSolidFromCuboid.generate((Cuboid2) o);
-      } else if (v.getValue() instanceof CuboidSnap) {
-        geom = GenerateSolidFromCuboid.generate((CuboidSnap) o);
-      }
+      } else
+        if (v.getValue() instanceof Cuboid2) {
+          geom = GenerateSolidFromCuboid.generate((Cuboid2) o);
+        } else
+          if (v.getValue() instanceof CuboidSnap) {
+            geom = GenerateSolidFromCuboid.generate((CuboidSnap) o);
+          }
 
       if (geom == null) {
         continue;
@@ -129,27 +129,24 @@ private Color col;
     }
 
     if (!feat.isEmpty()) {
-      VectorLayer vl = new VectorLayer(feat, PREFIX_NAME_STRING + " : " + iter,
-          col);
+      VectorLayer vl = new VectorLayer(feat, PREFIX_NAME_STRING + " : " + iter, col);
 
-      int nbLayer = mW.getInterfaceMap3D().getCurrent3DMap().getLayerList()
-          .size();
+      int nbLayer = mW.getInterfaceMap3D().getCurrent3DMap().getLayerList().size();
 
       if (nbLayer > MIN_LAYER) {
-        mW.getInterfaceMap3D().getCurrent3DMap().getLayerList()
-            .get(nbLayer - 1).setVisible(false);
+        mW.getInterfaceMap3D().getCurrent3DMap().getLayerList().get(nbLayer - 1).setVisible(false);
         mW.getInterfaceMap3D()
             .getCurrent3DMap()
             .removeLayer(
-                mW.getInterfaceMap3D().getCurrent3DMap().getLayerList()
-                    .get(nbLayer - 1).getLayerName());
+                mW.getInterfaceMap3D().getCurrent3DMap().getLayerList().get(nbLayer - 1)
+                    .getLayerName());
       }
 
       mW.getInterfaceMap3D().getCurrent3DMap().addLayer(vl);
 
     }
 
-    boolean works = mW.getInterfaceMap3D().screenCapture(folder, "img" + (count++)+ ".jpg");
+    boolean works = mW.getInterfaceMap3D().screenCapture(folder, "img" + (count++) + ".jpg");
 
     if (!works) {
       System.out.println("Not work");
@@ -157,27 +154,25 @@ private Color col;
   }
 
   private static void represent(Environnement env, MainWindow mW) {
-    
-   
-    
+
     List<Theme> lTheme = new ArrayList<RepEnvironnement.Theme>();
     lTheme.add(Theme.TOIT_BATIMENT);
     lTheme.add(Theme.FACADE_BATIMENT);
     // lTheme.add(Theme.FAITAGE);
     // lTheme.add(Theme.PIGNON);
     // lTheme.add(Theme.GOUTTIERE);
-    // lTheme.add(Theme.VOIRIE);
-    // lTheme.add(Theme.PARCELLE);
-    // lTheme.add(Theme.BORDURE);
-    // lTheme.add(Theme.ZONE);
+     lTheme.add(Theme.VOIRIE);
+     lTheme.add(Theme.PARCELLE);
+     lTheme.add(Theme.BORDURE);
+     lTheme.add(Theme.ZONE);
     // lTheme.add(Theme.PAN);
 
     Theme[] tab = lTheme.toArray(new Theme[0]);
 
     List<VectorLayer> vl = RepEnvironnement.represent(env, tab);
 
+    System.out.println("Adding " + vl.size() + " layers");
     for (VectorLayer l : vl) {
-
       mW.getInterfaceMap3D().getCurrent3DMap().addLayer(l);
     }
 
@@ -225,12 +220,10 @@ private Color col;
     // .textureLoading(folder + "Env3D_86.png"), dpUR.getX()-dpLL.getX(),
     // dpUR.getY()-dpLL.getY()));
 
-    feat.setRepresentation(new TexturedSurface(feat, TextureManager
-        .textureLoading(env.folder + "env3DPrj3.png"), dpUR.getX()
-        - dpLL.getX(), dpUR.getY() - dpLL.getY()));
+    feat.setRepresentation(new TexturedSurface(feat, TextureManager.textureLoading(env.folder
+        + "background3D.png"), dpUR.getX() - dpLL.getX(), dpUR.getY() - dpLL.getY()));
 
-    mW.getInterfaceMap3D().getCurrent3DMap()
-        .addLayer(new VectorLayer(fc, "Fond"));
+    mW.getInterfaceMap3D().getCurrent3DMap().addLayer(new VectorLayer(fc, "Fond"));
 
   }
 }

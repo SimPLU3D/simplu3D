@@ -20,7 +20,6 @@ import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
 import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
 import fr.ign.cogit.sig3d.calculation.raycasting.RayCasting;
-import fr.ign.cogit.sig3d.equation.Grid3D;
 
 public class InverseProjection {
 
@@ -190,22 +189,22 @@ public class InverseProjection {
 			double surechantillone) {
 
 		  
-		  IDirectPosition p1 = tri.coord().get(0); 
-		  IDirectPosition p2 =  tri.coord().get(1);
-		  IDirectPosition p3 = tri.coord().get(2);
+//		  IDirectPosition p1 = tri.coord().get(0); 
+//		  IDirectPosition p2 =  tri.coord().get(1);
+//		  IDirectPosition p3 = tri.coord().get(2);
 		 
 		  
 		  // On prend 2 indices au hasard 
-		  Vecteur v1 = new Vecteur(p1,p2);
+//		  Vecteur v1 = new Vecteur(p1,p2);
 		  
-		  double normeV1 = v1.norme();
-		  double pasX = normeV1 / surechantillone;
+//		  double normeV1 = v1.norme();
+//		  double pasX = normeV1 / surechantillone;
 		  
 		  
-		  Vecteur v2 = new Vecteur(p1,p3);
+//		  Vecteur v2 = new Vecteur(p1,p3);
 		  
-		  double normeV2 = v2.norme();
-		  double pasY = normeV2 / surechantillone;
+//		  double normeV2 = v2.norme();
+//		  double pasY = normeV2 / surechantillone;
 		  
 		  
 		  IDirectPositionList dplOut = new DirectPositionList();

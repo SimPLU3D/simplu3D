@@ -1,9 +1,6 @@
 package fr.ign.cogit.simplu3d.exec.test;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import org.citygml4j.model.citygml.transportation.Road;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;

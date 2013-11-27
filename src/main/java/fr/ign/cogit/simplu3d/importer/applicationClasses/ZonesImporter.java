@@ -14,6 +14,7 @@ public class ZonesImporter {
   public final static String NOM_ATT_TEXT_ZONE = "TEXT";
   public final static String NOM_VALIDITY_DATE = "DATE";
 
+  @SuppressWarnings("deprecation")
   public static IFeatureCollection<UrbaZone> importUrbaZone(
       IFeatureCollection<IFeature> zoneColl) {
 
@@ -38,7 +39,6 @@ public class ZonesImporter {
       o = feat.getAttribute(NOM_VALIDITY_DATE);
 
       if (o != null) {
-
         z.setDate(new Date(o.toString()));
       }
       

@@ -34,7 +34,7 @@ public abstract class AbstractBuilding extends CG_AbstractBuilding {
   private BasicPropertyUnit bPU;
 
   protected AbstractBuilding() {
-
+    super();
   }
 
   public double height(String s, String s2) {
@@ -47,6 +47,7 @@ public abstract class AbstractBuilding extends CG_AbstractBuilding {
 
     // Etape 1 : détection du toit et des façades
     List<IOrientableSurface> lOS = FromGeomToSurface.convertGeom(geom);
+    @SuppressWarnings("unchecked")
     IMultiSurface<IOrientableSurface> surfaceRoof = (IMultiSurface<IOrientableSurface>) RoofDetection
         .detectRoof(this, 0.2, true);
 
@@ -220,29 +221,18 @@ public abstract class AbstractBuilding extends CG_AbstractBuilding {
   }
 
   public boolean prospect(IGeometry geom, double slope, double hIni) {
-
     double zMin = 0;
     IDirectPositionList dpl = null;
-
     double shift = 0;
-
     Box3D box = new Box3D(this.getGeom());
     dpl = this.getToit().getGeom().coord();
-
     zMin = box.getLLDP().getZ();
-
     for (IDirectPosition dp : dpl) {
-
       if (geom.distance(new GM_Point(dp)) * slope + hIni < shift
           + dp.getZ() - zMin) {
-
         return false;
       }
-
     }
-
     return true;
-
   }
-
 }

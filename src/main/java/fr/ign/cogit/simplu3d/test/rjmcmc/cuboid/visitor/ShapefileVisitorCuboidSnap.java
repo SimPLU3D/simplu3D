@@ -18,16 +18,15 @@ import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
-
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.CuboidSnap;
-import fr.ign.mpp.configuration.Configuration;
 import fr.ign.mpp.configuration.GraphConfiguration;
+import fr.ign.rjmcmc.configuration.Configuration;
+import fr.ign.rjmcmc.kernel.SimpleObject;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.Temperature;
 import fr.ign.simulatedannealing.visitor.Visitor;
 
-public class ShapefileVisitorCuboidSnap<O, C extends Configuration<O>, T extends Temperature, S extends Sampler<O, C, T>>
-    implements Visitor<O, C, T, S> {
+public class ShapefileVisitorCuboidSnap<O extends SimpleObject> implements Visitor<O> {
   private int save;
   private int iter;
   private String fileName;
@@ -43,21 +42,21 @@ public class ShapefileVisitorCuboidSnap<O, C extends Configuration<O>, T extends
   }
 
   @Override
-  public void begin(C config, S sampler, T t) {
+  public void begin(Configuration<O> config, Sampler<O> sampler, Temperature t) {
   }
 
-  @SuppressWarnings( { "unchecked" })
+  @SuppressWarnings({ "unchecked" })
   @Override
-  public void end(C config, S sampler, T t) {
+  public void end(Configuration<O> config, Sampler<O> sampler, Temperature t) {
     this.writeShapefile(fileName + "_" + String.format(formatInt, iter + 1) + ".shp",
         (GraphConfiguration<CuboidSnap>) config);
   }
 
   String formatInt = "%1$-10d";
 
-  @SuppressWarnings( { "unchecked" })
+  @SuppressWarnings({ "unchecked" })
   @Override
-  public void visit(C config, S sampler, T t) {
+  public void visit(Configuration<O> config, Sampler<O> sampler, Temperature t) {
     ++iter;
     if ((save > 0) && (iter % save == 0)) {
       this.writeShapefile(fileName + "_" + String.format(formatInt, iter) + ".shp",
@@ -65,7 +64,7 @@ public class ShapefileVisitorCuboidSnap<O, C extends Configuration<O>, T extends
     }
   }
 
-  @SuppressWarnings( { "unchecked", "deprecation" })
+  @SuppressWarnings({ "unchecked", "deprecation" })
   private void writeShapefile(String aFileName, GraphConfiguration<CuboidSnap> config) {
     try {
       ShapefileDataStore store = new ShapefileDataStore(new File(aFileName).toURI().toURL());
@@ -84,8 +83,8 @@ public class ShapefileVisitorCuboidSnap<O, C extends Configuration<O>, T extends
         List<Object> liste = new ArrayList<Object>(0);
         liste.add(v.getValue().getRectangle2D().toGeometry());
         liste.add(v.getEnergy());
-        SimpleFeature simpleFeature = SimpleFeatureBuilder.build(type, liste.toArray(), String
-            .valueOf(i++));
+        SimpleFeature simpleFeature = SimpleFeatureBuilder.build(type, liste.toArray(),
+            String.valueOf(i++));
         collection.add(simpleFeature);
       }
       featureStore.addFeatures(collection);

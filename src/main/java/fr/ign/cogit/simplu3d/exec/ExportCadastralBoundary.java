@@ -11,7 +11,7 @@ public class ExportCadastralBoundary {
   public static void main(String[] args) {
 
       String folder = "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project4/";
-      String folderOut = "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project4/out/";
+//      String folderOut = "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project4/out/";
       Environnement env = null;
       try {
          env = LoaderSHP.load(folder);

@@ -32,45 +32,32 @@ public class TestLoader {
 
   public static void main(String[] args) throws Exception {
 
-    oclConstraints = new File(
-        "src/main/resources/ocl/simple_allConstraintsThese.ocl");
-//    String folderEnv = "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project1/";
+    oclConstraints = new File("src/main/resources/ocl/simple_allConstraintsThese.ocl");
+    // String folderEnv = "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project1/";
 
     try {
 
       System.out.println("*******************************************");
       System.out.println("***********Import environnement************");
       System.out.println("*******************************************");
-      
+
       SubParcel p = new SubParcel();
 
+      IDirectPosition dp1 = new DirectPosition(1, 0, 0);
 
-      
-      IDirectPosition dp1 = new DirectPosition(1,0,0);
-      
-      
-      
-      IDirectPosition dp2 = new DirectPosition(1,15,0);
-      
-      IDirectPosition dp3 = new DirectPosition(0,0,0);
-      
-      
-      
+      IDirectPosition dp2 = new DirectPosition(1, 15, 0);
+
+      IDirectPosition dp3 = new DirectPosition(0, 0, 0);
+
       IMultiSurface<IOrientableSurface> ims = new GM_MultiSurface<IOrientableSurface>();
-      
-      
-      ITriangle t = new GM_Triangle(dp1,dp2,dp3);
-      ITriangle t2 = new GM_Triangle(dp1,dp2,dp1);
-      
+
+      ITriangle t = new GM_Triangle(dp1, dp2, dp3);
+      ITriangle t2 = new GM_Triangle(dp1, dp2, dp1);
+
       ims.add(t);
       ims.add(t2);
-      
-      
+
       p.setGeom(ims);
-
-
-
-
 
       System.out.println("*******************************************");
       System.out.println("************Import modèle******************");
@@ -86,25 +73,14 @@ public class TestLoader {
       IModelInstance modelInstance = new JavaModelInstance(model);
       modelInstance.addModelInstanceElement(p);
       modelInstance.addModelInstanceElement(t);
-      
-      
-      
-      
-      
-      
-      
-      
 
       // create an empty model instance and put objects into it
       /*
        * IModelInstance modelInstance = new JavaModelInstance(model);
-       * 
        * Person student = new Student(); student.setName("Student-work-a-lot");
        * student.setAge(23);
-       * 
        * Person prof = new Professor(); prof.setName("Prof. Invalid");
        * prof.setAge(-42);
-       * 
        * modelInstance.addModelInstanceElement(student);
        * modelInstance.addModelInstanceElement(prof);
        */
@@ -113,23 +89,19 @@ public class TestLoader {
       System.out.println("****Chargement des contraintes OCL*********");
       System.out.println("*******************************************");
 
-      List<Constraint> constraintList = StandaloneFacade.INSTANCE
-          .parseOclConstraints(model, oclConstraints);
+      /* List<Constraint> constraintList = */StandaloneFacade.INSTANCE.parseOclConstraints(model,
+          oclConstraints);
 
       /*
-       * 
-      System.out.println("*******************************************");
-      System.out.println("**Interprétation des contraintes OCL*******");
-      System.out.println("*******************************************");
-
-      for (IInterpretationResult result : interpretEverything(modelInstance, constraintList)) {
-        System.out.println("  " + result.getModelObject() + " ("
-            + result.getConstraint().getKind() + ": "
-            + result.getConstraint().getSpecification().getBody() + "): "
-            + result.getResult());
-      }
-
-    
+       * System.out.println("*******************************************");
+       * System.out.println("**Interprétation des contraintes OCL*******");
+       * System.out.println("*******************************************");
+       * for (IInterpretationResult result : interpretEverything(modelInstance, constraintList)) {
+       * System.out.println("  " + result.getModelObject() + " ("
+       * + result.getConstraint().getKind() + ": "
+       * + result.getConstraint().getSpecification().getBody() + "): "
+       * + result.getResult());
+       * }
        * IOcl2DeclSettings settings = Ocl2DeclCodeFactory.getInstance()
        * .createOcl2DeclCodeSettings();
        * settings.setSourceDirectory("src-gen/simple/");
@@ -139,9 +111,7 @@ public class TestLoader {
        * .getTemplateGroup("Standard(SQL)"));
        * StandaloneFacade.INSTANCE.generateSQLCode(constraintList, settings,
        * model);
-       * 
        * System.out.println("Finished code generation.");
-       * 
        * settings.setSaveCode(false);
        */
 
@@ -150,43 +120,35 @@ public class TestLoader {
     }
 
   }
-  
-  
-  
+
   /**
-   * 
    * @param modelInstance
    * @param constraintList
    * @return
    */
-  public static List<IInterpretationResult> interpretEverything(
-      IModelInstance modelInstance, List<Constraint> constraintList) {
+  public static List<IInterpretationResult> interpretEverything(IModelInstance modelInstance,
+      List<Constraint> constraintList) {
 
     new OclInterpreterPlugin();
 
-  List<IInterpretationResult> resultList = new LinkedList<IInterpretationResult>();
+    List<IInterpretationResult> resultList = new LinkedList<IInterpretationResult>();
 
-  IOclInterpreter interpreter = new OCLInterpreterSimplu3D(modelInstance);
+    IOclInterpreter interpreter = new OCLInterpreterSimplu3D(modelInstance);
 
-  for (IModelInstanceObject imiObject : modelInstance
-          .getAllModelInstanceObjects()) {
-    
+    for (IModelInstanceObject imiObject : modelInstance.getAllModelInstanceObjects()) {
 
-    if(imiObject.getObject() instanceof SubParcel){
-      System.out.println(imiObject.getName());
-    }
-    
-
-    
-      for (Constraint constraint : constraintList) {
-          IInterpretationResult result = interpreter.interpretConstraint(
-                  constraint, imiObject);
-          if (result != null)
-              resultList.add(result);
+      if (imiObject.getObject() instanceof SubParcel) {
+        System.out.println(imiObject.getName());
       }
-  }
 
-  return resultList;
-}
+      for (Constraint constraint : constraintList) {
+        IInterpretationResult result = interpreter.interpretConstraint(constraint, imiObject);
+        if (result != null)
+          resultList.add(result);
+      }
+    }
+
+    return resultList;
+  }
 
 }

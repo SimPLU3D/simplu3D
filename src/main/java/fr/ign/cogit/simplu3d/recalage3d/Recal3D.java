@@ -9,7 +9,6 @@ import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.ISolid;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
@@ -25,7 +24,6 @@ import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Building;
-import fr.ign.cogit.simplu3d.model.application.BuildingPart;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.cache.CacheModelInstance;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboid2.DifferenceVolumeUnaryEnergy;
@@ -34,9 +32,9 @@ import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboid2.VolumeUnaryEnergy
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCuboid;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid2;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.loader.LoaderCuboid2;
-import fr.ign.mpp.configuration.Configuration;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
+import fr.ign.rjmcmc.configuration.Configuration;
 import fr.ign.rjmcmc.energy.BinaryEnergy;
 import fr.ign.rjmcmc.energy.ConstantEnergy;
 import fr.ign.rjmcmc.energy.MinusUnaryEnergy;
@@ -65,34 +63,30 @@ public class Recal3D {
 
     VeryFastRuleChecker vFR = new VeryFastRuleChecker(bpu);
 
-    CacheModelInstance cMI = new CacheModelInstance(bpu, vFR.getlModeInstance()
-        .get(0));
+    CacheModelInstance<AbstractBuilding> cMI = new CacheModelInstance<AbstractBuilding>(bpu, vFR
+        .getlModeInstance().get(0));
 
     // /La configuration est prête
 
     List<AbstractBuilding> lAB = loadBuilding(lCuboid);
 
-    boolean check = vFR.check(cMI
-        .update(lAB, new ArrayList<AbstractBuilding>()));
+    boolean check = vFR.check(cMI.update(lAB, new ArrayList<AbstractBuilding>()));
 
     if (check) {
 
       // Changement de la hauteur
       lAB = changeHeight(lAB, 1, vFR, cMI);
-      
+
       IFeatureCollection<IFeature> featColl = new FT_FeatureCollection<>();
 
       featColl.addAll(lAB);
-      
-      ShapefileWriter.write(featColl, strShpOut+"test1.shp");
+
+      ShapefileWriter.write(featColl, strShpOut + "test1.shp");
       featColl.clear();
       // Fusion des géométries
       featColl.addAll(fusionneGeom(lAB));
 
-      
-      ShapefileWriter.write(featColl, strShpOut+"test2.shp");
-
-
+      ShapefileWriter.write(featColl, strShpOut + "test2.shp");
 
     } else {
       System.out.println("pas check ?");
@@ -103,36 +97,27 @@ public class Recal3D {
   private static IFeatureCollection<IFeature> fusionneGeom(List<AbstractBuilding> lAB) {
 
     int nbBat = lAB.size();
-    
-    
-    
-    //Conversion des géométries
+
+    // Conversion des géométries
     List<IOrientableSurface> lGeom = new ArrayList<>();
 
     List<Double> lMinZ = new ArrayList<>();
     List<Double> lMaxZ = new ArrayList<>();
-    
-    
-    for(AbstractBuilding aB : lAB){
+
+    for (AbstractBuilding aB : lAB) {
       Box3D b = new Box3D(aB.getGeom());
-      
-      
+
       lGeom.add(aB.getFootprint());
       lMinZ.add(b.getLLDP().getZ());
       lMaxZ.add(b.getURDP().getZ());
-      
-      
+
     }
-    
-    
-    
-  bouclei :  for (int i = 0; i < nbBat; i++) {
+
+    for (int i = 0; i < nbBat; i++) {
 
       IOrientableSurface abi = lGeom.get(i);
 
       for (int j = i + 1; j < nbBat; j++) {
-        
-    
 
         IOrientableSurface abj = lGeom.get(j);
 
@@ -142,38 +127,31 @@ public class Recal3D {
 
         }
 
-
         double zMaxi = lMaxZ.get(i);
         double zMini = lMinZ.get(i);
 
-
         double zMaxj = lMaxZ.get(j);
         double zMinj = lMinZ.get(j);
-        
-        
-        
+
         int indexi, indexj;
 
         if (zMaxi > zMaxj) {
-          
-          
-           indexi = j;
-           indexj = i;
 
+          indexi = j;
+          indexj = i;
 
           zMaxi = zMaxj;
           zMini = zMinj;
-        }else{
+        } else {
           indexi = i;
-          indexj= j;
+          indexj = j;
         }
 
         // indexi est forcément plus bas que indexj
 
         IOrientableSurface geomTemp = lGeom.get(indexi);
 
-        IGeometry geom = geomTemp.difference(
-            lGeom.get(indexj));
+        IGeometry geom = geomTemp.difference(lGeom.get(indexj));
 
         if (geom.area() < 0.001) {
           continue;
@@ -189,44 +167,38 @@ public class Recal3D {
         List<IOrientableSurface> lOS = FromGeomToSurface.convertGeom(geom);
 
         for (IOrientableSurface os : lOS) {
-          
-          for(IDirectPosition dp: os.coord()){
+
+          for (IDirectPosition dp : os.coord()) {
             dp.setZ(0);
           }
-          
-          
-          
+
           lGeom.add(os);
           lMinZ.add(zMini);
           lMaxZ.add(zMaxi);
-
 
           nbBat++;
 
         }
 
-        
-
       }
 
     }
-    
-    
+
     IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
-    
-    for(int i=0; i < nbBat ; i++){
-      
-      ISolid sol = (ISolid)Extrusion2DObject.convertFromGeometry(lGeom.get(i), lMinZ.get(i),lMaxZ.get(i));
+
+    for (int i = 0; i < nbBat; i++) {
+
+      ISolid sol = (ISolid) Extrusion2DObject.convertFromGeometry(lGeom.get(i), lMinZ.get(i),
+          lMaxZ.get(i));
       featC.add(new DefaultFeature(new GM_MultiSurface<>(sol.getFacesList())));
     }
-    
 
-   System.out.println("NB geom : " + lGeom.size());
+    System.out.println("NB geom : " + lGeom.size());
 
-   System.out.println("zMin : " + lMinZ.size());
+    System.out.println("zMin : " + lMinZ.size());
 
-   System.out.println("zMax : " + lMaxZ.size());
-    
+    System.out.println("zMax : " + lMaxZ.size());
+
     // TODO Auto-generated method stub
     return featC;
   }
@@ -236,8 +208,8 @@ public class Recal3D {
     List<AbstractBuilding> lAB = new ArrayList<>();
 
     for (Cuboid2 c : lC) {
-      Building bP = new Building(new GM_MultiSurface<>(GenerateSolidFromCuboid
-          .generate(c).getFacesList()));
+      Building bP = new Building(new GM_MultiSurface<>(GenerateSolidFromCuboid.generate(c)
+          .getFacesList()));
 
       bP.isNew = true;
 
@@ -247,6 +219,7 @@ public class Recal3D {
     return lAB;
   }
 
+  @SuppressWarnings("unused")
   private static double getMoyGroup(List<AbstractBuilding> lAB) {
 
     double moy = 0;
@@ -261,8 +234,8 @@ public class Recal3D {
 
   }
 
-  public static List<AbstractBuilding> changeHeight(List<AbstractBuilding> lAB,
-      double diffHeight, VeryFastRuleChecker vFR, CacheModelInstance cMI) {
+  public static List<AbstractBuilding> changeHeight(List<AbstractBuilding> lAB, double diffHeight,
+      VeryFastRuleChecker vFR, CacheModelInstance<AbstractBuilding> cMI) {
 
     List<List<AbstractBuilding>> lLLAB = new ArrayList<>();
 
@@ -349,8 +322,7 @@ public class Recal3D {
         }
 
         // Intervalle en commun ?
-        if ((hMinj <= hMaxi && hMinj >= hMini)
-            || ((hMaxj >= hMini) && (hMaxj <= hMaxi))) {
+        if ((hMinj <= hMaxi && hMinj >= hMini) || ((hMaxj >= hMini) && (hMaxj <= hMaxi))) {
 
           // on fusionne
           lGeomGroup.set(j, geomi.union(geomj));
@@ -416,8 +388,7 @@ public class Recal3D {
     return lABOUT;
   }
 
-  public static AbstractBuilding changeGeomZMax(AbstractBuilding aBIni,
-      double zMaxNew) {
+  public static AbstractBuilding changeGeomZMax(AbstractBuilding aBIni, double zMaxNew) {
 
     AbstractBuilding aB = (AbstractBuilding) aBIni.clone();
 
@@ -455,9 +426,8 @@ public class Recal3D {
 
   }
 
-  public static List<AbstractBuilding> changeHeight2(
-      List<AbstractBuilding> lAB, double diffHeight, VeryFastRuleChecker vFR,
-      CacheModelInstance cMI) {
+  public static List<AbstractBuilding> changeHeight2(List<AbstractBuilding> lAB, double diffHeight,
+      VeryFastRuleChecker vFR, CacheModelInstance<AbstractBuilding> cMI) {
 
     int nbB = lAB.size();
 
@@ -592,8 +562,8 @@ public class Recal3D {
     return lAB;
   }
 
-  public static AbstractBuilding changeGeomHMax(AbstractBuilding aBIni,
-      Box3D b, double currentH, double newH) {
+  public static AbstractBuilding changeGeomHMax(AbstractBuilding aBIni, Box3D b, double currentH,
+      double newH) {
 
     AbstractBuilding aB = (AbstractBuilding) aBIni.clone();
 
@@ -617,14 +587,14 @@ public class Recal3D {
   }
 
   /**
-   * 
-   * @param p paramètres importés depuis le fichier XML
-   * @param bpu l'unité foncière considérée
+   * @param p
+   *        paramètres importés depuis le fichier XML
+   * @param bpu
+   *        l'unité foncière considérée
    * @return la configuration chargée, c'est à dire la formulation énergétique
    *         prise en compte
    */
-  public static Configuration<Cuboid2> create_configuration(Parameters p,
-      Geometry bpu) {
+  public static Configuration<Cuboid2> create_configuration(Parameters p, Geometry bpu) {
 
     // Énergie constante : à la création d'un nouvel objet
     ConstantEnergy<Cuboid2, Cuboid2> energyCreation = new ConstantEnergy<Cuboid2, Cuboid2>(
@@ -641,35 +611,31 @@ public class Recal3D {
         ponderationVolume, energyVolume);
 
     // On retire de l'énergie de création, l'énergie de l'aire
-    UnaryEnergy<Cuboid2> u3 = new MinusUnaryEnergy<Cuboid2>(energyCreation,
-        energyVolumePondere);
+    UnaryEnergy<Cuboid2> u3 = new MinusUnaryEnergy<Cuboid2>(energyCreation, energyVolumePondere);
 
     // Énergie constante : pondération de la différence
     ConstantEnergy<Cuboid2, Cuboid2> ponderationDifference = new ConstantEnergy<Cuboid2, Cuboid2>(
         Double.parseDouble(p.get("ponderation_difference_ext")));
     // On ajoute l'énergie de différence : la zone en dehors de la parcelle
     UnaryEnergy<Cuboid2> u4 = new DifferenceVolumeUnaryEnergy<Cuboid2>(bpu);
-    UnaryEnergy<Cuboid2> u5 = new MultipliesUnaryEnergy<Cuboid2>(
-        ponderationDifference, u4);
+    UnaryEnergy<Cuboid2> u5 = new MultipliesUnaryEnergy<Cuboid2>(ponderationDifference, u4);
     UnaryEnergy<Cuboid2> unaryEnergy = new PlusUnaryEnergy<Cuboid2>(u3, u5);
 
     // Énergie binaire : intersection entre deux rectangles
-    ConstantEnergy<Cuboid2, Cuboid2> c3 = new ConstantEnergy<Cuboid2, Cuboid2>(
-        Double.parseDouble(p.get("ponderation_volume_inter")));
+    ConstantEnergy<Cuboid2, Cuboid2> c3 = new ConstantEnergy<Cuboid2, Cuboid2>(Double.parseDouble(p
+        .get("ponderation_volume_inter")));
     BinaryEnergy<Cuboid2, Cuboid2> b1 = new IntersectionVolumeBinaryEnergy<Cuboid2>();
-    BinaryEnergy<Cuboid2, Cuboid2> binaryEnergy = new MultipliesBinaryEnergy<Cuboid2, Cuboid2>(
-        c3, b1);
+    BinaryEnergy<Cuboid2, Cuboid2> binaryEnergy = new MultipliesBinaryEnergy<Cuboid2, Cuboid2>(c3,
+        b1);
     // empty initial configuration*/
 
-    Configuration<Cuboid2> conf = new GraphConfiguration<Cuboid2>(unaryEnergy,
-        binaryEnergy);
+    Configuration<Cuboid2> conf = new GraphConfiguration<Cuboid2>(unaryEnergy, binaryEnergy);
 
     return conf;
   }
 
   private static Parameters initialize_parameters() {
-    return Parameters
-        .unmarshall("./src/main/resources/building_parameters_project_4.xml");
+    return Parameters.unmarshall("./src/main/resources/building_parameters_project_4.xml");
   }
 
 }

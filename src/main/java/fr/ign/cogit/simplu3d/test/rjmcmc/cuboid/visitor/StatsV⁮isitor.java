@@ -18,14 +18,14 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
 
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid;
-import fr.ign.mpp.configuration.Configuration;
 import fr.ign.mpp.configuration.GraphConfiguration;
+import fr.ign.rjmcmc.configuration.Configuration;
+import fr.ign.rjmcmc.kernel.SimpleObject;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.Temperature;
 import fr.ign.simulatedannealing.visitor.Visitor;
 
-public class StatsV⁮isitor<O, C extends Configuration<O>, T extends Temperature, S extends Sampler<O, C, T>>
-    implements Visitor<O, C, T, S> {
+public class StatsV⁮isitor<O extends SimpleObject> implements Visitor<O> {
 
   private int dump;
   private int iter;
@@ -66,15 +66,13 @@ public class StatsV⁮isitor<O, C extends Configuration<O>, T extends Temperatur
 
   /**
    * Creates a sample chart.
-   * 
-   * @param dataset the dataset.
-   * 
+   * @param dataset
+   *        the dataset.
    * @return A sample chart.
    */
   private JFreeChart createChart(final XYDataset dataset) {
-    final JFreeChart result = ChartFactory.createXYLineChart(
-        "Évolution de l'énergie", "Itération", "Énergie", dataset,
-        PlotOrientation.VERTICAL, true, true, true);
+    final JFreeChart result = ChartFactory.createXYLineChart("Évolution de l'énergie", "Itération",
+        "Énergie", dataset, PlotOrientation.VERTICAL, true, true, true);
 
     result.setBorderPaint(Color.white);
 
@@ -90,13 +88,11 @@ public class StatsV⁮isitor<O, C extends Configuration<O>, T extends Temperatur
     plot.setDomainGridlinePaint(Color.LIGHT_GRAY);
     plot.setBackgroundPaint(Color.white);
 
-    XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot
-        .getRenderer();
+    XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
     renderer.setSeriesPaint(0, new Color(255, 0, 0));
     renderer.setSeriesPaint(1, new Color(2, 157, 116));
     renderer.setSeriesPaint(2, new Color(112, 147, 219));
     renderer.setSeriesPaint(3, new Color(140, 23, 23));
-    
 
     // axis.setRange(0.0, 200.0);
     return result;
@@ -110,7 +106,7 @@ public class StatsV⁮isitor<O, C extends Configuration<O>, T extends Temperatur
 
   @SuppressWarnings("unchecked")
   @Override
-  public void visit(C config, S sampler, T t) {
+  public void visit(Configuration<O> config, Sampler<O> sampler, Temperature t) {
     ++iter;
 
     this.bestEnergy = Math.min(config.getEnergy(), bestEnergy);
@@ -133,11 +129,11 @@ public class StatsV⁮isitor<O, C extends Configuration<O>, T extends Temperatur
   }
 
   @Override
-  public void begin(C config, S sampler, T t) {
+  public void begin(Configuration<O> config, Sampler<O> sampler, Temperature t) {
   }
 
   @Override
-  public void end(C config, S sampler, T t) {
+  public void end(Configuration<O> config, Sampler<O> sampler, Temperature t) {
 
   }
 

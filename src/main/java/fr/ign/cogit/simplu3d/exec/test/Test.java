@@ -7,8 +7,8 @@ import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.OCLBuildingsCuboidFinal;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid2;
-import fr.ign.mpp.configuration.Configuration;
 import fr.ign.parameters.Parameters;
+import fr.ign.rjmcmc.configuration.Configuration;
 
 public class Test {
 

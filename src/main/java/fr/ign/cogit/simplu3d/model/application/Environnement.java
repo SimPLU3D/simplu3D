@@ -9,37 +9,24 @@ import fr.ign.cogit.sig3d.model.citygml.core.CG_CityModel;
 import fr.ign.cogit.simplu3d.importer.model.ImportModelInstanceEnvironnement;
 
 /**
- * 
  * @author MBrasebin
- * 
  */
 public class Environnement extends CG_CityModel {
-
-  
-  
-  
   public String folder;
   public PLU plu;
-  
-  
-  //On charge le modèle
+
+  // On charge le modèle
   public static IModel model = ImportModelInstanceEnvironnement
       .getModel("target/classes/fr/ign/cogit/simplu3d/importer/model/ModelProviderClass.class");
 
-  
   private static Environnement env = null;
-  
 
-
-  public IFeatureCollection<CadastralParcel> cadastralParcels = new FT_FeatureCollection<CadastralParcel>();
-  public IFeatureCollection<SubParcel> subParcels = new FT_FeatureCollection<SubParcel>();
-  public IFeatureCollection<AbstractBuilding> buildings = new FT_FeatureCollection<AbstractBuilding>();
-  public IFeatureCollection<UrbaZone> urbaZones = new FT_FeatureCollection<UrbaZone>();
-  public IFeatureCollection<Alignement> alignements = new FT_FeatureCollection<Alignement>();
-  public IFeatureCollection<BasicPropertyUnit> bpU = new FT_FeatureCollection<BasicPropertyUnit>();
-  
-  
-
+  public IFeatureCollection<CadastralParcel> cadastralParcels = new FT_FeatureCollection<>();
+  public IFeatureCollection<SubParcel> subParcels = new FT_FeatureCollection<>();
+  public IFeatureCollection<AbstractBuilding> buildings = new FT_FeatureCollection<>();
+  public IFeatureCollection<UrbaZone> urbaZones = new FT_FeatureCollection<>();
+  public IFeatureCollection<Alignement> alignements = new FT_FeatureCollection<>();
+  public IFeatureCollection<BasicPropertyUnit> bpU = new FT_FeatureCollection<>();
 
   public DTMArea terrain;
   public IFeatureCollection<Road> roads = new FT_FeatureCollection<Road>();
@@ -62,12 +49,11 @@ public class Environnement extends CG_CityModel {
   private Environnement() {
 
   }
-  
-  public static Environnement getInstance(){
-    if(env == null){
+
+  public static Environnement getInstance() {
+    if (env == null) {
       env = new Environnement();
     }
-    
     return env;
   }
 
@@ -75,8 +61,7 @@ public class Environnement extends CG_CityModel {
     return cadastralParcels;
   }
 
-  public void setCadastralParcels(
-      IFeatureCollection<CadastralParcel> cadastralParcels) {
+  public void setCadastralParcels(IFeatureCollection<CadastralParcel> cadastralParcels) {
     this.cadastralParcels = cadastralParcels;
   }
 
@@ -159,7 +144,7 @@ public class Environnement extends CG_CityModel {
   public void setRoads(IFeatureCollection<Road> roads) {
     this.roads = roads;
   }
-  
+
   public IFeatureCollection<BasicPropertyUnit> getBpU() {
     return bpU;
   }
@@ -167,7 +152,7 @@ public class Environnement extends CG_CityModel {
   public void setBpU(IFeatureCollection<BasicPropertyUnit> bpU) {
     this.bpU = bpU;
   }
-  
+
   public PLU getPlu() {
     return plu;
   }

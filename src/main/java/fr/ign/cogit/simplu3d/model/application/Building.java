@@ -5,20 +5,15 @@ import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 public class Building extends AbstractBuilding {
 
   protected Building(){
-    
   }
   public Building(IGeometry geom) {
     super(geom);
-
   }
 
   @Override
   public AbstractBuilding clone() {
-
     Building b = new Building((IGeometry) this.getGeom().clone());
     b.isNew = this.isNew;
     return b;
-
   }
-
 }

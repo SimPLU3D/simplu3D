@@ -1,10 +1,8 @@
 package fr.ign.cogit.simplu3d.importer.applicationClasses;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
-import tudresden.ocl20.pivot.parser.ParseException;
 import tudresden.ocl20.pivot.pivotmodel.Constraint;
 import tudresden.ocl20.pivot.standalone.facade.StandaloneFacade;
 import fr.ign.cogit.simplu3d.model.application.Environnement;

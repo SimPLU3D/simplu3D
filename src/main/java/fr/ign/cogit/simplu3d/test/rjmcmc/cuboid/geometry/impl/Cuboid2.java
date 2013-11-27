@@ -3,6 +3,8 @@ package fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.math.util.MathUtils;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -13,19 +15,16 @@ import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToSurface;
-import fr.ign.cogit.geoxygene.sig3d.convert.transform.Extrusion2DObject;
 import fr.ign.cogit.geoxygene.util.conversion.JtsGeOxygene;
 import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
-import fr.ign.cogit.simplu3d.model.application.Building;
-import fr.ign.cogit.simplu3d.model.application.BuildingPart;
+import fr.ign.cogit.simplu3d.model.application.AbstractSimpleBuilding;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.model.application.FastBuildingPart;
 import fr.ign.geometry.Primitive;
 import fr.ign.geometry.Rectangle2D;
-import fr.ign.rjmcmc.kernel.SimpleObject;
 
-public class Cuboid2 extends Building implements Primitive, SimpleObject {
+public class Cuboid2 extends AbstractSimpleBuilding implements Primitive {
   public double centerx;
   public double centery;
   public double length;
@@ -35,8 +34,8 @@ public class Cuboid2 extends Building implements Primitive, SimpleObject {
 
   public boolean isNew = true;
 
-  public Cuboid2(double centerx, double centery, double length, double width,
-      double height, double orientation) {
+  public Cuboid2(double centerx, double centery, double length, double width, double height,
+      double orientation) {
     super();
     this.centerx = centerx;
     this.centery = centery;
@@ -44,7 +43,6 @@ public class Cuboid2 extends Building implements Primitive, SimpleObject {
     this.width = width;
     this.height = height;
     this.orientation = orientation;
-
   }
 
   Polygon geomJTS = null;
@@ -58,20 +56,15 @@ public class Cuboid2 extends Building implements Primitive, SimpleObject {
 
   @Override
   public IOrientableSurface getFootprint() {
-
     if (polyGeox == null) {
-
       try {
         polyGeox = (IPolygon) JtsGeOxygene.makeGeOxygeneGeom(this.toGeometry());
       } catch (Exception e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
-
     }
-
     return polyGeox;
-
   }
 
   @Override
@@ -79,43 +72,25 @@ public class Cuboid2 extends Building implements Primitive, SimpleObject {
     if (geomJTS == null) {
       GeometryFactory geomFact = new GeometryFactory();
       Coordinate[] pts = new Coordinate[5];
-
       double cosOrient = Math.cos(orientation);
       double sinOrient = Math.sin(orientation);
-
       double a = cosOrient * length / 2;
       double b = sinOrient * width / 2;
-
       double c = sinOrient * length / 2;
       double d = cosOrient * width / 2;
-
-      pts[0] = new Coordinate(this.centerx - a + b, this.centery - c - d,
-          height);
-
-      pts[1] = new Coordinate(this.centerx + a + b, this.centery + c - d,
-          height);
-
-      pts[2] = new Coordinate(this.centerx + a - b, this.centery + c + d,
-          height);
-
-      pts[3] = new Coordinate(this.centerx - a - b, this.centery - c + d,
-          height);
-
+      pts[0] = new Coordinate(this.centerx - a + b, this.centery - c - d, height);
+      pts[1] = new Coordinate(this.centerx + a + b, this.centery + c - d, height);
+      pts[2] = new Coordinate(this.centerx + a - b, this.centery + c + d, height);
+      pts[3] = new Coordinate(this.centerx - a - b, this.centery - c + d, height);
       pts[4] = new Coordinate(pts[0]);
-
       /*
        * double hLength = length / 2; double hWidth = width / 2;
-       * 
        * pts[0] = new Coordinate(this.centerx - hLength, this.centery - hWidth);
-       * 
        * pts[1] = new Coordinate(this.centerx + hLength, this.centery - hWidth,
        * height);
-       * 
        * pts[2] = new Coordinate(this.centerx + hLength, this.centery + hWidth);
-       * 
        * pts[3] = new Coordinate(this.centerx - hLength, this.centery + hWidth,
        * height);
-       * 
        * pts[4] = new Coordinate(pts[0]);
        */
 
@@ -128,8 +103,8 @@ public class Cuboid2 extends Building implements Primitive, SimpleObject {
 
   @Override
   public Object[] toArray() {
-    return new Object[] { this.centerx, this.centery, this.length, this.width,
-        this.height, this.orientation };
+    return new Object[] { this.centerx, this.centery, this.length, this.width, this.height,
+        this.orientation };
   }
 
   @Override
@@ -140,8 +115,8 @@ public class Cuboid2 extends Building implements Primitive, SimpleObject {
   @Override
   public int hashCode() {
     int hashCode = 1;
-    double[] array = { this.centerx, this.centery, this.length, this.width,
-        this.orientation, this.height };
+    double[] array = { this.centerx, this.centery, this.length, this.width, this.orientation,
+        this.height };
     for (double e : array)
       hashCode = 31 * hashCode + hashCode(e);
     return hashCode;
@@ -149,7 +124,6 @@ public class Cuboid2 extends Building implements Primitive, SimpleObject {
 
   public int hashCode(double value) {
     long bits = Double.doubleToLongBits(value);
-
     return (int) (bits ^ (bits >>> 32));
   }
 
@@ -163,15 +137,16 @@ public class Cuboid2 extends Building implements Primitive, SimpleObject {
       return false;
     }
     Cuboid2 r = (Cuboid2) o;
-    return this.centerx == r.centerx && this.centery == r.centery
-        && this.width == r.width && this.length == r.length
-        && this.orientation == r.orientation && this.height == r.height;
+    return MathUtils.equals(this.centerx, r.centerx) && MathUtils.equals(this.centery, r.centery)
+        && MathUtils.equals(this.width, r.width) && MathUtils.equals(this.length, r.length)
+        && MathUtils.equals(this.orientation, r.orientation)
+        && MathUtils.equals(this.height, r.height);
   }
 
   public String toString() {
-    return "Cuboid : " + " Centre " + this.centerx + "; " + this.centery
-        + "  hauteur " + this.height + " largeur  " + this.width
-        + "   longueur  " + this.width + "   orientation   " + this.orientation;
+    return "Cuboid : " + " Centre " + this.centerx + "; " + this.centery + " hauteur "
+        + this.height + " largeur " + this.width + " longueur " + this.width + " orientation "
+        + this.orientation;
 
   }
 
@@ -180,9 +155,8 @@ public class Cuboid2 extends Building implements Primitive, SimpleObject {
   public Rectangle2D getRectangle2D() {
 
     if (rectangle == null) {
-      rectangle = new Rectangle2D(this.centerx, this.centery,
-          Math.cos(orientation) * length / 2, Math.sin(orientation) * length
-              / 2, width / length);
+      rectangle = new Rectangle2D(this.centerx, this.centery, Math.cos(orientation) * length / 2,
+          Math.sin(orientation) * length / 2, width / length);
     }
     return rectangle;
   }
@@ -199,148 +173,81 @@ public class Cuboid2 extends Building implements Primitive, SimpleObject {
 
   public double getZmin() {
     if (Double.isNaN(zMin)) {
-
       Environnement env = Environnement.getInstance();
       zMin = env.getTerrain().castCoordinate(this.centerx, this.centery).z;
-
     }
     // TODO Auto-generated method stub
     return zMin;
   }
 
   public static boolean do_intersect(Cuboid2 a, Cuboid2 b) {
-
     return Rectangle2D.do_intersect(a.getRectangle2D(), b.getRectangle2D());
   }
 
   public static double intersection_area(Cuboid2 a, Cuboid2 b) {
-
-    return Rectangle2D
-        .intersection_area(a.getRectangle2D(), b.getRectangle2D());
+    return Rectangle2D.intersection_area(a.getRectangle2D(), b.getRectangle2D());
   }
 
-  public List<AbstractBuilding> bandEpsilon(Geometry geom, double distMin,
-      double distMax) {
-
+  public List<AbstractBuilding> bandEpsilon(Geometry geom, double distMin, double distMax) {
     List<AbstractBuilding> lPolygonOut = new ArrayList<>();
-
     double d = geom.distance(geomJTS);
-
     if (d > distMax) {
       return lPolygonOut;
     }
-
     if (d < distMin) {
       return lPolygonOut;
     }
-
-    Geometry geomOut = Double.isNaN(distMax) ? geomJTS : geom.buffer(distMax)
-        .intersection(geomJTS);
-
+    Geometry geomOut = Double.isNaN(distMax) ? geomJTS : geom.buffer(distMax).intersection(geomJTS);
     geomOut = geomOut.difference(geom.buffer(distMin));
-    
-    
-    List <AbstractBuilding> fBP =getFastBuildingPart(distMin, distMax);
-    
-    
-    if(fBP != null){
+    List<AbstractBuilding> fBP = getFastBuildingPart(distMin, distMax);
+    if (fBP != null) {
       return fBP;
     }
-
-    
-    
-
     List<IOrientableSurface> lS;
     try {
-      lS = FromGeomToSurface.convertGeom(JtsGeOxygene
-          .makeGeOxygeneGeom(geomOut));
-
+      lS = FromGeomToSurface.convertGeom(JtsGeOxygene.makeGeOxygeneGeom(geomOut));
       for (IOrientableSurface oS : lS) {
-        
-        if(oS == null || oS.isEmpty()){
+        if (oS == null || oS.isEmpty()) {
           continue;
         }
-        
-        
-      
-        
-
-            lDMin.add(distMin);
-            lDMax.add(distMax);
-            lPolygonOut.add(new FastBuildingPart((IPolygon) oS,this.height + this.getZmin()));
-            lFP.add(fBP);
-          
-
-            
-            
-            
-
-        
-
-
-        
+        lDMin.add(distMin);
+        lDMax.add(distMax);
+        lPolygonOut.add(new FastBuildingPart((IPolygon) oS, this.height + this.getZmin()));
+        lFP.add(fBP);
       }
-
     } catch (Exception e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    
-    
     lFP.add(lPolygonOut);
-
     return lPolygonOut;
   }
-  
-  
-  
+
   private List<Double> lDMin = new ArrayList<>();
   private List<Double> lDMax = new ArrayList<>();
   private List<List<AbstractBuilding>> lFP = new ArrayList<>();
-  
-  
-  private List<AbstractBuilding> getFastBuildingPart(double dMin, double dMax){
-    
-    
+
+  private List<AbstractBuilding> getFastBuildingPart(double dMin, double dMax) {
     int nbLDmin = lDMin.size();
-    
-    
-    for(int i=0;i<nbLDmin;i++){
-      
-      if(lDMin.get(i) == dMin && lDMax.get(i) == dMax){
+    for (int i = 0; i < nbLDmin; i++) {
+      if (lDMin.get(i) == dMin && lDMax.get(i) == dMax) {
         return lFP.get(i);
       }
-      
-      
-      
     }
-    
-    
     return null;
-    
   }
-  
-  
-  
-  
-  
-  
 
-  public List<AbstractBuilding> bandEpsilon(CadastralParcel cP, double distMin,
-      double distMax) {
+  public List<AbstractBuilding> bandEpsilon(CadastralParcel cP, double distMin, double distMax) {
     try {
-      return bandEpsilon(JtsGeOxygene.makeJtsGeom(cP.getConsLine()), distMin,
-          distMax);
+      return bandEpsilon(JtsGeOxygene.makeJtsGeom(cP.getConsLine()), distMin, distMax);
     } catch (Exception e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
     return null;
-
   }
 
-  public List<AbstractBuilding> bandEpsilon(IGeometry geom, double distMin,
-      double distMax) {
+  public List<AbstractBuilding> bandEpsilon(IGeometry geom, double distMin, double distMax) {
     try {
       return bandEpsilon(JtsGeOxygene.makeJtsGeom(geom), distMin, distMax);
     } catch (Exception e) {
@@ -348,7 +255,6 @@ public class Cuboid2 extends Building implements Primitive, SimpleObject {
       e.printStackTrace();
     }
     return null;
-
   }
 
   public double height() {
@@ -356,16 +262,9 @@ public class Cuboid2 extends Building implements Primitive, SimpleObject {
   }
 
   public boolean prospect(IGeometry geom, double slope, double hIni) {
-
     double h = -1;
-
     double distance = this.getFootprint().distance(geom);
-
     h = ((Cuboid2) this).height;
-
-
     return distance * slope + hIni > h;
-
   }
-
 }

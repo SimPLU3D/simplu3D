@@ -9,15 +9,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
-import fr.ign.mpp.configuration.Configuration;
+import fr.ign.rjmcmc.configuration.Configuration;
+import fr.ign.rjmcmc.kernel.SimpleObject;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.Temperature;
 import fr.ign.simulatedannealing.visitor.Visitor;
 
-public class CSVendStats<O, C extends Configuration<O>, T extends Temperature, S extends Sampler<O, C, T>>
-    implements Visitor<O, C, T, S> {
-  private int dump;
-  private int save;
+public class CSVendStats<O extends SimpleObject> implements Visitor<O> {
+//  private int dump;
+//  private int save;
   private int iter;
   private BufferedWriter writer;
   private String textSeparator = ";";
@@ -34,8 +34,7 @@ public class CSVendStats<O, C extends Configuration<O>, T extends Temperature, S
 
       Path path = Paths.get(fileName);
 
-      writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8,
-          StandardOpenOption.APPEND);
+      writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND);
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -45,18 +44,17 @@ public class CSVendStats<O, C extends Configuration<O>, T extends Temperature, S
   @Override
   public void init(int dump, int s) {
     this.iter = 0;
-    this.dump = dump;
-    this.save = s;
+//    this.dump = dump;
+//    this.save = s;
   }
 
   @Override
-  public void begin(C config, S sampler, T t) {
+  public void begin(Configuration<O> config, Sampler<O> sampler, Temperature t) {
 
   }
 
-  @SuppressWarnings({ "unchecked" })
   @Override
-  public void end(C config, S sampler, T t) {
+  public void end(Configuration<O> config, Sampler<O> sampler, Temperature t) {
     try {
       doWrite(config, sampler);
       writer.flush();
@@ -71,12 +69,11 @@ public class CSVendStats<O, C extends Configuration<O>, T extends Temperature, S
   String formatInt = "%1$-10d";
 
   double energyMoy = 0;
-  
+
   private long currentTime;
 
-  @SuppressWarnings({ "unchecked" })
   @Override
-  public void visit(C config, S sampler, T t) {
+  public void visit(Configuration<O> config, Sampler<O> sampler, Temperature t) {
 
     if (iter == 0) {
       currentTime = System.currentTimeMillis();
@@ -85,8 +82,8 @@ public class CSVendStats<O, C extends Configuration<O>, T extends Temperature, S
     ++iter;
 
   }
-  
-  public void doWrite(C config, S sampler) {
+
+  public void doWrite(Configuration<O> config, Sampler<O> sampler) {
 
     StringBuffer sB = new StringBuffer();
 
@@ -97,13 +94,9 @@ public class CSVendStats<O, C extends Configuration<O>, T extends Temperature, S
 
     sB.append(config.size());
     sB.append(textSeparator);
-    
+
     sB.append(config.getEnergy());
     sB.append(textSeparator);
-
-
-
-
 
     try {
       writer.append(sB.toString());

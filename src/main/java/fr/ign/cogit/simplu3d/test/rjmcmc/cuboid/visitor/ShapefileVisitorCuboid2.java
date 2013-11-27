@@ -24,14 +24,14 @@ import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.geoxygene.util.conversion.JtsGeOxygene;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCuboid;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid2;
-import fr.ign.mpp.configuration.Configuration;
 import fr.ign.mpp.configuration.GraphConfiguration;
+import fr.ign.rjmcmc.configuration.Configuration;
+import fr.ign.rjmcmc.kernel.SimpleObject;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.Temperature;
 import fr.ign.simulatedannealing.visitor.Visitor;
 
-public class ShapefileVisitorCuboid2<O, C extends Configuration<O>, T extends Temperature, S extends Sampler<O, C, T>>
-    implements Visitor<O, C, T, S> {
+public class ShapefileVisitorCuboid2<O extends SimpleObject> implements Visitor<O> {
   private int save;
   private int iter;
   private String fileName;
@@ -47,21 +47,21 @@ public class ShapefileVisitorCuboid2<O, C extends Configuration<O>, T extends Te
   }
 
   @Override
-  public void begin(C config, S sampler, T t) {
+  public void begin(Configuration<O> config, Sampler<O> sampler, Temperature t) {
   }
 
-  @SuppressWarnings( { "unchecked" })
+  @SuppressWarnings({ "unchecked" })
   @Override
-  public void end(C config, S sampler, T t) {
+  public void end(Configuration<O> config, Sampler<O> sampler, Temperature t) {
     this.writeShapefile(fileName + "_" + String.format(formatInt, iter + 1) + ".shp",
         (GraphConfiguration<Cuboid2>) config);
   }
 
   String formatInt = "%1$-10d";
 
-  @SuppressWarnings( { "unchecked" })
+  @SuppressWarnings({ "unchecked" })
   @Override
-  public void visit(C config, S sampler, T t) {
+  public void visit(Configuration<O> config, Sampler<O> sampler, Temperature t) {
     ++iter;
     if ((save > 0) && (iter % save == 0)) {
       this.writeShapefile(fileName + "_" + String.format(formatInt, iter) + ".shp",
@@ -69,7 +69,7 @@ public class ShapefileVisitorCuboid2<O, C extends Configuration<O>, T extends Te
     }
   }
 
-  @SuppressWarnings( { "unchecked", "deprecation" })
+  @SuppressWarnings({ "unchecked", "deprecation" })
   private void writeShapefile(String aFileName, GraphConfiguration<Cuboid2> config) {
     try {
       ShapefileDataStore store = new ShapefileDataStore(new File(aFileName).toURI().toURL());
@@ -87,14 +87,14 @@ public class ShapefileVisitorCuboid2<O, C extends Configuration<O>, T extends Te
       for (GraphConfiguration<Cuboid2>.GraphVertex v : graph.getGraph().vertexSet()) {
 
         List<Object> liste = new ArrayList<>();
-        
+
         IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<>();
         iMS.addAll(GenerateSolidFromCuboid.generate(v.getValue()).getFacesList());
-        
+
         liste.add(JtsGeOxygene.makeJtsGeom(iMS));
         liste.add(v.getEnergy());
-        SimpleFeature simpleFeature = SimpleFeatureBuilder.build(type, liste.toArray(), String
-            .valueOf(i++));
+        SimpleFeature simpleFeature = SimpleFeatureBuilder.build(type, liste.toArray(),
+            String.valueOf(i++));
         collection.add(simpleFeature);
       }
       featureStore.addFeatures(collection);

@@ -20,7 +20,6 @@ import fr.ign.cogit.simplu3d.model.application.SpecificWallSurface;
 import fr.ign.cogit.simplu3d.model.application.SubParcel;
 import fr.ign.cogit.simplu3d.model.application.UrbaZone;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid2;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.CuboidSnap;
 import fr.ign.cogit.simplu3d.util.Util;
 
 public class ModelProviderClass {
@@ -45,11 +44,9 @@ public class ModelProviderClass {
   protected Prescription_SURF ps;
   protected PublicSpace pss;
   protected BuildingPart bp;
-  protected Cuboid2  c2;
+  protected Cuboid2 c2;
   /*
    * protected Cuboid c; protected Cuboid2 c2;
    */
-
-protected Util ut;
-
+  protected Util ut;
 }

@@ -3,16 +3,15 @@ package fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation;
 import fr.ign.rjmcmc.kernel.Transform;
 
 public class ChangeHeight implements Transform {
-  
-  
-  private double    amplitude;
-  public ChangeHeight(double amplitude){
+
+  private double amplitude;
+
+  public ChangeHeight(double amplitude) {
     this.amplitude = amplitude;
- 
   }
-  
+
   @Override
-  public void apply(double[] in, double[] out) {
+  public double apply(double[] in, double[] out) {
     double x = in[0];
     double y = in[1];
     double length = in[2];
@@ -20,40 +19,33 @@ public class ChangeHeight implements Transform {
     double height = in[4];
     double orientation = in[5];
     double dh = in[6];
-    // res = Rectangle_2(c+v+u, n+v,r);
     out[0] = x;
     out[1] = y;
     out[2] = length;
-    out[3] = width ;
+    out[3] = width;
     out[4] = height + (0.5 - dh) * amplitude;
     out[5] = orientation;
-    out[6] = 1 -dh;
-
-    
-  }
-
-  @Override
-  public double getAbsJacobian() {
-
+    out[6] = 1 - dh;
     return 1;
   }
 
   @Override
   public double getAbsJacobian(double[] d) {
-
     return 1;
   }
 
   @Override
-  public void inverse(double[] in, double[] out) {
-    this.apply(in, out);
+  public double inverse(double[] in, double[] out) {
+    return this.apply(in, out);
   }
-  
+
   @Override
   public int dimension() {
-
     return 7;
   }
 
-
+  @Override
+  public double getInverseAbsJacobian(double[] d) {
+    return 1;
+  }
 }
