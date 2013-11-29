@@ -30,7 +30,7 @@ import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeLength;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeWidth;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.MoveCuboid2;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.RotateCuboid2;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.birth.UniformBirthInGeom;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.birth.TransformToSurface;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.CSVendStats;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.CountVisitor;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.FilmVisitor;
@@ -40,6 +40,7 @@ import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.ViewerVisitor;
 import fr.ign.mpp.DirectRejectionSampler;
 import fr.ign.mpp.DirectSampler;
 import fr.ign.mpp.kernel.ObjectBuilder;
+import fr.ign.mpp.kernel.UniformBirth;
 import fr.ign.parameters.Parameters;
 import fr.ign.random.Random;
 import fr.ign.rjmcmc.acceptance.MetropolisAcceptance;
@@ -54,10 +55,6 @@ import fr.ign.rjmcmc.energy.MultipliesUnaryEnergy;
 import fr.ign.rjmcmc.energy.PlusUnaryEnergy;
 import fr.ign.rjmcmc.energy.UnaryEnergy;
 import fr.ign.rjmcmc.kernel.Kernel;
-import fr.ign.rjmcmc.kernel.NullView;
-import fr.ign.rjmcmc.kernel.SimpleObject;
-import fr.ign.rjmcmc.kernel.UniformView;
-import fr.ign.rjmcmc.kernel.Variate;
 import fr.ign.rjmcmc.sampler.GreenSampler;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.SimulatedAnnealing;
@@ -73,7 +70,6 @@ import fr.ign.simulatedannealing.visitor.Visitor;
 /**
  * Using a DirectRejectionSampler.
  * @author JPerret
- *
  */
 public class OCLBuildingsCuboidFinalDirectRejection {
 
@@ -286,9 +282,12 @@ public class OCLBuildingsCuboidFinalDirectRejection {
 
     IEnvelope env = bpU.getGeom().envelope();
     // Sampler de naissance
-    UniformBirthInGeom<Cuboid2> birth = new UniformBirthInGeom<Cuboid2>(new Cuboid2(env.minX(),
-        env.minY(), mindim, mindim, minheight, 0), new Cuboid2(env.maxX(), env.maxY(), maxdim,
-        maxdim, maxheight, Math.PI), builder, bpU.getpol2D());
+    // UniformBirthInGeom<Cuboid2> birth = new UniformBirthInGeom<Cuboid2>(new Cuboid2(env.minX(),
+    // env.minY(), mindim, mindim, minheight, 0), new Cuboid2(env.maxX(), env.maxY(), maxdim,
+    // maxdim, maxheight, Math.PI), builder, bpU.getpol2D());
+    UniformBirth<Cuboid2> birth = new UniformBirth<Cuboid2>(new Cuboid2(env.minX(), env.minY(),
+        mindim, mindim, minheight, 0), new Cuboid2(env.maxX(), env.maxY(), maxdim, maxdim,
+        maxheight, Math.PI), builder, TransformToSurface.class, bpU.getpol2D());
 
     // Distribution de poisson
     PoissonDistribution distribution = new PoissonDistribution(Double.parseDouble(p.get("poisson")));
@@ -298,7 +297,7 @@ public class OCLBuildingsCuboidFinalDirectRejection {
     // Probabilité de naissance-morts modifications
     List<Kernel<Cuboid2>> kernels = new ArrayList<Kernel<Cuboid2>>(3);
 
-    kernels.add(make_uniform_birth_death_kernel_with_geom(builder, birth,
+    kernels.add(Kernel.make_uniform_birth_death_kernel(builder, birth,
         Double.parseDouble(p.get("pbirth")), Double.parseDouble(p.get("pdeath"))));
     double amplitudeMove = Double.parseDouble(p.get("amplitudeMove"));
     kernels.add(Kernel.make_uniform_modification_kernel(builder, new MoveCuboid2(amplitudeMove),
@@ -318,14 +317,6 @@ public class OCLBuildingsCuboidFinalDirectRejection {
     Sampler<Cuboid2> s = new GreenSampler<Cuboid2>(ds,
         new MetropolisAcceptance<SimpleTemperature>(), kernels);
     return s;
-  }
-
-  private static <T extends SimpleObject> Kernel<T> make_uniform_birth_death_kernel_with_geom(
-      ObjectBuilder<T> builder, UniformBirthInGeom<T> b, double pbirth, double pdeath) {
-    Kernel<T> kernel = new Kernel<T>(new NullView<T>(), new UniformView<T>(builder), b.getVariate(),
-        new Variate<T>(0), b.getTransform(), pbirth, pdeath);
-    kernel.setName("BirthDeath");
-    return kernel;
   }
 
   private static EndTest<Cuboid2> create_end_test(Parameters p) {
