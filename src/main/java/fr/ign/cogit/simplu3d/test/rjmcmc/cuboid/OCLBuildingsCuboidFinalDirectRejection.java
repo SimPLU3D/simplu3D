@@ -25,6 +25,7 @@ import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboid2.IntersectionVolum
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboid2.VolumeUnaryEnergy;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid2;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.loader.LoaderCuboid2;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.sampler.GreenSamplerBlockTemperature;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeHeight;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeLength;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.ChangeWidth;
@@ -314,7 +315,7 @@ public class OCLBuildingsCuboidFinalDirectRejection {
     kernels.add(Kernel.make_uniform_modification_kernel(builder, new ChangeHeight(amplitudeHeight),
         0.2, "ChgHeight"));
 
-    Sampler<Cuboid2> s = new GreenSampler<Cuboid2>(ds,
+    Sampler<Cuboid2> s = new GreenSamplerBlockTemperature<Cuboid2>(ds,
         new MetropolisAcceptance<SimpleTemperature>(), kernels);
     return s;
   }
