@@ -18,9 +18,10 @@ import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.configuration.ModelInstanceGraphConfiguration;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.configuration.ModelInstanceGraphConfigurationPredicate;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid2;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.birth.UniformBirthInGeom;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.birth.TransformToSurface;
 import fr.ign.mpp.DirectSampler;
 import fr.ign.mpp.kernel.ObjectBuilder;
+import fr.ign.mpp.kernel.UniformBirth;
 import fr.ign.parameters.Parameters;
 import fr.ign.random.Random;
 import fr.ign.rjmcmc.acceptance.MetropolisAcceptance;
@@ -30,11 +31,7 @@ import fr.ign.rjmcmc.distribution.UniformDistribution;
 import fr.ign.rjmcmc.energy.ConstantEnergy;
 import fr.ign.rjmcmc.kernel.Kernel;
 import fr.ign.rjmcmc.kernel.KernelFunctor;
-import fr.ign.rjmcmc.kernel.NullView;
 import fr.ign.rjmcmc.kernel.RandomApply;
-import fr.ign.rjmcmc.kernel.SimpleObject;
-import fr.ign.rjmcmc.kernel.UniformView;
-import fr.ign.rjmcmc.kernel.Variate;
 import fr.ign.rjmcmc.sampler.GreenSampler;
 import fr.ign.rjmcmc.sampler.RejectionSampler;
 import fr.ign.rjmcmc.sampler.Sampler;
@@ -96,6 +93,7 @@ public class DistributionAssesment {
 
         if (lAB.size() != 1) {
           System.out.println("Probabilité supérieure à 1 ?");
+          return;
         }
 
         Cuboid2 c1 = lAB.get(0);
@@ -113,9 +111,9 @@ public class DistributionAssesment {
 
     }
 
-    ShapefileWriter.write(featC, "C:/Users/mbrasebin/Desktop/Distrib/dist.shp");
+    ShapefileWriter.write(featC, "H:/Distrib/dist.shp");
 
-    ShapefileWriter.write(featCD, "C:/Users/mbrasebin/Desktop/Distrib/distdeb.shp");
+    ShapefileWriter.write(featCD, "H:/Distrib/distdeb.shp");
 
   }
 
@@ -163,15 +161,18 @@ public class DistributionAssesment {
     };
 
     // Sampler de naissance
-    UniformBirthInGeom<Cuboid2> birth = new UniformBirthInGeom<Cuboid2>(new Cuboid2(0, 0, mindim,
+//    UniformBirthInGeom<Cuboid2> birth = new UniformBirthInGeom<Cuboid2>(new Cuboid2(0, 0, mindim,
+//        mindim, minheight, 0), new Cuboid2(1, 1, maxdim, maxdim, maxheight, Math.PI), builder,
+//        bpU.getpol2D());
+    UniformBirth<Cuboid2> birth = new UniformBirth<Cuboid2>(new Cuboid2(0, 0, mindim,
         mindim, minheight, 0), new Cuboid2(1, 1, maxdim, maxdim, maxheight, Math.PI), builder,
-        bpU.getpol2D());
+        TransformToSurface.class, bpU.getpol2D());
 
     DirectSampler<Cuboid2> ds = new DirectSampler<Cuboid2>(new UniformDistribution(0, 1), birth);
 
     // Probabilité de naissance-morts modifications
     List<Kernel<Cuboid2>> kernels = new ArrayList<Kernel<Cuboid2>>(3);
-    kernels.add(make_uniform_birth_death_kernel_with_geom(builder, birth, 1, 0));
+    kernels.add(Kernel.make_uniform_birth_death_kernel(builder, birth, 1, 1));
 
     Sampler<Cuboid2> s = new GreenSampler<Cuboid2>(ds,
         new MetropolisAcceptance<SimpleTemperature>(), kernels);
@@ -179,11 +180,11 @@ public class DistributionAssesment {
     return rs;
   }
 
-  public static <T extends SimpleObject> Kernel<T> make_uniform_birth_death_kernel_with_geom(
-      ObjectBuilder<T> builder, UniformBirthInGeom<T> b, double pbirth, double pdeath) {
-    return new Kernel<T>(new NullView<T>(), new UniformView<T>(builder), b.getVariate(),
-        new Variate<T>(0), b.getTransform(), pbirth, pdeath);
-  }
+//  public static <T extends SimpleObject> Kernel<T> make_uniform_birth_death_kernel_with_geom(
+//      ObjectBuilder<T> builder, UniformBirthInGeom<T> b, double pbirth, double pdeath) {
+//    return new Kernel<T>(new NullView<T>(), new UniformView<T>(builder), b.getVariate(),
+//        new Variate<T>(0), b.getTransform(), pbirth, pdeath);
+//  }
 
   private static Parameters initialize_parameters() {
     return Parameters
