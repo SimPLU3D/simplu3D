@@ -42,7 +42,7 @@ public class UniformBirthInGeom<T extends SimpleObject> implements ObjectSampler
     double phi = variate.compute(e, val0);
     double jacob = this.transform.apply(val0, val1);
     this.object = this.builder.build(val1);
-    return phi * jacob;
+    return phi / jacob; 
   }
 
   @Override
