@@ -2,7 +2,7 @@
 <parameter-configuration>
 	<parameters>
         <!-- Dossier contenant l'environnement géon il contient bati.shp, parcelle.shp, route.shp, zonage.shp, PRESRIPTION_SURF.shp-->
-		<param key="folder" value="E:/mbrasebin/Donnees/Strasbourg/GTRU/ProjectT1/"/>
+		<param key="folder" value="E:/mbrasebin/Donnees/Strasbourg/GTRU/ProjectT2/"/>
         <!-- Paramètres relatifs à l'énergie -->
         <!-- Énergie de création d'un cube dans une configuration m^3-->
 		<param key="energy" value="12" />
@@ -70,10 +70,10 @@
         <!-- Sortie viewer 3D -->
         <param key="visitorviewer" value="false" />
         <param key="showbackground" value="true" />
-        <param key="xminbg" value="1052592.48956" />
-        <param key="xmaxbg" value="1052353.72956" />
-        <param key="yminbg" value="6840777.25897" />
-        <param key="ymaxbg" value="6841006.49397" />
+        <param key="xminbg" value="1051157" />
+        <param key="xmaxbg" value="1051322" />
+        <param key="yminbg" value="6840727" />
+        <param key="ymaxbg" value="6840858" />
         <param key="z" value="138" />
         
         <!-- Sortie ShapeFileWriter -->
