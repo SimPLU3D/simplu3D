@@ -66,16 +66,18 @@ import fr.ign.simulatedannealing.visitor.CompositeVisitor;
 import fr.ign.simulatedannealing.visitor.OutputStreamVisitor;
 import fr.ign.simulatedannealing.visitor.Visitor;
 
-public class OptimisedBuildingsCuboidFinalDirectRejectionParallelTempering {
-
-
+public class OptimisedBuildingsCuboidFinalDirectRejection {
 
   private double coeffDec = Double.NaN;
   private double deltaConf = Double.NaN;
   private double minDimBox = Double.NaN;
   private double maxDimBox = Double.NaN;
-  
-  
+  private double energyCreation = Double.NaN;
+
+  public void setEnergyCreation(double energyCreation) {
+    this.energyCreation = energyCreation;
+  }
+
   public void setMinDimBox(double minDimBox) {
     this.minDimBox = minDimBox;
   }
@@ -84,7 +86,7 @@ public class OptimisedBuildingsCuboidFinalDirectRejectionParallelTempering {
     this.maxDimBox = maxDimBox;
   }
 
-  public OptimisedBuildingsCuboidFinalDirectRejectionParallelTempering() {
+  public OptimisedBuildingsCuboidFinalDirectRejection() {
   }
 
   public void setCoeffDec(double coeffDec) {
@@ -217,11 +219,16 @@ public class OptimisedBuildingsCuboidFinalDirectRejectionParallelTempering {
    * @return la configuration chargée, c'est à dire la formulation énergétique
    *         prise en compte
    */
-  public static Configuration<Cuboid2> create_configuration(Parameters p,
+  public Configuration<Cuboid2> create_configuration(Parameters p,
       Geometry geom, BasicPropertyUnit bpu) {
     // Énergie constante : à la création d'un nouvel objet
+
+    double energyCrea = Double.isNaN(this.energyCreation) ? Double
+        .parseDouble(p.get("energy")) : this.energyCreation;
+
     ConstantEnergy<Cuboid2, Cuboid2> energyCreation = new ConstantEnergy<Cuboid2, Cuboid2>(
-        Double.parseDouble(p.get("energy")));
+        energyCrea);
+
     // Énergie constante : pondération de l'intersection
     ConstantEnergy<Cuboid2, Cuboid2> ponderationVolume = new ConstantEnergy<Cuboid2, Cuboid2>(
         Double.parseDouble(p.get("ponderation_volume")));
@@ -265,12 +272,11 @@ public class OptimisedBuildingsCuboidFinalDirectRejectionParallelTempering {
   Sampler<Cuboid2> create_sampler(Parameters p, BasicPropertyUnit bpU,
       ConfigurationModificationPredicate<Cuboid2> pred) {
     // Un vecteur ?????
-    double mindim = Double.isNaN(this.minDimBox) ? Double.parseDouble(p.get("mindim")) : this.minDimBox;
-    double maxdim =  Double.isNaN(this.maxDimBox) ?Double.parseDouble(p.get("maxdim")) : this.maxDimBox;
-    
-    
-    
-    
+    double mindim = Double.isNaN(this.minDimBox) ? Double.parseDouble(p
+        .get("mindim")) : this.minDimBox;
+    double maxdim = Double.isNaN(this.maxDimBox) ? Double.parseDouble(p
+        .get("maxdim")) : this.maxDimBox;
+
     double minheight = Double.parseDouble(p.get("minheight"));
     double maxheight = Double.parseDouble(p.get("maxheight"));
     // A priori on redéfini le constructeur de l'objet

@@ -35,7 +35,7 @@ public class InfluDimCuboid {
     Parameters p = initialize_parameters(folderName + fileName);
 
     int nbValMin = 5;
-    int nbValMax = 7;
+    int nbValMax = 5;
 
     double[] valsMinDimBox = new double[nbValMin];
     double[] valsMaxDimBox = new double[nbValMax];
@@ -47,14 +47,13 @@ public class InfluDimCuboid {
     valsMinDimBox[4] = 20;
 
     valsMinDimBox[0] = 30;
-    valsMinDimBox[1] = 40;
-    valsMinDimBox[2] = 50;
-    valsMinDimBox[3] = 60;
-    valsMinDimBox[4] = 70;
-    valsMinDimBox[5] = 80;
-    valsMinDimBox[6] = 90;
+    valsMinDimBox[1] = 50;
+    valsMinDimBox[2] = 60;
+    valsMinDimBox[3] = 70;
+    valsMinDimBox[4] = 80;
+    valsMinDimBox[5] = 90;
 
-    int nbIt = 1;
+    int nbIt = 10;
 
     int count = 0;
 
