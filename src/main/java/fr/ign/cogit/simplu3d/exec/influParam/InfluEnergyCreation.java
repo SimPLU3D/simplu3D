@@ -36,10 +36,10 @@ public class InfluEnergyCreation {
 
 		Parameters p = initialize_parameters(folderName + fileName);
 
-		int nbInter = 10;
+		int nbInter = 20;
 
 		double valMin = 0;
-		double valMax = 100;
+		double valMax = 500;
 
 		int count = 0;
 
@@ -65,7 +65,7 @@ public class InfluEnergyCreation {
 
 			// writer.append(valCoeff[i] + ";");
 
-			for (int j = 4; j < 6; j++) {
+			for (int j = 0; j < 1; j++) {
 
 				Environnement env = LoaderSHP.load(p.get("folder"));
 

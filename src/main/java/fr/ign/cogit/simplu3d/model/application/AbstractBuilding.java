@@ -30,6 +30,10 @@ public abstract class AbstractBuilding extends CG_AbstractBuilding {
 
   public boolean isNew = false;
 
+  public void setNew(boolean isNew) {
+    this.isNew = isNew;
+  }
+
   private List<SubParcel> sousParcelles = new ArrayList<SubParcel>();
   private BasicPropertyUnit bPU;
 

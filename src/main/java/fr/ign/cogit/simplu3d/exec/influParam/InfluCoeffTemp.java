@@ -14,9 +14,10 @@ import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.OCLBuildingsCuboidFinal;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.OptimisedBuildingsCuboidFinalDirectRejection;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCuboid;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid2;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.predicate.UXL3Predicate;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
 import fr.ign.rjmcmc.configuration.Configuration;
@@ -36,12 +37,12 @@ public class InfluCoeffTemp {
 
     Parameters p = initialize_parameters(folderName + fileName);
 
-
+    int nbIt = 1;
     int nbInter = 5;
 
-    double bMin = 0;
-    double bMax = 0.99;
-    
+    double bMin = 0.99699993;
+    double bMax = 0.9999999;
+
     int count = 0;
 
     List<Double> ld = new ArrayList<>();
@@ -52,12 +53,9 @@ public class InfluCoeffTemp {
 
     }
 
- //   ld.add(bMax);
+     ld.add(bMax);
 
     Object[] valCoeff = ld.toArray();
-
-    int nbIt = 10;
-
 
     for (int i = 0; i < valCoeff.length; i++) {
 
@@ -66,49 +64,52 @@ public class InfluCoeffTemp {
       for (int j = 0; j < nbIt; j++) {
         Environnement env = LoaderSHP.load(p.get("folder"));
 
-        OCLBuildingsCuboidFinal ocb = new OCLBuildingsCuboidFinal();
+        OptimisedBuildingsCuboidFinalDirectRejection ocb = new OptimisedBuildingsCuboidFinalDirectRejection();
+        UXL3Predicate<Cuboid2> pred = new UXL3Predicate<>(env.getBpU().get(1));
+
+        // OCLBuildingsCuboidFinal ocb = new OCLBuildingsCuboidFinal();
         ocb.setCoeffDec((double) valCoeff[i]);
 
         double timeMs = System.currentTimeMillis();
 
-        Configuration<Cuboid2> cc = ocb.process(env.getBpU().get(1), p, env, 1);
+        Configuration<Cuboid2> cc = ocb.process(env.getBpU().get(1), p, env, 1,
+            pred);
 
-        
-        
         IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
-        
+
         for (GraphConfiguration<Cuboid2>.GraphVertex v : ((GraphConfiguration<Cuboid2>) cc)
-                .getGraph().vertexSet()) {
-            
-            IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<>();
-            iMS.addAll(GenerateSolidFromCuboid.generate(v.getValue()).getFacesList());
-            
-            
-            IFeature feat = new DefaultFeature(iMS);
-            
-            AttributeManager.addAttribute(feat, "Longueur", Math.max(v.getValue().length,v.getValue().width), "Double");
-            AttributeManager.addAttribute(feat, "Largeur", Math.min(v.getValue().length,v.getValue().width), "Double");
-            AttributeManager.addAttribute(feat, "Hauteur", v.getValue().height, "Double");
-            AttributeManager.addAttribute(feat, "Rotation", v.getValue().orientation, "Double");
-            
-            iFeatC.add(feat);
-            
+            .getGraph().vertexSet()) {
+
+          IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<>();
+          iMS.addAll(GenerateSolidFromCuboid.generate(v.getValue())
+              .getFacesList());
+
+          IFeature feat = new DefaultFeature(iMS);
+
+          AttributeManager.addAttribute(feat, "Longueur",
+              Math.max(v.getValue().length, v.getValue().width), "Double");
+          AttributeManager.addAttribute(feat, "Largeur",
+              Math.min(v.getValue().length, v.getValue().width), "Double");
+          AttributeManager.addAttribute(feat, "Hauteur", v.getValue().height,
+              "Double");
+          AttributeManager.addAttribute(feat, "Rotation",
+              v.getValue().orientation, "Double");
+
+          iFeatC.add(feat);
 
         }
-        
-        ShapefileWriter.write(iFeatC, p.get("result").toString() +"shp_" +ld.get(i)+ "_ " +j+"_ene"+cc.getEnergy()+".shp");
-        
-        
-        
+
+        ShapefileWriter.write(iFeatC,
+            p.get("result").toString() + "shp_" + ld.get(i) + "_ " + j + "_ene"
+                + cc.getEnergy() + ".shp");
 
         System.out.println(valCoeff[i] + "," + ocb.getCount() + ","
             + (System.currentTimeMillis() - timeMs) + "," + cc.getEnergy());
-        
+
         count++;
-        
-        System.out.println("État itération : " + count + "  / " + (valCoeff.length *nbIt));
 
-
+        System.out.println("État itération : " + count + "  / "
+            + (valCoeff.length * nbIt));
 
       }
 

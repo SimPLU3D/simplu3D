@@ -10,6 +10,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.List;
 
 import fr.ign.cogit.simplu3d.model.application.AbstractSimpleBuilding;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.configuration.ModelInstanceGraphConfigurationModificationPredicate;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.configuration.ModelInstanceGraphConfigurationPredicate;
 import fr.ign.rjmcmc.configuration.Configuration;
 import fr.ign.rjmcmc.sampler.Sampler;
@@ -22,10 +23,10 @@ public class CSVvisitor<O extends AbstractSimpleBuilding> implements Visitor<O> 
   private int iter;
   private BufferedWriter writer;
   private String textSeparator = ";";
-  ModelInstanceGraphConfigurationPredicate<O> predicate;
 
-  public CSVvisitor(String fileName, ModelInstanceGraphConfigurationPredicate<O> predicate) {
-    this.predicate = predicate;
+
+  public CSVvisitor(String fileName) {
+
     Path path = Paths.get(fileName);
     try {
       writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
@@ -46,19 +47,11 @@ public class CSVvisitor<O extends AbstractSimpleBuilding> implements Visitor<O> 
   public void begin(Configuration<O> config, Sampler<O> sampler, Temperature t) {
 
     String s = "Iteration" + textSeparator + "NBCube" + textSeparator + "ENERGIE" + textSeparator
-        + "ENERGIE_MOY" + textSeparator + "NB_EVAL" + textSeparator + "NB_FALSE";
+        + "ENERGIE_MOY" + textSeparator + "NB_FALSE";
 
-    List<List<Integer>> llInt = predicate.getRuleChecker().getlFalseArray();
 
-    double max = 0;
 
-    for (List<Integer> lInt : llInt) {
-      max = Math.max(lInt.size(), max);
-    }
 
-    for (int i = 0; i < max; i++) {
-      s = s + textSeparator + "FALSE_" + i;
-    }
 
     try {
       writer.append(s);
@@ -123,17 +116,8 @@ public class CSVvisitor<O extends AbstractSimpleBuilding> implements Visitor<O> 
     sB.append(energyMoy);
     sB.append(textSeparator);
 
-    sB.append(predicate.getRuleChecker().evalCount);
-    sB.append(textSeparator);
 
-    sB.append(predicate.getRuleChecker().evalFalse);
-    sB.append(textSeparator);
 
-    for (Integer i : predicate.getRuleChecker().getlFalseArray().get(0)) {
-      sB.append(i);
-      sB.append(textSeparator);
-
-    }
 
     try {
       writer.append(sB.toString());

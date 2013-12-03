@@ -32,11 +32,11 @@ public class Cuboid2 extends AbstractSimpleBuilding implements Primitive {
   public double orientation = 0;
   public double height;
 
-  public boolean isNew = true;
 
   public Cuboid2(double centerx, double centery, double length, double width, double height,
       double orientation) {
     super();
+    this.isNew = true;
     this.centerx = centerx;
     this.centery = centery;
     this.length = length;

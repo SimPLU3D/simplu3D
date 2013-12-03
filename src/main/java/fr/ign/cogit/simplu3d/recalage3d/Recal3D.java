@@ -51,11 +51,11 @@ public class Recal3D {
    */
   public static void main(String[] args) throws CloneNotSupportedException {
 
-    String strShpOut = "C:/Users/mbrasebin/Pictures/Experimentations/ExpCont/Recalage/";
+    String strShpOut = "C:/Users/mbrasebin/Desktop/Exp1/test1/Montage/Test/";
 
     Parameters p = initialize_parameters();
     Environnement env = LoaderSHP.load(p.get("folder"));
-    BasicPropertyUnit bpu = env.getBpU().get(Integer.parseInt(p.get("bpu")));
+    BasicPropertyUnit bpu = env.getBpU().get(1);
 
     String configPath = p.get("config_shape_file").toString();
 
@@ -75,7 +75,7 @@ public class Recal3D {
     if (check) {
 
       // Changement de la hauteur
-      lAB = changeHeight(lAB, 1, vFR, cMI);
+      lAB = changeHeight(lAB, 1.5, vFR, cMI);
 
       IFeatureCollection<IFeature> featColl = new FT_FeatureCollection<>();
 
@@ -635,7 +635,7 @@ public class Recal3D {
   }
 
   private static Parameters initialize_parameters() {
-    return Parameters.unmarshall("./src/main/resources/building_parameters_project_4.xml");
+    return Parameters.unmarshall("./src/main/resources/scenario/building_parameters_project_expthese_1.xml");
   }
 
 }

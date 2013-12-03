@@ -1,0 +1,131 @@
+package fr.ign.cogit.simplu3d.exec.influParam;
+
+import fr.ign.cogit.geoxygene.api.feature.IFeature;
+import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
+import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
+import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
+import fr.ign.cogit.geoxygene.feature.DefaultFeature;
+import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
+import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
+import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
+import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
+import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
+import fr.ign.cogit.simplu3d.model.application.Environnement;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.OptimisedBuildingsCuboidFinalDirectRejection;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCuboid;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid2;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.predicate.UXL3Predicate;
+import fr.ign.mpp.configuration.GraphConfiguration;
+import fr.ign.parameters.Parameters;
+import fr.ign.rjmcmc.configuration.Configuration;
+
+public class InfluDimCuboid {
+
+  /**
+   * @param args
+   */
+
+  // [building_footprint_rectangle_cli_main
+  public static void main(String[] args) throws Exception {
+
+    String folderName = "./src/main/resources/scenario/";
+
+    String fileName = "building_parameters_project_expthese_1.xml";
+
+    Parameters p = initialize_parameters(folderName + fileName);
+
+    int nbValMin = 5;
+    int nbValMax = 7;
+
+    double[] valsMinDimBox = new double[nbValMin];
+    double[] valsMaxDimBox = new double[nbValMax];
+
+    valsMinDimBox[0] = 1;
+    valsMinDimBox[1] = 5;
+    valsMinDimBox[2] = 10;
+    valsMinDimBox[3] = 15;
+    valsMinDimBox[4] = 20;
+
+    valsMinDimBox[0] = 30;
+    valsMinDimBox[1] = 40;
+    valsMinDimBox[2] = 50;
+    valsMinDimBox[3] = 60;
+    valsMinDimBox[4] = 70;
+    valsMinDimBox[5] = 80;
+    valsMinDimBox[6] = 90;
+
+    int nbIt = 1;
+
+    int count = 0;
+
+    for (int indexMin = 0; indexMin < valsMinDimBox.length; indexMin++) {
+
+      for (int indexMax = 0; indexMax < valsMinDimBox.length; indexMax++) {
+
+        // writer.append(valCoeff[i] + ";");
+
+        for (int j = 0; j < nbIt; j++) {
+          Environnement env = LoaderSHP.load(p.get("folder"));
+
+          OptimisedBuildingsCuboidFinalDirectRejection ocb = new OptimisedBuildingsCuboidFinalDirectRejection();
+          UXL3Predicate<Cuboid2> pred = new UXL3Predicate<>(env.getBpU().get(1));
+
+          // OCLBuildingsCuboidFinal ocb = new OCLBuildingsCuboidFinal();
+          ocb.setMinDimBox(valsMinDimBox[indexMin]);
+          ocb.setMaxDimBox(valsMaxDimBox[indexMax]);
+
+          double timeMs = System.currentTimeMillis();
+
+          Configuration<Cuboid2> cc = ocb.process(env.getBpU().get(1), p, env,
+              1, pred);
+
+          IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
+
+          for (GraphConfiguration<Cuboid2>.GraphVertex v : ((GraphConfiguration<Cuboid2>) cc)
+              .getGraph().vertexSet()) {
+
+            IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<>();
+            iMS.addAll(GenerateSolidFromCuboid.generate(v.getValue())
+                .getFacesList());
+
+            IFeature feat = new DefaultFeature(iMS);
+
+            AttributeManager.addAttribute(feat, "Longueur",
+                Math.max(v.getValue().length, v.getValue().width), "Double");
+            AttributeManager.addAttribute(feat, "Largeur",
+                Math.min(v.getValue().length, v.getValue().width), "Double");
+            AttributeManager.addAttribute(feat, "Hauteur", v.getValue().height,
+                "Double");
+            AttributeManager.addAttribute(feat, "Rotation",
+                v.getValue().orientation, "Double");
+
+            iFeatC.add(feat);
+
+          }
+
+          ShapefileWriter.write(iFeatC, p.get("result").toString()
+              + "shp_mindim" + valsMinDimBox[indexMin] + "_maxDim_ "
+              + valsMaxDimBox[indexMax] + "_ene" + cc.getEnergy() + ".shp");
+
+          System.out.println("mindim" + valsMinDimBox[indexMin] + "_maxDim_ "
+              + valsMaxDimBox[indexMax] + "_ene" + cc.getEnergy() + ","
+              + ocb.getCount() + "," + (System.currentTimeMillis() - timeMs)
+              + "," + cc.getEnergy());
+
+          count++;
+
+          System.out.println("État itération : " + count + "  / "
+              + (indexMin * indexMax * nbIt));
+
+        }
+
+      }
+    }
+
+  }
+
+  private static Parameters initialize_parameters(String name) {
+    return Parameters.unmarshall(name);
+  }
+
+}

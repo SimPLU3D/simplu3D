@@ -168,7 +168,7 @@ public class OCLBuildingsCuboidFinal {
     }
     if (Boolean.parseBoolean(p.get("csvvisitor"))) {
       String fileName = p.get("result").toString() + p.get("csvfilename");
-      CSVvisitor<Cuboid2> statsViewer = new CSVvisitor<Cuboid2>(fileName, pred);
+      CSVvisitor<Cuboid2> statsViewer = new CSVvisitor<Cuboid2>(fileName);
       list.add(statsViewer);
     }
     countV = new CountVisitor<>();

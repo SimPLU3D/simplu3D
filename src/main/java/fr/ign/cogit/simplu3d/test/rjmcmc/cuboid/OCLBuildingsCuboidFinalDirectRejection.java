@@ -33,6 +33,7 @@ import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.MoveCuboid2;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.RotateCuboid2;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.birth.TransformToSurface;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.CSVendStats;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.CSVvisitor;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.CountVisitor;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.FilmVisitor;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.visitor.ShapefileVisitorCuboid2;
@@ -56,7 +57,6 @@ import fr.ign.rjmcmc.energy.MultipliesUnaryEnergy;
 import fr.ign.rjmcmc.energy.PlusUnaryEnergy;
 import fr.ign.rjmcmc.energy.UnaryEnergy;
 import fr.ign.rjmcmc.kernel.Kernel;
-import fr.ign.rjmcmc.sampler.GreenSampler;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.SimulatedAnnealing;
 import fr.ign.simulatedannealing.endtest.EndTest;
@@ -88,18 +88,21 @@ public class OCLBuildingsCuboidFinalDirectRejection {
     this.deltaConf = deltaConf;
   }
 
-  public Configuration<Cuboid2> process(BasicPropertyUnit bpu, Parameters p, Environnement env,
-      int id) {
+  public Configuration<Cuboid2> process(BasicPropertyUnit bpu, Parameters p,
+      Environnement env, int id) {
     // Géométrie de l'unité foncière sur laquelle porte la génération
     IGeometry geom = bpu.generateGeom().buffer(1);
     ModelInstanceGraphConfigurationModificationPredicate<Cuboid2> pred = new ModelInstanceGraphConfigurationModificationPredicate<Cuboid2>(
         bpu);
-    // Définition de la fonction d'optimisation (on optimise en décroissant) relative au volume
+    // Définition de la fonction d'optimisation (on optimise en décroissant)
+    // relative au volume
     Configuration<Cuboid2> conf = null;
-    System.out.println(pred.getRuleChecker().getlModeInstance().size() + " model instances");
+    System.out.println(pred.getRuleChecker().getlModeInstance().size()
+        + " model instances");
     try {
-      conf = create_configuration(p, AdapterFactory.toGeometry(new GeometryFactory(), geom), bpu,
-          pred.getRuleChecker().getlModeInstance().get(0));
+      conf = create_configuration(p,
+          AdapterFactory.toGeometry(new GeometryFactory(), geom), bpu, pred
+              .getRuleChecker().getlModeInstance().get(0));
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -137,24 +140,29 @@ public class OCLBuildingsCuboidFinalDirectRejection {
       list.add(visitor);
     }
     if (Boolean.parseBoolean(p.get("shapefilewriter"))) {
-      Visitor<Cuboid2> shpVisitor = new ShapefileVisitorCuboid2<Cuboid2>(p.get("result").toString()
+      Visitor<Cuboid2> shpVisitor = new ShapefileVisitorCuboid2<Cuboid2>(p.get(
+          "result").toString()
           + "result");
       list.add(shpVisitor);
     }
     if (Boolean.parseBoolean(p.get("visitorviewer"))) {
-      ViewerVisitor<Cuboid2> visitorViewer = new ViewerVisitor<Cuboid2>("" + id, p);
+      ViewerVisitor<Cuboid2> visitorViewer = new ViewerVisitor<Cuboid2>(
+          "" + id, p);
       list.add(visitorViewer);
     }
     if (Boolean.parseBoolean(p.get("filmvisitor"))) {
-      IDirectPosition dpCentre = new DirectPosition(Double.parseDouble(p.get("filmvisitorx")),
-          Double.parseDouble(p.get("filmvisitory")), Double.parseDouble(p.get("filmvisitorz")));
-      Vecteur viewTo = new Vecteur(Double.parseDouble(p.get("filmvisitorvectx")),
-          Double.parseDouble(p.get("filmvisitorvecty")), Double.parseDouble(p
+      IDirectPosition dpCentre = new DirectPosition(Double.parseDouble(p
+          .get("filmvisitorx")), Double.parseDouble(p.get("filmvisitory")),
+          Double.parseDouble(p.get("filmvisitorz")));
+      Vecteur viewTo = new Vecteur(
+          Double.parseDouble(p.get("filmvisitorvectx")), Double.parseDouble(p
+              .get("filmvisitorvecty")), Double.parseDouble(p
               .get("filmvisitorvectz")));
-      Color c = new Color(Integer.parseInt(p.get("filmvisitorr")), Integer.parseInt(p
-          .get("filmvisitorg")), Integer.parseInt(p.get("filmvisitorb")));
-      FilmVisitor<Cuboid2> visitorViewerFilmVisitor = new FilmVisitor<Cuboid2>(dpCentre, viewTo,
-          p.get("result"), c);
+      Color c = new Color(Integer.parseInt(p.get("filmvisitorr")),
+          Integer.parseInt(p.get("filmvisitorg")), Integer.parseInt(p
+              .get("filmvisitorb")));
+      FilmVisitor<Cuboid2> visitorViewerFilmVisitor = new FilmVisitor<Cuboid2>(
+          dpCentre, viewTo, p.get("result"), c);
       list.add(visitorViewerFilmVisitor);
     }
     if (Boolean.parseBoolean(p.get("statsvisitor"))) {
@@ -166,11 +174,11 @@ public class OCLBuildingsCuboidFinalDirectRejection {
       CSVendStats<Cuboid2> statsViewer = new CSVendStats<Cuboid2>(fileName);
       list.add(statsViewer);
     }
-    // if (Boolean.parseBoolean(p.get("csvvisitor"))) {
-    // String fileName = p.get("result").toString() + p.get("csvfilename");
-    // CSVvisitor<Cuboid2> statsViewer = new CSVvisitor<Cuboid2>(fileName, pred);
-    // list.add(statsViewer);
-    // }
+    if (Boolean.parseBoolean(p.get("csvvisitor"))) {
+      String fileName = p.get("result").toString() + p.get("csvfilename");
+      CSVvisitor<Cuboid2> statsViewer = new CSVvisitor<Cuboid2>(fileName);
+      list.add(statsViewer);
+    }
     countV = new CountVisitor<>();
     list.add(countV);
     CompositeVisitor<Cuboid2> mVisitor = new CompositeVisitor<Cuboid2>(list);
@@ -179,7 +187,8 @@ public class OCLBuildingsCuboidFinalDirectRejection {
      * < This is the way to launch the optimization process. Here, the magic
      * happen... >
      */
-    SimulatedAnnealing.optimize(Random.random(), conf, samp, sch, end, mVisitor);
+    SimulatedAnnealing
+        .optimize(Random.random(), conf, samp, sch, end, mVisitor);
     return conf;
   }
 
@@ -198,15 +207,13 @@ public class OCLBuildingsCuboidFinalDirectRejection {
 
   // Création de la configuration
   /**
-   * @param p
-   *        paramètres importés depuis le fichier XML
-   * @param bpu
-   *        l'unité foncière considérée
+   * @param p paramètres importés depuis le fichier XML
+   * @param bpu l'unité foncière considérée
    * @return la configuration chargée, c'est à dire la formulation énergétique
    *         prise en compte
    */
-  public static Configuration<Cuboid2> create_configuration(Parameters p, Geometry geom,
-      BasicPropertyUnit bpu, IModelInstance modelInstance) {
+  public static Configuration<Cuboid2> create_configuration(Parameters p,
+      Geometry geom, BasicPropertyUnit bpu, IModelInstance modelInstance) {
     // Énergie constante : à la création d'un nouvel objet
     ConstantEnergy<Cuboid2, Cuboid2> energyCreation = new ConstantEnergy<Cuboid2, Cuboid2>(
         Double.parseDouble(p.get("energy")));
@@ -220,34 +227,34 @@ public class OCLBuildingsCuboidFinalDirectRejection {
         ponderationVolume, energyVolume);
 
     // On retire de l'énergie de création, l'énergie de l'aire
-    UnaryEnergy<Cuboid2> u3 = new MinusUnaryEnergy<Cuboid2>(energyCreation, energyVolumePondere);
+    UnaryEnergy<Cuboid2> u3 = new MinusUnaryEnergy<Cuboid2>(energyCreation,
+        energyVolumePondere);
 
     // Énergie constante : pondération de la différence
     ConstantEnergy<Cuboid2, Cuboid2> ponderationDifference = new ConstantEnergy<Cuboid2, Cuboid2>(
         Double.parseDouble(p.get("ponderation_difference_ext")));
     // On ajoute l'énergie de différence : la zone en dehors de la parcelle
     UnaryEnergy<Cuboid2> u4 = new DifferenceVolumeUnaryEnergy<Cuboid2>(geom);
-    UnaryEnergy<Cuboid2> u5 = new MultipliesUnaryEnergy<Cuboid2>(ponderationDifference, u4);
+    UnaryEnergy<Cuboid2> u5 = new MultipliesUnaryEnergy<Cuboid2>(
+        ponderationDifference, u4);
     UnaryEnergy<Cuboid2> unaryEnergy = new PlusUnaryEnergy<Cuboid2>(u3, u5);
 
     // Énergie binaire : intersection entre deux rectangles
-    ConstantEnergy<Cuboid2, Cuboid2> c3 = new ConstantEnergy<Cuboid2, Cuboid2>(Double.parseDouble(p
-        .get("ponderation_volume_inter")));
+    ConstantEnergy<Cuboid2, Cuboid2> c3 = new ConstantEnergy<Cuboid2, Cuboid2>(
+        Double.parseDouble(p.get("ponderation_volume_inter")));
     BinaryEnergy<Cuboid2, Cuboid2> b1 = new IntersectionVolumeBinaryEnergy<Cuboid2>();
-    BinaryEnergy<Cuboid2, Cuboid2> binaryEnergy = new MultipliesBinaryEnergy<Cuboid2, Cuboid2>(c3,
-        b1);
+    BinaryEnergy<Cuboid2, Cuboid2> binaryEnergy = new MultipliesBinaryEnergy<Cuboid2, Cuboid2>(
+        c3, b1);
     // empty initial configuration*/
-    Configuration<Cuboid2> conf = new ModelInstanceGraphConfiguration<Cuboid2>(bpu, modelInstance,
-        unaryEnergy, binaryEnergy);
+    Configuration<Cuboid2> conf = new ModelInstanceGraphConfiguration<Cuboid2>(
+        bpu, modelInstance, unaryEnergy, binaryEnergy);
     return conf;
   }
 
   /**
    * Sampler
-   * @param p
-   *        les paramètres chargés depuis le fichier xml
-   * @param r
-   *        l'enveloppe dans laquelle on génère les positions
+   * @param p les paramètres chargés depuis le fichier xml
+   * @param r l'enveloppe dans laquelle on génère les positions
    * @return
    */
   static Sampler<Cuboid2> create_sampler(Parameters p, BasicPropertyUnit bpU,
@@ -261,8 +268,8 @@ public class OCLBuildingsCuboidFinalDirectRejection {
     ObjectBuilder<Cuboid2> builder = new ObjectBuilder<Cuboid2>() {
       @Override
       public Cuboid2 build(double[] coordinates) {
-        return new Cuboid2(coordinates[0], coordinates[1], coordinates[2], coordinates[3],
-            coordinates[4], coordinates[5]);
+        return new Cuboid2(coordinates[0], coordinates[1], coordinates[2],
+            coordinates[3], coordinates[4], coordinates[5]);
       }
 
       @Override
@@ -283,37 +290,44 @@ public class OCLBuildingsCuboidFinalDirectRejection {
 
     IEnvelope env = bpU.getGeom().envelope();
     // Sampler de naissance
-    // UniformBirthInGeom<Cuboid2> birth = new UniformBirthInGeom<Cuboid2>(new Cuboid2(env.minX(),
-    // env.minY(), mindim, mindim, minheight, 0), new Cuboid2(env.maxX(), env.maxY(), maxdim,
+    // UniformBirthInGeom<Cuboid2> birth = new UniformBirthInGeom<Cuboid2>(new
+    // Cuboid2(env.minX(),
+    // env.minY(), mindim, mindim, minheight, 0), new Cuboid2(env.maxX(),
+    // env.maxY(), maxdim,
     // maxdim, maxheight, Math.PI), builder, bpU.getpol2D());
-    UniformBirth<Cuboid2> birth = new UniformBirth<Cuboid2>(new Cuboid2(env.minX(), env.minY(),
-        mindim, mindim, minheight, 0), new Cuboid2(env.maxX(), env.maxY(), maxdim, maxdim,
-        maxheight, Math.PI), builder, TransformToSurface.class, bpU.getpol2D());
+    UniformBirth<Cuboid2> birth = new UniformBirth<Cuboid2>(new Cuboid2(
+        env.minX(), env.minY(), mindim, mindim, minheight, 0), new Cuboid2(
+        env.maxX(), env.maxY(), maxdim, maxdim, maxheight, Math.PI), builder,
+        TransformToSurface.class, bpU.getpol2D());
 
     // Distribution de poisson
-    PoissonDistribution distribution = new PoissonDistribution(Double.parseDouble(p.get("poisson")));
+    PoissonDistribution distribution = new PoissonDistribution(
+        Double.parseDouble(p.get("poisson")));
 
-    DirectSampler<Cuboid2> ds = new DirectRejectionSampler<Cuboid2>(distribution, birth, pred);
+    DirectSampler<Cuboid2> ds = new DirectRejectionSampler<Cuboid2>(
+        distribution, birth, pred);
 
     // Probabilité de naissance-morts modifications
     List<Kernel<Cuboid2>> kernels = new ArrayList<Kernel<Cuboid2>>(3);
 
     kernels.add(Kernel.make_uniform_birth_death_kernel(builder, birth,
-        Double.parseDouble(p.get("pbirth")), Double.parseDouble(p.get("pdeath"))));
+        Double.parseDouble(p.get("pbirth")),
+        Double.parseDouble(p.get("pdeath"))));
     double amplitudeMove = Double.parseDouble(p.get("amplitudeMove"));
-    kernels.add(Kernel.make_uniform_modification_kernel(builder, new MoveCuboid2(amplitudeMove),
-        0.2, "Move"));
-    double amplitudeRotate = Double.parseDouble(p.get("amplitudeRotate")) * Math.PI / 180;
+    kernels.add(Kernel.make_uniform_modification_kernel(builder,
+        new MoveCuboid2(amplitudeMove), 0.2, "Move"));
+    double amplitudeRotate = Double.parseDouble(p.get("amplitudeRotate"))
+        * Math.PI / 180;
     kernels.add(Kernel.make_uniform_modification_kernel(builder,
         new RotateCuboid2(amplitudeRotate), 0.2, "Rotate"));
     double amplitudeMaxDim = Double.parseDouble(p.get("amplitudeMaxDim"));
-    kernels.add(Kernel.make_uniform_modification_kernel(builder, new ChangeWidth(amplitudeMaxDim),
-        0.2, "ChgWidth"));
-    kernels.add(Kernel.make_uniform_modification_kernel(builder, new ChangeLength(amplitudeMaxDim),
-        0.2, "ChgLength"));
+    kernels.add(Kernel.make_uniform_modification_kernel(builder,
+        new ChangeWidth(amplitudeMaxDim), 0.2, "ChgWidth"));
+    kernels.add(Kernel.make_uniform_modification_kernel(builder,
+        new ChangeLength(amplitudeMaxDim), 0.2, "ChgLength"));
     double amplitudeHeight = Double.parseDouble(p.get("amplitudeHeight"));
-    kernels.add(Kernel.make_uniform_modification_kernel(builder, new ChangeHeight(amplitudeHeight),
-        0.2, "ChgHeight"));
+    kernels.add(Kernel.make_uniform_modification_kernel(builder,
+        new ChangeHeight(amplitudeHeight), 0.2, "ChgHeight"));
 
     Sampler<Cuboid2> s = new GreenSamplerBlockTemperature<Cuboid2>(ds,
         new MetropolisAcceptance<SimpleTemperature>(), kernels);
@@ -331,7 +345,8 @@ public class OCLBuildingsCuboidFinalDirectRejection {
     } else {
       loc_deltaconf = this.deltaConf;
     }
-    return new StabilityEndTest<Cuboid2>(Integer.parseInt(p.get("nbiter")), loc_deltaconf);
+    return new StabilityEndTest<Cuboid2>(Integer.parseInt(p.get("nbiter")),
+        loc_deltaconf);
   }
 
   private Schedule<SimpleTemperature> create_schedule(Parameters p) {
@@ -341,7 +356,7 @@ public class OCLBuildingsCuboidFinalDirectRejection {
     } else {
       coefDef = this.coeffDec;
     }
-    return new GeometricSchedule<SimpleTemperature>(new SimpleTemperature(Double.parseDouble(p
-        .get("temp"))), coefDef);
+    return new GeometricSchedule<SimpleTemperature>(new SimpleTemperature(
+        Double.parseDouble(p.get("temp"))), coefDef);
   }
 }
