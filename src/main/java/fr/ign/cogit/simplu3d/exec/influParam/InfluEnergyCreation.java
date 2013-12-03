@@ -70,8 +70,8 @@ public class InfluEnergyCreation {
 
     int nbIt = 10;
 
-    BufferedWriter bf = createBufferWriter(p.get("result"));
-    bf.write("EnergyCreation,Energy,Box");
+    BufferedWriter bf = createBufferWriter(p.get("result")+ "infleEnergyCreation.csv");
+    bf.write("EnergyCreation,Iteration,Energy,Box");
     bf.newLine();
     bf.flush();
 

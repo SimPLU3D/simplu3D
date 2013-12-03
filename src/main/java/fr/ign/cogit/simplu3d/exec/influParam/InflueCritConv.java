@@ -1,5 +1,13 @@
 package fr.ign.cogit.simplu3d.exec.influParam;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +46,7 @@ public class InflueCritConv {
       List<Double> ld = new ArrayList<>();
 
       
-      /*
+    
       ld.add(5.0);
 
       ld.add(0.5);
@@ -48,7 +56,7 @@ public class InflueCritConv {
 
       ld.add(100.0);
 
-*/
+
       ld.add(200.0);
 
       ld.add(500.0);
@@ -56,8 +64,10 @@ public class InflueCritConv {
 
       ld.add(2000.0);
       ld.add(5000.0);
-      ld.add(10000.0);
+      
       /*
+      ld.add(10000.0);
+      
       ld.add(1.0);
       ld.add(3.0);
       ld.add(20.0);
@@ -66,7 +76,12 @@ public class InflueCritConv {
     */
       
       
-      int nbIt = 5;
+      int nbIt = 10;
+      
+      BufferedWriter bf = createBufferWriter(p.get("result")+ "influeCritereConv.csv");
+      bf.write("CritereConv,Iteration,Energy,Box");
+      bf.newLine();
+      bf.flush();
 
       for (int i =0; i < ld.size(); i++) {
 
@@ -116,10 +131,40 @@ public class InflueCritConv {
                       + cc.getEnergy() + "État itération : " + count + "  / "
                       + (ld.get(i) * nbIt));
 
+              
+              bf.write(ld.get(i) + "," + j + "," + cc.getEnergy() + "," + cc.size());
+              bf.newLine();
+              bf.flush();
           }
+          
+          bf.flush();
+          bf.close();
 
       }
 
+  }
+  
+
+  private static BufferedWriter createBufferWriter(String fileName) {
+    BufferedWriter writer = null;
+    try {
+
+      File f = new File(fileName);
+
+      if (!f.exists()) {
+        f.createNewFile();
+      }
+
+      Path path = Paths.get(fileName);
+
+      writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8,
+          StandardOpenOption.APPEND);
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+    return writer;
   }
 
   private static Parameters initialize_parameters(String name) {

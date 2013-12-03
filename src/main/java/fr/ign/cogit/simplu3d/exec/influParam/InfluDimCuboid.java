@@ -1,5 +1,14 @@
 package fr.ign.cogit.simplu3d.exec.influParam;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
@@ -56,6 +65,12 @@ public class InfluDimCuboid {
     int nbIt = 10;
 
     int count = 0;
+    
+    
+    BufferedWriter bf = createBufferWriter(p.get("result")+ "influDimCuboid.csv");
+    bf.write("DimCuboidMin, DimCuboidMax, Iteration, Energy,Box");
+    bf.newLine();
+    bf.flush();
 
     for (int indexMin = 0; indexMin < valsMinDimBox.length; indexMin++) {
 
@@ -115,6 +130,11 @@ public class InfluDimCuboid {
 
           System.out.println("État itération : " + count + "  / "
               + (indexMin * indexMax * nbIt));
+          
+          
+          bf.write( valsMinDimBox[indexMin] +","+ valsMaxDimBox[indexMax] +"," + j + "," + cc.getEnergy() + "," + cc.size());
+          bf.newLine();
+          bf.flush();
 
         }
 
@@ -123,6 +143,29 @@ public class InfluDimCuboid {
 
   }
 
+
+  private static BufferedWriter createBufferWriter(String fileName) {
+    BufferedWriter writer = null;
+    try {
+
+      File f = new File(fileName);
+
+      if (!f.exists()) {
+        f.createNewFile();
+      }
+
+      Path path = Paths.get(fileName);
+
+      writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8,
+          StandardOpenOption.APPEND);
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+    return writer;
+  }
+  
   private static Parameters initialize_parameters(String name) {
     return Parameters.unmarshall(name);
   }
