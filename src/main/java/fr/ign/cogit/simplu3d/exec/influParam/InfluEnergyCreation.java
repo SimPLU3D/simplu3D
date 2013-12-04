@@ -41,34 +41,27 @@ public class InfluEnergyCreation {
 
     String folderName = "./src/main/resources/scenario/";
 
-    String fileName = "building_parameters_project_expthese_1.xml";
+    String fileName = "building_parameters_project_expthese_1_maison.xml";
 
     Parameters p = initialize_parameters(folderName + fileName);
 
-    int nbInter = 12;
 
-    double valMin = 0;
-    double valMax = 500;
+
 
     int count = 0;
 
     List<Double> ld = new ArrayList<>();
+    ld.add(1.);
+    ld.add(10.);
+    ld.add(20.);
+    ld.add(50.);
+    ld.add(100.);
+    ld.add(200.);
+    ld.add(500.);
+    ld.add(1000.);
 
-    for (int i = 0; i < nbInter; i++) {
 
-      if (i == 0) {
-        ld.add(1.0);
-      } else {
-
-        ld.add(i * (valMax - valMin) / nbInter + valMin);
-
-      }
-
-    }
-
-    ld.add(valMax);
-
-    int nbIt = 10;
+    int nbIt = 5;
 
     BufferedWriter bf = createBufferWriter(p.get("result")+ "infleEnergyCreation.csv");
     bf.write("EnergyCreation,Iteration,Energy,Box");
