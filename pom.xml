@@ -2,24 +2,19 @@
 <project
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
 	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<artifactId>library</artifactId>
-		<groupId>fr.ign.cogit</groupId>
-		<version>0.0.1-SNAPSHOT</version>
-	</parent>
+	
+	<groupId>fr.ign.cogit</groupId>
 	<artifactId>simplu3d</artifactId>
 	<version>1.0-SNAPSHOT</version>
-	<name>simplu3d</name>
-
-
 	<packaging>jar</packaging>
+	<name>simplu3d</name>
 
 	<scm>
 		<connection>scm:svn:https://dionysos2.ign.fr/src/cogit-depot/geoxygene-cogit/trunk/modules/library/simplu3d/</connection>
 		<url>https://dionysos2.ign.fr/src/cogit-depot/geoxygene-cogit/trunk/modules/library/simplu3d/</url>
 	</scm>
-
 
 	<description>Implémentation d'un module de gestion des règles d'urbanisme </description>
 	<url>http://maven.apache.org</url>
@@ -138,7 +133,8 @@
 				</executions>
 			</plugin>
 		</plugins>
-		            <pluginManagement>
+		
+		<pluginManagement>
           <plugins>
 <plugin>
  <groupId>org.eclipse.m2e</groupId>
@@ -168,6 +164,42 @@
         </pluginManagement>
 		
 	</build>
+	
+	<repositories>
+		<repository>
+			<id>Central</id>
+			<name>Central Repository</name>
+			<url>http://repo1.maven.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>cogit-snapshots</id>
+			<name>Cogit Snapshots Repository</name>
+			<url>https://dionysos2.ign.fr/nexus-webapp-1.4.1/content/repositories/snapshots/</url>
+		</repository>
+		<repository>
+			<id>cogit-releases</id>
+			<name>Cogit Releases Repository</name>
+			<url>https://cogit-services.ign.fr/nexus-webapp-1.4.1/content/repositories/releases/</url>
+		</repository>
+		<repository>
+			<id>Imagej</id>
+			<url>http://maven.imagej.net/content/repositories/public</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+		</repository>
+		<repository>
+			<id>Atlassian</id>
+			<name>Atlassian</name>
+			<url>https://maven.atlassian.com/maven1/maven2</url>
+		</repository>
+	</repositories>
+	
+	
+	
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
