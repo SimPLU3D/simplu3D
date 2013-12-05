@@ -126,10 +126,12 @@ public class InfluEnergyCreation {
 
       }
 
-      bf.flush();
-      bf.close();
 
     }
+    
+    bf.flush();
+    bf.close();
+
 
   }
 
