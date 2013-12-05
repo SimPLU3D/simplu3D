@@ -20,8 +20,11 @@ public class UXL3PredicateGroup<O extends AbstractBuilding> implements
     ConfigurationModificationPredicate<O> {
 
   IMultiCurve<IOrientableCurve> curveS;
-
-  public UXL3PredicateGroup(BasicPropertyUnit bPU) {
+  int numberMaxOfBoxesInGroup;
+  public UXL3PredicateGroup(BasicPropertyUnit bPU, int numberMaxOfBoxesInGroup) {
+    
+    
+    this.numberMaxOfBoxesInGroup =  numberMaxOfBoxesInGroup;
 
     List<IOrientableCurve> lCurve = new ArrayList<>();
 
@@ -69,9 +72,9 @@ public class UXL3PredicateGroup<O extends AbstractBuilding> implements
 
         for (O batTemp : currentGroup) {
 
-          if (lBatIn.get(i).getFootprint().touches(batTemp.getFootprint())) {
+          if (lBatIn.get(i).getFootprint().distance(batTemp.getFootprint()) < 0.5) {
 
-            currentGroup.add(batTemp);
+            currentGroup.add(lBatIn.get(i));
             lBatIn.remove(i);
             i = -1;
             nbElem--;
@@ -142,13 +145,24 @@ public class UXL3PredicateGroup<O extends AbstractBuilding> implements
 
     }
 
+    
+
     List<List<O>> groupes = createGroupe(lBatIni);
 
     int nbElem = groupes.size();
+    
     for (int i = 0; i < nbElem; i++) {
-      for (int j = 0; j < nbElem; j++) {
+      
+      
+      if(groupes.get(i).size() > numberMaxOfBoxesInGroup ){
+        return false;
+      }
+      
+      
+      
+      for (int j = i+1; j < nbElem; j++) {
 
-        if (compareGroup(groupes.get(i), groupes.get(j)) < 3.1) {
+        if (compareGroup(groupes.get(i), groupes.get(j)) < 5) {
           return false;
         }
 
@@ -166,10 +180,11 @@ public class UXL3PredicateGroup<O extends AbstractBuilding> implements
     for (O o1 : l1) {
       for (O o2 : l2) {
 
-        min = Math.min(o1.footprint.distance(o2.footprint), min);
+        min = Math.min(o1.getFootprint().distance(o2.getFootprint()), min);
 
       }
     }
+//    System.out.println(min);
     return min;
 
   }

@@ -26,45 +26,45 @@ import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.OptimisedBuildingsCuboidFinalDir
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCuboid;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid2;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.predicate.UXL3Predicate;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.predicate.UXL3PredicateGroup;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
 import fr.ign.rjmcmc.configuration.Configuration;
 
-public class InfluEnergyCreation {
-
-  /**
-   * @param args
-   */
-
+public class InfluNumberOfBoxesInGroup {
   // [building_footprint_rectangle_cli_main
   public static void main(String[] args) throws Exception {
 
     String folderName = "./src/main/resources/scenario/";
 
-    String fileName = "building_parameters_project_expthese_1_maison.xml";
+    String fileName = "building_parameters_project_expthese_1.xml";
 
     Parameters p = initialize_parameters(folderName + fileName);
 
 
 
-
     int count = 0;
 
-    List<Double> ld = new ArrayList<>();
-    ld.add(1.);
-    ld.add(10.);
-    ld.add(20.);
-    ld.add(50.);
-    ld.add(100.);
-    ld.add(200.);
-    ld.add(500.);
-    ld.add(1000.);
+    List<Integer> ld = new ArrayList<>();
 
+    ld.add(2);
+    ld.add(3);
+    ld.add(4);
+    ld.add(5);
+    
+    ld.add(6);
+    ld.add(7);
+    ld.add(8);
+    ld.add(9);
 
+    ld.add(10);
+    ld.add(20);
+    
+    
     int nbIt = 5;
 
     BufferedWriter bf = createBufferWriter(p.get("result")+ "infleEnergyCreation.csv");
-    bf.write("EnergyCreation,Iteration,Energy,Box");
+    bf.write("NombreMaxParGroupe,Iteration,Energy,Box");
     bf.newLine();
     bf.flush();
 
@@ -72,15 +72,18 @@ public class InfluEnergyCreation {
 
       // writer.append(valCoeff[i] + ";");
 
-      for (int j = 0; j < nbIt; j++) {
+      for (int j = 5; j < 10; j++) {
 
         Environnement env = LoaderSHP.load(p.get("folder"));
 
         OptimisedBuildingsCuboidFinalDirectRejection ocb = new OptimisedBuildingsCuboidFinalDirectRejection();
-        UXL3Predicate<Cuboid2> pred = new UXL3Predicate<>(env.getBpU().get(1));
 
-        ocb.setEnergyCreation(ld.get(i));
+        
+        UXL3PredicateGroup<Cuboid2> pred = new  UXL3PredicateGroup<Cuboid2>(env.getBpU().get(1),(int) ld.get(i));
+        
+        ocb.process(env.getBpU().get(1), p, env, 1, pred);
 
+        
         double timeMs = System.currentTimeMillis();
 
         Configuration<Cuboid2> cc = ocb.process(env.getBpU().get(1), p, env, 1,
@@ -160,4 +163,5 @@ public class InfluEnergyCreation {
   private static Parameters initialize_parameters(String name) {
     return Parameters.unmarshall(name);
   }
+
 }

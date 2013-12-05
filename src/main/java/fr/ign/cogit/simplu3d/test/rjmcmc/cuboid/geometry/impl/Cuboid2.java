@@ -264,7 +264,11 @@ public class Cuboid2 extends AbstractSimpleBuilding implements Primitive {
   public boolean prospect(IGeometry geom, double slope, double hIni) {
     double h = -1;
     double distance = this.getFootprint().distance(geom);
+    
     h = ((Cuboid2) this).height;
+    
+    
+    
     return distance * slope + hIni > h;
   }
 }

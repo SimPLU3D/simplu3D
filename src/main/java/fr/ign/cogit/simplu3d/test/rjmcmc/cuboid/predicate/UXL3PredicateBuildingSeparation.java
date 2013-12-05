@@ -78,7 +78,7 @@ public class UXL3PredicateBuildingSeparation<O extends AbstractBuilding>
           continue;
         }
 
-        if (batTemp.getFootprint().distance(ab.getFootprint()) < 3.1) {
+        if (batTemp.getFootprint().distance(ab.getFootprint()) < 5) {
           return false;
         }
 
