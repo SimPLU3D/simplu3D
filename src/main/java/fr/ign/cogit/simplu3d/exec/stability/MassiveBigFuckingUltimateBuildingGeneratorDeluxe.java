@@ -52,7 +52,7 @@ public class MassiveBigFuckingUltimateBuildingGeneratorDeluxe {
 		int nbIt = 100;
 
 		BufferedWriter bf = createBufferWriter(p.get("result")
-				+ "infleEnergyCreation.csv");
+				+ "inflboucle.csv");
 		bf.write("EnergyCreation,Iteration,Energy,Box");
 		bf.newLine();
 		bf.flush();
