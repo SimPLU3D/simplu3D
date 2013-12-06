@@ -4,14 +4,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.ILineString;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
+import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToSurface;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_LineString;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
+import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
@@ -20,7 +23,7 @@ import fr.ign.rjmcmc.configuration.Configuration;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
 import fr.ign.rjmcmc.configuration.Modification;
 
-public class UB14PredicateFull<O extends Cuboid2> implements
+public class UB16PredicateWithParameters<O extends Cuboid2> implements
     ConfigurationModificationPredicate<O> {
 
   IMultiCurve<IOrientableCurve> curveVoirie;
@@ -31,21 +34,16 @@ public class UB14PredicateFull<O extends Cuboid2> implements
 
   IGeometry buffer13, buffer20, buffer20more;
 
-  int numberMaxOfBoxesInGroup;
+  BasicPropertyUnit bPU;
 
-  private double threshold = 10;
+  double hIni, s;
 
-  // C'est ternaire 0 = non, 1 = OUI, 2 = OSEF
-  private int CASE_BOARD_ROAD, CASE_BOARD_LIM;
+  public UB16PredicateWithParameters(BasicPropertyUnit bPU, double hIni,
+      double s) {
+    this.bPU = bPU;
 
-  public UB14PredicateFull(BasicPropertyUnit bPU, int numberMaxOfBoxesInGroup,
-      double threshold, int CASE_BOARD_ROAD, int CASE_BOARD_LIM) {
-
-    this.CASE_BOARD_LIM = CASE_BOARD_LIM;
-    this.CASE_BOARD_ROAD = CASE_BOARD_ROAD;
-
-    this.threshold = threshold;
-    this.numberMaxOfBoxesInGroup = numberMaxOfBoxesInGroup;
+    this.hIni = hIni;
+    this.s = s;
 
     List<IOrientableCurve> lCurveVoirie = new ArrayList<>();
 
@@ -53,9 +51,11 @@ public class UB14PredicateFull<O extends Cuboid2> implements
 
     for (CadastralParcel cP : bPU.getCadastralParcel()) {
       // for (SubParcel sB : cP.getSubParcel()) {
+
       for (SpecificCadastralBoundary sCB : cP.getBoundary()) {
 
         if (sCB.getType() == SpecificCadastralBoundary.ROAD) {
+
           IGeometry geom = sCB.getGeom();
 
           if (geom instanceof IOrientableCurve) {
@@ -66,8 +66,6 @@ public class UB14PredicateFull<O extends Cuboid2> implements
             System.out
                 .println("Classe UB14PredicateFull : quelque chose n'est pas un ICurve");
           }
-
-          // }
 
         } else if (sCB.getType() != SpecificCadastralBoundary.INTRA) {
           IGeometry geom = sCB.getGeom();
@@ -83,9 +81,15 @@ public class UB14PredicateFull<O extends Cuboid2> implements
 
         }
 
+        // }
+
       }
 
     }
+
+    System.out.println("NB voirie : " + lCurveVoirie.size());
+
+    System.out.println("NB other : " + lCurveLatBot.size());
 
     curveVoirie = new GM_MultiCurve<>(lCurveVoirie);
     bufferRoad = curveVoirie.buffer(0.5);
@@ -94,16 +98,16 @@ public class UB14PredicateFull<O extends Cuboid2> implements
 
     buffer13 = curveVoirie.buffer(13);
     buffer20 = curveVoirie.buffer(20).difference(buffer13);
-    buffer20more = bPU.getGeom().difference(buffer20);
+    
+    
+    buffer20more =  FromGeomToSurface.convertMSGeom(bPU.getGeom().difference(curveVoirie.buffer(20)));
+
 
   }
 
   private List<List<O>> createGroupe(List<O> lBatIn) {
 
     List<List<O>> listGroup = new ArrayList<>();
-    
-    
-    System.out.println("PENSER A L'EMPRISE AU SOL");
 
     while (!lBatIn.isEmpty()) {
 
@@ -142,6 +146,17 @@ public class UB14PredicateFull<O extends Cuboid2> implements
 
     List<O> lO = m.getBirth();
 
+    // Règles concernant le nouveau bâtiment
+
+    // Distance de 1,5 m à la rue ou alors longer la rue
+
+    boolean checked = this.distanceToRoadRespected(lO, 1.5);
+
+    if (!checked) {
+      return false;
+
+    }
+
     O batDeath = null;
 
     if (!m.getDeath().isEmpty()) {
@@ -150,8 +165,8 @@ public class UB14PredicateFull<O extends Cuboid2> implements
 
     }
 
-    // On ne cherche à implanter qu'un seul bâtiment
-
+    // On vérifie la distance entre groupes de batiments
+    // lBatIni la liste des bâtiments tels que la nouvelle config nous le dit
     List<O> lBatIni = new ArrayList<>();
 
     Iterator<O> iTBat = c.iterator();
@@ -174,72 +189,107 @@ public class UB14PredicateFull<O extends Cuboid2> implements
 
     }
 
+    // Vérification du CSE
+
+    boolean bo = respectBuildArea(lBatIni);
+
+    if (!bo) {
+      return false;
+    }
+
     List<List<O>> groupes = createGroupe(lBatIni);
 
     if (groupes.size() == 0) {
       return true;
     }
 
-    if (groupes.size() > 1) {
-      return false;
-    }
+    int nbElem = groupes.size();
 
-    // On a qu'un seul groupe
+    for (int i = 0; i < nbElem; i++) {
 
-    // Distance de 1,5 m à la rue ou alors longer la rue
+      // if (groupes.get(i).size() > numberMaxOfBoxesInGroup) {
+      // return false;
+      // }
 
-    boolean checked = false;
+      for (int j = i + 1; j < nbElem; j++) {
 
-    if (CASE_BOARD_ROAD != 1) {
-
-      checked = this.distanceToRoadRespected(lBatIni, 1.5);
-
-      if (CASE_BOARD_ROAD == 0 && !checked) {
-        return false;
-      }
-
-    }
-
-    if (!checked && CASE_BOARD_ROAD != 0) {
-
-      boolean checked2 = this.boardRoad(lBatIni, threshold);
-
-      if (!checked2) {
-
-        return false;
+        if (compareGroup(groupes.get(i), groupes.get(j)) < 5) {
+          return false;
+        }
 
       }
-
-    }
-
-    // 2 implantation : soit l'implantation borde les limites séparatives soit
-    // ce n'est pas le cas
-    boolean bordeLimiteLateral = boardLimLAt(lBatIni, threshold);
-
-    if (!bordeLimiteLateral && CASE_BOARD_LIM == 1) {
-      return false;
-    }
-
-    if (bordeLimiteLateral && CASE_BOARD_LIM == 0) {
-
-      boolean checkHeight = checkHeight(lBatIni, threshold);
-
-      return checkHeight;
     }
 
     // Cas de l'implantation avec prospect
+    boolean co = checkProspectForBuilding(lO, hIni, s);
 
-    boolean co = checkProspectForBuilding(lBatIni);
+    if (!co) {
+      return false;
+    }
 
-    return co;
+    /*
+     * 
+     * 
+     * 
+     * ///Règles concernant l'ensemble des bâtiments
+     * 
+     * // 2 implantation : soit l'implantation borde les limites séparatives
+     * soit // ce n'est pas le cas
+     * 
+     * 
+     * // Respect du CES
+     */
+
+    return true;
 
   }
 
-  private boolean checkProspectForBuilding(List<O> lO) {
+  private boolean checkIsInParcel(List<O> lO) {
 
     for (O ab : lO) {
 
-      boolean checked = ab.prospect(bufferLimLat, 0.5, 0);
+      IDirectPositionList dpl = ab.getFootprint().coord();
+
+      for (IDirectPosition dp : dpl) {
+
+        if (!this.bPU.getCadastralParcel().get(0).getGeom()
+            .contains(new GM_Point(dp))) {
+          return false;
+        }
+
+      }
+
+    }
+    // TODO Auto-generated method stub
+    return true;
+  }
+
+  private boolean respectBuildArea(List<O> lBatIni) {
+
+    if (lBatIni.isEmpty()) {
+      return true;
+    }
+
+    int nbElem = lBatIni.size();
+
+    IGeometry geom = lBatIni.get(0).getFootprint();
+
+    for (int i = 1; i < nbElem; i++) {
+
+      geom = geom.union(lBatIni.get(i).getFootprint());
+
+    }
+
+    double airePAr = this.bPU.getCadastralParcel().get(0).getArea();
+
+    return ((geom.area() / airePAr) <= 0.5);
+  }
+
+  private boolean checkProspectForBuilding(List<O> lO, double hIni, double s) {
+
+    for (O ab : lO) {
+
+      boolean checked = ab.prospect(bufferLimLat, s, hIni);
 
       if (!checked) {
         return false;
@@ -280,6 +330,7 @@ public class UB14PredicateFull<O extends Cuboid2> implements
         }
 
       }
+
     }
 
     return true;
@@ -329,45 +380,6 @@ public class UB14PredicateFull<O extends Cuboid2> implements
 
   }
 
-  private boolean boardLimLAt(List<O> lO, double threshold) {
-    for (O ab : lO) {
-
-      List<ILineString> ls = createLineStringsFromPol(ab.getFootprint());
-
-      for (ILineString l : ls) {
-
-        if (l.length() > threshold && this.bufferLimLat.contains(l)) {
-          return true;
-        }
-
-      }
-
-    }
-
-    return false;
-
-  }
-
-  private boolean boardRoad(List<O> lO, double threshold) {
-
-    for (O ab : lO) {
-
-      List<ILineString> ls = createLineStringsFromPol(ab.getFootprint());
-
-      for (ILineString l : ls) {
-
-        if (l.length() > threshold && this.bufferRoad.contains(l)) {
-          return true;
-        }
-
-      }
-
-    }
-
-    return false;
-
-  }
-
   private List<ILineString> createLineStringsFromPol(IGeometry geom) {
     List<ILineString> ls = new ArrayList<>();
 
@@ -410,5 +422,4 @@ public class UB14PredicateFull<O extends Cuboid2> implements
     return min;
 
   }
-
 }

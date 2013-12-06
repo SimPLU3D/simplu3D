@@ -30,7 +30,7 @@ public class TestLoaderSHP {
   public static IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
 
   public static void main(String[] args) throws CloneNotSupportedException {
-    String folder = "E:/mbrasebin/Donnees/Strasbourg/GTRU/ProjectT1/";
+    String folder = "E:/mbrasebin/Donnees/Strasbourg/GTRU/ProjectT3/";
     String folderOut =folder + "out/";
 
     
@@ -66,6 +66,7 @@ public class TestLoaderSHP {
       IDirectPosition centroidParcel = sp.getGeom().centroid();
 
       AttributeManager.addAttribute(sp, "ID", sp.getId(), "Integer");
+      AttributeManager.addAttribute(sp, "NBBord", sp.getBoundary().size(), "Integer");
 
       for (SpecificCadastralBoundary b : sp.getBoundary()) {
         bordures.add(b);

@@ -22,7 +22,7 @@ public class TestStrasbourgPLU {
   public static void main(String[] args) {
 
     // Dossier contenant les fichiers définissant l'environnement géo
-    String folderEnv = "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project1/";
+    String folderEnv = "E:/mbrasebin/Donnees/Strasbourg/GTRU/ProjectT3/";
 
     // Fichier contenant les contraintes OCL à appliquer
     File oclConstraints = new File("src/main/resources/ocl/test_static.ocl");

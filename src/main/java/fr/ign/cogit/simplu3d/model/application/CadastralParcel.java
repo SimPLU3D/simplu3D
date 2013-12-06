@@ -36,7 +36,7 @@ public class CadastralParcel extends CG_LandUse {
   }
 
 
-  public double area;
+  public double area = Double.NaN;
   
 
   public CadastralParcel(){
@@ -85,6 +85,12 @@ public class CadastralParcel extends CG_LandUse {
 
   
   public double getArea() {
+    
+    if(Double.isNaN(area)){
+      area = this.getGeom().area();
+    }
+    
+    
     return area;
   }
 

@@ -47,23 +47,23 @@ public class InfluNumberOfBoxesInGroup {
 
     List<Integer> ld = new ArrayList<>();
 
-    ld.add(2);
-    ld.add(3);
-    ld.add(4);
-    ld.add(5);
+    // ld.add(2);
+    // ld.add(3);
+    // ld.add(4);
+    // ld.add(5);
     
     ld.add(6);
     ld.add(7);
     ld.add(8);
     ld.add(9);
 
-    ld.add(10);
-    ld.add(20);
+//    ld.add(10);
+    //    ld.add(20);
     
     
-    int nbIt = 5;
+    int nbIt = 1;
 
-    BufferedWriter bf = createBufferWriter(p.get("result")+ "infleEnergyCreation.csv");
+    BufferedWriter bf = createBufferWriter(p.get("result")+ "influenceNumberOfBoxesInGroup.csv");
     bf.write("NombreMaxParGroupe,Iteration,Energy,Box");
     bf.newLine();
     bf.flush();
@@ -72,7 +72,7 @@ public class InfluNumberOfBoxesInGroup {
 
       // writer.append(valCoeff[i] + ";");
 
-      for (int j = 5; j < 10; j++) {
+      for (int j = 0; j < nbIt; j++) {
 
         Environnement env = LoaderSHP.load(p.get("folder"));
 
@@ -125,7 +125,7 @@ public class InfluNumberOfBoxesInGroup {
 
         System.out.println(ld.get(i) + "," + ocb.getCount() + ","
             + (System.currentTimeMillis() - timeMs) + "," + cc.getEnergy()
-            + "État itération : " + count + "  / " + (ld.get(i) * nbIt));
+            + "État itération : " + count + "  / " + (ld.size() * nbIt));
 
       }
 
