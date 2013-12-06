@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.exec.influParam;
+package fr.ign.cogit.simplu3d.exec.stability;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -8,8 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.List;
+
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
@@ -30,7 +29,9 @@ import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
 import fr.ign.rjmcmc.configuration.Configuration;
 
-public class InfluEnergyCreation {
+public class MassiveBigFuckingUltimateBuildingGeneratorDeluxe {
+	
+	
 
 	/**
 	 * @param args
@@ -47,17 +48,8 @@ public class InfluEnergyCreation {
 
 		int count = 0;
 
-		List<Double> ld = new ArrayList<>();
-		ld.add(1.);
-		ld.add(10.);
-		ld.add(20.);
-		ld.add(50.);
-		ld.add(100.);
-		ld.add(200.);
-		ld.add(500.);
-		ld.add(1000.);
 
-		int nbIt = 10;
+		int nbIt = 100;
 
 		BufferedWriter bf = createBufferWriter(p.get("result")
 				+ "infleEnergyCreation.csv");
@@ -66,10 +58,10 @@ public class InfluEnergyCreation {
 		bf.flush();
 
 		
-	
+
 		for (int j = 0; j < nbIt; j++) {
 
-			for (int i = 0; i < ld.size(); i++) {
+
 
 				// writer.append(valCoeff[i] + ";");
 
@@ -78,8 +70,6 @@ public class InfluEnergyCreation {
 				OptimisedBuildingsCuboidFinalDirectRejection ocb = new OptimisedBuildingsCuboidFinalDirectRejection();
 				UXL3Predicate<Cuboid2> pred = new UXL3Predicate<>(env.getBpU()
 						.get(1));
-
-				ocb.setEnergyCreation(ld.get(i));
 
 				double timeMs = System.currentTimeMillis();
 
@@ -113,22 +103,21 @@ public class InfluEnergyCreation {
 				}
 
 				ShapefileWriter.write(iFeatC,
-						p.get("result").toString() + "shp_" + ld.get(i) + "_ "
-								+ j + "_ene" + cc.getEnergy() + ".shp");
+						p.get("result").toString() + "shp_" + j + "_ene" + cc.getEnergy() + ".shp");
 
-				bf.write(ld.get(i) + "," + j + "," + cc.getEnergy() + ","
+				bf.write( j + "," + cc.getEnergy() + ","
 						+ cc.size());
 				bf.newLine();
 				bf.flush();
 
 				count++;
 
-				System.out.println(ld.get(i) + "," + ocb.getCount() + ","
+				System.out.println(+ ocb.getCount() + ","
 						+ (System.currentTimeMillis() - timeMs) + ","
 						+ cc.getEnergy() + "État itération : " + count + "  / "
-						+ (ld.get(i) * nbIt));
+						+ ( nbIt));
 
-			}
+			
 
 		}
 
@@ -162,4 +151,5 @@ public class InfluEnergyCreation {
 	private static Parameters initialize_parameters(String name) {
 		return Parameters.unmarshall(name);
 	}
+
 }
