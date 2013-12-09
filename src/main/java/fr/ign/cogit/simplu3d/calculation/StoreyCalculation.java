@@ -7,7 +7,7 @@ public class StoreyCalculation {
 
   public static double HAUTEUR_ETAGE = 3;
 
-  public static boolean CONSIDER_ROOF = false;
+  public static boolean CONSIDER_ROOF = true;
 
   public static boolean USE_STOREYS_HEIGH_ATT = false;
   

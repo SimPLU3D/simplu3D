@@ -20,7 +20,7 @@
 		<param key="maxdim" value="30" />
         <!-- Hauteur !-->
 		<param key="minheight" value ="2" />
-		<param key="maxheight" value="28" />
+		<param key="maxheight" value="16" />
 
         <!-- Probabilités !-->
         <!-- Création/destruction d'une boîte !-->

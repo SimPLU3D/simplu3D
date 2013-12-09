@@ -16,7 +16,7 @@ import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 public class SHONCalculation {
 
   // METHODE
-  public static double COEF_PLANCHER_PAR_ETAGE = 0.95;
+  public static double COEF_PLANCHER_PAR_ETAGE = 0.8;
 
   // COMPLEXE
   public static double HABITABLE_HAUTEUR = 1.8;

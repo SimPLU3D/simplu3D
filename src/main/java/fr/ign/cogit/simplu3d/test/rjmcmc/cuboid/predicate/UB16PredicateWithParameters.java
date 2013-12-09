@@ -87,9 +87,9 @@ public class UB16PredicateWithParameters<O extends Cuboid2> implements
 
     }
 
-    System.out.println("NB voirie : " + lCurveVoirie.size());
+ //   System.out.println("NB voirie : " + lCurveVoirie.size());
 
-    System.out.println("NB other : " + lCurveLatBot.size());
+    //   System.out.println("NB other : " + lCurveLatBot.size());
 
     curveVoirie = new GM_MultiCurve<>(lCurveVoirie);
     bufferRoad = curveVoirie.buffer(0.5);

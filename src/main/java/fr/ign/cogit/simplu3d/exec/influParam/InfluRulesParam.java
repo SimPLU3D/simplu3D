@@ -34,11 +34,11 @@ public class InfluRulesParam {
   public static void main(String[] args) throws IOException,
       CloneNotSupportedException {
 
-    double valMinSlope = 0.5;
+    double valMinSlope = 0;
     double valMaxSlope = 4;
     double pasSlope = 0.25;
 
-    double valMinHini = 0;
+    double valMinHini = 2;
     double valMaxHini = 12;
     double pasHini = 1;
 
@@ -68,6 +68,9 @@ public class InfluRulesParam {
           IFeatureCollection<IFeature> collectionToSave = new FT_FeatureCollection<>();
 
           double energyTot = 0;
+          
+          
+          System.out.println("Slope : " + currentValSlope + "   HIni   " + currentValHini );
 
           for (BasicPropertyUnit bPU : env.getBpU()) {
 
