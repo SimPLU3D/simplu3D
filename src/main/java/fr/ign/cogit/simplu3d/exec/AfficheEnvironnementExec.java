@@ -37,7 +37,7 @@ public class AfficheEnvironnementExec {
 
     String folderName = "./src/main/resources/scenario/";
 
-    String fileName = "building_parameters_project_expthese_1.xml";
+    String fileName = "building_parameters_project_expthese_3.xml";
 
     Parameters p = initialize_parameters(folderName + fileName);
 
@@ -51,13 +51,13 @@ public class AfficheEnvironnementExec {
     // lTheme.add(Theme.FAITAGE);
     // lTheme.add(Theme.PIGNON);
     // lTheme.add(Theme.GOUTTIERE);
-    lTheme.add(Theme.VOIRIE);
+   lTheme.add(Theme.VOIRIE);
     // lTheme.add(Theme.PARCELLE);
     // lTheme.add(Theme.SOUS_PARCELLE);
     // lTheme.add(Theme.ZONE);
     // lTheme.add(Theme.PAN);
     // lTheme.add(Theme.PAN_MUR);
-    lTheme.add(Theme.BORDURE);
+   // lTheme.add(Theme.BORDURE);
 
     Theme[] tab = lTheme.toArray(new Theme[0]);
 

@@ -41,21 +41,17 @@ public class InfluEnergyCreation {
 
 		String folderName = "./src/main/resources/scenario/";
 
-		String fileName = "building_parameters_project_expthese_1_maison.xml";
+		String fileName = "building_parameters_project_expthese_1.xml";
 
 		Parameters p = initialize_parameters(folderName + fileName);
 
 		int count = 0;
 
 		List<Double> ld = new ArrayList<>();
-		ld.add(1.);
-		ld.add(10.);
-		ld.add(20.);
-		ld.add(50.);
-		ld.add(100.);
-		ld.add(200.);
-		ld.add(500.);
-		ld.add(1000.);
+		ld.add(20000.);
+		ld.add(10000.);
+		ld.add(5000.);
+		ld.add(2000.);
 
 		int nbIt = 10;
 

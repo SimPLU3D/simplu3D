@@ -51,7 +51,7 @@ public class Recal3D {
    */
   public static void main(String[] args) throws CloneNotSupportedException {
 
-    String strShpOut = "C:/Users/mbrasebin/Desktop/Exp1/test1/Montage/Test/";
+    String strShpOut = "C:/Users/mbrasebin/Desktop/Exp1/test1/";
 
     Parameters p = initialize_parameters();
     Environnement env = LoaderSHP.load(p.get("folder"));
@@ -75,7 +75,7 @@ public class Recal3D {
     if (check) {
 
       // Changement de la hauteur
-      lAB = changeHeight(lAB, 1.5, vFR, cMI);
+      lAB = changeHeight(lAB, 1, vFR, cMI);
 
       IFeatureCollection<IFeature> featColl = new FT_FeatureCollection<>();
 

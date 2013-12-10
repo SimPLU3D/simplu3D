@@ -5,6 +5,7 @@ import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.OptimisedBuildingsCuboidFinalDirectRejection;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid2;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.predicate.UB14PredicateFull;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.predicate.UB16PredicateWithParameters;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.predicate.UXL3PredicateBuildingSeparation;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.predicate.UXL3PredicateGroup;
@@ -19,7 +20,7 @@ public class BigFuckingUltimateBuildingGeneratorDeluxe {
   // [building_footprint_rectangle_cli_main
   public static void main(String[] args) throws Exception {
     String folderName = "./src/main/resources/scenario/";
-    String fileName = "building_parameters_project_expthese_3.xml";
+    String fileName = "building_parameters_project_expthese_2.xml";
     
     
     Parameters p = initialize_parameters(folderName + fileName);
@@ -30,7 +31,7 @@ public class BigFuckingUltimateBuildingGeneratorDeluxe {
     
     
     
-    BasicPropertyUnit bPU = env.getBpU().get(5);
+    BasicPropertyUnit bPU = env.getBpU().get(1);
     
     
     
@@ -52,8 +53,8 @@ public class BigFuckingUltimateBuildingGeneratorDeluxe {
   //  UXL3PredicateGroup<Cuboid2> pred = new  UXL3PredicateGroup<Cuboid2>(env.getBpU().get(1),3);
     
     
-    UB16PredicateWithParameters<Cuboid2> pred = new UB16PredicateWithParameters<Cuboid2>(bPU ,0,0.5);
-    
+ //   UB16PredicateWithParameters<Cuboid2> pred = new UB16PredicateWithParameters<Cuboid2>(bPU ,0,0.5);
+    UB14PredicateFull<Cuboid2> pred = new UB14PredicateFull<Cuboid2>(bPU, 0.5, 0,0);
 
     oCB.process(bPU, p, env, 1, pred);
     

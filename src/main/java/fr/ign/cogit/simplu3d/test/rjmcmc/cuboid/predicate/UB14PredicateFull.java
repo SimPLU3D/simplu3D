@@ -34,18 +34,21 @@ public class UB14PredicateFull<O extends Cuboid2> implements
   int numberMaxOfBoxesInGroup;
 
   private double threshold = 10;
+  
+
+  BasicPropertyUnit bPU;
 
   // C'est ternaire 0 = non, 1 = OUI, 2 = OSEF
   private int CASE_BOARD_ROAD, CASE_BOARD_LIM;
 
-  public UB14PredicateFull(BasicPropertyUnit bPU, int numberMaxOfBoxesInGroup,
-      double threshold, int CASE_BOARD_ROAD, int CASE_BOARD_LIM) {
+  public UB14PredicateFull(BasicPropertyUnit bPU, double threshold, int CASE_BOARD_ROAD, int CASE_BOARD_LIM) {
 
     this.CASE_BOARD_LIM = CASE_BOARD_LIM;
     this.CASE_BOARD_ROAD = CASE_BOARD_ROAD;
+    
+    this.bPU = bPU;
 
     this.threshold = threshold;
-    this.numberMaxOfBoxesInGroup = numberMaxOfBoxesInGroup;
 
     List<IOrientableCurve> lCurveVoirie = new ArrayList<>();
 
@@ -98,45 +101,7 @@ public class UB14PredicateFull<O extends Cuboid2> implements
 
   }
 
-  private List<List<O>> createGroupe(List<O> lBatIn) {
-
-    List<List<O>> listGroup = new ArrayList<>();
-    
-    
-    System.out.println("PENSER A L'EMPRISE AU SOL");
-
-    while (!lBatIn.isEmpty()) {
-
-      O batIni = lBatIn.remove(0);
-
-      List<O> currentGroup = new ArrayList<>();
-      currentGroup.add(batIni);
-
-      int nbElem = lBatIn.size();
-
-      bouclei: for (int i = 0; i < nbElem; i++) {
-
-        for (O batTemp : currentGroup) {
-
-          if (lBatIn.get(i).getFootprint().distance(batTemp.getFootprint()) < 0.5) {
-
-            currentGroup.add(lBatIn.get(i));
-            lBatIn.remove(i);
-            i = -1;
-            nbElem--;
-            continue bouclei;
-
-          }
-        }
-
-      }
-
-      listGroup.add(currentGroup);
-    }
-
-    return listGroup;
-  }
-
+ 
   @Override
   public boolean check(Configuration<O> c, Modification<O, Configuration<O>> m) {
 
@@ -173,16 +138,17 @@ public class UB14PredicateFull<O extends Cuboid2> implements
       lBatIni.add(ab);
 
     }
-
-    List<List<O>> groupes = createGroupe(lBatIni);
-
-    if (groupes.size() == 0) {
+    
+    if(lBatIni.size() == 0){
       return true;
     }
+    
+    respectBuildArea(lBatIni);
 
-    if (groupes.size() > 1) {
-      return false;
-    }
+    
+    
+    
+
 
     // On a qu'un seul groupe
 
@@ -410,5 +376,27 @@ public class UB14PredicateFull<O extends Cuboid2> implements
     return min;
 
   }
+  
+  private boolean respectBuildArea(List<O> lBatIni) {
+
+    if (lBatIni.isEmpty()) {
+      return true;
+    }
+
+    int nbElem = lBatIni.size();
+
+    IGeometry geom = lBatIni.get(0).getFootprint();
+
+    for (int i = 1; i < nbElem; i++) {
+
+      geom = geom.union(lBatIni.get(i).getFootprint());
+
+    }
+
+    double airePAr = this.bPU.getCadastralParcel().get(0).getArea();
+
+    return ((geom.area() / airePAr) <= 0.8);
+  }
+
 
 }
