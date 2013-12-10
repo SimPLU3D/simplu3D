@@ -34,15 +34,15 @@ public class InfluRulesParam {
   public static void main(String[] args) throws IOException,
       CloneNotSupportedException {
 
-    double valMinSlope = 0;
-    double valMaxSlope = 4;
-    double pasSlope = 0.25;
+    double valMinSlope =   0;
+    double valMaxSlope = 3.5;
+    double pasSlope = 0.5;
 
-    double valMinHini = 2;
-    double valMaxHini = 12;
-    double pasHini = 1;
+    double valMinHini = 0;
+    double valMaxHini = 8;
+    double pasHini = 2;
 
-    double nbIteration = 10;
+    double nbIteration = 1;
 
     String folderName = "./src/main/resources/scenario/";
 
@@ -56,14 +56,18 @@ public class InfluRulesParam {
     bf.newLine();
     bf.flush();
 
+
+    Environnement env = LoaderSHP.load(p.get("folder"));
+    
     for (int iteration = 0; iteration < nbIteration; iteration++) {
 
-      Environnement env = LoaderSHP.load(p.get("folder"));
 
       for (double currentValSlope = valMinSlope; currentValSlope < valMaxSlope; currentValSlope = currentValSlope
           + pasSlope) {
         for (double currentValHini = valMinHini; currentValHini < valMaxHini; currentValHini = currentValHini
             + pasHini) {
+          
+
 
           IFeatureCollection<IFeature> collectionToSave = new FT_FeatureCollection<>();
 
