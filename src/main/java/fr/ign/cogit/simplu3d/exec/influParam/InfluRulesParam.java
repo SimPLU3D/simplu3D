@@ -34,7 +34,7 @@ public class InfluRulesParam {
   public static void main(String[] args) throws IOException,
       CloneNotSupportedException {
 
-    double valMinSlope =   0;
+    double valMinSlope =   2;
     double valMaxSlope = 3.5;
     double pasSlope = 0.5;
 

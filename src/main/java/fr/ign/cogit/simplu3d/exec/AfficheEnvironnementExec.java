@@ -37,7 +37,7 @@ public class AfficheEnvironnementExec {
 
     String folderName = "./src/main/resources/scenario/";
 
-    String fileName = "building_parameters_project_expthese_3.xml";
+    String fileName = "building_parameters_project_expthese_2.xml";
 
     Parameters p = initialize_parameters(folderName + fileName);
 
