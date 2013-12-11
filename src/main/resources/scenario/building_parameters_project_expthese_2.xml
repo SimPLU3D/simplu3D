@@ -19,7 +19,7 @@
         <param key="mindim" value="2" />
 		<param key="maxdim" value="30" />
         <!-- Hauteur !-->
-		<param key="minheight" value ="2" />
+		<param key="minheight" value ="1" />
 		<param key="maxheight" value="28" />
 
         <!-- Probabilités !-->
@@ -66,7 +66,7 @@
 		<param key="nbsave" value="50000" />
         <!-- Visiteurs utilisés-->
         <!-- Sortie console -->
-        <param key="outputstreamvisitor" value="false" />
+        <param key="outputstreamvisitor" value="true" />
         <!-- Sortie viewer 3D -->
         <param key="visitorviewer" value="false" />
         <param key="showbackground" value="true" />
@@ -101,7 +101,7 @@
        <param key="csvfilenamend" value="exportEndStats.csv" />  
         
         <!-- Dossier des sorties des visiteur -->
-        <param key="result" value="E:/temp/" />           
+        <param key="result" value="E:/temp2/" />           
         
 
 	</parameters>

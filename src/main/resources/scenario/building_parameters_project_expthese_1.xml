@@ -47,7 +47,7 @@
         <!-- 0 = non 1 = oui !-->
         <param key="load_existing_config" value="0" />
         <!-- Chemin de la configuration, cette configuraiton ne doit pas avoir subi de post tratier!-->
-        <param key="config_shape_file" value="C:/Users/mbrasebin/Desktop/Exp1/test1/Montage/Test/result_1975488   .shp" />
+        <param key="config_shape_file" value="C:/Users/mbrasebin/Desktop/Exp1/test1/result_1975488   .shp" />
         
         
         <!-- Nombre d'itération!-->
