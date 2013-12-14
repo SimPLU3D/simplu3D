@@ -42,6 +42,15 @@ public class UB14PredicateFull<O extends Cuboid2> implements
 
   // C'est ternaire 0 = non, 1 = OUI, 2 = OSEF
   private int CASE_BOARD_ROAD, CASE_BOARD_LIM;
+  
+  IGeometry forbiddenGeom = null;
+  
+  public UB14PredicateFull(BasicPropertyUnit bPU, double threshold,
+	      int CASE_BOARD_ROAD, int CASE_BOARD_LIM,IGeometry forbiddengeom) {
+	  this(bPU,threshold,CASE_BOARD_ROAD,CASE_BOARD_LIM);
+	  this.forbiddenGeom = forbiddengeom;
+	  
+  }
 
   public UB14PredicateFull(BasicPropertyUnit bPU, double threshold,
       int CASE_BOARD_ROAD, int CASE_BOARD_LIM) {
@@ -157,6 +166,14 @@ public class UB14PredicateFull<O extends Cuboid2> implements
   public boolean check(Configuration<O> c, Modification<O, Configuration<O>> m) {
 
     List<O> lO = m.getBirth();
+    
+    for(O ab : lO){
+    	if(forbiddenGeom != null){
+    		if(ab.getFootprint().intersects(forbiddenGeom)){
+    			return false;
+    		}
+    	}
+    }
 
     O batDeath = null;
 
