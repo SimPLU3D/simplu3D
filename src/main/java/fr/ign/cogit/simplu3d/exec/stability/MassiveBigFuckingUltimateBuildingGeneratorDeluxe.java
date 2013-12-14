@@ -50,6 +50,7 @@ public class MassiveBigFuckingUltimateBuildingGeneratorDeluxe {
 
 
 		int nbIt = 100;
+		int nbIni = 100;
 
 		BufferedWriter bf = createBufferWriter(p.get("result")
 				+ "inflboucle.csv");
@@ -59,7 +60,7 @@ public class MassiveBigFuckingUltimateBuildingGeneratorDeluxe {
 
 		
 
-		for (int j = 0; j < nbIt; j++) {
+		for (int j = nbIni; j < nbIni + nbIt; j++) {
 
 
 

@@ -30,7 +30,7 @@ public class TestLoaderSHP {
   public static IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
 
   public static void main(String[] args) throws CloneNotSupportedException {
-    String folder = "E:/mbrasebin/Donnees/Strasbourg/GTRU/ProjectT2/";
+    String folder = "D:/mbrasebin/Donnees/Strasbourg/GTRU/ProjectT3/";
     String folderOut =folder + "out/";
 
     

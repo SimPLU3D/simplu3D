@@ -197,6 +197,8 @@ public class UB16PredicateWithParameters<O extends Cuboid2> implements
       return false;
     }
 
+    
+    /*
     List<List<O>> groupes = createGroupe(lBatIni);
 
     if (groupes.size() == 0) {
@@ -218,7 +220,7 @@ public class UB16PredicateWithParameters<O extends Cuboid2> implements
         }
 
       }
-    }
+    }*/
 
     // Cas de l'implantation avec prospect
     boolean co = checkProspectForBuilding(lO, hIni, s);

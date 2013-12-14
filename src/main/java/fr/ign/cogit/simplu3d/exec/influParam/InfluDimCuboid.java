@@ -39,7 +39,7 @@ public class InfluDimCuboid {
 
     String folderName = "./src/main/resources/scenario/";
 
-    String fileName = "building_parameters_project_expthese_1.xml";
+    String fileName = "building_parameters_project_expthese_1_maison.xml";
 
     Parameters p = initialize_parameters(folderName + fileName);
 
@@ -59,7 +59,7 @@ public class InfluDimCuboid {
     valsMaxDimBox[2] = 75;
     valsMaxDimBox[3] = 100;
 
-    int nbIt = 5;
+    int nbIt =10;
 
     int count = 0;
     
@@ -75,7 +75,7 @@ public class InfluDimCuboid {
 
         // writer.append(valCoeff[i] + ";");
 
-        for (int j = 0; j < nbIt; j++) {
+        for (int j = 10; j < 20; j++) {
           Environnement env = LoaderSHP.load(p.get("folder"));
 
           OptimisedBuildingsCuboidFinalDirectRejection ocb = new OptimisedBuildingsCuboidFinalDirectRejection();

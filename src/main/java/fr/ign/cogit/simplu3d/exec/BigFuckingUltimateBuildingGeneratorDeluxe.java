@@ -32,7 +32,7 @@ public class BigFuckingUltimateBuildingGeneratorDeluxe {
   // [building_footprint_rectangle_cli_main
   public static void main(String[] args) throws Exception {
     String folderName = "./src/main/resources/scenario/";
-    String fileName = "building_parameters_project_expthese_2.xml";
+    String fileName = "building_parameters_project_expthese_3_maison.xml";
     
     
     Parameters p = initialize_parameters(folderName + fileName);
