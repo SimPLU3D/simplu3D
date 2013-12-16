@@ -11,6 +11,7 @@ import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
+import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.model.application.PLU;
@@ -30,7 +31,7 @@ public class TestLoaderSHP {
   public static IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
 
   public static void main(String[] args) throws CloneNotSupportedException {
-    String folder = "D:/mbrasebin/Donnees/Strasbourg/GTRU/ProjectT3/";
+    String folder = "E:/mbrasebin/Donnees/Strasbourg/GTRU/ProjectT3/";
     String folderOut =folder + "out/";
 
     
@@ -59,7 +60,12 @@ public class TestLoaderSHP {
     
     System.out.println("nb Parcelles : " + env.getParcelles().size());
     
-    for (CadastralParcel sp : env.getParcelles()) {
+    for(BasicPropertyUnit bPU:env.getBpU()){
+    
+    for (CadastralParcel sp : bPU.getCadastralParcel()) {
+      
+      
+      
       
       count = count + sp.getBoundary().size();
       
@@ -67,13 +73,15 @@ public class TestLoaderSHP {
 
       AttributeManager.addAttribute(sp, "ID", sp.getId(), "Integer");
       AttributeManager.addAttribute(sp, "NBBord", sp.getBoundary().size(), "Integer");
-
+      AttributeManager.addAttribute(sp, "NBBat", bPU.getBuildings().size(), "Integer");
+      
       for (SpecificCadastralBoundary b : sp.getBoundary()) {
         bordures.add(b);
 
         AttributeManager.addAttribute(b, "ID", b.getId(), "Integer");
         AttributeManager.addAttribute(b, "Type", b.getType(), "Integer");
         AttributeManager.addAttribute(b, "IDPar", sp.getId(), "Integer");
+
 
         if (b.getFeatAdj() != null) {
           
@@ -137,7 +145,7 @@ public class TestLoaderSHP {
       }
 
     }
-    
+    }
     
     
     
@@ -185,6 +193,7 @@ public class TestLoaderSHP {
 
     for (SubParcel sp : env.getSubParcels()) {
       AttributeManager.addAttribute(sp, "Test", 0, "Integer");
+      AttributeManager.addAttribute(sp, "NB Bat", sp.getBuildingsParts().size(), "Integer");
     }
 
     ShapefileWriter.write(env.getSubParcels(), folderOut + "sousParcelles.shp");

@@ -17,7 +17,7 @@
         <!--Distribution (équiprobable) des dimensions des boîtes-->
         <!-- Largeur et longueur !-->
         <param key="mindim" value="2" />
-		<param key="maxdim" value="30" />
+		<param key="maxdim" value="100" />
         <!-- Hauteur !-->
 		<param key="minheight" value ="1" />
 		<param key="maxheight" value="28" />

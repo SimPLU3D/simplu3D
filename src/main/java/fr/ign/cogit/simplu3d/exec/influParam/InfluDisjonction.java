@@ -36,11 +36,11 @@ public class InfluDisjonction {
 
     String folderName = "./src/main/resources/scenario/";
 
-    String fileName = "building_parameters_project_expthese_2_maison.xml";
+    String fileName = "building_parameters_project_expthese_2.xml";
 
     Parameters p = initialize_parameters(folderName + fileName);
 
-    int nbIt = 9;
+    int nbIt = 10;
 
     BufferedWriter bf = createBufferWriter(p.get("result")
         + "influDisjonction.csv");
@@ -50,13 +50,13 @@ public class InfluDisjonction {
 
     for (int it = 0; it < nbIt; it++) {
 
-      for (int i = 2; i < 3; i++) {
+      for (int i = 1; i < 2; i++) {
 
         // writer.append(valCoeff[i] + ";");
 
         Environnement env = LoaderSHP.load(p.get("folder"));
 
-        for (int j = 2; j < 3; j++) {
+        for (int j = 1; j < 2; j++) {
 
        BasicPropertyUnit bPU = env.getBpU().get(1);
 

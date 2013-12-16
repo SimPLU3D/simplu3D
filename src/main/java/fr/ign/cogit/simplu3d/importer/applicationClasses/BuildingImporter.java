@@ -69,15 +69,15 @@ public class BuildingImporter {
 
         double area = (poly.intersection(sp.getGeom())).area();
 
-        if (area / aireEmprise > RATIO_MIN) {
+   //     if (area / aireEmprise > RATIO_MIN) {
 
           int index = featTemp.getElements().indexOf(sp);
           collBPU.get(index).getBuildings().add(b);
           isAttached = true;
+System.out.println("Desactiver le hack de la classe BuildingImporter");
+       //   break;
 
-          break;
-
-        }
+   //     }
 
       }
 

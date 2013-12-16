@@ -44,11 +44,11 @@ public class InfluRulesParam {
     double valMaxHini = 2;
     double pasHini = 2;
 
-    double nbIteration = 5;
+    double nbIteration = 10;
 
     String folderName = "./src/main/resources/scenario/";
 
-    String fileName = "building_parameters_project_expthese_3_maison.xml";
+    String fileName = "building_parameters_project_expthese_3.xml";
 
 
     Parameters p = initialize_parameters(folderName + fileName);

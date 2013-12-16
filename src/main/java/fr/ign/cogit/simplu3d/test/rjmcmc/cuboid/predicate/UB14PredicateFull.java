@@ -111,9 +111,9 @@ public class UB14PredicateFull<O extends Cuboid2> implements
     System.out.println(lCurveVoirie.size());
 
     curveVoirie = new GM_MultiCurve<>(lCurveVoirie);
-    bufferRoad = curveVoirie.buffer(2.5);
+    bufferRoad = curveVoirie.buffer(1.5);
     curveLatBot = new GM_MultiCurve<>(lCurveLatBot);
-    bufferLimLat = curveLatBot.buffer(2.5);
+    bufferLimLat = curveLatBot.buffer(1.5);
 
     buffer13 = curveVoirie.buffer(13);
     buffer20 = curveVoirie.buffer(20).difference(buffer13);
@@ -209,6 +209,10 @@ public class UB14PredicateFull<O extends Cuboid2> implements
 
     if (lBatIni.size() == 0) {
       return true;
+    }
+    
+    if(lBatIni.size() > 2){
+      return false;
     }
 
     List<List<O>> groupes = createGroupe(lBatIni);

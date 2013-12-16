@@ -193,11 +193,11 @@ public class UB16PredicateWithOtherBuildings<O extends Cuboid2> implements
 
 		// Vérification du CSE
 
-		boolean bo = respectBuildArea(lBatIni);
+	//	boolean bo = respectBuildArea(lBatIni);
 
-		if (!bo) {
-			return false;
-		}
+//		if (!bo) {
+	//		return false;
+		//}
 
 		/*
 		 * List<List<O>> groupes = createGroupe(lBatIni);
