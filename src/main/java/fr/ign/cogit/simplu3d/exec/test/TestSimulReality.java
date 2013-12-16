@@ -29,7 +29,7 @@ public class TestSimulReality {
 	    String fileName = "building_parameters_project_expthese_2_maison.xml";
 	    
 	    
-	    String shapeFile = "";
+	    String shapeFile = "D:/mbrasebin/Donnees/Strasbourg/GTRU/ProjectT2/otherData/cacheForParking.shp";
 	    
 	    IGeometry  forbiddenZone = ShapefileReader.read(shapeFile).get(0).getGeom();
 	    
@@ -65,7 +65,7 @@ public class TestSimulReality {
 	    
 	    
 	 //   UB16PredicateWithParameters<Cuboid2> pred = new UB16PredicateWithParameters<Cuboid2>(bPU ,0,0.5);
-	    UB14PredicateFull<Cuboid2> pred = new UB14PredicateFull<Cuboid2>(bPU, 5, 1, 1, forbiddenZone);
+	    UB14PredicateFull<Cuboid2> pred = new UB14PredicateFull<Cuboid2>(bPU, 5, 1, 0, forbiddenZone);
 
 	    Configuration<Cuboid2> cc = oCB.process(bPU, p, env, 1, pred);
 	    
