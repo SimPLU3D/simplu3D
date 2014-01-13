@@ -51,15 +51,31 @@ public class Recal3D {
    */
   public static void main(String[] args) throws CloneNotSupportedException {
 
-    String strShpOut = "C:/Users/mbrasebin/Desktop/Exp1/test1/";
+    String strShpOut = "E:/temp/shp3D/out/";
+    String shpeIn = "E:/temp/shp3D/building13.shp";
+    
+    
 
-    Parameters p = initialize_parameters();
+
+    List<Cuboid2> lCuboid = LoaderCuboid2.loadFromShapeFile(shpeIn);
+    
+    
+    IFeatureCollection<IFeature> featColl = new FT_FeatureCollection<>();
+    
+    List<AbstractBuilding> lAB = loadBuilding(lCuboid);
+    featColl.addAll(fusionneGeom(lAB));
+
+    ShapefileWriter.write(featColl, strShpOut + "test2.shp");
+    
+    /*
+ 
+    
+     
+     Parameters p = initialize_parameters();
     Environnement env = LoaderSHP.load(p.get("folder"));
     BasicPropertyUnit bpu = env.getBpU().get(1);
 
     String configPath = p.get("config_shape_file").toString();
-
-    List<Cuboid2> lCuboid = LoaderCuboid2.loadFromShapeFile(configPath);
 
     VeryFastRuleChecker vFR = new VeryFastRuleChecker(bpu);
 
@@ -90,11 +106,11 @@ public class Recal3D {
 
     } else {
       System.out.println("pas check ?");
-    }
+    }*/
 
   }
 
-  private static IFeatureCollection<IFeature> fusionneGeom(List<AbstractBuilding> lAB) {
+  private static IFeatureCollection<IFeature> fusionneGeom(List<? extends AbstractBuilding> lAB) {
 
     int nbBat = lAB.size();
 
@@ -105,6 +121,8 @@ public class Recal3D {
     List<Double> lMaxZ = new ArrayList<>();
 
     for (AbstractBuilding aB : lAB) {
+      
+      
       Box3D b = new Box3D(aB.getGeom());
 
       lGeom.add(aB.getFootprint());

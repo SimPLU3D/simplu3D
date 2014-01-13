@@ -22,9 +22,10 @@ import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.OCLBuildingsCuboidFinal;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.OptimisedBuildingsCuboidFinalDirectRejection;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCuboid;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid2;
+import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.predicate.UXL3Predicate;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
 import fr.ign.rjmcmc.configuration.Configuration;
@@ -91,16 +92,19 @@ public class InflueCritConv {
 
               Environnement env = LoaderSHP.load(p.get("folder"));
 
-              OCLBuildingsCuboidFinal ocb = new OCLBuildingsCuboidFinal();
+
+              OptimisedBuildingsCuboidFinalDirectRejection ocb = new OptimisedBuildingsCuboidFinalDirectRejection();
+              UXL3Predicate<Cuboid2> pred = new UXL3Predicate<>(env.getBpU()
+                      .get(1));
 
               ocb.setDeltaConf(ld.get(i));
 
               double timeMs = System.currentTimeMillis();
 
               Configuration<Cuboid2> cc = ocb.process(env.getBpU().get(1), p,
-                      env, 1);
-
-              
+                  env, 1, pred);
+           
+            
               IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
               
               for (GraphConfiguration<Cuboid2>.GraphVertex v : ((GraphConfiguration<Cuboid2>) cc)
@@ -136,12 +140,14 @@ public class InflueCritConv {
               bf.newLine();
               bf.flush();
           }
-          
-          bf.flush();
-          bf.close();
+
 
       }
 
+      
+      bf.flush();
+      bf.close();
+      
   }
   
 

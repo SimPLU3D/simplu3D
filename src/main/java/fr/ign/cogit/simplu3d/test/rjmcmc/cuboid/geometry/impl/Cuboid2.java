@@ -172,9 +172,15 @@ public class Cuboid2 extends AbstractSimpleBuilding implements Primitive {
   double zMin = Double.NaN;
 
   public double getZmin() {
-    if (Double.isNaN(zMin)) {
+    if (Double.isNaN(zMin)) {            
       Environnement env = Environnement.getInstance();
-      zMin = env.getTerrain().castCoordinate(this.centerx, this.centery).z;
+      if(env != null && env.getTerrain() != null){
+        zMin = env.getTerrain().castCoordinate(this.centerx, this.centery).z;
+      }else{
+        logger.warn("No terrain Cuboid ZMin set to 0");
+        zMin =0;
+      }
+
     }
     // TODO Auto-generated method stub
     return zMin;
