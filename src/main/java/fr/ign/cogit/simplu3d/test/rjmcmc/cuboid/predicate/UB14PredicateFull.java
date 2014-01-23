@@ -52,8 +52,14 @@ public class UB14PredicateFull<O extends Cuboid2> implements
 	  
   }
 
+
+  
+  
   public UB14PredicateFull(BasicPropertyUnit bPU, double threshold,
       int CASE_BOARD_ROAD, int CASE_BOARD_LIM) {
+    
+    
+  
 
     this.CASE_BOARD_LIM = CASE_BOARD_LIM;
     this.CASE_BOARD_ROAD = CASE_BOARD_ROAD;
@@ -111,9 +117,9 @@ public class UB14PredicateFull<O extends Cuboid2> implements
     System.out.println(lCurveVoirie.size());
 
     curveVoirie = new GM_MultiCurve<>(lCurveVoirie);
-    bufferRoad = curveVoirie.buffer(1.5);
+    bufferRoad = curveVoirie.buffer(0.75);
     curveLatBot = new GM_MultiCurve<>(lCurveLatBot);
-    bufferLimLat = curveLatBot.buffer(1.5);
+    bufferLimLat = curveLatBot.buffer(0.75);
 
     buffer13 = curveVoirie.buffer(13);
     buffer20 = curveVoirie.buffer(20).difference(buffer13);
@@ -211,9 +217,9 @@ public class UB14PredicateFull<O extends Cuboid2> implements
       return true;
     }
     
-    if(lBatIni.size() > 2){
-      return false;
-    }
+   // if(lBatIni.size() > 2){
+    //    return false;
+    //}
 
     List<List<O>> groupes = createGroupe(lBatIni);
 

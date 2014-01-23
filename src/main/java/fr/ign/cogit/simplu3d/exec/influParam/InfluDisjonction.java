@@ -50,13 +50,13 @@ public class InfluDisjonction {
 
     for (int it = 0; it < nbIt; it++) {
 
-      for (int i = 1; i < 2; i++) {
+      for (int i = 2; i < 3; i++) {
 
         // writer.append(valCoeff[i] + ";");
 
         Environnement env = LoaderSHP.load(p.get("folder"));
 
-        for (int j = 1; j < 2; j++) {
+        for (int j = 2; j < 3; j++) {
 
        BasicPropertyUnit bPU = env.getBpU().get(1);
 
