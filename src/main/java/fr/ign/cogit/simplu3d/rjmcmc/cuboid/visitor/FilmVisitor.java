@@ -25,9 +25,7 @@ import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement.Theme;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCuboid;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid2;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.CuboidSnap;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.rjmcmc.configuration.Configuration;
 import fr.ign.rjmcmc.kernel.SimpleObject;
@@ -44,7 +42,7 @@ public class FilmVisitor<O extends SimpleObject> implements Visitor<O> {
   private final static String PREFIX_NAME_STRING = "Étape";
   private final static int MIN_LAYER = 3;
 
-  private GraphConfiguration<Cuboid> bestConfig = null;
+  private GraphConfiguration<Cuboid2> bestConfig = null;
   private double bestValue = Double.POSITIVE_INFINITY;
 
   private IDirectPosition dp;
@@ -53,7 +51,8 @@ public class FilmVisitor<O extends SimpleObject> implements Visitor<O> {
   private int count = 0;
   private Color col;
 
-  public FilmVisitor(IDirectPosition dp, Vecteur vectOrientation, String folder, Color col) {
+  public FilmVisitor(IDirectPosition dp, Vecteur vectOrientation,
+      String folder, Color col) {
     mW = new MainWindow();
     represent(Environnement.getInstance(), mW);
     this.dp = dp;
@@ -67,7 +66,8 @@ public class FilmVisitor<O extends SimpleObject> implements Visitor<O> {
     this.iter = 0;
     this.save = save;
 
-    mW.getInterfaceMap3D().zoomOn(dp.getX(), dp.getY(), dp.getZ(), vectOrientation);
+    mW.getInterfaceMap3D().zoomOn(dp.getX(), dp.getY(), dp.getZ(),
+        vectOrientation);
 
   }
 
@@ -78,12 +78,12 @@ public class FilmVisitor<O extends SimpleObject> implements Visitor<O> {
 
     if (config.getEnergy() < bestValue) {
       bestValue = config.getEnergy();
-      bestConfig = (GraphConfiguration<Cuboid>) config;
+      bestConfig = (GraphConfiguration<Cuboid2>) config;
 
     }
 
     if ((save > 0) && (iter % save == 0)) {
-      this.addInformationToMainWindow((GraphConfiguration<Cuboid>) config);
+      this.addInformationToMainWindow((GraphConfiguration<Cuboid2>) config);
     }
   }
 
@@ -97,7 +97,7 @@ public class FilmVisitor<O extends SimpleObject> implements Visitor<O> {
     this.addInformationToMainWindow(bestConfig);
   }
 
-  private void addInformationToMainWindow(GraphConfiguration<Cuboid> config) {
+  private void addInformationToMainWindow(GraphConfiguration<Cuboid2> config) {
 
     IFeatureCollection<IFeature> feat = new FT_FeatureCollection<>();
 
@@ -107,16 +107,10 @@ public class FilmVisitor<O extends SimpleObject> implements Visitor<O> {
 
       Object o = v.getValue();
 
-      if (v.getValue() instanceof Cuboid) {
-        geom = GenerateSolidFromCuboid.generate((Cuboid) o);
+      if (v.getValue() instanceof Cuboid2) {
+        geom = GenerateSolidFromCuboid.generate((Cuboid2) o);
 
-      } else
-        if (v.getValue() instanceof Cuboid2) {
-          geom = GenerateSolidFromCuboid.generate((Cuboid2) o);
-        } else
-          if (v.getValue() instanceof CuboidSnap) {
-            geom = GenerateSolidFromCuboid.generate((CuboidSnap) o);
-          }
+      }
 
       if (geom == null) {
         continue;
@@ -129,24 +123,28 @@ public class FilmVisitor<O extends SimpleObject> implements Visitor<O> {
     }
 
     if (!feat.isEmpty()) {
-      VectorLayer vl = new VectorLayer(feat, PREFIX_NAME_STRING + " : " + iter, col);
+      VectorLayer vl = new VectorLayer(feat, PREFIX_NAME_STRING + " : " + iter,
+          col);
 
-      int nbLayer = mW.getInterfaceMap3D().getCurrent3DMap().getLayerList().size();
+      int nbLayer = mW.getInterfaceMap3D().getCurrent3DMap().getLayerList()
+          .size();
 
       if (nbLayer > MIN_LAYER) {
-        mW.getInterfaceMap3D().getCurrent3DMap().getLayerList().get(nbLayer - 1).setVisible(false);
+        mW.getInterfaceMap3D().getCurrent3DMap().getLayerList()
+            .get(nbLayer - 1).setVisible(false);
         mW.getInterfaceMap3D()
             .getCurrent3DMap()
             .removeLayer(
-                mW.getInterfaceMap3D().getCurrent3DMap().getLayerList().get(nbLayer - 1)
-                    .getLayerName());
+                mW.getInterfaceMap3D().getCurrent3DMap().getLayerList()
+                    .get(nbLayer - 1).getLayerName());
       }
 
       mW.getInterfaceMap3D().getCurrent3DMap().addLayer(vl);
 
     }
 
-    boolean works = mW.getInterfaceMap3D().screenCapture(folder, "img" + (count++) + ".jpg");
+    boolean works = mW.getInterfaceMap3D().screenCapture(folder,
+        "img" + (count++) + ".jpg");
 
     if (!works) {
       System.out.println("Not work");
@@ -161,10 +159,10 @@ public class FilmVisitor<O extends SimpleObject> implements Visitor<O> {
     // lTheme.add(Theme.FAITAGE);
     // lTheme.add(Theme.PIGNON);
     // lTheme.add(Theme.GOUTTIERE);
-     lTheme.add(Theme.VOIRIE);
-     lTheme.add(Theme.PARCELLE);
-     lTheme.add(Theme.BORDURE);
-     lTheme.add(Theme.ZONE);
+    lTheme.add(Theme.VOIRIE);
+    lTheme.add(Theme.PARCELLE);
+    lTheme.add(Theme.BORDURE);
+    lTheme.add(Theme.ZONE);
     // lTheme.add(Theme.PAN);
 
     Theme[] tab = lTheme.toArray(new Theme[0]);
@@ -220,10 +218,12 @@ public class FilmVisitor<O extends SimpleObject> implements Visitor<O> {
     // .textureLoading(folder + "Env3D_86.png"), dpUR.getX()-dpLL.getX(),
     // dpUR.getY()-dpLL.getY()));
 
-    feat.setRepresentation(new TexturedSurface(feat, TextureManager.textureLoading(env.folder
-        + "background3D.png"), dpUR.getX() - dpLL.getX(), dpUR.getY() - dpLL.getY()));
+    feat.setRepresentation(new TexturedSurface(feat, TextureManager
+        .textureLoading(env.folder + "background3D.png"), dpUR.getX()
+        - dpLL.getX(), dpUR.getY() - dpLL.getY()));
 
-    mW.getInterfaceMap3D().getCurrent3DMap().addLayer(new VectorLayer(fc, "Fond"));
+    mW.getInterfaceMap3D().getCurrent3DMap()
+        .addLayer(new VectorLayer(fc, "Fond"));
 
   }
 }

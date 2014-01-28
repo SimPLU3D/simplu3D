@@ -5,7 +5,8 @@ import org.junit.Test;
 
 import com.vividsolutions.jts.util.Assert;
 
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid2;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid2;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.RotateCuboid2;
 
 public class RotateCuboid2Test {
   RotateCuboid2 t;
