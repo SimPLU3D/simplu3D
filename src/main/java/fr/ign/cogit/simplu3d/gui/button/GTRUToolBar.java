@@ -17,21 +17,12 @@ import fr.ign.cogit.geoxygene.sig3d.convert.transform.Extrusion3DObject;
 import fr.ign.cogit.geoxygene.sig3d.gui.MainWindow;
 import fr.ign.cogit.geoxygene.sig3d.semantic.VectorLayer;
 import fr.ign.cogit.sig3d.analysis.ProspectCalculation;
-import fr.ign.cogit.sig3d.calculation.OrientedBoundingBox;
-import fr.ign.cogit.simplu3d.exec.GTRU3D;
 import fr.ign.cogit.simplu3d.gui.actionPanel.ButtonActionPanel;
-import fr.ign.cogit.simplu3d.implantation.BasicIterator;
-import fr.ign.cogit.simplu3d.implantation.method.impl.RandomWalk;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Building;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.scenario.AbstractDefaultScenario;
-import fr.ign.cogit.simplu3d.scenario.implCube.COSBasicRectangleScenario;
-import fr.ign.cogit.simplu3d.scenario.implCube.COSOrientedScenario;
-import fr.ign.cogit.simplu3d.scenario.implCubeRoof.CESBasicRectangleRoofScenario;
-import fr.ign.cogit.simplu3d.scenario.implCubeRoof.COSBasicRectangleRoofScenario;
 
 public class GTRUToolBar extends JMenu implements ActionListener {
 
@@ -42,8 +33,8 @@ public class GTRUToolBar extends JMenu implements ActionListener {
 
   private MainWindow mW;
 
-  private JMenuItem mITemActionBatiment, butProposeBuilding,
-      butGenerateProspect, butGenerateHeight, butAsBuilding;
+  private JMenuItem mITemActionBatiment, butGenerateProspect,
+      butGenerateHeight, butAsBuilding;
 
   private JMenu subMenuGenerateConstraint;
 
@@ -57,15 +48,10 @@ public class GTRUToolBar extends JMenu implements ActionListener {
     mITemActionBatiment = new JMenuItem("Action Building");
     mITemActionBatiment.addActionListener(this);
     this.add(mITemActionBatiment);
-    
+
     butAsBuilding = new JMenuItem("Convert as Building");
     butAsBuilding.addActionListener(this);
     this.add(butAsBuilding);
-
-
-    this.butProposeBuilding = new JMenuItem("Propose building");
-    this.butProposeBuilding.addActionListener(this);
-    this.add(this.butProposeBuilding);
 
     subMenuGenerateConstraint = new JMenu("Generate constraint");
     this.add(this.subMenuGenerateConstraint);
@@ -105,32 +91,24 @@ public class GTRUToolBar extends JMenu implements ActionListener {
       return;
 
     }
-    
-    
-    if(source == butAsBuilding){
-      
+
+    if (source == butAsBuilding) {
+
       IFeatureCollection<Building> new_Buildings = new FT_FeatureCollection<Building>();
-      
-      for(IFeature feat: sel){
-        
+
+      for (IFeature feat : sel) {
 
         new_Buildings.add(new Building(feat.getGeom()));
-        
-        
-        
+
       }
-      
-      
+
       VectorLayer vL2 = new VectorLayer(new_Buildings, "Result : " + (++COUNT),
           Color.green);
-      
+
       this.mW.getInterfaceMap3D().getCurrent3DMap().addLayer(vL2);
     }
 
-    
-    
-    
-    ////////////Cette partie ne concerne que les unités foncières
+    // //////////Cette partie ne concerne que les unités foncières
 
     IFeatureCollection<BasicPropertyUnit> bPUColl = new FT_FeatureCollection<BasicPropertyUnit>();
 
@@ -139,99 +117,6 @@ public class GTRUToolBar extends JMenu implements ActionListener {
 
         bPUColl.addUnique(((CadastralParcel) feat).getbPU());
 
-      }
-
-    }
-    
-
-    if (source == butProposeBuilding) {
-
-      System.out.println("Nombre de parcelles : " + bPUColl.size());
-
-      IFeatureCollection<IFeature> new_Buildings = new FT_FeatureCollection<IFeature>();
-
-      for (BasicPropertyUnit bpU : bPUColl) {
-
-        OrientedBoundingBox oBB = new OrientedBoundingBox(bpU.generateGeom());
-
-        System.out.println("Longueur : " + oBB.getLength());
-        System.out.println("Largeur : " + oBB.getWidth());
-
-        // On affiche les choix disponibles et on les récupère
-        String[] options = { "Optimisation COS - Rectangle",
-            "Optimisation COS - Rectangle orienté",
-            "Optimisation COS - rectangle avec toit",
-            "Optimisation CES - rectangle avec toit" };
-
-        // Propose de choisir entre les différentes applications
-        Object obj = JOptionPane.showInputDialog(null,
-            "Quelle stratégie de peuplement ?", "Choix de la stratégie",
-            JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-        if (obj == null) {
-
-          return;
-        }
-
-        int nbOptions = options.length;
-        int i;
-
-        for (i = 0; i < nbOptions; i++) {
-          if (options[i].equals(obj.toString())) {
-            break;
-          }
-
-        }
-
-        AbstractDefaultScenario bRS = null;
-
-        switch (i) {
-          case 0:
-            bRS = new COSBasicRectangleScenario(bpU, 8, 30, 8, 30, 0, 15);
-            break;
-          case 1:
-            bRS = new COSOrientedScenario(bpU, 8, 100, 8, 100, 0, 28);
-            break;
-          case 2:
-            bRS = new COSBasicRectangleRoofScenario(bpU, 4, 13, 4, 13, 0, 12,
-                0, 10);
-            break;
-          case 3:
-            bRS = new CESBasicRectangleRoofScenario(bpU, 4, 13, 4, 13, 0, 12,
-                0, 10);
-            break;
-        }
-
-
-        
-        if (bRS == null) {
-          return;
-        }
-
-        // COSBasicRectangleScenario bRS = new COSBasicRectangleScenario(bpU, 8,
-        // 30, 8, 30, 0, 15);
-
-        // COSBasicRectangleRoofScenario bRS = new
-        // COSBasicRectangleRoofScenario( bpU, 4, 15, 4, 15, 0, 12, 0, 3);
-
-        // COSBasicLScenario bRS = new COSBasicLScenario(bpU, 8, 100, 8, 100, 0,
-        // 15,
-        // 2, 30, 2, 30);
-
-        RandomWalk r = new RandomWalk(bRS);
-
-        BasicIterator bI = new BasicIterator(r, GTRU3D.ITERATION);
-        new_Buildings.add(bI.getFinalBuilding());
-      }
-
-      VectorLayer vL = new VectorLayer(new_Buildings, "Test"  + (++COUNT), Color.red);
-      this.mW.getInterfaceMap3D().getCurrent3DMap().addLayer(vL);
-
-      if (GTRU3D.DEBUG) {
-        VectorLayer vL2 = new VectorLayer(GTRU3D.DEBUG_FEAT, "Debug"
-            + (++COUNT), Color.green);
-        this.mW.getInterfaceMap3D().getCurrent3DMap().addLayer(vL2);
-
-        GTRU3D.DEBUG_FEAT.clear();
       }
 
     }

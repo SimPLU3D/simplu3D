@@ -1,11 +1,8 @@
 package fr.ign.cogit.simplu3d.importer.model;
 
-
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Polygon;
-import fr.ign.cogit.simplu3d.calculation.HauteurCalculation;
-import fr.ign.cogit.simplu3d.calculation.util.PointBasType;
 import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Building;
@@ -21,7 +18,6 @@ import fr.ign.cogit.simplu3d.model.application.SubParcel;
 import fr.ign.cogit.simplu3d.model.application.UrbaZone;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid2;
 
-
 public class ModelProviderClass {
   protected UrbaZone zone;
   protected CadastralParcel parcelle;
@@ -29,8 +25,6 @@ public class ModelProviderClass {
   protected SpecificWallSurface facade;
   protected SpecificCadastralBoundary bordure;
   protected RoofSurface toit;
-  protected HauteurCalculation vol;
-  protected PointBasType pbt;
   protected Integer inti;
   protected AbstractBuilding ab;
   protected SubParcel sP;
@@ -43,6 +37,5 @@ public class ModelProviderClass {
   protected PublicSpace pss;
   protected BuildingPart bp;
   protected Cuboid2 c2;
-
 
 }

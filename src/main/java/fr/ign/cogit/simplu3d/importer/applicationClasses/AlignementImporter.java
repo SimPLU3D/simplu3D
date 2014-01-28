@@ -12,7 +12,7 @@ import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.index.Tiling;
-import fr.ign.cogit.simplu3d.convert.ConvertToLineString;
+import fr.ign.cogit.sig3d.convert.geom.FromGeomToLineString;
 import fr.ign.cogit.simplu3d.model.application.Alignement;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.Recoil;
@@ -77,7 +77,7 @@ public class AlignementImporter {
 
       for (int i = 0; i < nbCollToTreat; i++) {
         IFeature featTemp = collToTreat.get(i);
-        List<IOrientableCurve> lIOC = ConvertToLineString.convert(featTemp
+        List<IOrientableCurve> lIOC = FromGeomToLineString.convert(featTemp
             .getGeom());
 
         if (lIOC.isEmpty()) {
@@ -144,7 +144,7 @@ public class AlignementImporter {
       rec = ((Recoil) a).getDistance();
     }
 
-    IOrientableCurve geomAlignement = ConvertToLineString.convert(a.getGeom())
+    IOrientableCurve geomAlignement = FromGeomToLineString.convert(a.getGeom())
         .get(0);
 
     Vecteur v = new Vecteur(geomAlignement.coord().get(0), geomAlignement
@@ -153,7 +153,7 @@ public class AlignementImporter {
 
     for (SpecificCadastralBoundary b : bordures) {
 
-      List<IOrientableCurve> lIOC = ConvertToLineString.convert(b.getGeom());
+      List<IOrientableCurve> lIOC = FromGeomToLineString.convert(b.getGeom());
 
 //      if (lIOC.size() != 1) {
 //        System.out.println("Alignement : différent de 1 ???");
