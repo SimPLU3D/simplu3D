@@ -167,16 +167,16 @@ public class ViewerVisitor<O extends SimpleObject> implements Visitor<O> {
     mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
     mW.getInterfaceMap3D().moveLight(-140, 3, 120, 1);
 
-    if (!Boolean.parseBoolean(p.get("showbackground"))) {
+    if (p.getBoolean("showbackground")) {
       return;
     }
 
-    double z = Double.parseDouble(p.get("z"));
+    double z = p.getDouble("z");
 
-    double xmin = Double.parseDouble(p.get("xminbg"));
-    double xmax = Double.parseDouble(p.get("xmaxbg"));
-    double ymin = Double.parseDouble(p.get("yminbg"));
-    double ymax = Double.parseDouble(p.get("ymaxbg"));
+    double xmin = p.getDouble("xminbg");
+    double xmax = p.getDouble("xmaxbg");
+    double ymin =p.getDouble("yminbg");
+    double ymax = p.getDouble("ymaxbg");
 
     //
     // 1051042.8513268954120576,6840539.0837931865826249 :

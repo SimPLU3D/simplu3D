@@ -52,18 +52,18 @@ public class TestBuildingsRectangle<O> {
 
   // [building_footprint_rectangle_init_visitor
   static void init_visitor(Parameters p, Visitor<?> v) {
-    v.init(Integer.parseInt(p.get("nbdump")), Integer.parseInt(p.get("nbsave")));
+    v.init(p.getInteger("nbdump"), p.getInteger("nbsave"));
   }
 
   // ]
 
   public static Configuration<Rectangle2D> create_configuration(Parameters p, Geometry bpu) {
     ConstantEnergy<Rectangle2D, Rectangle2D> c1 = new ConstantEnergy<Rectangle2D, Rectangle2D>(
-        Double.parseDouble(p.get("energy")));
+        p.getDouble("energy"));
     ConstantEnergy<Rectangle2D, Rectangle2D> c2 = new ConstantEnergy<Rectangle2D, Rectangle2D>(
-        Double.parseDouble(p.get("ponderation_intersection")));
+        p.getDouble("ponderation_intersection"));
     ConstantEnergy<Rectangle2D, Rectangle2D> c4 = new ConstantEnergy<Rectangle2D, Rectangle2D>(
-        Double.parseDouble(p.get("ponderation_difference")));
+        p.getDouble("ponderation_difference"));
     UnaryEnergy<Rectangle2D> u1 = new IntersectionAreaUnaryEnergy<Rectangle2D>(bpu);
     UnaryEnergy<Rectangle2D> u2 = new MultipliesUnaryEnergy<Rectangle2D>(c2, u1);
     UnaryEnergy<Rectangle2D> u3 = new MinusUnaryEnergy<Rectangle2D>(c1, u2);
@@ -71,7 +71,7 @@ public class TestBuildingsRectangle<O> {
     UnaryEnergy<Rectangle2D> u5 = new MultipliesUnaryEnergy<Rectangle2D>(c4, u4);
     UnaryEnergy<Rectangle2D> u6 = new PlusUnaryEnergy<Rectangle2D>(u3, u5);
     ConstantEnergy<Rectangle2D, Rectangle2D> c3 = new ConstantEnergy<Rectangle2D, Rectangle2D>(
-        Double.parseDouble(p.get("ponderation_surface")));
+        p.getDouble("ponderation_surface"));
     BinaryEnergy<Rectangle2D, Rectangle2D> b1 = new IntersectionAreaBinaryEnergy<Rectangle2D>();
     BinaryEnergy<Rectangle2D, Rectangle2D> b2 = new MultipliesBinaryEnergy<Rectangle2D, Rectangle2D>(
         c3, b1);
@@ -83,10 +83,9 @@ public class TestBuildingsRectangle<O> {
 
   // [building_footprint_rectangle_create_sampler
   static Sampler<Rectangle2D> create_sampler(Parameters p, IEnvelope r) {
-    Vector2D v = new Vector2D(Double.parseDouble(p.get("maxsize")), Double.parseDouble(p
-        .get("maxsize")));
-    double minratio = Double.parseDouble(p.get("minratio"));
-    double maxratio = Double.parseDouble(p.get("maxratio"));
+    Vector2D v = new Vector2D(p.getDouble("maxsize"),p.getDouble("maxsize"));
+    double minratio =p.getDouble("minratio");
+    double maxratio = p.getDouble("maxratio");
     ObjectBuilder<Rectangle2D> builder = new ObjectBuilder<Rectangle2D>() {
       @Override
       public Rectangle2D build(double[] coordinates) {
@@ -113,13 +112,13 @@ public class TestBuildingsRectangle<O> {
         r.minY(), n.x(), n.y(), minratio), new Rectangle2D(r.maxX(), r.maxY(), v.x(), v.y(),
         maxratio), builder);
 
-    PoissonDistribution distribution = new PoissonDistribution(Double.parseDouble(p.get("poisson")));
+    PoissonDistribution distribution = new PoissonDistribution(p.getDouble("poisson"));
 
     DirectSampler<Rectangle2D> ds = new DirectSampler<Rectangle2D>(distribution, birth);
 
     List<Kernel<Rectangle2D>> kernels = new ArrayList<Kernel<Rectangle2D>>(3);
     kernels.add(Kernel.make_uniform_birth_death_kernel(builder, birth,
-        Double.parseDouble(p.get("pbirth")), Double.parseDouble(p.get("pdeath"))));
+        p.getDouble("pbirth"), p.getDouble("pdeath")));
     kernels.add(Kernel.make_uniform_modification_kernel(builder,
         new RectangleScaledEdgeTransform(), 0.4, "ScaledEdge"));
     kernels.add(Kernel.make_uniform_modification_kernel(builder,
@@ -146,8 +145,8 @@ public class TestBuildingsRectangle<O> {
      * command line to eventually change the values >
      */
     Parameters p = initialize_parameters();
-    Environnement env = LoaderSHP.load(p.get("folder"));
-    BasicPropertyUnit bpu = env.getBpU().get(Integer.parseInt(p.get("bpu")));
+    Environnement env = LoaderSHP.load(p.getString("folder"));
+    BasicPropertyUnit bpu = env.getBpU().get(p.getInteger("bpu"));
     IGeometry geom = bpu.generateGeom().buffer(1);
 
     /*
@@ -175,15 +174,15 @@ public class TestBuildingsRectangle<O> {
   }
 
   private static EndTest<Rectangle2D> create_end_test(Parameters p) {
-    return new MaxIterationEndTest<Rectangle2D>(Integer.parseInt(p.get("nbiter")));
+    return new MaxIterationEndTest<Rectangle2D>(p.getInteger("nbiter"));
   }
 
   private static Schedule<SimpleTemperature> create_schedule(Parameters p) {
-    return new GeometricSchedule<SimpleTemperature>(new SimpleTemperature(Double.parseDouble(p
-        .get("temp"))), Double.parseDouble(p.get("deccoef")));
+    return new GeometricSchedule<SimpleTemperature>(new SimpleTemperature(p.getDouble("temp")), 
+        p.getDouble("deccoef"));
   }
 
-  private static Parameters initialize_parameters() {
+  private static Parameters initialize_parameters() throws Exception {
     return Parameters.unmarshall("./src/main/resources/building_parameters.xml");
   }
   // ]

@@ -29,7 +29,7 @@ import fr.ign.parameters.Parameters;
 
 public class AfficheEnvironnementExec {
 
-  public static void main(String[] args) throws CloneNotSupportedException {
+  public static void main(String[] args) throws Exception {
 
     Object1d.width = 4.0f;
 
@@ -41,7 +41,7 @@ public class AfficheEnvironnementExec {
 
     Parameters p = initialize_parameters(folderName + fileName);
 
-    String folder = p.get("folder");
+    String folder = p.getString("folder");
 
     Environnement env = LoaderSHP.load(folder);
 
@@ -72,16 +72,16 @@ public class AfficheEnvironnementExec {
 
     mW.getMainMenuBar().add(new GTRUToolBar(mW));
 
-    if (!Boolean.parseBoolean(p.get("showbackground"))) {
+    if (!p.getBoolean("showbackground")) {
       return;
     }
 
-    double z = Double.parseDouble(p.get("z"));
+    double z = p.getDouble("z");
 
-    double xmin = Double.parseDouble(p.get("xminbg"));
-    double xmax = Double.parseDouble(p.get("xmaxbg"));
-    double ymin = Double.parseDouble(p.get("yminbg"));
-    double ymax = Double.parseDouble(p.get("ymaxbg"));
+    double xmin = p.getDouble("xminbg");
+    double xmax = p.getDouble("xmaxbg");
+    double ymin = p.getDouble("yminbg");
+    double ymax = p.getDouble("ymaxbg");
 
     //
     // 1051042.8513268954120576,6840539.0837931865826249 :
@@ -123,7 +123,7 @@ public class AfficheEnvironnementExec {
         .addLayer(new VectorLayer(fc, "Fond"));
   }
 
-  private static Parameters initialize_parameters(String name) {
+  private static Parameters initialize_parameters(String name) throws Exception {
     return Parameters.unmarshall(name);
   }
 

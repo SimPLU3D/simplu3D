@@ -24,15 +24,15 @@ public class TestBuffer {
 
   /**
    * @param args
-   * @throws CloneNotSupportedException
+   * @throws Exception 
    */
-  public static void main(String[] args) throws CloneNotSupportedException {
+  public static void main(String[] args) throws Exception {
     String folderName = "./src/main/resources/scenario/";
     String fileName = "building_parameters_project_expthese_3.xml";
 
     Parameters p = initialize_parameters(folderName + fileName);
 
-    Environnement env = LoaderSHP.load(p.get("folder"));
+    Environnement env = LoaderSHP.load(p.getString("folder"));
     
     IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
 
@@ -129,7 +129,7 @@ public class TestBuffer {
 
   }
 
-  private static Parameters initialize_parameters(String name) {
+  private static Parameters initialize_parameters(String name) throws Exception {
     return Parameters.unmarshall(name);
   }
 

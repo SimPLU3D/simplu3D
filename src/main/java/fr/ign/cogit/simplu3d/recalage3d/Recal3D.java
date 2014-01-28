@@ -20,11 +20,8 @@ import fr.ign.cogit.geoxygene.sig3d.geometry.Box3D;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.checker.VeryFastRuleChecker;
-import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
-import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Building;
-import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.cache.CacheModelInstance;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboid2.DifferenceVolumeUnaryEnergy;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.energy.cuboid2.IntersectionVolumeBinaryEnergy;
@@ -616,11 +613,11 @@ public class Recal3D {
 
     // Énergie constante : à la création d'un nouvel objet
     ConstantEnergy<Cuboid2, Cuboid2> energyCreation = new ConstantEnergy<Cuboid2, Cuboid2>(
-        Double.parseDouble(p.get("energy")));
+        p.getDouble("energy"));
 
     // Énergie constante : pondération de l'intersection
     ConstantEnergy<Cuboid2, Cuboid2> ponderationVolume = new ConstantEnergy<Cuboid2, Cuboid2>(
-        Double.parseDouble(p.get("ponderation_volume")));
+        p.getDouble("ponderation_volume"));
 
     // Énergie unaire : aire dans la parcelle
     UnaryEnergy<Cuboid2> energyVolume = new VolumeUnaryEnergy<Cuboid2>();
@@ -633,15 +630,15 @@ public class Recal3D {
 
     // Énergie constante : pondération de la différence
     ConstantEnergy<Cuboid2, Cuboid2> ponderationDifference = new ConstantEnergy<Cuboid2, Cuboid2>(
-        Double.parseDouble(p.get("ponderation_difference_ext")));
+        p.getDouble("ponderation_difference_ext"));
     // On ajoute l'énergie de différence : la zone en dehors de la parcelle
     UnaryEnergy<Cuboid2> u4 = new DifferenceVolumeUnaryEnergy<Cuboid2>(bpu);
     UnaryEnergy<Cuboid2> u5 = new MultipliesUnaryEnergy<Cuboid2>(ponderationDifference, u4);
     UnaryEnergy<Cuboid2> unaryEnergy = new PlusUnaryEnergy<Cuboid2>(u3, u5);
 
     // Énergie binaire : intersection entre deux rectangles
-    ConstantEnergy<Cuboid2, Cuboid2> c3 = new ConstantEnergy<Cuboid2, Cuboid2>(Double.parseDouble(p
-        .get("ponderation_volume_inter")));
+    ConstantEnergy<Cuboid2, Cuboid2> c3 = new ConstantEnergy<Cuboid2, Cuboid2>(  p.getDouble(
+        "ponderation_volume_inter"));
     BinaryEnergy<Cuboid2, Cuboid2> b1 = new IntersectionVolumeBinaryEnergy<Cuboid2>();
     BinaryEnergy<Cuboid2, Cuboid2> binaryEnergy = new MultipliesBinaryEnergy<Cuboid2, Cuboid2>(c3,
         b1);
@@ -652,7 +649,7 @@ public class Recal3D {
     return conf;
   }
 
-  private static Parameters initialize_parameters() {
+  private static Parameters initialize_parameters() throws Exception {
     return Parameters.unmarshall("./src/main/resources/scenario/building_parameters_project_expthese_1.xml");
   }
 

@@ -90,7 +90,7 @@ public class InflueCritConv {
 
           for (int j = 0; j < nbIt; j++) {
 
-              Environnement env = LoaderSHP.load(p.get("folder"));
+              Environnement env = LoaderSHP.load(p.getString("folder"));
 
 
               OptimisedBuildingsCuboidFinalDirectRejection ocb = new OptimisedBuildingsCuboidFinalDirectRejection();
@@ -173,7 +173,7 @@ public class InflueCritConv {
     return writer;
   }
 
-  private static Parameters initialize_parameters(String name) {
+  private static Parameters initialize_parameters(String name) throws Exception {
       return Parameters.unmarshall(name);
   }
 }

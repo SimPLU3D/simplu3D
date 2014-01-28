@@ -55,7 +55,7 @@ public class Test {
       for (int j = 0; j < nbIt; j++) {
         
         System.out.println("i" + (double) valCoeff[i] + "  " + count);
-        Environnement env = LoaderSHP.load(p.get("folder"));
+        Environnement env = LoaderSHP.load(p.getString("folder"));
 
         OCLBuildingsCuboidFinal ocb = new OCLBuildingsCuboidFinal();
         ocb.setCoeffDec((double) valCoeff[i]);
@@ -83,7 +83,7 @@ public class Test {
 
   }
 
-  private static Parameters initialize_parameters(String name) {
+  private static Parameters initialize_parameters(String name) throws Exception {
     return Parameters.unmarshall(name);
   }
 

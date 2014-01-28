@@ -25,7 +25,6 @@ import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.OptimisedBuildingsCuboidFinalDirectRejection;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCuboid;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid2;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.predicate.UXL3Predicate;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.predicate.UXL3PredicateGroup;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
@@ -74,7 +73,7 @@ public class InfluNumberOfBoxesInGroup {
 
       for (int j = 0; j < nbIt; j++) {
 
-        Environnement env = LoaderSHP.load(p.get("folder"));
+        Environnement env = LoaderSHP.load(p.getString("folder"));
 
         OptimisedBuildingsCuboidFinalDirectRejection ocb = new OptimisedBuildingsCuboidFinalDirectRejection();
 
@@ -160,7 +159,7 @@ public class InfluNumberOfBoxesInGroup {
     return writer;
   }
 
-  private static Parameters initialize_parameters(String name) {
+  private static Parameters initialize_parameters(String name) throws Exception {
     return Parameters.unmarshall(name);
   }
 

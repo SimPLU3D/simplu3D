@@ -54,7 +54,7 @@ public class InfluDisjonction {
 
         // writer.append(valCoeff[i] + ";");
 
-        Environnement env = LoaderSHP.load(p.get("folder"));
+        Environnement env = LoaderSHP.load(p.getString("folder"));
 
         for (int j = 2; j < 3; j++) {
 
@@ -131,7 +131,7 @@ public class InfluDisjonction {
     return writer;
   }
 
-  private static Parameters initialize_parameters(String name) {
+  private static Parameters initialize_parameters(String name) throws Exception {
     return Parameters.unmarshall(name);
   }
 

@@ -1,6 +1,5 @@
 package fr.ign.cogit.simplu3d.distribution;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,10 +42,9 @@ public class DistributionAssesment {
 
   /**
    * @param args
-   * @throws CloneNotSupportedException
-   * @throws IOException
+   * @throws Exception
    */
-  public static void main(String[] args) throws CloneNotSupportedException, IOException {
+  public static void main(String[] args) throws Exception {
 
     IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
 
@@ -56,13 +54,14 @@ public class DistributionAssesment {
      * command line to eventually change the values >
      */
     Parameters p = initialize_parameters();
-    Environnement env = LoaderSHP.load(p.get("folder"));
+    Environnement env = LoaderSHP.load(p.getString("folder"));
     BasicPropertyUnit bpu = env.getBpU().get(1);
 
     ModelInstanceGraphConfigurationPredicate<Cuboid2> pred = new ModelInstanceGraphConfigurationPredicate<Cuboid2>(
         bpu);
-    Configuration<Cuboid2> config = new ModelInstanceGraphConfiguration<>(bpu, pred
-        .getRuleChecker().getlModeInstance().get(0), new ConstantEnergy<Cuboid2, Cuboid2>(0),
+    Configuration<Cuboid2> config = new ModelInstanceGraphConfiguration<>(bpu,
+        pred.getRuleChecker().getlModeInstance().get(0),
+        new ConstantEnergy<Cuboid2, Cuboid2>(0),
         new ConstantEnergy<Cuboid2, Cuboid2>(0));
 
     Sampler<Cuboid2> samp = create_sampler(p, bpu, pred);
@@ -79,7 +78,8 @@ public class DistributionAssesment {
 
       Modification<Cuboid2, Configuration<Cuboid2>> modif = new Modification<Cuboid2, Configuration<Cuboid2>>();
 
-      KernelFunctor<Cuboid2> kf = new KernelFunctor<Cuboid2>(Random.random(), config, modif);
+      KernelFunctor<Cuboid2> kf = new KernelFunctor<Cuboid2>(Random.random(),
+          config, modif);
 
       RandomApply.randomApply(0, samp.getKernels(), kf);
 
@@ -119,10 +119,8 @@ public class DistributionAssesment {
 
   /**
    * Sampler
-   * @param p
-   *        les paramètres chargés depuis le fichier xml
-   * @param r
-   *        l'enveloppe dans laquelle on génère les positions
+   * @param p les paramètres chargés depuis le fichier xml
+   * @param r l'enveloppe dans laquelle on génère les positions
    * @return
    */
   static Sampler<Cuboid2> create_sampler(Parameters p, BasicPropertyUnit bpU,
@@ -130,18 +128,18 @@ public class DistributionAssesment {
 
     // Un vecteur ?????
 
-    double mindim = Double.parseDouble(p.get("mindim"));
-    double maxdim = Double.parseDouble(p.get("maxdim"));
+    double mindim = p.getDouble("mindim");
+    double maxdim = p.getDouble("maxdim");
 
-    double minheight = Double.parseDouble(p.get("minheight"));
-    double maxheight = Double.parseDouble(p.get("maxheight"));
+    double minheight = p.getDouble("minheight");
+    double maxheight = p.getDouble("maxheight");
 
     // A priori on redéfini le constructeur de l'objet
     ObjectBuilder<Cuboid2> builder = new ObjectBuilder<Cuboid2>() {
       @Override
       public Cuboid2 build(double[] coordinates) {
-        return new Cuboid2(coordinates[0], coordinates[1], coordinates[2], coordinates[3],
-            coordinates[4], coordinates[5]);
+        return new Cuboid2(coordinates[0], coordinates[1], coordinates[2],
+            coordinates[3], coordinates[4], coordinates[5]);
       }
 
       @Override
@@ -161,14 +159,17 @@ public class DistributionAssesment {
     };
 
     // Sampler de naissance
-//    UniformBirthInGeom<Cuboid2> birth = new UniformBirthInGeom<Cuboid2>(new Cuboid2(0, 0, mindim,
-//        mindim, minheight, 0), new Cuboid2(1, 1, maxdim, maxdim, maxheight, Math.PI), builder,
-//        bpU.getpol2D());
-    UniformBirth<Cuboid2> birth = new UniformBirth<Cuboid2>(new Cuboid2(0, 0, mindim,
-        mindim, minheight, 0), new Cuboid2(1, 1, maxdim, maxdim, maxheight, Math.PI), builder,
-        TransformToSurface.class, bpU.getpol2D());
+    // UniformBirthInGeom<Cuboid2> birth = new UniformBirthInGeom<Cuboid2>(new
+    // Cuboid2(0, 0, mindim,
+    // mindim, minheight, 0), new Cuboid2(1, 1, maxdim, maxdim, maxheight,
+    // Math.PI), builder,
+    // bpU.getpol2D());
+    UniformBirth<Cuboid2> birth = new UniformBirth<Cuboid2>(new Cuboid2(0, 0,
+        mindim, mindim, minheight, 0), new Cuboid2(1, 1, maxdim, maxdim,
+        maxheight, Math.PI), builder, TransformToSurface.class, bpU.getpol2D());
 
-    DirectSampler<Cuboid2> ds = new DirectSampler<Cuboid2>(new UniformDistribution(0, 1), birth);
+    DirectSampler<Cuboid2> ds = new DirectSampler<Cuboid2>(
+        new UniformDistribution(0, 1), birth);
 
     // Probabilité de naissance-morts modifications
     List<Kernel<Cuboid2>> kernels = new ArrayList<Kernel<Cuboid2>>(3);
@@ -180,13 +181,16 @@ public class DistributionAssesment {
     return rs;
   }
 
-//  public static <T extends SimpleObject> Kernel<T> make_uniform_birth_death_kernel_with_geom(
-//      ObjectBuilder<T> builder, UniformBirthInGeom<T> b, double pbirth, double pdeath) {
-//    return new Kernel<T>(new NullView<T>(), new UniformView<T>(builder), b.getVariate(),
-//        new Variate<T>(0), b.getTransform(), pbirth, pdeath);
-//  }
+  // public static <T extends SimpleObject> Kernel<T>
+  // make_uniform_birth_death_kernel_with_geom(
+  // ObjectBuilder<T> builder, UniformBirthInGeom<T> b, double pbirth, double
+  // pdeath) {
+  // return new Kernel<T>(new NullView<T>(), new UniformView<T>(builder),
+  // b.getVariate(),
+  // new Variate<T>(0), b.getTransform(), pbirth, pdeath);
+  // }
 
-  private static Parameters initialize_parameters() {
+  private static Parameters initialize_parameters() throws Exception {
     return Parameters
         .unmarshall("./src/main/resources/scenario/building_parameters_project_expthese_1.xml");
   }

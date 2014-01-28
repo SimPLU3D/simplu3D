@@ -62,7 +62,7 @@ public class InfluCoeffTemp {
       // writer.append(valCoeff[i] + ";");
 
       for (int j = 0; j < nbIt; j++) {
-        Environnement env = LoaderSHP.load(p.get("folder"));
+        Environnement env = LoaderSHP.load(p.getString("folder"));
 
         OptimisedBuildingsCuboidFinalDirectRejection ocb = new OptimisedBuildingsCuboidFinalDirectRejection();
         UXL3Predicate<Cuboid2> pred = new UXL3Predicate<>(env.getBpU().get(1));
@@ -117,7 +117,7 @@ public class InfluCoeffTemp {
 
   }
 
-  private static Parameters initialize_parameters(String name) {
+  private static Parameters initialize_parameters(String name) throws Exception {
     return Parameters.unmarshall(name);
   }
 }

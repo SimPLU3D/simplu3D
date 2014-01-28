@@ -25,18 +25,16 @@ import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.OptimisedBuildingsCuboidFinalDir
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCuboid;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid2;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.predicate.UB16PredicateWithOtherBuildings;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.predicate.UB16PredicateWithParameters;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
 import fr.ign.rjmcmc.configuration.Configuration;
 
 public class InfluRulesParam {
 
-  public static void main(String[] args) throws IOException,
-      CloneNotSupportedException {
+  public static void main(String[] args) throws Exception {
 
-    double valMinSlope =  2;    
-    
+    double valMinSlope = 2;
+
     double valMaxSlope = 2.5;
     double pasSlope = 0.5;
 
@@ -50,7 +48,6 @@ public class InfluRulesParam {
 
     String fileName = "building_parameters_project_expthese_3.xml";
 
-
     Parameters p = initialize_parameters(folderName + fileName);
 
     BufferedWriter bf = createBufferWriter(p.get("result")
@@ -59,40 +56,33 @@ public class InfluRulesParam {
     bf.newLine();
     bf.flush();
 
+    Environnement env = LoaderSHP.load(p.getString("folder"));
 
-    Environnement env = LoaderSHP.load(p.get("folder"));
-    
     for (int iteration = 0; iteration < nbIteration; iteration++) {
-
 
       for (double currentValSlope = valMinSlope; currentValSlope < valMaxSlope; currentValSlope = currentValSlope
           + pasSlope) {
         for (double currentValHini = valMinHini; currentValHini < valMaxHini; currentValHini = currentValHini
             + pasHini) {
-          
-
 
           IFeatureCollection<IFeature> collectionToSave = new FT_FeatureCollection<>();
 
           double energyTot = 0;
-          
-          
-          System.out.println("Slope : " + currentValSlope + "   HIni   " + currentValHini );
+
+          System.out.println("Slope : " + currentValSlope + "   HIni   "
+              + currentValHini);
 
           for (BasicPropertyUnit bPU : env.getBpU()) {
 
             OptimisedBuildingsCuboidFinalDirectRejection ocb = new OptimisedBuildingsCuboidFinalDirectRejection();
 
-           // UB16PredicateWithParameters<Cuboid2> pred = new UB16PredicateWithParameters<Cuboid2>(
-            //     bPU, currentValHini, currentValSlope);
+            // UB16PredicateWithParameters<Cuboid2> pred = new
+            // UB16PredicateWithParameters<Cuboid2>(
+            // bPU, currentValHini, currentValSlope);
 
-            
             UB16PredicateWithOtherBuildings<Cuboid2> pred = new UB16PredicateWithOtherBuildings<Cuboid2>(
-                    bPU, currentValHini, currentValSlope);
+                bPU, currentValHini, currentValSlope);
 
-            
-            
-            
             Configuration<Cuboid2> cc = ocb.process(bPU, p, env, 1, pred);
 
             energyTot = energyTot + cc.getEnergy();
@@ -168,7 +158,7 @@ public class InfluRulesParam {
     return writer;
   }
 
-  private static Parameters initialize_parameters(String name) {
+  private static Parameters initialize_parameters(String name) throws Exception {
     return Parameters.unmarshall(name);
   }
 

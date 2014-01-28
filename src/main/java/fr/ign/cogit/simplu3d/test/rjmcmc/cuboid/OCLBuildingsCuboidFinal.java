@@ -108,7 +108,7 @@ public class OCLBuildingsCuboidFinal {
     // Température
     Schedule<SimpleTemperature> sch = create_schedule(p);
 
-    int loadExistingConfig = Integer.parseInt(p.get("load_existing_config"));
+    int loadExistingConfig = p.getInteger("load_existing_config");
     if (loadExistingConfig == 1) {
       String configPath = p.get("config_shape_file").toString();
       List<Cuboid2> lCuboid = LoaderCuboid2.loadFromShapeFile(configPath);
@@ -125,48 +125,48 @@ public class OCLBuildingsCuboidFinal {
     // create_end_test(p);
 
     EndTest<Cuboid2> end = null;
-    if (Boolean.parseBoolean(p.get("isAbsoluteNumber"))) {
+    if (p.getBoolean("isAbsoluteNumber")) {
       end = create_end_test(p);
     } else {
       end = create_end_test_stability(p);
     }
 
     List<Visitor<Cuboid2>> list = new ArrayList<Visitor<Cuboid2>>();
-    if (Boolean.parseBoolean(p.get("outputstreamvisitor"))) {
+    if (p.getBoolean("outputstreamvisitor")) {
       Visitor<Cuboid2> visitor = new OutputStreamVisitor<Cuboid2>(System.out);
       list.add(visitor);
     }
-    if (Boolean.parseBoolean(p.get("shapefilewriter"))) {
+    if (p.getBoolean("shapefilewriter")) {
       Visitor<Cuboid2> shpVisitor = new ShapefileVisitorCuboid2<Cuboid2>(p.get("result").toString()
           + "result");
       list.add(shpVisitor);
     }
-    if (Boolean.parseBoolean(p.get("visitorviewer"))) {
+    if (p.getBoolean("visitorviewer")) {
       ViewerVisitor<Cuboid2> visitorViewer = new ViewerVisitor<Cuboid2>("" + id, p);
       list.add(visitorViewer);
     }
-    if (Boolean.parseBoolean(p.get("filmvisitor"))) {
-      IDirectPosition dpCentre = new DirectPosition(Double.parseDouble(p.get("filmvisitorx")),
-          Double.parseDouble(p.get("filmvisitory")), Double.parseDouble(p.get("filmvisitorz")));
-      Vecteur viewTo = new Vecteur(Double.parseDouble(p.get("filmvisitorvectx")),
-          Double.parseDouble(p.get("filmvisitorvecty")), Double.parseDouble(p
-              .get("filmvisitorvectz")));
-      Color c = new Color(Integer.parseInt(p.get("filmvisitorr")), Integer.parseInt(p
-          .get("filmvisitorg")), Integer.parseInt(p.get("filmvisitorb")));
+    if (p.getBoolean("filmvisitor")) {
+      IDirectPosition dpCentre = new DirectPosition(p.getDouble("filmvisitorx"),
+          p.getDouble("filmvisitory"), p.getDouble("filmvisitorz"));
+      Vecteur viewTo = new Vecteur(p.getDouble("filmvisitorvectx"),
+          p.getDouble("filmvisitorvecty"), p.getDouble("filmvisitorvectz"));
+      
+      
+      Color c = new Color(p.getInteger("filmvisitorr"), p.getInteger("filmvisitorg"), p.getInteger("filmvisitorb"));
       FilmVisitor<Cuboid2> visitorViewerFilmVisitor = new FilmVisitor<Cuboid2>(dpCentre, viewTo,
-          p.get("result"), c);
+          p.getString("result"), c);
       list.add(visitorViewerFilmVisitor);
     }
-    if (Boolean.parseBoolean(p.get("statsvisitor"))) {
+    if (p.getBoolean("statsvisitor")) {
       StatsV⁮isitor<Cuboid2> statsViewer = new StatsV⁮isitor<Cuboid2>("Énergie");
       list.add(statsViewer);
     }
-    if (Boolean.parseBoolean(p.get("csvvisitorend"))) {
+    if (p.getBoolean("csvvisitorend")) {
       String fileName = p.get("result").toString() + p.get("csvfilenamend");
       CSVendStats<Cuboid2> statsViewer = new CSVendStats<Cuboid2>(fileName);
       list.add(statsViewer);
     }
-    if (Boolean.parseBoolean(p.get("csvvisitor"))) {
+    if (p.getBoolean("csvvisitor")) {
       String fileName = p.get("result").toString() + p.get("csvfilename");
       CSVvisitor<Cuboid2> statsViewer = new CSVvisitor<Cuboid2>(fileName);
       list.add(statsViewer);
@@ -187,7 +187,7 @@ public class OCLBuildingsCuboidFinal {
   // nbdump => affichage dans la console
   // nbsave => sauvegarde en shapefile
   static void init_visitor(Parameters p, Visitor<?> v) {
-    v.init(Integer.parseInt(p.get("nbdump")), Integer.parseInt(p.get("nbsave")));
+    v.init(p.getInteger("nbdump"), p.getInteger("nbsave"));
   }
 
   CountVisitor<Cuboid2> countV = null;
@@ -209,10 +209,10 @@ public class OCLBuildingsCuboidFinal {
       BasicPropertyUnit bpu, IModelInstance modelInstance) {
     // Énergie constante : à la création d'un nouvel objet
     ConstantEnergy<Cuboid2, Cuboid2> energyCreation = new ConstantEnergy<Cuboid2, Cuboid2>(
-        Double.parseDouble(p.get("energy")));
+        p.getDouble("energy"));
     // Énergie constante : pondération de l'intersection
     ConstantEnergy<Cuboid2, Cuboid2> ponderationVolume = new ConstantEnergy<Cuboid2, Cuboid2>(
-        Double.parseDouble(p.get("ponderation_volume")));
+        p.getDouble("ponderation_volume"));
     // Énergie unaire : aire dans la parcelle
     UnaryEnergy<Cuboid2> energyVolume = new VolumeUnaryEnergy<Cuboid2>();
     // Multiplication de l'énergie d'intersection et de l'aire
@@ -224,15 +224,14 @@ public class OCLBuildingsCuboidFinal {
 
     // Énergie constante : pondération de la différence
     ConstantEnergy<Cuboid2, Cuboid2> ponderationDifference = new ConstantEnergy<Cuboid2, Cuboid2>(
-        Double.parseDouble(p.get("ponderation_difference_ext")));
+        p.getDouble("ponderation_difference_ext"));
     // On ajoute l'énergie de différence : la zone en dehors de la parcelle
     UnaryEnergy<Cuboid2> u4 = new DifferenceVolumeUnaryEnergy<Cuboid2>(geom);
     UnaryEnergy<Cuboid2> u5 = new MultipliesUnaryEnergy<Cuboid2>(ponderationDifference, u4);
     UnaryEnergy<Cuboid2> unaryEnergy = new PlusUnaryEnergy<Cuboid2>(u3, u5);
 
     // Énergie binaire : intersection entre deux rectangles
-    ConstantEnergy<Cuboid2, Cuboid2> c3 = new ConstantEnergy<Cuboid2, Cuboid2>(Double.parseDouble(p
-        .get("ponderation_volume_inter")));
+    ConstantEnergy<Cuboid2, Cuboid2> c3 = new ConstantEnergy<Cuboid2, Cuboid2>(p.getDouble("ponderation_volume_inter"));
     BinaryEnergy<Cuboid2, Cuboid2> b1 = new IntersectionVolumeBinaryEnergy<Cuboid2>();
     BinaryEnergy<Cuboid2, Cuboid2> binaryEnergy = new MultipliesBinaryEnergy<Cuboid2, Cuboid2>(c3,
         b1);
@@ -253,10 +252,10 @@ public class OCLBuildingsCuboidFinal {
   static Sampler<Cuboid2> create_sampler(Parameters p, BasicPropertyUnit bpU,
       ModelInstanceGraphConfigurationPredicate<Cuboid2> pred) {
     // Un vecteur ?????
-    double mindim = Double.parseDouble(p.get("mindim"));
-    double maxdim = Double.parseDouble(p.get("maxdim"));
-    double minheight = Double.parseDouble(p.get("minheight"));
-    double maxheight = Double.parseDouble(p.get("maxheight"));
+    double mindim = p.getDouble("mindim");
+    double maxdim = p.getDouble("maxdim");
+    double minheight = p.getDouble("minheight");
+    double maxheight = p.getDouble("maxheight");
     // A priori on redéfini le constructeur de l'objet
     ObjectBuilder<Cuboid2> builder = new ObjectBuilder<Cuboid2>() {
       @Override
@@ -291,7 +290,7 @@ public class OCLBuildingsCuboidFinal {
         maxheight, Math.PI), builder, TransformToSurface.class, bpU.getpol2D());
 
     // Distribution de poisson
-    PoissonDistribution distribution = new PoissonDistribution(Double.parseDouble(p.get("poisson")));
+    PoissonDistribution distribution = new PoissonDistribution(p.getDouble("poisson"));
 
     DirectSampler<Cuboid2> ds = new DirectSampler<Cuboid2>(distribution, birth);
 
@@ -299,19 +298,19 @@ public class OCLBuildingsCuboidFinal {
     List<Kernel<Cuboid2>> kernels = new ArrayList<Kernel<Cuboid2>>(3);
 
     kernels.add(Kernel.make_uniform_birth_death_kernel(builder, birth,
-        Double.parseDouble(p.get("pbirth")), Double.parseDouble(p.get("pdeath"))));
-    double amplitudeMove = Double.parseDouble(p.get("amplitudeMove"));
+        p.getDouble("pbirth"), p.getDouble("pdeath")));
+    double amplitudeMove = p.getDouble("amplitudeMove");
     kernels.add(Kernel.make_uniform_modification_kernel(builder, new MoveCuboid2(amplitudeMove),
         0.2, "Move"));
-    double amplitudeRotate = Double.parseDouble(p.get("amplitudeRotate")) * Math.PI / 180;
+    double amplitudeRotate = p.getDouble("amplitudeRotate") * Math.PI / 180;
     kernels.add(Kernel.make_uniform_modification_kernel(builder,
         new RotateCuboid2(amplitudeRotate), 0.2, "Rotate"));
-    double amplitudeMaxDim = Double.parseDouble(p.get("amplitudeMaxDim"));
+    double amplitudeMaxDim = p.getDouble("amplitudeMaxDim");
     kernels.add(Kernel.make_uniform_modification_kernel(builder, new ChangeWidth(amplitudeMaxDim),
         0.2, "ChgWidth"));
     kernels.add(Kernel.make_uniform_modification_kernel(builder, new ChangeLength(amplitudeMaxDim),
         0.2, "ChgLength"));
-    double amplitudeHeight = Double.parseDouble(p.get("amplitudeHeight"));
+    double amplitudeHeight = p.getDouble("amplitudeHeight");
     kernels.add(Kernel.make_uniform_modification_kernel(builder, new ChangeHeight(amplitudeHeight),
         0.2, "ChgHeight"));
 
@@ -322,27 +321,26 @@ public class OCLBuildingsCuboidFinal {
   }
 
   private static EndTest<Cuboid2> create_end_test(Parameters p) {
-    return new MaxIterationEndTest<Cuboid2>(Integer.parseInt(p.get("nbiter")));
+    return new MaxIterationEndTest<Cuboid2>(p.getInteger("nbiter"));
   }
 
   private EndTest<Cuboid2> create_end_test_stability(Parameters p) {
     double loc_deltaconf;
     if (Double.isNaN(this.deltaConf)) {
-      loc_deltaconf = Double.parseDouble(p.get("delta"));
+      loc_deltaconf = p.getDouble("delta");
     } else {
       loc_deltaconf = this.deltaConf;
     }
-    return new StabilityEndTest<Cuboid2>(Integer.parseInt(p.get("nbiter")), loc_deltaconf);
+    return new StabilityEndTest<Cuboid2>(p.getInteger("nbiter"), loc_deltaconf);
   }
 
   private Schedule<SimpleTemperature> create_schedule(Parameters p) {
     double coefDef = 0;
     if (Double.isNaN(this.coeffDec)) {
-      coefDef = Double.parseDouble(p.get("deccoef"));
+      coefDef = p.getDouble("deccoef");
     } else {
       coefDef = this.coeffDec;
     }
-    return new GeometricSchedule<SimpleTemperature>(new SimpleTemperature(Double.parseDouble(p
-        .get("temp"))), coefDef);
+    return new GeometricSchedule<SimpleTemperature>(new SimpleTemperature(p.getDouble("temp")), coefDef);
   }
 }

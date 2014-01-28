@@ -69,7 +69,7 @@ public class InfluEnergyCreation {
 
 				// writer.append(valCoeff[i] + ";");
 
-				Environnement env = LoaderSHP.load(p.get("folder"));
+				Environnement env = LoaderSHP.load(p.getString("folder"));
 
 				OptimisedBuildingsCuboidFinalDirectRejection ocb = new OptimisedBuildingsCuboidFinalDirectRejection();
 				UXL3Predicate<Cuboid2> pred = new UXL3Predicate<>(env.getBpU()
@@ -155,7 +155,7 @@ public class InfluEnergyCreation {
 		return writer;
 	}
 
-	private static Parameters initialize_parameters(String name) {
+	private static Parameters initialize_parameters(String name) throws Exception {
 		return Parameters.unmarshall(name);
 	}
 }

@@ -16,9 +16,6 @@ import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.OptimisedBuildingsCuboidFinalDir
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCuboid;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.geometry.impl.Cuboid2;
 import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.predicate.UB14PredicateFull;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.predicate.UB16PredicateWithParameters;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.predicate.UXL3PredicateBuildingSeparation;
-import fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.predicate.UXL3PredicateGroup;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
 import fr.ign.rjmcmc.configuration.Configuration;
@@ -33,74 +30,60 @@ public class BigFuckingUltimateBuildingGeneratorDeluxe {
   public static void main(String[] args) throws Exception {
     String folderName = "./src/main/resources/scenario/";
     String fileName = "building_parameters_project_expthese_3_maison.xml";
-    
-    
+
     Parameters p = initialize_parameters(folderName + fileName);
-    
-    
-    Environnement env = LoaderSHP.load(p.get("folder"));
-    
-    
-    
-    
+
+    Environnement env = LoaderSHP.load(p.getString("folder"));
+
     BasicPropertyUnit bPU = env.getBpU().get(1);
-    
-    
-    
+
     // OCLBuildingsCuboidFinalDirectRejection oCB = new
     // OCLBuildingsCuboidFinalDirectRejection();
     OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();
-    
-    
-    
-    
 
     // UXL3
     // UXL3Predicate<Cuboid2> pred = new UXL3Predicate<>(env.getBpU().get(1));
- 
-   // UXL3PredicateBuildingSeparation<Cuboid2> pred = new UXL3PredicateBuildingSeparation<>(
-   //     env.getBpU().get(1));
 
-    
-  //  UXL3PredicateGroup<Cuboid2> pred = new  UXL3PredicateGroup<Cuboid2>(env.getBpU().get(1),3);
-    
-    
- //   UB16PredicateWithParameters<Cuboid2> pred = new UB16PredicateWithParameters<Cuboid2>(bPU ,0,0.5);
-    UB14PredicateFull<Cuboid2> pred = new UB14PredicateFull<Cuboid2>(bPU, 5, 1,1);
+    // UXL3PredicateBuildingSeparation<Cuboid2> pred = new
+    // UXL3PredicateBuildingSeparation<>(
+    // env.getBpU().get(1));
+
+    // UXL3PredicateGroup<Cuboid2> pred = new
+    // UXL3PredicateGroup<Cuboid2>(env.getBpU().get(1),3);
+
+    // UB16PredicateWithParameters<Cuboid2> pred = new
+    // UB16PredicateWithParameters<Cuboid2>(bPU ,0,0.5);
+    UB14PredicateFull<Cuboid2> pred = new UB14PredicateFull<Cuboid2>(bPU, 5, 1,
+        1);
 
     Configuration<Cuboid2> cc = oCB.process(bPU, p, env, 1, pred);
-    
+
     IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
 
     for (GraphConfiguration<Cuboid2>.GraphVertex v : ((GraphConfiguration<Cuboid2>) cc)
-            .getGraph().vertexSet()) {
+        .getGraph().vertexSet()) {
 
-        IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<>();
-        iMS.addAll(GenerateSolidFromCuboid.generate(v.getValue())
-                .getFacesList());
+      IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<>();
+      iMS.addAll(GenerateSolidFromCuboid.generate(v.getValue()).getFacesList());
 
-        IFeature feat = new DefaultFeature(iMS);
+      IFeature feat = new DefaultFeature(iMS);
 
-        AttributeManager.addAttribute(feat, "Longueur",
-                Math.max(v.getValue().length, v.getValue().width),
-                "Double");
-        AttributeManager.addAttribute(feat, "Largeur",
-                Math.min(v.getValue().length, v.getValue().width),
-                "Double");
-        AttributeManager.addAttribute(feat, "Hauteur",
-                v.getValue().height, "Double");
-        AttributeManager.addAttribute(feat, "Rotation",
-                v.getValue().orientation, "Double");
+      AttributeManager.addAttribute(feat, "Longueur",
+          Math.max(v.getValue().length, v.getValue().width), "Double");
+      AttributeManager.addAttribute(feat, "Largeur",
+          Math.min(v.getValue().length, v.getValue().width), "Double");
+      AttributeManager.addAttribute(feat, "Hauteur", v.getValue().height,
+          "Double");
+      AttributeManager.addAttribute(feat, "Rotation", v.getValue().orientation,
+          "Double");
 
-        iFeatC.add(feat);
+      iFeatC.add(feat);
 
     }
-    
-    
-    ShapefileWriter.write(iFeatC,
-        p.get("result").toString() + "out.shp");
-    
-    System.out.println("That's all folks");    
+
+    ShapefileWriter.write(iFeatC, p.get("result").toString() + "out.shp");
+
+    System.out.println("That's all folks");
 
     // OCLBuildingsCuboidFinal oCB = new OCLBuildingsCuboidFinal(); //Rejection
     // sampler => Arrivera t il à proposer une solution ? La réponse dans un
@@ -114,7 +97,7 @@ public class BigFuckingUltimateBuildingGeneratorDeluxe {
 
   }
 
-  private static Parameters initialize_parameters(String name) {
+  private static Parameters initialize_parameters(String name) throws Exception {
     return Parameters.unmarshall(name);
   }
 }
