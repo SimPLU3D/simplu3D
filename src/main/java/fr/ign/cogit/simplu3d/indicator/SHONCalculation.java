@@ -10,6 +10,7 @@ import fr.ign.cogit.geoxygene.sig3d.equation.PlanEquation;
 import fr.ign.cogit.geoxygene.sig3d.geometry.Box3D;
 import fr.ign.cogit.sig3d.calculation.CutBuilding;
 import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
+import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.RoofSurface;
 import fr.ign.cogit.simplu3d.model.application.SubParcel;
 
@@ -27,24 +28,34 @@ public class SHONCalculation {
 
   public static double assess(SubParcel p, METHOD m) {
 
+    return assess(p.getBuildingsParts().getElements(), m);
+  }
+
+  public static double assess(BasicPropertyUnit bPu, METHOD m) {
+
+    return assess(bPu.getBuildings(), m);
+  }
+
+  public static double assess(List<? extends AbstractBuilding> lB, METHOD m) {
+
     double aireBatie = 0;
 
     switch (m) {
 
       case SIMPLE:
-        aireBatie = SHONCalculation.assessSimpleAireBati(p);
+        aireBatie = SHONCalculation.assessSimpleAireBati(lB);
       case FLOOR_CUT:
-        aireBatie = SHONCalculation.assessAireBatieFromCut(p);
+        aireBatie = SHONCalculation.assessAireBatieFromCut(lB);
     }
 
     return aireBatie;
   }
 
-  public static double assessSimpleAireBati(SubParcel p) {
+  public static double assessSimpleAireBati(List<? extends AbstractBuilding> lBP) {
 
     double aireBatie = 0;
 
-    for (AbstractBuilding b : p.getBuildingsParts()) {
+    for (AbstractBuilding b : lBP) {
 
       aireBatie = aireBatie + assessSimpleSHON(b);
     }
@@ -53,11 +64,12 @@ public class SHONCalculation {
 
   }
 
-  public static double assessAireBatieFromCut(SubParcel p) {
+  public static double assessAireBatieFromCut(
+      List<? extends AbstractBuilding> lBP) {
 
     double aireBatie = 0;
 
-    for (AbstractBuilding b : p.getBuildingsParts()) {
+    for (AbstractBuilding b : lBP) {
 
       aireBatie = aireBatie + assessCUTSHON(b);
     }

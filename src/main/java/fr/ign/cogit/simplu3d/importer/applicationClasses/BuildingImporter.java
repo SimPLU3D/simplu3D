@@ -23,6 +23,13 @@ public class BuildingImporter {
    */
   public final static double RATIO_MIN = 0.8;
 
+  
+  /**
+   * @ TODO : buildingparts non gérés
+   * @param featBati
+   * @param collBPU
+   * @return
+   */
   public static IFeatureCollection<Building> importBuilding(
       IFeatureCollection<IFeature> featBati,
       IFeatureCollection<BasicPropertyUnit> collBPU) {
@@ -58,8 +65,10 @@ public class BuildingImporter {
       }
 
       Iterator<IFeature> itSP = featTemp.select(poly).iterator();
+      
 
-      double aireEmprise = poly.area();
+
+     // double aireEmprise = poly.area();
 
       boolean isAttached = false;
 
@@ -67,14 +76,14 @@ public class BuildingImporter {
 
         IFeature sp = itSP.next();
 
-        double area = (poly.intersection(sp.getGeom())).area();
+  //      double area = (poly.intersection(sp.getGeom())).area();
 
    //     if (area / aireEmprise > RATIO_MIN) {
 
           int index = featTemp.getElements().indexOf(sp);
           collBPU.get(index).getBuildings().add(b);
           isAttached = true;
-System.out.println("Desactiver le hack de la classe BuildingImporter");
+      //    System.out.println("Desactiver le hack de la classe BuildingImporter");
        //   break;
 
    //     }
