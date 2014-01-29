@@ -26,39 +26,36 @@ import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement.Theme;
 
+/**
+ * Viewer avec quelques outils représentant les contraintes d'urbanisme
+ * 
+ * 
+ * @author MBrasebin
+ * 
+ */
 public class GTRU3D {
 
-  
-  public static final int ITERATION = 5000;
-
   public static boolean DEBUG = false;
-  
-  public static final  String folder = "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project3/";
 
-  
+  public static final String folder = "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project3/";
+
   public static IFeatureCollection<IFeature> DEBUG_FEAT = new FT_FeatureCollection<IFeature>();
-  
-  
+
   public static void main(String[] args) throws CloneNotSupportedException {
     ConstantRepresentation.backGroundColor = new Color(156, 180, 193);
 
     Environnement env = LoaderSHP.load(folder);
 
-
     MainWindow mW = new MainWindow();
-    
-    
+
     new GTRUToolBar(mW);
     new IOToolBar(mW);
-    
-    represent(folder, env, mW);
-    
 
-  
+    represent(folder, env, mW);
 
   }
-  
-  private static void represent(String folder, Environnement env, MainWindow mW){
+
+  private static void represent(String folder, Environnement env, MainWindow mW) {
     List<Theme> lTheme = new ArrayList<RepEnvironnement.Theme>();
     lTheme.add(Theme.TOIT_BATIMENT);
     lTheme.add(Theme.FACADE_BATIMENT);
@@ -66,15 +63,14 @@ public class GTRU3D {
     // lTheme.add(Theme.PIGNON);
     // lTheme.add(Theme.GOUTTIERE);
     // lTheme.add(Theme.VOIRIE);
-     lTheme.add(Theme.PARCELLE);
-  //  lTheme.add(Theme.BORDURE);
-     //  lTheme.add(Theme.ZONE);
+    lTheme.add(Theme.PARCELLE);
+    // lTheme.add(Theme.BORDURE);
+    // lTheme.add(Theme.ZONE);
     // lTheme.add(Theme.PAN);
 
     Theme[] tab = lTheme.toArray(new Theme[0]);
 
     List<VectorLayer> vl = RepEnvironnement.represent(env, tab);
-
 
     for (VectorLayer l : vl) {
 
@@ -87,24 +83,23 @@ public class GTRU3D {
     mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
     mW.getInterfaceMap3D().moveLight(-140, 3, 120, 1);
 
- 
     double z = 140;
-    // 
+    //
     // 1051042.8513268954120576,6840539.0837931865826249 :
     // 1051264.8064121364150196,6840679.2711814027279615
     // Projet 1
-   // IDirectPosition dpLL = new DirectPosition(1051042.8513268954120576,6840539.0837931865826249,z);
-   // IDirectPosition dpUR = new DirectPosition(1051264.8064121364150196,6840679.2711814027279615,z);
+    // IDirectPosition dpLL = new
+    // DirectPosition(1051042.8513268954120576,6840539.0837931865826249,z);
+    // IDirectPosition dpUR = new
+    // DirectPosition(1051264.8064121364150196,6840679.2711814027279615,z);
 
     // Projet 3
-    IDirectPosition dpLL = new DirectPosition(1051157,6840727,z);
-    IDirectPosition dpUR = new DirectPosition(1051322,6840858,z);
-
+    IDirectPosition dpLL = new DirectPosition(1051157, 6840727, z);
+    IDirectPosition dpUR = new DirectPosition(1051322, 6840858, z);
 
     IDirectPositionList dpl = new DirectPositionList();
 
-
-    IDirectPosition dp2 = new DirectPosition(dpUR.getX(),dpLL.getY(), z);
+    IDirectPosition dp2 = new DirectPosition(dpUR.getX(), dpLL.getY(), z);
 
     IDirectPosition dp4 = new DirectPosition(dpLL.getX(), dpUR.getY(), z);
 
@@ -120,17 +115,17 @@ public class GTRU3D {
 
     fc.add(feat);
 
-//    feat.setRepresentation(new TexturedSurface(feat, TextureManager
- //       .textureLoading(folder + "Env3D_86.png"), dpUR.getX()-dpLL.getX(), dpUR.getY()-dpLL.getY()));
-    
+    // feat.setRepresentation(new TexturedSurface(feat, TextureManager
+    // .textureLoading(folder + "Env3D_86.png"), dpUR.getX()-dpLL.getX(),
+    // dpUR.getY()-dpLL.getY()));
+
     feat.setRepresentation(new TexturedSurface(feat, TextureManager
-        .textureLoading(folder + "env3DPrj3.png"), dpUR.getX()-dpLL.getX(), dpUR.getY()-dpLL.getY()));
- 
-    
+        .textureLoading(folder + "env3DPrj3.png"), dpUR.getX() - dpLL.getX(),
+        dpUR.getY() - dpLL.getY()));
 
     mW.getInterfaceMap3D().getCurrent3DMap()
         .addLayer(new VectorLayer(fc, "Fond"));
-    
+
   }
 
 }

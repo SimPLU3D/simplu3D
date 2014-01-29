@@ -24,6 +24,14 @@ import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 
+
+/**
+ * Barre d'outils permettant la génération de certains éléments réglementaires 
+ * 
+ * 
+ * @author MBrasebin
+ *
+ */
 public class GTRUToolBar extends JMenu implements ActionListener {
 
   /**

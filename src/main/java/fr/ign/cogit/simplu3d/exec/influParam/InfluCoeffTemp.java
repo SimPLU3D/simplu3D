@@ -22,11 +22,14 @@ import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
 import fr.ign.rjmcmc.configuration.Configuration;
 
+/**
+ * Classe pour étudier les variations du coefficient de température
+ * 
+ * @author MBrasebin
+ *
+ */
 public class InfluCoeffTemp {
 
-  /**
-   * @param args
-   */
 
   // [building_footprint_rectangle_cli_main
   public static void main(String[] args) throws Exception {

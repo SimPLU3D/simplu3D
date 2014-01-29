@@ -25,6 +25,13 @@ import fr.ign.cogit.simplu3d.model.application.Building;
 import fr.ign.cogit.simplu3d.model.application.Materiau;
 import fr.ign.cogit.simplu3d.model.application.SpecificWallSurface;
 
+
+/**
+ * Classe permettant de générer des bâtiments paramétrés
+ * 
+ * @author MBrasebin
+ *
+ */
 public class ParametricBuilding extends Building {
 
   public void settB(TopologieBatiment tB) {

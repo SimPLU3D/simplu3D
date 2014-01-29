@@ -21,6 +21,13 @@ import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.sig3d.Messages;
 import fr.ign.cogit.geoxygene.sig3d.gui.InterfaceMap3D;
 
+
+/**
+ * Classe permettant d'appliquer des modifications sur les bâtiments paramétrés
+ * 
+ * @author MBrasebin
+ *
+ */
 public class ButtonActionPanel extends JPanel implements ActionListener {
 
   /**

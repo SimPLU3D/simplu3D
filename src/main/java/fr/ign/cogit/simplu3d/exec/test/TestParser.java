@@ -23,6 +23,13 @@ import tudresden.ocl20.pivot.pivotmodel.impl.ConstraintImpl;
 import tudresden.ocl20.pivot.standalone.facade.StandaloneFacade;
 import fr.ign.cogit.simplu3d.importer.model.ImportModelInstanceEnvironnement;
 
+
+/**
+ * 
+ * 
+ * @author JPerret
+ *
+ */
 public class TestParser {
 
   /**

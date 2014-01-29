@@ -5,6 +5,11 @@ import java.util.List;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid2;
 
+/**
+ * Génère des statistiques sur les cuboid générés
+ * @author MBrasebin
+ *
+ */
 public class StatsCuboidFromShapeFile {
 
   /**

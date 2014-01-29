@@ -21,7 +21,7 @@ import fr.ign.cogit.simplu3d.model.application.SubParcel;
 import fr.ign.cogit.simplu3d.solver.interpreter.OCLInterpreterSimplu3D;
 
 /**
- * Comme le Fast Rule Checker, mais en plus rapide. Du moins, je l'espère
+ * Classe permettant la vérification des règles d'urbanisme sur une unité foncière
  * @author MBrasebin
  */
 public class VeryFastRuleChecker {

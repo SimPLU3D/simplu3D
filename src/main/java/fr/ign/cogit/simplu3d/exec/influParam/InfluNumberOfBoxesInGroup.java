@@ -30,6 +30,13 @@ import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
 import fr.ign.rjmcmc.configuration.Configuration;
 
+
+/**
+ * Classe pour étudier l'influence des variations du nombre de boîtes
+ * 
+ * @author MBrasebin
+ *
+ */
 public class InfluNumberOfBoxesInGroup {
   // [building_footprint_rectangle_cli_main
   public static void main(String[] args) throws Exception {

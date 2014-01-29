@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.distribution;
+package fr.ign.cogit.simplu3d.exec;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +36,15 @@ import fr.ign.rjmcmc.sampler.RejectionSampler;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.SimpleTemperature;
 
-public class DistributionAssesment {
+/**
+ * Classe permettant de générer et d'exporter un ensemble de boîtes suivant la
+ * distribution paramétrée
+ * 
+ * 
+ * @author MBrasebin
+ * 
+ */
+public class DistributionGeneration {
 
   public static IFeatureCollection<IFeature> featCD = new FT_FeatureCollection<>();
 

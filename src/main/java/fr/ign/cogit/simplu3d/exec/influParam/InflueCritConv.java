@@ -30,6 +30,13 @@ import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
 import fr.ign.rjmcmc.configuration.Configuration;
 
+
+/**
+ * Classe pour étudier l'influence du critère de convergence
+ * 
+ * @author MBrasebin
+ *
+ */
 public class InflueCritConv {
 
 //[building_footprint_rectangle_cli_main

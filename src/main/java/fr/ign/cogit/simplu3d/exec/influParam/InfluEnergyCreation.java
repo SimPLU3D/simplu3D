@@ -30,6 +30,13 @@ import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
 import fr.ign.rjmcmc.configuration.Configuration;
 
+
+/**
+ * Classe pour étudier l'influence des variations d'énergie de création
+ * 
+ * @author MBrasebin
+ *
+ */
 public class InfluEnergyCreation {
 
 	/**
