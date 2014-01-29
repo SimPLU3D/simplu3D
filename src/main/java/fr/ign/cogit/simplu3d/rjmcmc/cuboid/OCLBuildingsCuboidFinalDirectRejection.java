@@ -29,14 +29,14 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.sampler.GreenSamplerBlockTemperature;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.ChangeHeight;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.ChangeLength;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.ChangeWidth;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.MoveCuboid2;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.RotateCuboid2;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.MoveCuboid;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.RotateCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth.TransformToSurface;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.CSVendStats;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.CSVvisitor;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.CountVisitor;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.FilmVisitor;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.ShapefileVisitorCuboid2;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.ShapefileVisitorCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.StatsVisitor;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.ViewerVisitor;
 import fr.ign.mpp.DirectRejectionSampler;
@@ -140,7 +140,7 @@ public class OCLBuildingsCuboidFinalDirectRejection {
       list.add(visitor);
     }
     if (p.getBoolean("shapefilewriter")) {
-      Visitor<Cuboid2> shpVisitor = new ShapefileVisitorCuboid2<Cuboid2>(p.get(
+      Visitor<Cuboid2> shpVisitor = new ShapefileVisitorCuboid<Cuboid2>(p.get(
           "result").toString()
           + "result");
       list.add(shpVisitor);
@@ -312,11 +312,11 @@ public class OCLBuildingsCuboidFinalDirectRejection {
         p.getDouble("pdeath")));
     double amplitudeMove = p.getDouble("amplitudeMove");
     kernels.add(Kernel.make_uniform_modification_kernel(builder,
-        new MoveCuboid2(amplitudeMove), 0.2, "Move"));
+        new MoveCuboid(amplitudeMove), 0.2, "Move"));
     double amplitudeRotate = p.getDouble("amplitudeRotate")
         * Math.PI / 180;
     kernels.add(Kernel.make_uniform_modification_kernel(builder,
-        new RotateCuboid2(amplitudeRotate), 0.2, "Rotate"));
+        new RotateCuboid(amplitudeRotate), 0.2, "Rotate"));
     double amplitudeMaxDim = p.getDouble("amplitudeMaxDim");
     kernels.add(Kernel.make_uniform_modification_kernel(builder,
         new ChangeWidth(amplitudeMaxDim), 0.2, "ChgWidth"));

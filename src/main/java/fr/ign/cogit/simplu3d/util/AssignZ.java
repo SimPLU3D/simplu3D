@@ -11,6 +11,12 @@ import fr.ign.cogit.simplu3d.model.application.SubParcel;
 import fr.ign.cogit.simplu3d.model.application.UrbaZone;
 import fr.ign.cogit.simplu3d.model.application.Road;
 
+
+/**
+ * Classe pour affecter un z à différents types d'objets
+ * 
+ * @author MBrasebin
+ */
 public class AssignZ {
 
   public static void toParcelle(IFeatureCollection<CadastralParcel> parcelles,

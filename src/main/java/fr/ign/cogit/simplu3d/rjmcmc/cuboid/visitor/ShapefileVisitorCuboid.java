@@ -31,12 +31,12 @@ import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.Temperature;
 import fr.ign.simulatedannealing.visitor.Visitor;
 
-public class ShapefileVisitorCuboid2<O extends SimpleObject> implements Visitor<O> {
+public class ShapefileVisitorCuboid<O extends SimpleObject> implements Visitor<O> {
   private int save;
   private int iter;
   private String fileName;
 
-  public ShapefileVisitorCuboid2(String fileName) {
+  public ShapefileVisitorCuboid(String fileName) {
     this.fileName = fileName;
   }
 

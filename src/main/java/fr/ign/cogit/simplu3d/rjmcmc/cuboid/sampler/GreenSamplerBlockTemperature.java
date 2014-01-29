@@ -21,6 +21,15 @@ import fr.ign.rjmcmc.kernel.SimpleObject;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.Temperature;
 
+
+/**
+ * 
+ * Sampler bloquant la diminution de la température si une configuration ne vérifie pas les résutlats
+ * 
+ * @author MBrasebin
+ *
+ * @param <O>
+ */
 public class GreenSamplerBlockTemperature<O extends SimpleObject> implements Sampler<O> {
   /**
    * Logger.

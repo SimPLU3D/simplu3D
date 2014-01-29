@@ -2,12 +2,12 @@ package fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation;
 
 import fr.ign.rjmcmc.kernel.Transform;
 
-public class MoveCuboid2 implements Transform {
+public class RotateCuboid implements Transform {
 
-  private double amplitudeMove;
+  private double amplitudeRotate;
 
-  public MoveCuboid2(double amplitudeMove) {
-    this.amplitudeMove = amplitudeMove;
+  public RotateCuboid(double amp) {
+    amplitudeRotate = amp;
   }
 
   @Override
@@ -18,16 +18,19 @@ public class MoveCuboid2 implements Transform {
     double width = in[3];
     double height = in[4];
     double orientation = in[5];
-    double dx = in[6];
-    double dy = in[7];
-    out[0] = x + (0.5 - dx) * amplitudeMove;
-    out[1] = y + (0.5 - dy) * amplitudeMove;
+    double dor = in[6];
+    out[0] = x;
+    out[1] = y;
     out[2] = length;
     out[3] = width;
     out[4] = height;
-    out[5] = orientation;
-    out[6] = 1 - dx;
-    out[7] = 1 - dy;
+    double newAngle = orientation + (0.5 - dor) * amplitudeRotate;
+    double modulo = newAngle % (Math.PI);
+    if (modulo < 0) {
+      modulo = Math.PI + modulo;
+    }
+    out[5] = modulo;
+    out[6] = 1 - dor;
     return 1;
   }
 
@@ -48,6 +51,6 @@ public class MoveCuboid2 implements Transform {
 
   @Override
   public int dimension() {
-    return 8;
+    return 7;
   }
 }
