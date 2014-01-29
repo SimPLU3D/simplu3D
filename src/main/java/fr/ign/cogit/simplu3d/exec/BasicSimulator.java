@@ -20,7 +20,7 @@ import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
 import fr.ign.rjmcmc.configuration.Configuration;
 
-public class BigFuckingUltimateBuildingGeneratorDeluxe {
+public class BasicSimulator {
 
   /**
    * @param args

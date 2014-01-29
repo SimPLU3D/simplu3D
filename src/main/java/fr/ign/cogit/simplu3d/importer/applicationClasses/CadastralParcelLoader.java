@@ -27,7 +27,6 @@ import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_LineString;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.geoxygene.util.algo.SmallestSurroundingRectangleComputation;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
-import fr.ign.cogit.simplu3d.exec.test.TestLoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 
@@ -128,8 +127,6 @@ public class CadastralParcelLoader {
 
           df.setGeom(a.getGeom().buffer(threshold));
           AttributeManager.addAttribute(df, "OK", 0, "Integer");
-
-          TestLoaderSHP.featC.add(df);
 
         }
 
@@ -270,8 +267,6 @@ public class CadastralParcelLoader {
             df.setGeom((new GM_LineString(dplTemp)).buffer(threshold));
             AttributeManager.addAttribute(df, "OK", 0, "Integer");
 
-            TestLoaderSHP.featC.add(df);
-
             listArcLat.add(aCandidat);
           } else {
 
@@ -283,7 +278,6 @@ public class CadastralParcelLoader {
             df.setGeom((new GM_LineString(dplTemp)).buffer(threshold));
             AttributeManager.addAttribute(df, "OK", 1, "Integer");
 
-            TestLoaderSHP.featC.add(df);
 
             // Le candidat est un fond de parcelle
             break;
