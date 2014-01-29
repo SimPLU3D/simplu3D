@@ -17,6 +17,8 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
 
+
+
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid2;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.rjmcmc.configuration.Configuration;
@@ -25,7 +27,7 @@ import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.Temperature;
 import fr.ign.simulatedannealing.visitor.Visitor;
 
-public class StatsV⁮isitor<O extends SimpleObject> implements Visitor<O> {
+public class StatsVisitor<O extends SimpleObject> implements Visitor<O> {
 
   private int dump;
   private int iter;
@@ -39,7 +41,7 @@ public class StatsV⁮isitor<O extends SimpleObject> implements Visitor<O> {
 
   private double bestEnergy = Double.POSITIVE_INFINITY;
 
-  public StatsV⁮isitor(String title) {
+  public StatsVisitor(String title) {
 
     aF = new ApplicationFrame(title);
 

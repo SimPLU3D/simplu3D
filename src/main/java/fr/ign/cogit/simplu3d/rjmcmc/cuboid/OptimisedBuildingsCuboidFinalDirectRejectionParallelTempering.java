@@ -32,7 +32,7 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.CSVvisitor;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.CountVisitor;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.FilmVisitor;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.ShapefileVisitorCuboid2;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.StatsV⁮isitor;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.StatsVisitor;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.ViewerVisitor;
 import fr.ign.mpp.DirectRejectionSampler;
 import fr.ign.mpp.DirectSampler;
@@ -190,7 +190,7 @@ public class OptimisedBuildingsCuboidFinalDirectRejectionParallelTempering {
           list.add(visitorViewerFilmVisitor);
         }
         if (p.getBoolean("statsvisitor")) {
-          StatsV⁮isitor<Cuboid2> statsViewer = new StatsV⁮isitor<Cuboid2>(
+          StatsVisitor<Cuboid2> statsViewer = new StatsVisitor<Cuboid2>(
               "Énergie");
           list.add(statsViewer);
         }
