@@ -14,7 +14,7 @@ import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.OptimisedBuildingsCuboidFinalDirectRejection;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCuboid;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid2;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.predicate.UXL3Predicate;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
@@ -41,7 +41,7 @@ public class BigFuckingUltimateBuildingGeneratorDeluxe {
     // OCLBuildingsCuboidFinalDirectRejection();
     OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();
 
-    UXL3Predicate<Cuboid2> pred = new UXL3Predicate<>(env.getBpU().get(1));
+    UXL3Predicate<Cuboid> pred = new UXL3Predicate<>(env.getBpU().get(1));
 
     // UXL3PredicateBuildingSeparation<Cuboid2> pred = new
     // UXL3PredicateBuildingSeparation<>(
@@ -53,11 +53,11 @@ public class BigFuckingUltimateBuildingGeneratorDeluxe {
     // UB16PredicateWithParameters<Cuboid2> pred = new
     // UB16PredicateWithParameters<Cuboid2>(bPU ,0,0.5);
 
-    Configuration<Cuboid2> cc = oCB.process(bPU, p, env, 1, pred);
+    Configuration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred);
 
     IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
 
-    for (GraphConfiguration<Cuboid2>.GraphVertex v : ((GraphConfiguration<Cuboid2>) cc)
+    for (GraphConfiguration<Cuboid>.GraphVertex v : ((GraphConfiguration<Cuboid>) cc)
         .getGraph().vertexSet()) {
 
       IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<>();

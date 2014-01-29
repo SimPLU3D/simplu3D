@@ -1,6 +1,5 @@
-package fr.ign.cogit.simplu3d.calculation;
+package fr.ign.cogit.simplu3d.indicator;
 
-import fr.ign.cogit.simplu3d.calculation.HauteurCalculation;
 import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 
 public class RoofCoeff {

@@ -23,7 +23,7 @@ import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.OptimisedBuildingsCuboidFinalDirectRejection;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCuboid;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid2;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.predicate.UXL3Predicate;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
@@ -69,17 +69,17 @@ public class MassiveBigFuckingUltimateBuildingGeneratorDeluxe {
 				Environnement env = LoaderSHP.load(p.getString("folder"));
 
 				OptimisedBuildingsCuboidFinalDirectRejection ocb = new OptimisedBuildingsCuboidFinalDirectRejection();
-				UXL3Predicate<Cuboid2> pred = new UXL3Predicate<>(env.getBpU()
+				UXL3Predicate<Cuboid> pred = new UXL3Predicate<>(env.getBpU()
 						.get(1));
 
 				double timeMs = System.currentTimeMillis();
 
-				Configuration<Cuboid2> cc = ocb.process(env.getBpU().get(1), p,
+				Configuration<Cuboid> cc = ocb.process(env.getBpU().get(1), p,
 						env, 1, pred);
 
 				IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
 
-				for (GraphConfiguration<Cuboid2>.GraphVertex v : ((GraphConfiguration<Cuboid2>) cc)
+				for (GraphConfiguration<Cuboid>.GraphVertex v : ((GraphConfiguration<Cuboid>) cc)
 						.getGraph().vertexSet()) {
 
 					IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<>();

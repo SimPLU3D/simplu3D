@@ -12,16 +12,16 @@ import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_LineString;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Polygon;
 import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Solid;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid2;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 
 public class GenerateSolidFromCuboid {
 
-  public static ISolid generate(Cuboid2 c) {
+  public static ISolid generate(Cuboid c) {
 
     return generate(c, c.getZmin());
   }
 
-  public static ISolid generate(Cuboid2 c, double zMin) {
+  public static ISolid generate(Cuboid c, double zMin) {
 
     IDirectPositionList dpl = c.getFootprint().coord();
 

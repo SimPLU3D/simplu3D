@@ -17,10 +17,10 @@ import fr.ign.cogit.geoxygene.sig3d.geometry.Box3D;
 import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
 import fr.ign.cogit.sig3d.analysis.RoofDetection;
 import fr.ign.cogit.sig3d.model.citygml.building.CG_AbstractBuilding;
-import fr.ign.cogit.simplu3d.calculation.HauteurCalculation;
-import fr.ign.cogit.simplu3d.calculation.StoreyCalculation;
 import fr.ign.cogit.simplu3d.importer.applicationClasses.EmpriseGenerator;
 import fr.ign.cogit.simplu3d.importer.applicationClasses.RoofImporter;
+import fr.ign.cogit.simplu3d.indicator.HauteurCalculation;
+import fr.ign.cogit.simplu3d.indicator.StoreyCalculation;
 
 public abstract class AbstractBuilding extends CG_AbstractBuilding {
 

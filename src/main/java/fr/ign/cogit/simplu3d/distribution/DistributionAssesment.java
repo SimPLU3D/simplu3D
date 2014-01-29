@@ -16,7 +16,7 @@ import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.configuration.ModelInstanceGraphConfiguration;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.configuration.ModelInstanceGraphConfigurationPredicate;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid2;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth.TransformToSurface;
 import fr.ign.mpp.DirectSampler;
 import fr.ign.mpp.kernel.ObjectBuilder;
@@ -57,14 +57,14 @@ public class DistributionAssesment {
     Environnement env = LoaderSHP.load(p.getString("folder"));
     BasicPropertyUnit bpu = env.getBpU().get(1);
 
-    ModelInstanceGraphConfigurationPredicate<Cuboid2> pred = new ModelInstanceGraphConfigurationPredicate<Cuboid2>(
+    ModelInstanceGraphConfigurationPredicate<Cuboid> pred = new ModelInstanceGraphConfigurationPredicate<Cuboid>(
         bpu);
-    Configuration<Cuboid2> config = new ModelInstanceGraphConfiguration<>(bpu,
+    Configuration<Cuboid> config = new ModelInstanceGraphConfiguration<>(bpu,
         pred.getRuleChecker().getlModeInstance().get(0),
-        new ConstantEnergy<Cuboid2, Cuboid2>(0),
-        new ConstantEnergy<Cuboid2, Cuboid2>(0));
+        new ConstantEnergy<Cuboid, Cuboid>(0),
+        new ConstantEnergy<Cuboid, Cuboid>(0));
 
-    Sampler<Cuboid2> samp = create_sampler(p, bpu, pred);
+    Sampler<Cuboid> samp = create_sampler(p, bpu, pred);
 
     // int count = 0;
 
@@ -76,16 +76,16 @@ public class DistributionAssesment {
 
       // count++;
 
-      Modification<Cuboid2, Configuration<Cuboid2>> modif = new Modification<Cuboid2, Configuration<Cuboid2>>();
+      Modification<Cuboid, Configuration<Cuboid>> modif = new Modification<Cuboid, Configuration<Cuboid>>();
 
-      KernelFunctor<Cuboid2> kf = new KernelFunctor<Cuboid2>(Random.random(),
+      KernelFunctor<Cuboid> kf = new KernelFunctor<Cuboid>(Random.random(),
           config, modif);
 
       RandomApply.randomApply(0, samp.getKernels(), kf);
 
       boolean test = true; // samp.checkNonUpdateConfiguration(kf);
 
-      List<Cuboid2> lAB = (List<Cuboid2>) kf.getModif().getBirth();
+      List<Cuboid> lAB = (List<Cuboid>) kf.getModif().getBirth();
 
       if (test) {
 
@@ -96,7 +96,7 @@ public class DistributionAssesment {
           return;
         }
 
-        Cuboid2 c1 = lAB.get(0);
+        Cuboid c1 = lAB.get(0);
 
         IFeature f = new DefaultFeature();
         f.setGeom(new GM_Point(new DirectPosition(c1.centerx, c1.centery)));
@@ -123,8 +123,8 @@ public class DistributionAssesment {
    * @param r l'enveloppe dans laquelle on génère les positions
    * @return
    */
-  static Sampler<Cuboid2> create_sampler(Parameters p, BasicPropertyUnit bpU,
-      ModelInstanceGraphConfigurationPredicate<Cuboid2> pred) {
+  static Sampler<Cuboid> create_sampler(Parameters p, BasicPropertyUnit bpU,
+      ModelInstanceGraphConfigurationPredicate<Cuboid> pred) {
 
     // Un vecteur ?????
 
@@ -135,10 +135,10 @@ public class DistributionAssesment {
     double maxheight = p.getDouble("maxheight");
 
     // A priori on redéfini le constructeur de l'objet
-    ObjectBuilder<Cuboid2> builder = new ObjectBuilder<Cuboid2>() {
+    ObjectBuilder<Cuboid> builder = new ObjectBuilder<Cuboid>() {
       @Override
-      public Cuboid2 build(double[] coordinates) {
-        return new Cuboid2(coordinates[0], coordinates[1], coordinates[2],
+      public Cuboid build(double[] coordinates) {
+        return new Cuboid(coordinates[0], coordinates[1], coordinates[2],
             coordinates[3], coordinates[4], coordinates[5]);
       }
 
@@ -148,7 +148,7 @@ public class DistributionAssesment {
       }
 
       @Override
-      public void setCoordinates(Cuboid2 t, double[] coordinates) {
+      public void setCoordinates(Cuboid t, double[] coordinates) {
         coordinates[0] = t.centerx;
         coordinates[1] = t.centery;
         coordinates[2] = t.length;
@@ -164,20 +164,20 @@ public class DistributionAssesment {
     // mindim, minheight, 0), new Cuboid2(1, 1, maxdim, maxdim, maxheight,
     // Math.PI), builder,
     // bpU.getpol2D());
-    UniformBirth<Cuboid2> birth = new UniformBirth<Cuboid2>(new Cuboid2(0, 0,
-        mindim, mindim, minheight, 0), new Cuboid2(1, 1, maxdim, maxdim,
+    UniformBirth<Cuboid> birth = new UniformBirth<Cuboid>(new Cuboid(0, 0,
+        mindim, mindim, minheight, 0), new Cuboid(1, 1, maxdim, maxdim,
         maxheight, Math.PI), builder, TransformToSurface.class, bpU.getpol2D());
 
-    DirectSampler<Cuboid2> ds = new DirectSampler<Cuboid2>(
+    DirectSampler<Cuboid> ds = new DirectSampler<Cuboid>(
         new UniformDistribution(0, 1), birth);
 
     // Probabilité de naissance-morts modifications
-    List<Kernel<Cuboid2>> kernels = new ArrayList<Kernel<Cuboid2>>(3);
+    List<Kernel<Cuboid>> kernels = new ArrayList<Kernel<Cuboid>>(3);
     kernels.add(Kernel.make_uniform_birth_death_kernel(builder, birth, 1, 1));
 
-    Sampler<Cuboid2> s = new GreenSampler<Cuboid2>(ds,
+    Sampler<Cuboid> s = new GreenSampler<Cuboid>(ds,
         new MetropolisAcceptance<SimpleTemperature>(), kernels);
-    Sampler<Cuboid2> rs = new RejectionSampler<Cuboid2>(s, pred);
+    Sampler<Cuboid> rs = new RejectionSampler<Cuboid>(s, pred);
     return rs;
   }
 

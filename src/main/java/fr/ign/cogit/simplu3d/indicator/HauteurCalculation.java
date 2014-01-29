@@ -1,16 +1,17 @@
-package fr.ign.cogit.simplu3d.calculation;
+package fr.ign.cogit.simplu3d.indicator;
 
 import java.util.List;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.sig3d.geometry.Box3D;
-import fr.ign.cogit.simplu3d.calculation.util.PointBasType;
+import fr.ign.cogit.sig3d.indicator.util.PointBasType;
+import fr.ign.cogit.sig3d.model.citygml.building.CG_AbstractBuilding;
+import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 import fr.ign.cogit.simplu3d.model.application.SubParcel;
-import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 
 public class HauteurCalculation {
 
@@ -18,10 +19,7 @@ public class HauteurCalculation {
     PLUS_HAUT_EGOUT, PLUS_HAUT_FAITAGE, PLANCHER_PLUS_ELEVE
   };
 
-
- 
-  public static double calculate(AbstractBuilding b, int type_pb,
-      int type_ph) {
+  public static double calculate(AbstractBuilding b, int type_pb, int type_ph) {
 
     double zBas = calculateZBas(b, type_pb);
 
@@ -57,22 +55,22 @@ public class HauteurCalculation {
 
     if (type_pb == PointBasType.EMPRISE_PUBLIQUE) {
       zBas = calculateZBasEP(b);
-    } 
-    
+    }
+
     if (type_pb == PointBasType.PLUS_BAS_BATIMENT) {
       zBas = calculateZBasPBB(b);
     }
-    
+
     if (type_pb == PointBasType.PLUS_BAS_TERRAIN) {
       zBas = calculateZBasPBT(b);
     }
-    
+
     if (type_pb == PointBasType.PLUS_HAUT_TERRAIN) {
       zBas = calculateZBasPHT(b);
     }
 
- //   System.out.println(zBas);
-    
+    // System.out.println(zBas);
+
     return zBas;
   }
 
@@ -104,7 +102,7 @@ public class HauteurCalculation {
     return box.getURDP().getZ();
   }
 
-  public static double calculateZHautPHF(AbstractBuilding b) {
+  public static double calculateZHautPHF(CG_AbstractBuilding b) {
     Box3D box = new Box3D(b.getGeom());
     return box.getURDP().getZ();
   }
@@ -145,13 +143,13 @@ public class HauteurCalculation {
     return zMin;
   }
 
-  private static double calculateZBasPBB(AbstractBuilding b) {
+  private static double calculateZBasPBB(CG_AbstractBuilding b) {
     Box3D box = new Box3D(b.getGeom());
     return box.getLLDP().getZ();
   }
 
   private static double calculateZBasEP(AbstractBuilding b) {
-    BasicPropertyUnit  spList = b.getbPU();
+    BasicPropertyUnit spList = b.getbPU();
 
     double zMin = Double.POSITIVE_INFINITY;
 

@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.calculation;
+package fr.ign.cogit.simplu3d.indicator;
 
 import fr.ign.cogit.simplu3d.model.application.SubParcel;
 

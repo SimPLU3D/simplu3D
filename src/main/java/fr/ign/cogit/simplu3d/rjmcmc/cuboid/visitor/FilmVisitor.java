@@ -25,7 +25,7 @@ import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement.Theme;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCuboid;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid2;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.rjmcmc.configuration.Configuration;
 import fr.ign.rjmcmc.kernel.SimpleObject;
@@ -42,7 +42,7 @@ public class FilmVisitor<O extends SimpleObject> implements Visitor<O> {
   private final static String PREFIX_NAME_STRING = "Étape";
   private final static int MIN_LAYER = 3;
 
-  private GraphConfiguration<Cuboid2> bestConfig = null;
+  private GraphConfiguration<Cuboid> bestConfig = null;
   private double bestValue = Double.POSITIVE_INFINITY;
 
   private IDirectPosition dp;
@@ -78,12 +78,12 @@ public class FilmVisitor<O extends SimpleObject> implements Visitor<O> {
 
     if (config.getEnergy() < bestValue) {
       bestValue = config.getEnergy();
-      bestConfig = (GraphConfiguration<Cuboid2>) config;
+      bestConfig = (GraphConfiguration<Cuboid>) config;
 
     }
 
     if ((save > 0) && (iter % save == 0)) {
-      this.addInformationToMainWindow((GraphConfiguration<Cuboid2>) config);
+      this.addInformationToMainWindow((GraphConfiguration<Cuboid>) config);
     }
   }
 
@@ -97,7 +97,7 @@ public class FilmVisitor<O extends SimpleObject> implements Visitor<O> {
     this.addInformationToMainWindow(bestConfig);
   }
 
-  private void addInformationToMainWindow(GraphConfiguration<Cuboid2> config) {
+  private void addInformationToMainWindow(GraphConfiguration<Cuboid> config) {
 
     IFeatureCollection<IFeature> feat = new FT_FeatureCollection<>();
 
@@ -107,8 +107,8 @@ public class FilmVisitor<O extends SimpleObject> implements Visitor<O> {
 
       Object o = v.getValue();
 
-      if (v.getValue() instanceof Cuboid2) {
-        geom = GenerateSolidFromCuboid.generate((Cuboid2) o);
+      if (v.getValue() instanceof Cuboid) {
+        geom = GenerateSolidFromCuboid.generate((Cuboid) o);
 
       }
 

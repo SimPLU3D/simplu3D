@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.calculation;
+package fr.ign.cogit.simplu3d.indicator;
 
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;

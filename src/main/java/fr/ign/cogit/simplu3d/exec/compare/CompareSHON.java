@@ -15,7 +15,7 @@ import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.sig3d.analysis.RoofDetection;
-import fr.ign.cogit.simplu3d.calculation.SHONCalculation;
+import fr.ign.cogit.simplu3d.indicator.SHONCalculation;
 import fr.ign.cogit.simplu3d.model.application.Building;
 
 public class CompareSHON {
@@ -33,7 +33,6 @@ public class CompareSHON {
         .read(
             "E:/mbrasebin/Donnees/Strasbourg/ZoneTest/Experimentation/CompareSHON/donnees/batiBd3D.shp")
         .get(0);
-  
 
     IMultiSurface<? extends IOrientableSurface> roofBDTopo = RoofDetection
         .detectRoof(batBDTOPO, 0.1, false);
@@ -82,16 +81,12 @@ public class CompareSHON {
 
     SHONCalculation.DEBUG.clear();
 
-    
-
-    
     double shon2 = SHONCalculation
         .assessCUTSHON(new Building(batBD3D.getGeom()));
-    featC.clear(); 
+    featC.clear();
     featC.add(new DefaultFeature(new GM_MultiSurface<>(SHONCalculation.DEBUG)));
-    
-    
-        ShapefileWriter
+
+    ShapefileWriter
         .write(
             featC,
             "E:/mbrasebin/Donnees/Strasbourg/ZoneTest/Experimentation/CompareSHON/donnees/debugBD3D.shp");
@@ -110,8 +105,7 @@ public class CompareSHON {
         + ":" + 4 * aireBD3D * 0.8 + ":" + (4 * 0.8 * (aireBD3D - aireBDTopo)));
     System.out.println("Surface plancher méthode proposée" + ":" + shon1 + ":"
         + shon2 + ":" + (shon2 - shon1));
-    
-    
+
     System.out.println();
 
     // System.out.println(shon1 + "   " + shon2);

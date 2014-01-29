@@ -1,12 +1,11 @@
-package fr.ign.cogit.simplu3d.calculation;
+package fr.ign.cogit.simplu3d.indicator;
 
-import fr.ign.cogit.simplu3d.calculation.COSCalculation.METHOD;
-import fr.ign.cogit.simplu3d.model.application.SubParcel;
 import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
+import fr.ign.cogit.simplu3d.model.application.SubParcel;
 
 public class CESCalculation {
 
-  public static double assess(SubParcel p, METHOD m) {
+  public static double assess(SubParcel p) {
 
     double area = p.getLod2MultiSurface().area();
     double aireBatie = 0;

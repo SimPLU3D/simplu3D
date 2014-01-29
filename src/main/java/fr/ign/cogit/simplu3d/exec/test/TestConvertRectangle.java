@@ -8,7 +8,7 @@ import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.util.conversion.JtsGeOxygene;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid2;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid2;
 
 public class TestConvertRectangle {
@@ -21,13 +21,13 @@ public class TestConvertRectangle {
     String strShpIn = "C:/Users/mbrasebin/Pictures/Experimentations/ExpCont/ExpRot2.shp";
     
     
-    List<Cuboid2> lCuboid = LoaderCuboid2.loadFromShapeFile(strShpIn);
+    List<Cuboid> lCuboid = LoaderCuboid2.loadFromShapeFile(strShpIn);
     
     IFeatureCollection<IFeature> featC1 = new FT_FeatureCollection<>();
     IFeatureCollection<IFeature> featC2 = new FT_FeatureCollection<>();
     
     
-    for(Cuboid2 c: lCuboid){
+    for(Cuboid c: lCuboid){
       featC1.add(new DefaultFeature(c.getFootprint()));
       featC2.add(new DefaultFeature(   JtsGeOxygene.makeGeOxygeneGeom(c.getRectangle2D().toGeometry())));
       

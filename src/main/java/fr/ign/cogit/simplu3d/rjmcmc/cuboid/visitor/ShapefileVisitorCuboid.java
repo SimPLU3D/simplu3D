@@ -23,7 +23,7 @@ import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.geoxygene.util.conversion.JtsGeOxygene;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCuboid;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid2;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.rjmcmc.configuration.Configuration;
 import fr.ign.rjmcmc.kernel.SimpleObject;
@@ -54,7 +54,7 @@ public class ShapefileVisitorCuboid<O extends SimpleObject> implements Visitor<O
   @Override
   public void end(Configuration<O> config, Sampler<O> sampler, Temperature t) {
     this.writeShapefile(fileName + "_" + String.format(formatInt, iter + 1) + ".shp",
-        (GraphConfiguration<Cuboid2>) config);
+        (GraphConfiguration<Cuboid>) config);
   }
 
   String formatInt = "%1$-10d";
@@ -65,12 +65,12 @@ public class ShapefileVisitorCuboid<O extends SimpleObject> implements Visitor<O
     ++iter;
     if ((save > 0) && (iter % save == 0)) {
       this.writeShapefile(fileName + "_" + String.format(formatInt, iter) + ".shp",
-          (GraphConfiguration<Cuboid2>) config);
+          (GraphConfiguration<Cuboid>) config);
     }
   }
 
   @SuppressWarnings({ "unchecked", "deprecation" })
-  private void writeShapefile(String aFileName, GraphConfiguration<Cuboid2> config) {
+  private void writeShapefile(String aFileName, GraphConfiguration<Cuboid> config) {
     try {
       ShapefileDataStore store = new ShapefileDataStore(new File(aFileName).toURI().toURL());
       String specs = "geom:MultiPolygon,energy:double"; //$NON-NLS-1$
@@ -83,8 +83,8 @@ public class ShapefileVisitorCuboid<O extends SimpleObject> implements Visitor<O
       FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureCollections
           .newCollection();
       int i = 1;
-      GraphConfiguration<Cuboid2> graph = (GraphConfiguration<Cuboid2>) config;
-      for (GraphConfiguration<Cuboid2>.GraphVertex v : graph.getGraph().vertexSet()) {
+      GraphConfiguration<Cuboid> graph = (GraphConfiguration<Cuboid>) config;
+      for (GraphConfiguration<Cuboid>.GraphVertex v : graph.getGraph().vertexSet()) {
 
         List<Object> liste = new ArrayList<>();
 

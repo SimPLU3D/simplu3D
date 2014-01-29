@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.calculation;
+package fr.ign.cogit.simplu3d.indicator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,9 +9,9 @@ import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.sig3d.equation.PlanEquation;
 import fr.ign.cogit.geoxygene.sig3d.geometry.Box3D;
 import fr.ign.cogit.sig3d.calculation.CutBuilding;
+import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.application.RoofSurface;
 import fr.ign.cogit.simplu3d.model.application.SubParcel;
-import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 
 public class SHONCalculation {
 

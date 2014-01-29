@@ -6,7 +6,7 @@ import java.util.List;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.OCLBuildingsCuboidFinal;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid2;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.parameters.Parameters;
 import fr.ign.rjmcmc.configuration.Configuration;
 
@@ -62,7 +62,7 @@ public class Test {
 
         double timeMs = System.currentTimeMillis();
 
-        Configuration<Cuboid2> cc = ocb.process(env.getBpU().get(1), p, env, 1);
+        Configuration<Cuboid> cc = ocb.process(env.getBpU().get(1), p, env, 1);
 
         
         

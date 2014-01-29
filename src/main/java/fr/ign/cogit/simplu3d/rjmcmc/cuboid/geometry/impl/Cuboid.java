@@ -24,7 +24,7 @@ import fr.ign.cogit.simplu3d.model.application.FastBuildingPart;
 import fr.ign.geometry.Primitive;
 import fr.ign.geometry.Rectangle2D;
 
-public class Cuboid2 extends AbstractSimpleBuilding implements Primitive {
+public class Cuboid extends AbstractSimpleBuilding implements Primitive {
   public double centerx;
   public double centery;
   public double length;
@@ -33,7 +33,7 @@ public class Cuboid2 extends AbstractSimpleBuilding implements Primitive {
   public double height;
 
 
-  public Cuboid2(double centerx, double centery, double length, double width, double height,
+  public Cuboid(double centerx, double centery, double length, double width, double height,
       double orientation) {
     super();
     this.isNew = true;
@@ -133,10 +133,10 @@ public class Cuboid2 extends AbstractSimpleBuilding implements Primitive {
 
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof Cuboid2)) {
+    if (!(o instanceof Cuboid)) {
       return false;
     }
-    Cuboid2 r = (Cuboid2) o;
+    Cuboid r = (Cuboid) o;
     return MathUtils.equals(this.centerx, r.centerx) && MathUtils.equals(this.centery, r.centery)
         && MathUtils.equals(this.width, r.width) && MathUtils.equals(this.length, r.length)
         && MathUtils.equals(this.orientation, r.orientation)
@@ -186,11 +186,11 @@ public class Cuboid2 extends AbstractSimpleBuilding implements Primitive {
     return zMin;
   }
 
-  public static boolean do_intersect(Cuboid2 a, Cuboid2 b) {
+  public static boolean do_intersect(Cuboid a, Cuboid b) {
     return Rectangle2D.do_intersect(a.getRectangle2D(), b.getRectangle2D());
   }
 
-  public static double intersection_area(Cuboid2 a, Cuboid2 b) {
+  public static double intersection_area(Cuboid a, Cuboid b) {
     return Rectangle2D.intersection_area(a.getRectangle2D(), b.getRectangle2D());
   }
 
@@ -271,7 +271,7 @@ public class Cuboid2 extends AbstractSimpleBuilding implements Primitive {
     double h = -1;
     double distance = this.getFootprint().distance(geom);
     
-    h = ((Cuboid2) this).height;
+    h = ((Cuboid) this).height;
     
     
     

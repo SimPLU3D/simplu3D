@@ -12,7 +12,7 @@ import fr.ign.cogit.geoxygene.sig3d.semantic.VectorLayer;
 import fr.ign.cogit.geoxygene.util.conversion.JtsGeOxygene;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCuboid;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid2;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid2;
 
 public class CuboidRepartition {
@@ -30,7 +30,7 @@ public class CuboidRepartition {
 
     for (int i = 0; i < 100; i++) {
 
-      Cuboid2 c = new Cuboid2(50, 50 + i * 50, 10, 30, 5, i * Math.PI / 50);
+      Cuboid c = new Cuboid(50, 50 + i * 50, 10, 30, 5, i * Math.PI / 50);
       iFCWrite.add(new DefaultFeature(JtsGeOxygene.makeGeOxygeneGeom(c
           .getRectangle2D().toGeometry())));
 
@@ -38,11 +38,11 @@ public class CuboidRepartition {
     }
 
     
-    List<Cuboid2> lCub =  LoaderCuboid2.loadFromShapeFile("C:/Users/mbrasebin/Pictures/Experimentations/ExpCont/Exp4Conf.shp"); //LoaderCuboid2.loadFromCollection(iFC);
+    List<Cuboid> lCub =  LoaderCuboid2.loadFromShapeFile("C:/Users/mbrasebin/Pictures/Experimentations/ExpCont/Exp4Conf.shp"); //LoaderCuboid2.loadFromCollection(iFC);
     
     IFeatureCollection<IFeature> iFC2 = new FT_FeatureCollection<>();
     
-    for(Cuboid2 c: lCub){
+    for(Cuboid c: lCub){
       iFC2.add(new DefaultFeature(GenerateSolidFromCuboid.generate(c, 0)));
     }
     

@@ -27,7 +27,7 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.energy.cuboid2.DifferenceVolumeUnaryE
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.energy.cuboid2.IntersectionVolumeBinaryEnergy;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.energy.cuboid2.VolumeUnaryEnergy;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCuboid;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid2;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid2;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
@@ -54,7 +54,7 @@ public class Recal3D {
     
 
 
-    List<Cuboid2> lCuboid = LoaderCuboid2.loadFromShapeFile(shpeIn);
+    List<Cuboid> lCuboid = LoaderCuboid2.loadFromShapeFile(shpeIn);
     
     
     IFeatureCollection<IFeature> featColl = new FT_FeatureCollection<>();
@@ -218,11 +218,11 @@ public class Recal3D {
     return featC;
   }
 
-  public static List<AbstractBuilding> loadBuilding(List<Cuboid2> lC) {
+  public static List<AbstractBuilding> loadBuilding(List<Cuboid> lC) {
 
     List<AbstractBuilding> lAB = new ArrayList<>();
 
-    for (Cuboid2 c : lC) {
+    for (Cuboid c : lC) {
       Building bP = new Building(new GM_MultiSurface<>(GenerateSolidFromCuboid.generate(c)
           .getFacesList()));
 
@@ -609,42 +609,42 @@ public class Recal3D {
    * @return la configuration chargée, c'est à dire la formulation énergétique
    *         prise en compte
    */
-  public static Configuration<Cuboid2> create_configuration(Parameters p, Geometry bpu) {
+  public static Configuration<Cuboid> create_configuration(Parameters p, Geometry bpu) {
 
     // Énergie constante : à la création d'un nouvel objet
-    ConstantEnergy<Cuboid2, Cuboid2> energyCreation = new ConstantEnergy<Cuboid2, Cuboid2>(
+    ConstantEnergy<Cuboid, Cuboid> energyCreation = new ConstantEnergy<Cuboid, Cuboid>(
         p.getDouble("energy"));
 
     // Énergie constante : pondération de l'intersection
-    ConstantEnergy<Cuboid2, Cuboid2> ponderationVolume = new ConstantEnergy<Cuboid2, Cuboid2>(
+    ConstantEnergy<Cuboid, Cuboid> ponderationVolume = new ConstantEnergy<Cuboid, Cuboid>(
         p.getDouble("ponderation_volume"));
 
     // Énergie unaire : aire dans la parcelle
-    UnaryEnergy<Cuboid2> energyVolume = new VolumeUnaryEnergy<Cuboid2>();
+    UnaryEnergy<Cuboid> energyVolume = new VolumeUnaryEnergy<Cuboid>();
     // Multiplication de l'énergie d'intersection et de l'aire
-    UnaryEnergy<Cuboid2> energyVolumePondere = new MultipliesUnaryEnergy<Cuboid2>(
+    UnaryEnergy<Cuboid> energyVolumePondere = new MultipliesUnaryEnergy<Cuboid>(
         ponderationVolume, energyVolume);
 
     // On retire de l'énergie de création, l'énergie de l'aire
-    UnaryEnergy<Cuboid2> u3 = new MinusUnaryEnergy<Cuboid2>(energyCreation, energyVolumePondere);
+    UnaryEnergy<Cuboid> u3 = new MinusUnaryEnergy<Cuboid>(energyCreation, energyVolumePondere);
 
     // Énergie constante : pondération de la différence
-    ConstantEnergy<Cuboid2, Cuboid2> ponderationDifference = new ConstantEnergy<Cuboid2, Cuboid2>(
+    ConstantEnergy<Cuboid, Cuboid> ponderationDifference = new ConstantEnergy<Cuboid, Cuboid>(
         p.getDouble("ponderation_difference_ext"));
     // On ajoute l'énergie de différence : la zone en dehors de la parcelle
-    UnaryEnergy<Cuboid2> u4 = new DifferenceVolumeUnaryEnergy<Cuboid2>(bpu);
-    UnaryEnergy<Cuboid2> u5 = new MultipliesUnaryEnergy<Cuboid2>(ponderationDifference, u4);
-    UnaryEnergy<Cuboid2> unaryEnergy = new PlusUnaryEnergy<Cuboid2>(u3, u5);
+    UnaryEnergy<Cuboid> u4 = new DifferenceVolumeUnaryEnergy<Cuboid>(bpu);
+    UnaryEnergy<Cuboid> u5 = new MultipliesUnaryEnergy<Cuboid>(ponderationDifference, u4);
+    UnaryEnergy<Cuboid> unaryEnergy = new PlusUnaryEnergy<Cuboid>(u3, u5);
 
     // Énergie binaire : intersection entre deux rectangles
-    ConstantEnergy<Cuboid2, Cuboid2> c3 = new ConstantEnergy<Cuboid2, Cuboid2>(  p.getDouble(
+    ConstantEnergy<Cuboid, Cuboid> c3 = new ConstantEnergy<Cuboid, Cuboid>(  p.getDouble(
         "ponderation_volume_inter"));
-    BinaryEnergy<Cuboid2, Cuboid2> b1 = new IntersectionVolumeBinaryEnergy<Cuboid2>();
-    BinaryEnergy<Cuboid2, Cuboid2> binaryEnergy = new MultipliesBinaryEnergy<Cuboid2, Cuboid2>(c3,
+    BinaryEnergy<Cuboid, Cuboid> b1 = new IntersectionVolumeBinaryEnergy<Cuboid>();
+    BinaryEnergy<Cuboid, Cuboid> binaryEnergy = new MultipliesBinaryEnergy<Cuboid, Cuboid>(c3,
         b1);
     // empty initial configuration*/
 
-    Configuration<Cuboid2> conf = new GraphConfiguration<Cuboid2>(unaryEnergy, binaryEnergy);
+    Configuration<Cuboid> conf = new GraphConfiguration<Cuboid>(unaryEnergy, binaryEnergy);
 
     return conf;
   }

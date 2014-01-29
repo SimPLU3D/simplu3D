@@ -19,7 +19,7 @@ import org.jfree.ui.ApplicationFrame;
 
 
 
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid2;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.rjmcmc.configuration.Configuration;
 import fr.ign.rjmcmc.kernel.SimpleObject;
@@ -114,12 +114,12 @@ public class StatsVisitor<O extends SimpleObject> implements Visitor<O> {
     this.bestEnergy = Math.min(config.getEnergy(), bestEnergy);
 
     if (iter % dump == 0) {
-      this.addInformationToMainWindow((GraphConfiguration<Cuboid2>) config);
+      this.addInformationToMainWindow((GraphConfiguration<Cuboid>) config);
     }
 
   }
 
-  private void addInformationToMainWindow(GraphConfiguration<Cuboid2> config) {
+  private void addInformationToMainWindow(GraphConfiguration<Cuboid> config) {
     // TODO Auto-generated method stub
 
     series.add(iter, config.getEnergy());

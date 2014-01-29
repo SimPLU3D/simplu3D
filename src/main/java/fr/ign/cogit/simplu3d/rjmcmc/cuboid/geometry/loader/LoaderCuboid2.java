@@ -15,17 +15,17 @@ import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToSurface;
 import fr.ign.cogit.geoxygene.sig3d.equation.ApproximatedPlanEquation;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
 import fr.ign.cogit.sig3d.calculation.OrientedBoundingBox;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid2;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 
 public class LoaderCuboid2 {
 
-  public static List<Cuboid2> loadFromShapeFile(String shapeFile) {
+  public static List<Cuboid> loadFromShapeFile(String shapeFile) {
     return loadFromCollection(ShapefileReader.read(shapeFile));
   }
 
-  public static List<Cuboid2> loadFromCollection(
+  public static List<Cuboid> loadFromCollection(
       IFeatureCollection<IFeature> featColl) {
-    List<Cuboid2> lCub = new ArrayList<>();
+    List<Cuboid> lCub = new ArrayList<>();
 
     for (IFeature feat : featColl) {
       lCub.add(transformFeature(feat));
@@ -36,7 +36,7 @@ public class LoaderCuboid2 {
 
   }
 
-  public static Cuboid2 transformFeature(IFeature feat) {
+  public static Cuboid transformFeature(IFeature feat) {
 
     IMultiSurface<IOrientableSurface> iMS = FromGeomToSurface
         .convertMSGeom(feat.getGeom());
@@ -66,7 +66,7 @@ public class LoaderCuboid2 {
 
     Angle a = v.direction();
 
-    return new Cuboid2(centreX, centreY, l, w, oBB.getzMax() - oBB.getzMin(),
+    return new Cuboid(centreX, centreY, l, w, oBB.getzMax() - oBB.getzMin(),
         a.getValeur());
 
   }
