@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.indicator;
+package fr.ign.cogit.simplu3d.calculation;
 
 import fr.ign.cogit.geoxygene.sig3d.calculation.Calculation3D;
 import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromPolygonToTriangle;

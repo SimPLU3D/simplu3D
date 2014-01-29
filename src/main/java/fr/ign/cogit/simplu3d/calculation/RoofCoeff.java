@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.indicator;
+package fr.ign.cogit.simplu3d.calculation;
 
 import fr.ign.cogit.simplu3d.calculation.HauteurCalculation;
 import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;

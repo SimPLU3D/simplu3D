@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.indicator;
+package fr.ign.cogit.simplu3d.calculation;
 
 import java.util.List;
 
