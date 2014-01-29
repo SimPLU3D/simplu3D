@@ -1,12 +1,2 @@
-12:20:51,538 ERROR (CarteTopo.java:insertOrSelectNode:2526) - 2 nodes for point DirectPosition - X : 5.0     Y : 0.0
-12:20:51,545 ERROR (CarteTopo.java:insertOrSelectNode:2526) - 2 nodes for point DirectPosition - X : 5.0     Y : 0.0
-12:20:51,546 ERROR (CarteTopo.java:insertOrSelectNode:2526) - 2 nodes for point DirectPosition - X : 5.0     Y : 0.0
-12:20:51,548 ERROR (CarteTopo.java:insertOrSelectNode:2526) - 2 nodes for point DirectPosition - X : 5.0     Y : 0.0
-12:20:52,192 ERROR (CarteTopo.java:insertOrSelectNode:2526) - 2 nodes for point DirectPosition - X : 5.0     Y : 0.0
-12:20:52,194 ERROR (CarteTopo.java:insertOrSelectNode:2526) - 2 nodes for point DirectPosition - X : 5.0     Y : 0.0
-12:20:52,195 ERROR (CarteTopo.java:insertOrSelectNode:2526) - 2 nodes for point DirectPosition - X : 5.0     Y : 0.0
-12:20:52,199 ERROR (CarteTopo.java:insertOrSelectNode:2526) - 2 nodes for point DirectPosition - X : 5.0     Y : 0.0
-12:20:52,292 ERROR (CarteTopo.java:insertOrSelectNode:2526) - 2 nodes for point DirectPosition - X : 5.0     Y : 0.0
-12:20:52,293 ERROR (CarteTopo.java:insertOrSelectNode:2526) - 2 nodes for point DirectPosition - X : 5.0     Y : 0.0
-12:20:52,293 ERROR (CarteTopo.java:insertOrSelectNode:2526) - 2 nodes for point DirectPosition - X : 5.0     Y : 0.0
-12:20:52,294 ERROR (CarteTopo.java:insertOrSelectNode:2526) - 2 nodes for point DirectPosition - X : 5.0     Y : 0.0
+15:17:59,548 ERROR (CarteTopo.java:insertOrSelectNode:2526) - 2 nodes for point DirectPosition - X : 1051180.750236232     Y : 6840626.88711665
+15:17:59,551 ERROR (CarteTopo.java:insertOrSelectNode:2526) - 2 nodes for point DirectPosition - X : 1051180.750236232     Y : 6840626.88711665

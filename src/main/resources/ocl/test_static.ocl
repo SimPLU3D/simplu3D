@@ -1,7 +1,0 @@
-package  fr::ign::cogit::simplu3d::model::application
-
-
-context Batiment
-inv: HauteurCalculation::calculateZBas(self,1) < 10.0
-
-endpackage
