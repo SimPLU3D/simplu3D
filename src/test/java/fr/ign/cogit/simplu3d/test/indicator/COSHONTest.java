@@ -18,9 +18,12 @@ public class COSHONTest {
 
     double cos1 = COSCalculation.assess(sp, METHOD.SIMPLE);
     double cos2 = COSCalculation.assess(sp, METHOD.FLOOR_CUT);
+    
+    
+    double epsilon = 0.00001;
 
-    Assert.assertEquals(1.599950942067209, cos1);
-    Assert.assertEquals(1.48546026759227689, cos2);
+    Assert.assertTrue(Math.abs(1.599950942067229 -cos1) < epsilon);
+    Assert.assertTrue(Math.abs(1.48546026759227689 - cos2) < epsilon);
 
   }
 
