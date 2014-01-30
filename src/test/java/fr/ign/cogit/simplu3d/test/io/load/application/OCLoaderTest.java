@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.junit.Test;
+
 import tudresden.ocl20.pivot.interpreter.IInterpretationResult;
 import tudresden.ocl20.pivot.interpreter.IOclInterpreter;
 import tudresden.ocl20.pivot.interpreter.OclInterpreterPlugin;
@@ -24,13 +26,15 @@ import fr.ign.cogit.simplu3d.importer.model.ImportModelInstanceEnvironnement;
 import fr.ign.cogit.simplu3d.model.application.SubParcel;
 import fr.ign.cogit.simplu3d.solver.interpreter.OCLInterpreterSimplu3D;
 
-public class TestLoader {
+public class OCLoaderTest {
 
   static File modelFile;
 
   static File oclConstraints;
 
-  public static void main(String[] args) throws Exception {
+  @Test
+  public void testImport() {
+
 
     oclConstraints = new File("src/main/resources/ocl/simple_allConstraintsThese.ocl");
     // String folderEnv = "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project1/";
@@ -126,7 +130,7 @@ public class TestLoader {
    * @param constraintList
    * @return
    */
-  public static List<IInterpretationResult> interpretEverything(IModelInstance modelInstance,
+  private static List<IInterpretationResult> interpretEverything(IModelInstance modelInstance,
       List<Constraint> constraintList) {
 
     new OclInterpreterPlugin();

@@ -45,8 +45,7 @@ public class InfluNumberOfBoxesInGroup {
 
     String fileName = "building_parameters_project_expthese_1.xml";
 
-    Parameters p = initialize_parameters(folderName + fileName);
-
+    Parameters p = Parameters.unmarshall(new File(folderName + fileName));
 
 
     int count = 0;
@@ -159,15 +158,12 @@ public class InfluNumberOfBoxesInGroup {
       writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8,
           StandardOpenOption.APPEND);
     } catch (IOException e) {
-      // TODO Auto-generated catch block
+
       e.printStackTrace();
     }
 
     return writer;
   }
 
-  private static Parameters initialize_parameters(String name) throws Exception {
-    return Parameters.unmarshall(name);
-  }
 
 }

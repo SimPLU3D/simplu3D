@@ -2,9 +2,9 @@
 <project
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	
+
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<groupId>fr.ign.cogit</groupId>
 	<artifactId>simplu3d</artifactId>
 	<version>1.0-SNAPSHOT</version>
@@ -133,38 +133,38 @@
 				</executions>
 			</plugin>
 		</plugins>
-		
+
 		<pluginManagement>
-          <plugins>
-<plugin>
- <groupId>org.eclipse.m2e</groupId>
- <artifactId>lifecycle-mapping</artifactId>
- <version>1.0.0</version>
- <configuration>
-   <lifecycleMappingMetadata>
-     <pluginExecutions>
-       <pluginExecution>
-         <pluginExecutionFilter>
-           <groupId>org.apache.maven.plugins</groupId>
-           <artifactId>maven-dependency-plugin</artifactId>
-           <versionRange>[1.0.0,)</versionRange>
-           <goals>
-             <goal>copy-dependencies</goal>
-           </goals>
-         </pluginExecutionFilter>
-         <action>
-           <ignore />
-         </action>
-       </pluginExecution>
-     </pluginExecutions>
-   </lifecycleMappingMetadata>
- </configuration>
-</plugin>           
-          </plugins>
-        </pluginManagement>
-		
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-dependency-plugin</artifactId>
+										<versionRange>[1.0.0,)</versionRange>
+										<goals>
+											<goal>copy-dependencies</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
 	</build>
-	
+
 	<repositories>
 		<repository>
 			<id>Central</id>
@@ -187,9 +187,9 @@
 		<repository>
 			<id>Imagej</id>
 			<url>http://maven.imagej.net/content/repositories/public</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
 		</repository>
 		<repository>
 			<id>Atlassian</id>
@@ -197,10 +197,15 @@
 			<url>https://maven.atlassian.com/maven1/maven2</url>
 		</repository>
 	</repositories>
-	
-	
-	
+
+
+
 	<dependencies>
+	 	<dependency>
+			<groupId>org.eclipse</groupId>
+			<artifactId>xsd</artifactId>
+			<version>2.6.0.v20100614-1136</version>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -246,8 +251,8 @@
 			<groupId>org.eclipse.emf</groupId>
 			<artifactId>org.eclipse.emf.mapping.ecore.xmi</artifactId>
 			<version>2.5.0.v20100521-1847</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/org.eclipse.emf.mapping.ecore.xmi-2.5.0.v20100521-1847.jar</systemPath>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/org.eclipse.emf.mapping.ecore.xmi-2.5.0.v20100521-1847.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.emf</groupId>
@@ -279,49 +284,39 @@
 			<artifactId>org.eclipse.uml2.uml.resources</artifactId>
 			<version>3.1.0.v201005031530</version>
 		</dependency>
-        <!--
- 		<dependency>
-			<groupId>org.eclipse</groupId>
-			<artifactId>uml2</artifactId>
-			<version>3.0.0.v201005031530</version>
-		</dependency>
-		-->
-		
+		<!-- <dependency> <groupId>org.eclipse</groupId> <artifactId>uml2</artifactId> 
+			<version>3.0.0.v201005031530</version> </dependency> -->
+
 		<dependency>
 			<groupId>org.emftext</groupId>
 			<artifactId>access</artifactId>
 			<version>1.2.0.201009131109</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/org.emftext.access_1.2.0.201009131109.jar</systemPath>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/org.emftext.access_1.2.0.201009131109.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.emftext.commons</groupId>
 			<artifactId>antlr3</artifactId>
 			<version>2_0_1.0.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/org.emftext.commons.antlr3_2_0_1.0.0.jar</systemPath>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/org.emftext.commons.antlr3_2_0_1.0.0.jar</systemPath>
 		</dependency>
 		<dependency>
-		    <groupId>org.kiama</groupId>
-		    <artifactId>attribution</artifactId>
-		    <version>3.1.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/org.kiama.attribution_3.1.0.201101171054.jar</systemPath>
+			<groupId>org.kiama</groupId>
+			<artifactId>attribution</artifactId>
+			<version>3.1.0.201101171054</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/org.kiama.attribution_3.1.0.201101171054.jar</systemPath>
 		</dependency>
-		<!--
+		<!-- <dependency> <groupId>org.scala-lang</groupId> <artifactId>scala-library</artifactId> 
+			<version>2.10.2</version> </dependency> -->
 		<dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-            <version>2.10.2</version>
-        </dependency>
-         -->
-        <dependency>
-            <groupId>scala-library</groupId>
-            <artifactId>scala-library</artifactId>
-            <version>0.1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/scala-library-0.1.jar</systemPath>
-        </dependency>
+			<groupId>scala-library</groupId>
+			<artifactId>scala-library</artifactId>
+			<version>0.1</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/scala-library-0.1.jar</systemPath>
+		</dependency>
 		<dependency>
 			<groupId>tudresden.ocl20</groupId>
 			<artifactId>logging</artifactId>
@@ -333,239 +328,239 @@
 			<groupId>tudresden.ocl20.pivot.essentialocl</groupId>
 			<artifactId>standardlibrary</artifactId>
 			<version>3.1.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.essentialocl.standardlibrary_3.1.0.201101171054.jar</systemPath>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.essentialocl.standardlibrary_3.1.0.201101171054.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>tudresden.ocl20.pivot</groupId>
 			<artifactId>essentialocl</artifactId>
 			<version>3.1.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.essentialocl_3.1.0.201101171054.jar</systemPath>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.essentialocl_3.1.0.201101171054.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>tudresden.ocl20.pivot.examples</groupId>
 			<artifactId>pml</artifactId>
 			<version>3.1.0.201101171055</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.examples.pml_3.1.0.201101171055.jar</systemPath>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.examples.pml_3.1.0.201101171055.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>tudresden.ocl20.pivot.examples</groupId>
 			<artifactId>simple</artifactId>
 			<version>3.1.0.201101171055</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.examples.simple_3.1.0.201101171055.jar</systemPath>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.examples.simple_3.1.0.201101171055.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>tudresden.ocl20.pivot</groupId>
 			<artifactId>interpreter</artifactId>
 			<version>3.1.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.interpreter_3.1.0.201101171054.jar</systemPath>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.interpreter_3.1.0.201101171054.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>tudresden.ocl20.pivot.language.ocl.resource</groupId>
 			<artifactId>ocl</artifactId>
 			<version>3.1.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.language.ocl.resource.ocl_3.1.0.201101171054.jar</systemPath>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.language.ocl.resource.ocl_3.1.0.201101171054.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>tudresden.ocl20.pivot.language.ocl</groupId>
 			<artifactId>semantics</artifactId>
 			<version>3.1.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.language.ocl.semantics_3.1.0.201101171054.jar</systemPath>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.language.ocl.semantics_3.1.0.201101171054.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>tudresden.ocl20.pivot.language.ocl</groupId>
 			<artifactId>staticsemantics</artifactId>
 			<version>3.1.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.language.ocl.staticsemantics_3.1.0.201101171054.jar</systemPath>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.language.ocl.staticsemantics_3.1.0.201101171054.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>tudresden.ocl20.pivot.language</groupId>
 			<artifactId>ocl</artifactId>
 			<version>3.1.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.language.ocl_3.1.0.201101171054.jar</systemPath>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.language.ocl_3.1.0.201101171054.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>tudresden.ocl20.pivot.metamodels</groupId>
 			<artifactId>ecore</artifactId>
 			<version>3.1.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.metamodels.ecore_3.1.0.201101171054.jar</systemPath>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.metamodels.ecore_3.1.0.201101171054.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>tudresden.ocl20.pivot.metamodels</groupId>
 			<artifactId>java</artifactId>
 			<version>3.1.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.metamodels.java_3.1.0.201101171054.jar</systemPath>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.metamodels.java_3.1.0.201101171054.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>tudresden.ocl20.pivot.metamodels</groupId>
 			<artifactId>uml2</artifactId>
 			<version>3.1.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.metamodels.uml2_3.1.0.201101171054.jar</systemPath>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.metamodels.uml2_3.1.0.201101171054.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>tudresden.ocl20.pivot.metamodels</groupId>
 			<artifactId>xsd</artifactId>
 			<version>3.1.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.metamodels.xsd_3.1.0.201101171054.jar</systemPath>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.metamodels.xsd_3.1.0.201101171054.jar</systemPath>
 		</dependency>
-        <dependency>
-            <groupId>tudresden.ocl20.pivot</groupId>
-            <artifactId>model</artifactId>
-            <version>3.1.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.model_3.1.0.201101171054.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>tudresden.ocl20.pivot</groupId>
-            <artifactId>modelinstance</artifactId>
-            <version>3.1.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.modelinstance_3.1.0.201101171054.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>tudresden.ocl20.pivot.modelinstancetype</groupId>
-            <artifactId>ecore</artifactId>
-            <version>3.1.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.modelinstancetype.ecore_3.1.0.201101171054.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>tudresden.ocl20.pivot.modelinstancetype</groupId>
-            <artifactId>java</artifactId>
-            <version>3.1.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.modelinstancetype.java_3.1.0.201101171054.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>tudresden.ocl20.pivot.modelinstancetype</groupId>
-            <artifactId>xml</artifactId>
-            <version>3.1.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.modelinstancetype.xml_3.1.0.201101171054.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>tudresden.ocl20.pivot</groupId>
-            <artifactId>modelinstancetype</artifactId>
-            <version>3.1.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.modelinstancetype_3.1.0.201101171054.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>tudresden.ocl20.pivot</groupId>
-            <artifactId>parser</artifactId>
-            <version>3.1.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.parser_3.1.0.201101171054.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>tudresden.ocl20.pivot.pivotmodel</groupId>
-            <artifactId>semantics</artifactId>
-            <version>3.1.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.pivotmodel.semantics_3.1.0.201101171054.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>tudresden.ocl20.pivot</groupId>
-            <artifactId>pivotmodel</artifactId>
-            <version>3.1.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.pivotmodel_3.1.0.201101171054.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>tudresden.ocl20.pivot.standalone</groupId>
-            <artifactId>facade</artifactId>
-            <version>3.1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.standalone.facade_3.1.0.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>tudresden.ocl20.pivot.standardlibrary</groupId>
-            <artifactId>java</artifactId>
-            <version>3.1.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.standardlibrary.java_3.1.0.201101171054.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>tudresden.ocl20.pivot.tools.codegen.declarativ</groupId>
-            <artifactId>ocl2sql</artifactId>
-            <version>3.1.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.tools.codegen.declarativ.ocl2sql_3.1.0.201101171054.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>tudresden.ocl20.pivot.tools.codegen</groupId>
-            <artifactId>declarativ</artifactId>
-            <version>3.0.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.tools.codegen.declarativ_3.0.0.201101171054.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>tudresden.ocl20.pivot.tools.codegen.ocl2java</groupId>
-            <artifactId>types</artifactId>
-            <version>3.0.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.tools.codegen.ocl2java.types_3.0.0.201101171054.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>tudresden.ocl20.pivot.tools.codegen</groupId>
-            <artifactId>ocl2java</artifactId>
-            <version>3.1.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.tools.codegen.ocl2java_3.1.0.201101171054.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>tudresden.ocl20.pivot.tools</groupId>
-            <artifactId>codegen</artifactId>
-            <version>3.1.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.tools.codegen_3.1.0.201101171054.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>tudresden.ocl20.pivot.tools</groupId>
-            <artifactId>CWM</artifactId>
-            <version>3.0.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.tools.CWM_3.0.0.201101171054.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>tudresden.ocl20.pivot.tools.template</groupId>
-            <artifactId>sql</artifactId>
-            <version>3.1.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.tools.template.sql_3.1.0.201101171054.jar</systemPath>
-        </dependency>
+		<dependency>
+			<groupId>tudresden.ocl20.pivot</groupId>
+			<artifactId>model</artifactId>
+			<version>3.1.0.201101171054</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.model_3.1.0.201101171054.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>tudresden.ocl20.pivot</groupId>
+			<artifactId>modelinstance</artifactId>
+			<version>3.1.0.201101171054</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.modelinstance_3.1.0.201101171054.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>tudresden.ocl20.pivot.modelinstancetype</groupId>
+			<artifactId>ecore</artifactId>
+			<version>3.1.0.201101171054</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.modelinstancetype.ecore_3.1.0.201101171054.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>tudresden.ocl20.pivot.modelinstancetype</groupId>
+			<artifactId>java</artifactId>
+			<version>3.1.0.201101171054</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.modelinstancetype.java_3.1.0.201101171054.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>tudresden.ocl20.pivot.modelinstancetype</groupId>
+			<artifactId>xml</artifactId>
+			<version>3.1.0.201101171054</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.modelinstancetype.xml_3.1.0.201101171054.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>tudresden.ocl20.pivot</groupId>
+			<artifactId>modelinstancetype</artifactId>
+			<version>3.1.0.201101171054</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.modelinstancetype_3.1.0.201101171054.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>tudresden.ocl20.pivot</groupId>
+			<artifactId>parser</artifactId>
+			<version>3.1.0.201101171054</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.parser_3.1.0.201101171054.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>tudresden.ocl20.pivot.pivotmodel</groupId>
+			<artifactId>semantics</artifactId>
+			<version>3.1.0.201101171054</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.pivotmodel.semantics_3.1.0.201101171054.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>tudresden.ocl20.pivot</groupId>
+			<artifactId>pivotmodel</artifactId>
+			<version>3.1.0.201101171054</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.pivotmodel_3.1.0.201101171054.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>tudresden.ocl20.pivot.standalone</groupId>
+			<artifactId>facade</artifactId>
+			<version>3.1.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.standalone.facade_3.1.0.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>tudresden.ocl20.pivot.standardlibrary</groupId>
+			<artifactId>java</artifactId>
+			<version>3.1.0.201101171054</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.standardlibrary.java_3.1.0.201101171054.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>tudresden.ocl20.pivot.tools.codegen.declarativ</groupId>
+			<artifactId>ocl2sql</artifactId>
+			<version>3.1.0.201101171054</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.tools.codegen.declarativ.ocl2sql_3.1.0.201101171054.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>tudresden.ocl20.pivot.tools.codegen</groupId>
+			<artifactId>declarativ</artifactId>
+			<version>3.0.0.201101171054</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.tools.codegen.declarativ_3.0.0.201101171054.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>tudresden.ocl20.pivot.tools.codegen.ocl2java</groupId>
+			<artifactId>types</artifactId>
+			<version>3.0.0.201101171054</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.tools.codegen.ocl2java.types_3.0.0.201101171054.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>tudresden.ocl20.pivot.tools.codegen</groupId>
+			<artifactId>ocl2java</artifactId>
+			<version>3.1.0.201101171054</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.tools.codegen.ocl2java_3.1.0.201101171054.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>tudresden.ocl20.pivot.tools</groupId>
+			<artifactId>codegen</artifactId>
+			<version>3.1.0.201101171054</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.tools.codegen_3.1.0.201101171054.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>tudresden.ocl20.pivot.tools</groupId>
+			<artifactId>CWM</artifactId>
+			<version>3.0.0.201101171054</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.tools.CWM_3.0.0.201101171054.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>tudresden.ocl20.pivot.tools.template</groupId>
+			<artifactId>sql</artifactId>
+			<version>3.1.0.201101171054</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.tools.template.sql_3.1.0.201101171054.jar</systemPath>
+		</dependency>
 		<dependency>
 			<groupId>tudresden.ocl20.pivot.tools</groupId>
 			<artifactId>template</artifactId>
 			<version>3.1.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.tools.template_3.1.0.201101171054.jar</systemPath>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.tools.template_3.1.0.201101171054.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>tudresden.ocl20.pivot.tools.transformation</groupId>
 			<artifactId>pivot2sql</artifactId>
 			<version>3.0.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.tools.transformation.pivot2sql_3.0.0.201101171054.jar</systemPath>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.tools.transformation.pivot2sql_3.0.0.201101171054.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>tudresden.ocl20.pivot.tools</groupId>
 			<artifactId>transformation</artifactId>
 			<version>3.1.0.201101171054</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.tools.transformation_3.1.0.201101171054.jar</systemPath>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/tudresden.ocl20.pivot.tools.transformation_3.1.0.201101171054.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>fr.ign</groupId>

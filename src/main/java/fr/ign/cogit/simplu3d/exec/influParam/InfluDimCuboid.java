@@ -44,7 +44,7 @@ public class InfluDimCuboid {
 
     String fileName = "building_parameters_project_expthese_1_maison.xml";
 
-    Parameters p = initialize_parameters(folderName + fileName);
+    Parameters p = Parameters.unmarshall(new File(folderName + fileName));
 
     int nbValMin = 4;
     int nbValMax = 4;
@@ -166,8 +166,6 @@ public class InfluDimCuboid {
     return writer;
   }
   
-  private static Parameters initialize_parameters(String name) throws Exception {
-    return Parameters.unmarshall(name);
-  }
+  
 
 }

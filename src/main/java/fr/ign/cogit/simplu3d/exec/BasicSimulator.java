@@ -1,5 +1,7 @@
 package fr.ign.cogit.simplu3d.exec;
 
+import java.io.File;
+
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
@@ -20,12 +22,11 @@ import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
 import fr.ign.rjmcmc.configuration.Configuration;
 
-
 /**
  * Simulateur standard
  * 
  * @author MBrasebin
- *
+ * 
  */
 public class BasicSimulator {
 
@@ -35,10 +36,14 @@ public class BasicSimulator {
 
   // [building_footprint_rectangle_cli_main
   public static void main(String[] args) throws Exception {
-    String folderName = "./src/main/resources/scenario/";
-    String fileName = "building_parameters_project_expthese_3_maison.xml";
 
-    Parameters p = initialize_parameters(folderName + fileName);
+    String folderName = BasicSimulator.class.getClassLoader()
+        .getResource("scenario/").getPath();
+
+    // String folderName = "./src/main/resources/scenario/";
+    String fileName = "building_parameters_project_expthese_3.xml";
+
+    Parameters p = Parameters.unmarshall(new File(folderName + fileName));
 
     Environnement env = LoaderSHP.load(p.getString("folder"));
 
@@ -101,7 +106,4 @@ public class BasicSimulator {
 
   }
 
-  private static Parameters initialize_parameters(String name) throws Exception {
-    return Parameters.unmarshall(name);
-  }
 }

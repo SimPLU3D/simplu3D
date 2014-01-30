@@ -46,7 +46,7 @@ public class InflueCritConv {
 
       String fileName = "building_parameters_project_expthese_1.xml";
 
-      Parameters p = initialize_parameters(folderName + fileName);
+      Parameters p = Parameters.unmarshall(new File(folderName + fileName));
 
 
       int count = 0;
@@ -180,7 +180,5 @@ public class InflueCritConv {
     return writer;
   }
 
-  private static Parameters initialize_parameters(String name) throws Exception {
-      return Parameters.unmarshall(name);
-  }
+
 }

@@ -45,6 +45,11 @@ public class LoaderSimpluSHPTest {
 
   @Test
   public void testImport() {
+    
+    if(ENV_SINGLETON != null){
+ 
+      return;
+    }
 
     getENVTest();
 

@@ -1,5 +1,6 @@
 package fr.ign.cogit.simplu3d.exec.influParam;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,8 +38,10 @@ public class InfluCoeffTemp {
     String folderName = "./src/main/resources/scenario/";
 
     String fileName = "building_parameters_project_expthese_1.xml";
+    
+    Parameters p = Parameters.unmarshall(new File(folderName + fileName));
 
-    Parameters p = initialize_parameters(folderName + fileName);
+
 
     int nbIt = 1;
     int nbInter = 5;
@@ -120,7 +123,5 @@ public class InfluCoeffTemp {
 
   }
 
-  private static Parameters initialize_parameters(String name) throws Exception {
-    return Parameters.unmarshall(name);
-  }
+
 }

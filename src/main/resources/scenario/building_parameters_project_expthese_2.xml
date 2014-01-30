@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<parameter-configuration>
-	<parameters>
+<parameters>
         <!-- Dossier contenant l'environnement géon il contient bati.shp, parcelle.shp, route.shp, zonage.shp, PRESRIPTION_SURF.shp-->
 		<param key="folder" value="E:/mbrasebin/Donnees/Strasbourg/GTRU/ProjectT2/"/>
         <!-- Paramètres relatifs à l'énergie -->
@@ -102,10 +101,8 @@
         
         <!-- Dossier des sorties des visiteur -->
         <param key="result" value="E:/temp2/" />           
-        
+</parameters>
 
-	</parameters>
-</parameter-configuration>
 
 
 

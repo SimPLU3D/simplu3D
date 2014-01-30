@@ -1,5 +1,6 @@
 package fr.ign.cogit.simplu3d.exec;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,7 +62,7 @@ public class DistributionGeneration {
      * the parameters object with the default values provided... parse the
      * command line to eventually change the values >
      */
-    Parameters p = initialize_parameters();
+    Parameters p = Parameters.unmarshall(new File("./src/main/resources/scenario/building_parameters_project_expthese_1.xml"));
     Environnement env = LoaderSHP.load(p.getString("folder"));
     BasicPropertyUnit bpu = env.getBpU().get(1);
 
@@ -198,8 +199,4 @@ public class DistributionGeneration {
   // new Variate<T>(0), b.getTransform(), pbirth, pdeath);
   // }
 
-  private static Parameters initialize_parameters() throws Exception {
-    return Parameters
-        .unmarshall("./src/main/resources/scenario/building_parameters_project_expthese_1.xml");
-  }
 }
