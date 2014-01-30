@@ -6,11 +6,10 @@ import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.sig3d.semantic.DTM;
 import fr.ign.cogit.simplu3d.model.application.Alignement;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
+import fr.ign.cogit.simplu3d.model.application.Road;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 import fr.ign.cogit.simplu3d.model.application.SubParcel;
 import fr.ign.cogit.simplu3d.model.application.UrbaZone;
-import fr.ign.cogit.simplu3d.model.application.Road;
-
 
 /**
  * Classe pour affecter un z à différents types d'objets
@@ -68,8 +67,8 @@ public class AssignZ {
     for (UrbaZone z : zones) {
 
       IGeometry geom = z.getGeom();
-      
-      for(IDirectPosition dp: geom.coord()){
+
+      for (IDirectPosition dp : geom.coord()) {
         dp.setZ(0);
       }
 
