@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-import fr.ign.cogit.appli.xdogs.theseMickael.util.correction.CorrectionBati3D;
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
@@ -31,6 +30,7 @@ import fr.ign.cogit.gru3d.regleUrba.schemageo.Batiment;
 import fr.ign.cogit.gru3d.regleUrba.schemageo.Parcelle;
 import fr.ign.cogit.gru3d.regleUrba.schemageo.Route;
 import fr.ign.cogit.gru3d.regleUrba.schemageo.Toit;
+import fr.ign.cogit.sig3d.util.correction.CorrectionBati3D;
 
 /**
  * Classe permettant le chargement du modèle de résolution des règles urbas
