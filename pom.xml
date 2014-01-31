@@ -53,6 +53,15 @@
 			</testResource>
 		</testResources>
 		<plugins>
+		<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration> 
+					<environmentVariables> 
+						<PATH>${basedir}\lib\native_libraries\windows-amd64\</PATH> 
+					</environmentVariables> 
+				</configuration> 
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -162,15 +171,7 @@
 				</plugin>
 			</plugins>
 			
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration> 
-					<environmentVariables> 
-						<PATH>${basedir}\lib\native_libraries\windows-amd64\</PATH> 
-					</environmentVariables> 
-				</configuration> 
-			</plugin>
+			
 			
 		</pluginManagement>
 		
