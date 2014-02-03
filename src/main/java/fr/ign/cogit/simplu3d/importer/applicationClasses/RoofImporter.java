@@ -14,8 +14,8 @@ import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromPolygonToLineString;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_LineString;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
-import fr.ign.cogit.sig3d.analysis.ClassifyRoof;
-import fr.ign.cogit.sig3d.analysis.DetectPignon;
+import fr.ign.cogit.sig3d.analysis.roof.ClassifyRoof;
+import fr.ign.cogit.sig3d.analysis.roof.DetectPignon;
 import fr.ign.cogit.simplu3d.model.application.RoofSurface;
 
 public class RoofImporter {

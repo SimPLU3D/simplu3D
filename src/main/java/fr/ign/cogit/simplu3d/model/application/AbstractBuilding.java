@@ -15,7 +15,7 @@ import fr.ign.cogit.geoxygene.sig3d.calculation.Util;
 import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToSurface;
 import fr.ign.cogit.geoxygene.sig3d.geometry.Box3D;
 import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
-import fr.ign.cogit.sig3d.analysis.RoofDetection;
+import fr.ign.cogit.sig3d.analysis.roof.RoofDetection;
 import fr.ign.cogit.sig3d.model.citygml.building.CG_AbstractBuilding;
 import fr.ign.cogit.simplu3d.importer.applicationClasses.EmpriseGenerator;
 import fr.ign.cogit.simplu3d.importer.applicationClasses.RoofImporter;

@@ -22,7 +22,7 @@ import fr.ign.cogit.geoxygene.sig3d.representation.sample.ObjectCartoon;
 import fr.ign.cogit.geoxygene.sig3d.semantic.VectorLayer;
 import fr.ign.cogit.geoxygene.sig3d.util.ColorRandom;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
-import fr.ign.cogit.sig3d.analysis.ClassifyRoof;
+import fr.ign.cogit.sig3d.analysis.roof.ClassifyRoof;
 import fr.ign.cogit.sig3d.representation.color.ColorLocalRandom;
 import fr.ign.cogit.sig3d.representation.noLight.Object2dNoLight;
 import fr.ign.cogit.sig3d.representation.rendering.CartooMod2;
