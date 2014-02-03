@@ -6,7 +6,6 @@ import java.util.List;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.sig3d.equation.PlanEquation;
 import fr.ign.cogit.geoxygene.sig3d.geometry.Box3D;
 import fr.ign.cogit.sig3d.calculation.CutBuilding;
 import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
@@ -131,8 +130,7 @@ public class SHONCalculation {
 
     for (int i = 0; i < nbFloor; i++) {
 
-      PlanEquation eq = new PlanEquation(0, 0, -1, zActu + HABITABLE_HAUTEUR);
-      List<IOrientableSurface> lG = CutBuilding.cutWithPPPolygon(lOS, eq);
+      List<IPolygon> lG = CutBuilding.cutAt(lOS, zActu + HABITABLE_HAUTEUR);
 
       if (lG != null && lG.size() > 0) {
 
@@ -153,9 +151,8 @@ public class SHONCalculation {
     }
 
     if (areaSHON == 0 && nbFloor == 0 && (zMax - zMax) > HABITABLE_HAUTEUR) {
-      PlanEquation eq = new PlanEquation(0, 0, -1, (zMax + zMax) / 2);
 
-      List<IOrientableSurface> lG = CutBuilding.cutWithPPPolygon(lOS, eq);
+      List<IPolygon> lG = CutBuilding.cutAt(lOS, (zMax + zMax) / 2);
 
       double areaTemp = calculAreaFromCut(lG);
 
@@ -172,7 +169,7 @@ public class SHONCalculation {
    * @param lG
    * @return
    */
-  private static double calculAreaFromCut(List<IOrientableSurface> lG) {
+  private static double calculAreaFromCut(List<IPolygon> lG) {
     double areaTemp = 0;
 
     if (lG == null) {
