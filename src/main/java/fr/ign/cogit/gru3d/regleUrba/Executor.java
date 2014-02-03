@@ -36,7 +36,7 @@ public class Executor {
   // private static String REPERTOIRE =
   // "E://mbrasebin//Donnees//JeuDonneesSAGEO//EnvironnementUDMS//";
 
-  private static String REPERTOIRE = "E:/mbrasebin/Donnees/Strasbourg/TestRegles/Test2/";
+  public static String REPERTOIRE = "";
 
   public static DirectPosition dpTranslate = null;
 
@@ -53,8 +53,13 @@ public class Executor {
    */
   public static void main(String[] args) throws Exception {
 
+
+    
+    
     ConstantRepresentation.backGroundColor = new Color(156, 180, 193);
 
+
+    
     Export.doExport = Export.AvailableExport.NONE;
 
     try {
@@ -154,7 +159,7 @@ public class Executor {
       fc.add(feat);
 
       feat.setRepresentation(new TexturedSurface(feat, TextureManager
-          .textureLoading("C:/Users/mbrasebin/Desktop/Env3D/TextParcelle.png"),
+          .textureLoading(REPERTOIRE + "TextParcelle.png"),
           longueur, largeur));
 
       carte.addLayer(new VectorLayer(fc, "Cool"));

@@ -12,7 +12,7 @@ import fr.ign.cogit.gru3d.regleUrba.reglesUrbanismes.regles.PLU;
 
 public class Chargement {
 
-  public static String PATH_PACKAGE_RULES = "fr.ign.cogit.appli.xdogs.theseMickael.regleUrba.reglesUrbanismes.regles";
+  public static String PATH_PACKAGE_RULES = "fr.ign.cogit.gru3d.regleUrba.reglesUrbanismes.regles";
 
   public static PLU chargementFichier(String nomFichier) {
 

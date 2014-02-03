@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PLU>
+    <zonePLU>
+        <nom>UA</nom>
+        <regles>
+            <ID>0</ID>
+            <consequence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ReculRoute">
+                <description>Recul d'une distance de 10.0m  par rapport à la voirie bordant la parcelle</description>
+                <distanceRecul xsi:type="DistanceEuclidienne">
+                    <dMin>10.0</dMin>
+                </distanceRecul>
+            </consequence>
+            <consequence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ContrainteHauteur">
+                <description>Le batiment ne peut dépasser cette hauteur 6.0</description>
+                <hauteurMax>6.0</hauteurMax>
+            </consequence>
+        </regles>
+        <LienDocument></LienDocument>
+    </zonePLU>
+</PLU>

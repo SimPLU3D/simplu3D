@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PLU>
+    <zonePLU>
+        <nom></nom>
+        <regles>
+            <ID>0</ID>
+            <consequence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="LimitationCES">
+                <description>Le CES doit être compris sur la parcelle entre : 0.2 et 8.0</description>
+                <cesMin>0.2</cesMin>
+                <cesMax>8.0</cesMax>
+            </consequence>
+        </regles>
+        <LienDocument></LienDocument>
+    </zonePLU>
+</PLU>

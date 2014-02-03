@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PLU>
+    <zonePLU>
+        <nom>Z1</nom>
+        <regles>
+            <ID>0</ID>
+            <consequence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ReculRoute">
+                <description>Recul d'une distance de 3.0 * hauteur du batiment + 5.0 par rapport aux bordures de la parcelle</description>
+                <distanceRecul xsi:type="DistanceFHauteur">
+                    <coefficient>1.0</coefficient>
+                    <hauteurOrigine>8.0</hauteurOrigine>
+                </distanceRecul>
+            </consequence>
+            <consequence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ReculRoute">
+                <description>Recul d'une distance de 3.0 * hauteur du batiment + 5.0 par rapport aux bordures de la parcelle</description>
+                <distanceRecul xsi:type="DistanceEuclidienne">
+                    <dMin>5</dMin>
+                </distanceRecul>
+            </consequence>
+            <consequence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ReculBordure">
+                <description>Recul d'une distance de 3.0 * hauteur du batiment + 5.0 par rapport aux bordures de la parcelle</description>
+                <distanceRecul xsi:type="DistanceEuclidienne">
+                    <dMin>1</dMin>
+                </distanceRecul>
+            </consequence>
+             <consequence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ReculAutreBatiment">
+                <description>Recul d'une distance de 3.0 * hauteur du batiment + 5.0 par rapport aux bordures de la parcelle</description>
+                <distanceRecul xsi:type="DistanceEuclidienne">
+                    <dMin>1</dMin>
+                </distanceRecul>
+            </consequence>
+            <consequence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ContrainteHauteur">
+                <description>Le batiment ne peut dépasser cette hauteur 13.0</description>
+                <hauteurMax>15.0</hauteurMax>
+            </consequence>
+        </regles>
+        <LienDocument></LienDocument>
+    </zonePLU>
+</PLU>

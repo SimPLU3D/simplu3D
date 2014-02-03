@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PLU>
+    <zonePLU>
+        <nom>etest</nom>
+        <regles>
+            <ID>0</ID>
+
+
+			 <consequence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ReculBordure">
+                <description>Recul d'une distance de 3.0m  par rapport aux bordures de la parcelle</description>
+                <distanceRecul xsi:type="DistanceEuclidienne">
+                    <dMin>2.0</dMin>
+                </distanceRecul>
+            </consequence>
+			
+			
+			 <consequence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ReculAutreBatiment">
+                <description>Recul d'une distance de 3.0m  par rapport aux bordures d'un autre bâtiment</description>
+                <distanceRecul xsi:type="DistanceEuclidienne">
+                    <dMin>5.0</dMin>
+                </distanceRecul>
+            </consequence>
+			
+				<consequence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ContrainteHauteur">
+			     <description>Le batiment ne peut dépasser cette hauteur 35.0</description>
+                 <hauteurMax>35.0</hauteurMax>
+            </consequence>
+			
+			
+        </regles>
+      
+        <LienDocument></LienDocument>
+    </zonePLU>
+</PLU>
