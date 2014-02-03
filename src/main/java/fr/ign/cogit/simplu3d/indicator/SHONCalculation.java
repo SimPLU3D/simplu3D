@@ -113,6 +113,8 @@ public class SHONCalculation {
 
     List<IOrientableSurface> lOS = new ArrayList<IOrientableSurface>();
     lOS.addAll(bati.getLod2MultiSurface());
+    
+    
 
     Box3D b = new Box3D(bati.getLod2MultiSurface());
 
@@ -131,12 +133,6 @@ public class SHONCalculation {
     for (int i = 0; i < nbFloor; i++) {
 
       List<IPolygon> lG = CutBuilding.cutAt(lOS, zActu + HABITABLE_HAUTEUR);
-
-      if (lG != null && lG.size() > 0) {
-
-        DEBUG.addAll(lG);
-
-      }
 
       double areaTemp = calculAreaFromCut(lG);
 
