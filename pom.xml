@@ -227,6 +227,11 @@
 
 
 	<dependencies>
+	<dependency>
+	  <groupId>org.eclipse.core</groupId>
+ 	 <artifactId>org.eclipse.core.runtime</artifactId>
+ 	 <version>3.6.0.v20100505</version>
+	</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
