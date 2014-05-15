@@ -60,17 +60,17 @@
         
         <!-- Paramètres relatifs aux visiteur!-->
          <!-- Nombre d'itérations de dump!-->
-		<param key="nbdump" value="5000" />
+		<param key="nbdump" value="2000" />
          <!-- Nombre d'itérations de save!-->
-		<param key="nbsave" value="50000" />
+		<param key="nbsave" value="2000" />
         <!-- Visiteurs utilisés-->
         <!-- Sortie console -->
         <param key="outputstreamvisitor" value="false" />
         <!-- Sortie viewer 3D -->
         <param key="visitorviewer" value="false" />
         <param key="showbackground" value="true" />
-        <param key="xminbg" value="1052592.48956" />
-        <param key="xmaxbg" value="1052353.72956" />
+        <param key="xminbg" value="1052572.48956" /> 
+        <param key="xmaxbg" value="1052373.72956" />
         <param key="yminbg" value="6840777.25897" />
         <param key="ymaxbg" value="6841006.49397" />
         <param key="z" value="138" />
@@ -78,19 +78,18 @@
         <!-- Sortie ShapeFileWriter -->
         <param key="shapefilewriter" value="false" />   
         <!-- Sortie Statsvisitor -->
-        <param key="statsvisitor" value="false" />      
+        <param key="statsvisitor" value="true" />      
         <!-- Sortie FilmVisitor -->
-        <param key="filmvisitor" value="false" />
-        <param key="filmvisitorx" value="1051180.7261527262" />
-        <param key="filmvisitory" value="6840750.337137596" />
-        <param key="filmvisitorz" value="160" />   
+        <param key="filmvisitor" value="true" />
+        <param key="filmvisitorx" value="1052412.6415535808" /> 
+        <param key="filmvisitory" value="6840868.320031373" />
+        <param key="filmvisitorz" value="170" />   
         <param key="filmvisitorvectx" value="-15" />             
-        <param key="filmvisitorvecty" value="-20" />   
-        <param key="filmvisitorvectz" value="15" /> 
-        <param key="filmvisitorr" value="180" />             
-        <param key="filmvisitorg" value="180" />   
-        <param key="filmvisitorb" value="180" />  
-        
+        <param key="filmvisitorvecty" value="-10" />   
+        <param key="filmvisitorvectz" value="10" /> 
+        <param key="filmvisitorr" value="60" />             
+        <param key="filmvisitorg" value="0" />   
+        <param key="filmvisitorb" value="0" />  
        <!-- Sortie CSV -->
        <param key="csvvisitor" value="false" />  
        <param key="csvfilename" value="export.csv" />  

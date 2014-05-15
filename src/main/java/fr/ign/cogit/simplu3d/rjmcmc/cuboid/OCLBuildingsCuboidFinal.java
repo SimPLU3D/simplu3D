@@ -145,6 +145,13 @@ public class OCLBuildingsCuboidFinal {
       ViewerVisitor<Cuboid> visitorViewer = new ViewerVisitor<Cuboid>("" + id, p);
       list.add(visitorViewer);
     }
+    
+    if (p.getBoolean("statsvisitor")) {
+      StatsVisitor<Cuboid> statsViewer = new StatsVisitor<Cuboid>("Énergie");
+      list.add(statsViewer);
+    }
+    
+    
     if (p.getBoolean("filmvisitor")) {
       IDirectPosition dpCentre = new DirectPosition(p.getDouble("filmvisitorx"),
           p.getDouble("filmvisitory"), p.getDouble("filmvisitorz"));
@@ -157,10 +164,7 @@ public class OCLBuildingsCuboidFinal {
           p.getString("result"), c);
       list.add(visitorViewerFilmVisitor);
     }
-    if (p.getBoolean("statsvisitor")) {
-      StatsVisitor<Cuboid> statsViewer = new StatsVisitor<Cuboid>("Énergie");
-      list.add(statsViewer);
-    }
+
     if (p.getBoolean("csvvisitorend")) {
       String fileName = p.get("result").toString() + p.get("csvfilenamend");
       CSVendStats<Cuboid> statsViewer = new CSVendStats<Cuboid>(fileName);

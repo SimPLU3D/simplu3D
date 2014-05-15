@@ -1,8 +1,17 @@
 package fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor;
 
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
+
+import org.coode.owlapi.rdfxml.parser.ObjectCardinalityTranslator;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
@@ -12,7 +21,10 @@ import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
+import fr.ign.cogit.geoxygene.sig3d.Messages;
+import fr.ign.cogit.geoxygene.sig3d.gui.InterfaceMap3D;
 import fr.ign.cogit.geoxygene.sig3d.gui.MainWindow;
+import fr.ign.cogit.geoxygene.sig3d.representation.sample.ObjectCartoon;
 import fr.ign.cogit.geoxygene.sig3d.representation.texture.TextureManager;
 import fr.ign.cogit.geoxygene.sig3d.representation.texture.TexturedSurface;
 import fr.ign.cogit.geoxygene.sig3d.semantic.VectorLayer;
@@ -40,7 +52,7 @@ public class FilmVisitor<O extends SimpleObject> implements Visitor<O> {
   private int iter;
 
   private final static String PREFIX_NAME_STRING = "Étape";
-  private final static int MIN_LAYER = 3;
+  private static int MIN_LAYER = 3;
 
   private GraphConfiguration<Cuboid> bestConfig = null;
   private double bestValue = Double.POSITIVE_INFINITY;
@@ -118,13 +130,16 @@ public class FilmVisitor<O extends SimpleObject> implements Visitor<O> {
 
       DefaultFeature df = new DefaultFeature(geom);
       AttributeManager.addAttribute(df, "Energy", v.getEnergy(), "Double");
+      
+      
+      df.setRepresentation(new ObjectCartoon(df, col));
+      
       feat.add(df);
 
     }
 
     if (!feat.isEmpty()) {
-      VectorLayer vl = new VectorLayer(feat, PREFIX_NAME_STRING + " : " + iter,
-          col);
+      VectorLayer vl = new VectorLayer(feat, PREFIX_NAME_STRING + " : " + iter);
 
       int nbLayer = mW.getInterfaceMap3D().getCurrent3DMap().getLayerList()
           .size();
@@ -142,27 +157,123 @@ public class FilmVisitor<O extends SimpleObject> implements Visitor<O> {
       mW.getInterfaceMap3D().getCurrent3DMap().addLayer(vl);
 
     }
+    
+    try {
+      Thread.sleep(1000);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
 
-    boolean works = mW.getInterfaceMap3D().screenCapture(folder,
-        "img" + (count++) + ".jpg");
+    boolean works = this.screenCapture(folder,
+        "img" + (count++) + ".jpg",  mW.getInterfaceMap3D());
 
     if (!works) {
       System.out.println("Not work");
     }
   }
 
+  
+  
+
+  /**
+   * Permet d'enregistrer une image à partir de l'écran Ne fonctionne qu'avec
+   * l'IHM actuel (Offset nécessaire) Ne prends pas compte de l'existance d'un
+   * fichier de même nom
+   * @param path
+   *        le dossier dans lequel l'impr ecran sera supprime
+   * @param fileName
+   *        le nom du fichier
+   * @return indique si la capture s'est effectuée avec succès
+   */
+  public boolean screenCapture(String path, String fileName, InterfaceMap3D iMap3D) {
+    
+    
+    
+    try {
+      
+        
+      ChartPanel v = StatsVisitor.CHARTSINGLETON;
+      
+
+ 
+      
+      int xSup = 0;
+      int ySup = 0 ;
+      
+      boolean hasStats = (v != null);
+      
+      
+      if(hasStats){
+        
+        
+        xSup = v.getSize().width;
+        ySup = v.getSize().height;
+        
+      }
+      
+      int xSize = iMap3D.getSize().width + xSup;
+      int ySize = Math.max(iMap3D.getSize().height, ySup);
+      
+      
+      
+      BufferedImage bufImage = new BufferedImage(xSize,ySize ,
+          BufferedImage.TYPE_INT_RGB);
+      
+      
+      Graphics g = bufImage.createGraphics();
+
+      
+      g.setColor(Color.white);
+      
+    //  g.drawRect(0, 0, xSize, ySize);
+      
+      g.fillRect(0, 0, xSize, ySize);
+      
+  
+      iMap3D.getCanvas3D().paint(g);
+      
+      
+    
+      
+      if(hasStats){
+        
+       
+        g.drawImage(v.getChart().createBufferedImage(xSup, ySup),iMap3D.getSize().width,    (ySize - ySup) /2  , null     );
+        
+ 
+        
+      }
+      
+      
+      
+      File fichier = new File(path, fileName);
+      if (fichier.exists()) {
+        System.out.println("Fail");
+        return false;
+      } else {
+        ImageIO.write(bufImage, "jpg", fichier);
+        return true;
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return false;
+  }
+  
+  
   private static void represent(Environnement env, MainWindow mW) {
 
     List<Theme> lTheme = new ArrayList<RepEnvironnement.Theme>();
-    lTheme.add(Theme.TOIT_BATIMENT);
-    lTheme.add(Theme.FACADE_BATIMENT);
+    //lTheme.add(Theme.TOIT_BATIMENT);
+    //lTheme.add(Theme.FACADE_BATIMENT);
     // lTheme.add(Theme.FAITAGE);
     // lTheme.add(Theme.PIGNON);
     // lTheme.add(Theme.GOUTTIERE);
-    lTheme.add(Theme.VOIRIE);
-    lTheme.add(Theme.PARCELLE);
-    lTheme.add(Theme.BORDURE);
-    lTheme.add(Theme.ZONE);
+   // lTheme.add(Theme.VOIRIE);
+    //lTheme.add(Theme.PARCELLE);
+    //lTheme.add(Theme.BORDURE);
+    //lTheme.add(Theme.ZONE);
     // lTheme.add(Theme.PAN);
 
     Theme[] tab = lTheme.toArray(new Theme[0]);
@@ -173,28 +284,23 @@ public class FilmVisitor<O extends SimpleObject> implements Visitor<O> {
     for (VectorLayer l : vl) {
       mW.getInterfaceMap3D().getCurrent3DMap().addLayer(l);
     }
-
-    mW.getInterfaceMap3D().removeLight(0);
-    mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
-    mW.getInterfaceMap3D().moveLight(1051157, 6840727, 160, 0);
-    mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
-    mW.getInterfaceMap3D().moveLight(1051257, 6840827, 160, 1);
-
+    
+    
     double z = 140;
     //
     // 1051042.8513268954120576,6840539.0837931865826249 :
     // 1051264.8064121364150196,6840679.2711814027279615
     // Projet 1
-    /*
-     * IDirectPosition dpLL = new
-     * DirectPosition(1051042.8513268954120576,6840539.0837931865826249,z);
-     * IDirectPosition dpUR = new
-     * DirectPosition(1051264.8064121364150196,6840679.2711814027279615,z);
-     */
+    
+      IDirectPosition  dpUR  = new
+      DirectPosition(1052353.72956,6841006.49397,z);
+      IDirectPosition dpLL= new
+      DirectPosition(1052592.48956,6840777.25897,z);
+     
 
     // Projet 3
-    IDirectPosition dpLL = new DirectPosition(1051157, 6840727, z);
-    IDirectPosition dpUR = new DirectPosition(1051322, 6840858, z);
+ //   IDirectPosition dpLL = new DirectPosition(1051157, 6840727, z);
+      //   IDirectPosition dpUR = new DirectPosition(1051322, 6840858, z);
 
     IDirectPositionList dpl = new DirectPositionList();
 
@@ -224,6 +330,25 @@ public class FilmVisitor<O extends SimpleObject> implements Visitor<O> {
 
     mW.getInterfaceMap3D().getCurrent3DMap()
         .addLayer(new VectorLayer(fc, "Fond"));
+    
+
+    mW.getInterfaceMap3D().removeLight(0);
+    mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
+    mW.getInterfaceMap3D().moveLight(dpUR.getX(), dpUR.getY(), 140, 0);
+    
+    
+    
+    mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
+    mW.getInterfaceMap3D().moveLight(dpUR.getX(), dpLL.getY(), 140, 1);
+    
+    
+    
+    mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
+    mW.getInterfaceMap3D().moveLight(dpLL.getX(), dpUR.getY(), 10000, 2);
+
+
+
+    MIN_LAYER = lTheme.size() +1 ;
 
   }
 }
