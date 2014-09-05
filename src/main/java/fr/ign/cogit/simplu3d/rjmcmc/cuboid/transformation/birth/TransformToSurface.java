@@ -1,6 +1,7 @@
 package fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth;
 
 import java.util.List;
+import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
@@ -50,7 +51,8 @@ public class TransformToSurface implements Transform {
 
   private void prepareGeometry(IGeometry geom) {
     List<IOrientableSurface> lOS = FromGeomToSurface.convertGeom(geom);
-    TriangulationJTS triangulation = TriangulationLoader.generate((IPolygon) lOS.get(0));
+    TriangulationJTS triangulation = TriangulationLoader
+        .generate((IPolygon) lOS.get(0));
     try {
       triangulation.triangule();
     } catch (Exception e) {
@@ -71,49 +73,46 @@ public class TransformToSurface implements Transform {
   }
 
   @Override
-  public double getAbsJacobian(double[] v) {
-    return this.absDeterminant;
-  }
-
-  @Override
-  public double apply(double[] in, double[] out) {
-    IDirectPosition dp = eq.sample(in[0], in[1]);
-    if (dp == null) {
-      out[0] = 0;
-      out[1] = 0;
+  public double apply(boolean direct, Vector<Double> val0, Vector<Double> var0,
+      Vector<Double> val1, Vector<Double> var1) {
+    if (direct) {
+      IDirectPosition dp = eq.sample(var0.get(0), var0.get(1));
+      if (dp == null) {
+        val1.set(0, 0.);
+        val1.set(1, 0.);
+      } else {
+        val1.set(0, dp.getX());
+        val1.set(1, dp.getY());
+      }
+      for (int i = 2; i < val1.size(); i++) {
+        val1.set(i, val0.get(i) * mat[i] + delta[i]);
+      }
+      return 1;
     } else {
-      out[0] = dp.getX();
-      out[1] = dp.getY();
+      IDirectPosition dp = eq.inversample(var0.get(0), var0.get(1));
+      if (dp == null) {
+        val1.set(0, 0.);
+        val1.set(1, 0.);
+      } else {
+        val1.set(0, dp.getX());
+        val1.set(1, dp.getY());
+      }
+      for (int i = 2; i < val1.size(); i++) {
+        val1.set(i, (val0.get(i) - delta[i]) * inv[i]);
+      }
+      return 1;
     }
-    for (int i = 2; i < out.length; i++) {
-      out[i] = in[i] * mat[i] + delta[i];
-    }
-    return 1;
   }
 
   @Override
-  public double inverse(double[] in, double[] out) {
-    IDirectPosition dp = eq.inversample(in[0], in[1]);
-    if (dp == null) {
-      out[0] = 0;
-      out[1] = 0;
-    } else {
-      out[0] = dp.getX();
-      out[1] = dp.getY();
-    }
-    for (int i = 2; i < out.length; i++) {
-      out[i] = (in[i] - delta[i]) * inv[i];
-    }
-    return 1;
+  public double getAbsJacobian(boolean direct) {
+    if (direct)
+      return this.absDeterminant;
+    return 1 / this.absDeterminant;
   }
 
   @Override
-  public int dimension() {
+  public int dimension(int n0, int n1) {
     return this.mat.length;
-  }
-
-  @Override
-  public double getInverseAbsJacobian(double[] d) {
-    return 1;// FIXME THAT !!!
   }
 }

@@ -3,6 +3,9 @@ package fr.ign.cogit.simplu3d.rjmcmc.cuboid;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
+
+import org.apache.commons.math3.random.RandomGenerator;
 
 import tudresden.ocl20.pivot.modelinstance.IModelInstance;
 
@@ -88,23 +91,28 @@ public class OCLBuildingsCuboidFinal {
     this.deltaConf = deltaConf;
   }
 
-  public Configuration<Cuboid> process(BasicPropertyUnit bpu, Parameters p, Environnement env,
-      int id) {
+  public Configuration<Cuboid> process(BasicPropertyUnit bpu, Parameters p,
+      Environnement env, int id) {
     // Géométrie de l'unité foncière sur laquelle porte la génération
     IGeometry geom = bpu.generateGeom().buffer(1);
     ModelInstanceGraphConfigurationPredicate<Cuboid> pred = new ModelInstanceGraphConfigurationPredicate<Cuboid>(
         bpu);
-    // Définition de la fonction d'optimisation (on optimise en décroissant) relative au volume
+    // Définition de la fonction d'optimisation (on optimise en décroissant)
+    // relative au volume
     Configuration<Cuboid> conf = null;
-    System.out.println(pred.getRuleChecker().getlModeInstance().size() + " model instances");
+    System.out.println(pred.getRuleChecker().getlModeInstance().size()
+        + " model instances");
     try {
-      conf = create_configuration(p, AdapterFactory.toGeometry(new GeometryFactory(), geom), bpu,
-          pred.getRuleChecker().getlModeInstance().get(0));
+      conf = create_configuration(p,
+          AdapterFactory.toGeometry(new GeometryFactory(), geom), bpu, pred
+              .getRuleChecker().getlModeInstance().get(0));
     } catch (Exception e) {
       e.printStackTrace();
     }
+
+    RandomGenerator rng = Random.random();
     // Création de l'échantilloneur
-    Sampler<Cuboid> samp = create_sampler(p, bpu, pred);
+    Sampler<Cuboid> samp = create_sampler(rng, p, bpu, pred);
     // Température
     Schedule<SimpleTemperature> sch = create_schedule(p);
 
@@ -137,31 +145,33 @@ public class OCLBuildingsCuboidFinal {
       list.add(visitor);
     }
     if (p.getBoolean("shapefilewriter")) {
-      Visitor<Cuboid> shpVisitor = new ShapefileVisitorCuboid<Cuboid>(p.get("result").toString()
+      Visitor<Cuboid> shpVisitor = new ShapefileVisitorCuboid<Cuboid>(p.get(
+          "result").toString()
           + "result");
       list.add(shpVisitor);
     }
     if (p.getBoolean("visitorviewer")) {
-      ViewerVisitor<Cuboid> visitorViewer = new ViewerVisitor<Cuboid>("" + id, p);
+      ViewerVisitor<Cuboid> visitorViewer = new ViewerVisitor<Cuboid>("" + id,
+          p);
       list.add(visitorViewer);
     }
-    
+
     if (p.getBoolean("statsvisitor")) {
       StatsVisitor<Cuboid> statsViewer = new StatsVisitor<Cuboid>("Énergie");
       list.add(statsViewer);
     }
-    
-    
+
     if (p.getBoolean("filmvisitor")) {
-      IDirectPosition dpCentre = new DirectPosition(p.getDouble("filmvisitorx"),
-          p.getDouble("filmvisitory"), p.getDouble("filmvisitorz"));
+      IDirectPosition dpCentre = new DirectPosition(
+          p.getDouble("filmvisitorx"), p.getDouble("filmvisitory"),
+          p.getDouble("filmvisitorz"));
       Vecteur viewTo = new Vecteur(p.getDouble("filmvisitorvectx"),
           p.getDouble("filmvisitorvecty"), p.getDouble("filmvisitorvectz"));
-      
-      
-      Color c = new Color(p.getInteger("filmvisitorr"), p.getInteger("filmvisitorg"), p.getInteger("filmvisitorb"));
-      FilmVisitor<Cuboid> visitorViewerFilmVisitor = new FilmVisitor<Cuboid>(dpCentre, viewTo,
-          p.getString("result"), c);
+
+      Color c = new Color(p.getInteger("filmvisitorr"),
+          p.getInteger("filmvisitorg"), p.getInteger("filmvisitorb"));
+      FilmVisitor<Cuboid> visitorViewerFilmVisitor = new FilmVisitor<Cuboid>(
+          dpCentre, viewTo, p.getString("result"), c);
       list.add(visitorViewerFilmVisitor);
     }
 
@@ -183,7 +193,8 @@ public class OCLBuildingsCuboidFinal {
      * < This is the way to launch the optimization process. Here, the magic
      * happen... >
      */
-    SimulatedAnnealing.optimize(Random.random(), conf, samp, sch, end, mVisitor);
+    SimulatedAnnealing
+        .optimize(Random.random(), conf, samp, sch, end, mVisitor);
     return conf;
   }
 
@@ -202,15 +213,13 @@ public class OCLBuildingsCuboidFinal {
 
   // Création de la configuration
   /**
-   * @param p
-   *        paramètres importés depuis le fichier XML
-   * @param bpu
-   *        l'unité foncière considérée
+   * @param p paramètres importés depuis le fichier XML
+   * @param bpu l'unité foncière considérée
    * @return la configuration chargée, c'est à dire la formulation énergétique
    *         prise en compte
    */
-  public static Configuration<Cuboid> create_configuration(Parameters p, Geometry geom,
-      BasicPropertyUnit bpu, IModelInstance modelInstance) {
+  public static Configuration<Cuboid> create_configuration(Parameters p,
+      Geometry geom, BasicPropertyUnit bpu, IModelInstance modelInstance) {
     // Énergie constante : à la création d'un nouvel objet
     ConstantEnergy<Cuboid, Cuboid> energyCreation = new ConstantEnergy<Cuboid, Cuboid>(
         p.getDouble("energy"));
@@ -224,36 +233,38 @@ public class OCLBuildingsCuboidFinal {
         ponderationVolume, energyVolume);
 
     // On retire de l'énergie de création, l'énergie de l'aire
-    UnaryEnergy<Cuboid> u3 = new MinusUnaryEnergy<Cuboid>(energyCreation, energyVolumePondere);
+    UnaryEnergy<Cuboid> u3 = new MinusUnaryEnergy<Cuboid>(energyCreation,
+        energyVolumePondere);
 
     // Énergie constante : pondération de la différence
     ConstantEnergy<Cuboid, Cuboid> ponderationDifference = new ConstantEnergy<Cuboid, Cuboid>(
         p.getDouble("ponderation_difference_ext"));
     // On ajoute l'énergie de différence : la zone en dehors de la parcelle
     UnaryEnergy<Cuboid> u4 = new DifferenceVolumeUnaryEnergy<Cuboid>(geom);
-    UnaryEnergy<Cuboid> u5 = new MultipliesUnaryEnergy<Cuboid>(ponderationDifference, u4);
+    UnaryEnergy<Cuboid> u5 = new MultipliesUnaryEnergy<Cuboid>(
+        ponderationDifference, u4);
     UnaryEnergy<Cuboid> unaryEnergy = new PlusUnaryEnergy<Cuboid>(u3, u5);
 
     // Énergie binaire : intersection entre deux rectangles
-    ConstantEnergy<Cuboid, Cuboid> c3 = new ConstantEnergy<Cuboid, Cuboid>(p.getDouble("ponderation_volume_inter"));
+    ConstantEnergy<Cuboid, Cuboid> c3 = new ConstantEnergy<Cuboid, Cuboid>(
+        p.getDouble("ponderation_volume_inter"));
     BinaryEnergy<Cuboid, Cuboid> b1 = new IntersectionVolumeBinaryEnergy<Cuboid>();
-    BinaryEnergy<Cuboid, Cuboid> binaryEnergy = new MultipliesBinaryEnergy<Cuboid, Cuboid>(c3,
-        b1);
+    BinaryEnergy<Cuboid, Cuboid> binaryEnergy = new MultipliesBinaryEnergy<Cuboid, Cuboid>(
+        c3, b1);
     // empty initial configuration*/
-    Configuration<Cuboid> conf = new ModelInstanceGraphConfiguration<Cuboid>(bpu, modelInstance,
-        unaryEnergy, binaryEnergy);
+    Configuration<Cuboid> conf = new ModelInstanceGraphConfiguration<Cuboid>(
+        bpu, modelInstance, unaryEnergy, binaryEnergy);
     return conf;
   }
 
   /**
    * Sampler
-   * @param p
-   *        les paramètres chargés depuis le fichier xml
-   * @param r
-   *        l'enveloppe dans laquelle on génère les positions
+   * @param p les paramètres chargés depuis le fichier xml
+   * @param r l'enveloppe dans laquelle on génère les positions
    * @return
    */
-  static Sampler<Cuboid> create_sampler(Parameters p, BasicPropertyUnit bpU,
+  static Sampler<Cuboid> create_sampler(RandomGenerator rng, Parameters p,
+      BasicPropertyUnit bpU,
       ModelInstanceGraphConfigurationPredicate<Cuboid> pred) {
     // Un vecteur ?????
     double mindim = p.getDouble("mindim");
@@ -261,12 +272,8 @@ public class OCLBuildingsCuboidFinal {
     double minheight = p.getDouble("minheight");
     double maxheight = p.getDouble("maxheight");
     // A priori on redéfini le constructeur de l'objet
+    // A priori on redéfini le constructeur de l'objet
     ObjectBuilder<Cuboid> builder = new ObjectBuilder<Cuboid>() {
-      @Override
-      public Cuboid build(double[] coordinates) {
-        return new Cuboid(coordinates[0], coordinates[1], coordinates[2], coordinates[3],
-            coordinates[4], coordinates[5]);
-      }
 
       @Override
       public int size() {
@@ -274,51 +281,63 @@ public class OCLBuildingsCuboidFinal {
       }
 
       @Override
-      public void setCoordinates(Cuboid t, double[] coordinates) {
-        coordinates[0] = t.centerx;
-        coordinates[1] = t.centery;
-        coordinates[2] = t.length;
-        coordinates[3] = t.width;
-        coordinates[4] = t.height;
-        coordinates[5] = t.orientation;
+      public Cuboid build(Vector<Double> val1) {
+
+        return new Cuboid(val1.get(0), val1.get(1), val1.get(2), val1.get(3),
+            val1.get(4), val1.get(5));
+      }
+
+      @Override
+      public void setCoordinates(Cuboid t, List<Double> val1) {
+        val1.set(0, t.centerx);
+        val1.set(1, t.centery);
+        val1.set(2, t.length);
+        val1.set(3, t.width);
+        val1.set(4, t.height);
+        val1.set(5, t.orientation);
       }
     };
 
     IEnvelope env = bpU.getGeom().envelope();
     // Sampler de naissance
-    // UniformBirthInGeom<Cuboid2> birth = new UniformBirthInGeom<Cuboid2>(new Cuboid2(env.minX(),
-    // env.minY(), mindim, mindim, minheight, 0), new Cuboid2(env.maxX(), env.maxY(), maxdim,
+    // UniformBirthInGeom<Cuboid2> birth = new UniformBirthInGeom<Cuboid2>(new
+    // Cuboid2(env.minX(),
+    // env.minY(), mindim, mindim, minheight, 0), new Cuboid2(env.maxX(),
+    // env.maxY(), maxdim,
     // maxdim, maxheight, Math.PI), builder, bpU.getpol2D());
-    UniformBirth<Cuboid> birth = new UniformBirth<Cuboid>(new Cuboid(env.minX(), env.minY(),
-        mindim, mindim, minheight, 0), new Cuboid(env.maxX(), env.maxY(), maxdim, maxdim,
-        maxheight, Math.PI), builder, TransformToSurface.class, bpU.getpol2D());
+
+    UniformBirth<Cuboid> birth = new UniformBirth<Cuboid>(rng, new Cuboid(
+        env.minX(), env.minY(), mindim, mindim, minheight, 0), new Cuboid(
+        env.maxX(), env.maxY(), maxdim, maxdim, maxheight, Math.PI), builder,
+        TransformToSurface.class, bpU.getpol2D());
 
     // Distribution de poisson
-    PoissonDistribution distribution = new PoissonDistribution(p.getDouble("poisson"));
+    PoissonDistribution distribution = new PoissonDistribution(rng,
+        p.getDouble("poisson"));
 
     DirectSampler<Cuboid> ds = new DirectSampler<Cuboid>(distribution, birth);
 
     // Probabilité de naissance-morts modifications
     List<Kernel<Cuboid>> kernels = new ArrayList<Kernel<Cuboid>>(3);
 
-    kernels.add(Kernel.make_uniform_birth_death_kernel(builder, birth,
+    kernels.add(Kernel.make_uniform_birth_death_kernel(rng, builder, birth,
         p.getDouble("pbirth"), p.getDouble("pdeath")));
     double amplitudeMove = p.getDouble("amplitudeMove");
-    kernels.add(Kernel.make_uniform_modification_kernel(builder, new MoveCuboid(amplitudeMove),
-        0.2, "Move"));
+    kernels.add(Kernel.make_uniform_modification_kernel(rng, builder,
+        new MoveCuboid(amplitudeMove), 0.2, "Move"));
     double amplitudeRotate = p.getDouble("amplitudeRotate") * Math.PI / 180;
-    kernels.add(Kernel.make_uniform_modification_kernel(builder,
+    kernels.add(Kernel.make_uniform_modification_kernel(rng, builder,
         new RotateCuboid(amplitudeRotate), 0.2, "Rotate"));
     double amplitudeMaxDim = p.getDouble("amplitudeMaxDim");
-    kernels.add(Kernel.make_uniform_modification_kernel(builder, new ChangeWidth(amplitudeMaxDim),
-        0.2, "ChgWidth"));
-    kernels.add(Kernel.make_uniform_modification_kernel(builder, new ChangeLength(amplitudeMaxDim),
-        0.2, "ChgLength"));
+    kernels.add(Kernel.make_uniform_modification_kernel(rng, builder,
+        new ChangeWidth(amplitudeMaxDim), 0.2, "ChgWidth"));
+    kernels.add(Kernel.make_uniform_modification_kernel(rng, builder,
+        new ChangeLength(amplitudeMaxDim), 0.2, "ChgLength"));
     double amplitudeHeight = p.getDouble("amplitudeHeight");
-    kernels.add(Kernel.make_uniform_modification_kernel(builder, new ChangeHeight(amplitudeHeight),
-        0.2, "ChgHeight"));
+    kernels.add(Kernel.make_uniform_modification_kernel(rng, builder,
+        new ChangeHeight(amplitudeHeight), 0.2, "ChgHeight"));
 
-    Sampler<Cuboid> s = new GreenSampler<Cuboid>(ds,
+    Sampler<Cuboid> s = new GreenSampler<Cuboid>(rng, ds,
         new MetropolisAcceptance<SimpleTemperature>(), kernels);
     Sampler<Cuboid> rs = new RejectionSampler<Cuboid>(s, pred);
     return rs;
@@ -345,6 +364,7 @@ public class OCLBuildingsCuboidFinal {
     } else {
       coefDef = this.coeffDec;
     }
-    return new GeometricSchedule<SimpleTemperature>(new SimpleTemperature(p.getDouble("temp")), coefDef);
+    return new GeometricSchedule<SimpleTemperature>(new SimpleTemperature(
+        p.getDouble("temp")), coefDef);
   }
 }

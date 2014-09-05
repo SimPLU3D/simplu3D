@@ -3,6 +3,9 @@ package fr.ign.cogit.simplu3d.rjmcmc.cuboid;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
+
+import org.apache.commons.math3.random.RandomGenerator;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -114,7 +117,7 @@ public class OptimisedBuildingsCuboidFinalDirectRejection {
       e.printStackTrace();
     }
     // Création de l'échantilloneur
-    Sampler<Cuboid> samp = create_sampler(p, bpu, pred);
+    Sampler<Cuboid> samp = create_sampler(Random.random(),p, bpu, pred);
     // Température
     Schedule<SimpleTemperature> sch = create_schedule(p);
 
@@ -268,7 +271,7 @@ public class OptimisedBuildingsCuboidFinalDirectRejection {
    * @param r l'enveloppe dans laquelle on génère les positions
    * @return
    */
-  Sampler<Cuboid> create_sampler(Parameters p, BasicPropertyUnit bpU,
+  Sampler<Cuboid> create_sampler(RandomGenerator rng,Parameters p, BasicPropertyUnit bpU,
       ConfigurationModificationPredicate<Cuboid> pred) {
     // Un vecteur ?????
     double mindim = Double.isNaN(this.minDimBox) ? p.getDouble("mindim") : this.minDimBox;
@@ -277,28 +280,33 @@ public class OptimisedBuildingsCuboidFinalDirectRejection {
     double minheight = p.getDouble("minheight");
     double maxheight = p.getDouble("maxheight");
     // A priori on redéfini le constructeur de l'objet
+    // A priori on redéfini le constructeur de l'objet
     ObjectBuilder<Cuboid> builder = new ObjectBuilder<Cuboid>() {
-      @Override
-      public Cuboid build(double[] coordinates) {
-        return new Cuboid(coordinates[0], coordinates[1], coordinates[2],
-            coordinates[3], coordinates[4], coordinates[5]);
-      }
 
       @Override
       public int size() {
         return 6;
       }
 
+
+
       @Override
-      public void setCoordinates(Cuboid t, double[] coordinates) {
-        coordinates[0] = t.centerx;
-        coordinates[1] = t.centery;
-        coordinates[2] = t.length;
-        coordinates[3] = t.width;
-        coordinates[4] = t.height;
-        coordinates[5] = t.orientation;
+      public Cuboid build(Vector<Double> val1) {
+       
+        return new Cuboid(val1.get(0),val1.get(1),val1.get(2),val1.get(3),val1.get(4),val1.get(5));
+      }
+
+      @Override
+      public void setCoordinates(Cuboid t, List<Double> val1) {
+          val1.set(0, t.centerx);
+          val1.set(1, t.centery);
+          val1.set(2, t.length);
+          val1.set(3, t.width);
+          val1.set(4, t.height);
+          val1.set(5, t.orientation);
       }
     };
+
 
     IEnvelope env = bpU.getGeom().envelope();
     // Sampler de naissance
@@ -307,13 +315,13 @@ public class OptimisedBuildingsCuboidFinalDirectRejection {
     // env.minY(), mindim, mindim, minheight, 0), new Cuboid2(env.maxX(),
     // env.maxY(), maxdim,
     // maxdim, maxheight, Math.PI), builder, bpU.getpol2D());
-    UniformBirth<Cuboid> birth = new UniformBirth<Cuboid>(new Cuboid(
+    UniformBirth<Cuboid> birth = new UniformBirth<Cuboid>(rng,new Cuboid(
         env.minX(), env.minY(), mindim, mindim, minheight, 0), new Cuboid(
         env.maxX(), env.maxY(), maxdim, maxdim, maxheight, Math.PI), builder,
         TransformToSurface.class, bpU.getpol2D());
 
     // Distribution de poisson
-    PoissonDistribution distribution = new PoissonDistribution(
+    PoissonDistribution distribution = new PoissonDistribution(rng,
         p.getDouble("poisson"));
 
     DirectSampler<Cuboid> ds = new DirectRejectionSampler<Cuboid>(
@@ -322,23 +330,23 @@ public class OptimisedBuildingsCuboidFinalDirectRejection {
     // Probabilité de naissance-morts modifications
     List<Kernel<Cuboid>> kernels = new ArrayList<Kernel<Cuboid>>(3);
 
-    kernels.add(Kernel.make_uniform_birth_death_kernel(builder, birth,
+    kernels.add(Kernel.make_uniform_birth_death_kernel(rng,builder, birth,
         p.getDouble("pbirth"),
         p.getDouble("pdeath")));
     double amplitudeMove = p.getDouble("amplitudeMove");
-    kernels.add(Kernel.make_uniform_modification_kernel(builder,
+    kernels.add(Kernel.make_uniform_modification_kernel(rng,builder,
         new MoveCuboid(amplitudeMove), 0.2, "Move"));
     double amplitudeRotate = p.getDouble("amplitudeRotate")
         * Math.PI / 180;
-    kernels.add(Kernel.make_uniform_modification_kernel(builder,
+    kernels.add(Kernel.make_uniform_modification_kernel(rng,builder,
         new RotateCuboid(amplitudeRotate), 0.2, "Rotate"));
     double amplitudeMaxDim = p.getDouble("amplitudeMaxDim");
-    kernels.add(Kernel.make_uniform_modification_kernel(builder,
+    kernels.add(Kernel.make_uniform_modification_kernel(rng,builder,
         new ChangeWidth(amplitudeMaxDim), 0.2, "ChgWidth"));
-    kernels.add(Kernel.make_uniform_modification_kernel(builder,
+    kernels.add(Kernel.make_uniform_modification_kernel(rng,builder,
         new ChangeLength(amplitudeMaxDim), 0.2, "ChgLength"));
     double amplitudeHeight = p.getDouble("amplitudeHeight");
-    kernels.add(Kernel.make_uniform_modification_kernel(builder,
+    kernels.add(Kernel.make_uniform_modification_kernel(rng,builder,
         new ChangeHeight(amplitudeHeight), 0.2, "ChgHeight"));
 
     Sampler<Cuboid> s = new GreenSamplerBlockTemperature<Cuboid>(ds,

@@ -3,6 +3,9 @@ package fr.ign.cogit.simplu3d.exec;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
+
+import org.apache.commons.math3.random.RandomGenerator;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
@@ -135,6 +138,7 @@ public class DistributionGeneration {
   static Sampler<Cuboid> create_sampler(Parameters p, BasicPropertyUnit bpU,
       ModelInstanceGraphConfigurationPredicate<Cuboid> pred) {
 
+    RandomGenerator rng = Random.random();
     // Un vecteur ?????
 
     double mindim = p.getDouble("mindim");
@@ -145,25 +149,28 @@ public class DistributionGeneration {
 
     // A priori on redéfini le constructeur de l'objet
     ObjectBuilder<Cuboid> builder = new ObjectBuilder<Cuboid>() {
-      @Override
-      public Cuboid build(double[] coordinates) {
-        return new Cuboid(coordinates[0], coordinates[1], coordinates[2],
-            coordinates[3], coordinates[4], coordinates[5]);
-      }
 
       @Override
       public int size() {
         return 6;
       }
 
+
+
       @Override
-      public void setCoordinates(Cuboid t, double[] coordinates) {
-        coordinates[0] = t.centerx;
-        coordinates[1] = t.centery;
-        coordinates[2] = t.length;
-        coordinates[3] = t.width;
-        coordinates[4] = t.height;
-        coordinates[5] = t.orientation;
+      public Cuboid build(Vector<Double> val1) {
+       
+        return new Cuboid(val1.get(0),val1.get(1),val1.get(2),val1.get(3),val1.get(4),val1.get(5));
+      }
+
+      @Override
+      public void setCoordinates(Cuboid t, List<Double> val1) {
+          val1.set(0, t.centerx);
+          val1.set(1, t.centery);
+          val1.set(2, t.length);
+          val1.set(3, t.width);
+          val1.set(4, t.height);
+          val1.set(5, t.orientation);
       }
     };
 
@@ -173,18 +180,18 @@ public class DistributionGeneration {
     // mindim, minheight, 0), new Cuboid2(1, 1, maxdim, maxdim, maxheight,
     // Math.PI), builder,
     // bpU.getpol2D());
-    UniformBirth<Cuboid> birth = new UniformBirth<Cuboid>(new Cuboid(0, 0,
+    UniformBirth<Cuboid> birth = new UniformBirth<Cuboid>(rng,new Cuboid(0, 0,
         mindim, mindim, minheight, 0), new Cuboid(1, 1, maxdim, maxdim,
         maxheight, Math.PI), builder, TransformToSurface.class, bpU.getpol2D());
 
     DirectSampler<Cuboid> ds = new DirectSampler<Cuboid>(
-        new UniformDistribution(0, 1), birth);
+        new UniformDistribution(rng,0, 1), birth);
 
     // Probabilité de naissance-morts modifications
     List<Kernel<Cuboid>> kernels = new ArrayList<Kernel<Cuboid>>(3);
-    kernels.add(Kernel.make_uniform_birth_death_kernel(builder, birth, 1, 1));
+    kernels.add(Kernel.make_uniform_birth_death_kernel(rng,builder, birth, 1, 1));
 
-    Sampler<Cuboid> s = new GreenSampler<Cuboid>(ds,
+    Sampler<Cuboid> s = new GreenSampler<Cuboid>(rng,ds,
         new MetropolisAcceptance<SimpleTemperature>(), kernels);
     Sampler<Cuboid> rs = new RejectionSampler<Cuboid>(s, pred);
     return rs;

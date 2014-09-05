@@ -1,5 +1,7 @@
 package fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation;
 
+import java.util.Vector;
+
 import fr.ign.rjmcmc.kernel.Transform;
 
 public class ChangeWidth implements Transform {
@@ -10,42 +12,34 @@ public class ChangeWidth implements Transform {
     this.amplitude = amplitude;
   }
 
+
   @Override
-  public double apply(double[] in, double[] out) {
-    double x = in[0];
-    double y = in[1];
-    double length = in[2];
-    double width = in[3];
-    double height = in[4];
-    double orientation = in[5];
-    double dl = in[6];
-    out[0] = x;
-    out[1] = y;
-    out[2] = length;
-    out[3] = width + (0.5 - dl) * amplitude;
-    out[4] = height;
-    out[5] = orientation;
-    out[6] = 1 - dl;
+  public double apply(boolean direct, Vector<Double> val0, Vector<Double> var0,
+      Vector<Double> val1, Vector<Double> var1) {
+
+    double dl = var0.get(0);
+
+    val1.set(0, val0.get(0));
+    val1.set(1, val0.get(1));
+    val1.set(2, val0.get(2));
+    val1.set(3, val0.get(3) +   (0.5 - dl) * amplitude);
+    val1.set(4, val0.get(4));
+    val1.set(5, val0.get(5));
+
+    var1.set(0, 1 - dl);
+
     return 1;
   }
 
   @Override
-  public double getInverseAbsJacobian(double[] d) {
+  public double getAbsJacobian(boolean direct) {
+    // TODO Auto-generated method stub
     return 1;
   }
 
   @Override
-  public double getAbsJacobian(double[] d) {
-    return 1;
-  }
-
-  @Override
-  public double inverse(double[] in, double[] out) {
-    return this.apply(in, out);
-  }
-
-  @Override
-  public int dimension() {
+  public int dimension(int n0, int n1) {
+    // TODO Auto-generated method stub
     return 7;
   }
 }

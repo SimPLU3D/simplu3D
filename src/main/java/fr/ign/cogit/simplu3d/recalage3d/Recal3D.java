@@ -18,6 +18,7 @@ import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToSurface;
 import fr.ign.cogit.geoxygene.sig3d.convert.transform.Extrusion2DObject;
 import fr.ign.cogit.geoxygene.sig3d.geometry.Box3D;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
+import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.checker.VeryFastRuleChecker;
 import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
@@ -48,8 +49,10 @@ public class Recal3D {
    */
   public static void main(String[] args) throws CloneNotSupportedException {
 
-    String strShpOut = "E:/temp/shp3D/out/";
-    String shpeIn = "E:/temp/shp3D/building13.shp";
+    String strShpOut = "E:/temp/";
+    String shpeIn = "E:/temp/shp_0_ene-21877.23719914085.shp";
+    
+    ShapefileReader.read(shpeIn);
 
     List<Cuboid> lCuboid = LoaderCuboid2.loadFromShapeFile(shpeIn);
 
