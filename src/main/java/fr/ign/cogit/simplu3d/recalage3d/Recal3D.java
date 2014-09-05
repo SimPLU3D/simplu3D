@@ -52,7 +52,6 @@ public class Recal3D {
     String strShpOut = "E:/temp/";
     String shpeIn = "E:/temp/shp_0_ene-21877.23719914085.shp";
     
-    ShapefileReader.read(shpeIn);
 
     List<Cuboid> lCuboid = LoaderCuboid2.loadFromShapeFile(shpeIn);
 
