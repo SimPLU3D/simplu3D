@@ -18,7 +18,6 @@ import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToSurface;
 import fr.ign.cogit.geoxygene.sig3d.convert.transform.Extrusion2DObject;
 import fr.ign.cogit.geoxygene.sig3d.geometry.Box3D;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
-import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.checker.VeryFastRuleChecker;
 import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
@@ -108,6 +107,8 @@ public class Recal3D {
       List<? extends AbstractBuilding> lAB) {
 
     int nbBat = lAB.size();
+    
+     
 
     // Conversion des géométries
     List<IOrientableSurface> lGeom = new ArrayList<>();
@@ -125,7 +126,7 @@ public class Recal3D {
 
     }
 
-    for (int i = 0; i < nbBat; i++) {
+   bouclei : for (int i = 0; i < nbBat; i++) {
 
       IOrientableSurface abi = lGeom.get(i);
 

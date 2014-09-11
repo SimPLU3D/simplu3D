@@ -32,9 +32,9 @@ import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 
 /**
  * Assigne les bordures aux parcelles
- * 3 types de bordure (voirie, fond ou latéral) en fonction du voisinage d'une
- * bo
- * @author MBrasebin
+ * 3 types de bordure (voirie, fond ou latéral) en fonction du voisinage 
+ * 
+ *  @author MBrasebin
  */
 public class CadastralParcelLoader {
 
@@ -216,7 +216,7 @@ public class CadastralParcelLoader {
           Arc aCandidat = arcsATraites.remove(0);
 
           double largeur = 999;
-          /* double area = */iMC.convexHull().area();
+          /* double area =iMC.convexHull().area(); */
           // if (area > 0.001) {
 
           if (aCandidat.getNoeudIni().getCoord().distance(somInitial) > aCandidat.getNoeudFin()
