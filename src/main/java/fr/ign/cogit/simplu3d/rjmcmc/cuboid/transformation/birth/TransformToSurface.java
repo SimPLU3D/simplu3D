@@ -18,6 +18,12 @@ import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.sig3d.topology.TriangulationLoader;
 import fr.ign.rjmcmc.kernel.Transform;
 
+
+/**
+ * TODO : supprimer les deux constructeurs
+ * @author MBrasebin
+ *
+ */
 public class TransformToSurface implements Transform {
   /**
    * Logger.
@@ -29,7 +35,25 @@ public class TransformToSurface implements Transform {
   private double inv[];
   private double determinant;
   private double absDeterminant;
+  
+  public TransformToSurface(Vector<Double> d, Vector<Double> v, IGeometry geom) {
 
+    // On prépare la géométrie pour être triangulée
+    prepareGeometry(geom);
+    this.mat = new double[d.size()];
+    this.delta = new double[d.size()];
+    this.inv = new double[d.size()];
+    this.determinant = 1.;
+    for (int i = 2; i < d.size(); ++i) {
+      double dvalue =d.get(i);
+      determinant *= dvalue;
+      mat[i] = dvalue;
+      inv[i] = 1 / dvalue;
+      delta[i] = v.get(i);
+    }
+    this.absDeterminant = 1;// Math.abs(determinant);
+  }
+  
   public TransformToSurface(double[] d, double[] v, IGeometry geom) {
     // On prépare la géométrie pour être triangulée
     prepareGeometry(geom);
@@ -89,7 +113,7 @@ public class TransformToSurface implements Transform {
       }
       return 1;
     } else {
-      IDirectPosition dp = eq.inversample(var0.get(0), var0.get(1));
+      IDirectPosition dp = eq.inversample(var1.get(0), var1.get(1));
       if (dp == null) {
         val1.set(0, 0.);
         val1.set(1, 0.);

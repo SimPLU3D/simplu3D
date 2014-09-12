@@ -21,7 +21,7 @@ public class RotateCuboid2Test {
   @Test
   public void testApply() {
 
-    int dimension = t.dimension(0, 0);
+    int dimension = t.dimension(0, 0)-1;
 
     // double[] in = new double[] { 0, 0, 5, 1, 20, 0, 1 };
     Vector<Double> lvalIn = new Vector<Double>();
@@ -61,7 +61,7 @@ public class RotateCuboid2Test {
   @Test
   public void testInverse() {
 
-    int dimension = t.dimension(0, 0);
+    int dimension = t.dimension(0, 0)-1;
     // double[] in = new double[] { 0, 0, 5, 1, 20, 0, 1 };
     Vector<Double> lvalIn = new Vector<Double>();
 

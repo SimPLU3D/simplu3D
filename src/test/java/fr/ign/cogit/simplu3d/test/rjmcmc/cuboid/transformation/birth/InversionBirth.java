@@ -52,7 +52,7 @@ public class InversionBirth {
       if (lOS.get(0).contains(f.getGeom())) {
         iMS.add(f.getGeometrie());
 
-        break;
+     //   break;
       }
 
     }
@@ -73,10 +73,12 @@ public class InversionBirth {
       
       IDirectPosition dpInv = eq.inversample(dpCal.getX(), dpCal.getY());
       
-      if(dpInv.getX() != rand1 && dpInv.getY() != rand2){
+      if((Math.abs( dpInv.getX() - eq.getCorrectedRand()) > 0.0001) || (0.0001 < Math.abs(dpInv.getY() - rand2))){
+          
+
         
-        System.out.println("Error : " + dpInv.getX() + "        " + rand1);
-        System.out.println("Error : " + dpInv.getY() + "        " + rand2);
+        System.out.println("Error X : " + dpInv.getX() + "        " + eq.getCorrectedRand());
+        System.out.println("Error Y : " + dpInv.getY() + "        " + rand2);
       }
       
       
