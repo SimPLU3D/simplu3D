@@ -53,23 +53,23 @@ public class TransformToSurface implements Transform {
     }
     this.absDeterminant = 1;// Math.abs(determinant);
   }
-  
-  public TransformToSurface(double[] d, double[] v, IGeometry geom) {
-    // On prépare la géométrie pour être triangulée
-    prepareGeometry(geom);
-    this.mat = new double[d.length];
-    this.delta = new double[d.length];
-    this.inv = new double[d.length];
-    this.determinant = 1.;
-    for (int i = 2; i < d.length; ++i) {
-      double dvalue = d[i];
-      determinant *= dvalue;
-      mat[i] = dvalue;
-      inv[i] = 1 / dvalue;
-      delta[i] = v[i];
-    }
-    this.absDeterminant = 1;// Math.abs(determinant);
-  }
+//  
+//  public TransformToSurface(double[] d, double[] v, IGeometry geom) {
+//    // On prépare la géométrie pour être triangulée
+//    prepareGeometry(geom);
+//    this.mat = new double[d.length];
+//    this.delta = new double[d.length];
+//    this.inv = new double[d.length];
+//    this.determinant = 1.;
+//    for (int i = 2; i < d.length; ++i) {
+//      double dvalue = d[i];
+//      determinant *= dvalue;
+//      mat[i] = dvalue;
+//      inv[i] = 1 / dvalue;
+//      delta[i] = v[i];
+//    }
+//    this.absDeterminant = 1;// Math.abs(determinant);
+//  }
 
   private EquiSurfaceDistribution eq;
 
@@ -109,20 +109,20 @@ public class TransformToSurface implements Transform {
         val1.set(1, dp.getY());
       }
       for (int i = 2; i < val1.size(); i++) {
-        val1.set(i, val0.get(i) * mat[i] + delta[i]);
+        val1.set(i, var0.get(i) * mat[i] + delta[i]);
       }
       return 1;
     } else {
-      IDirectPosition dp = eq.inversample(var1.get(0), var1.get(1));
+      IDirectPosition dp = eq.inversample(val0.get(0), val0.get(1));
       if (dp == null) {
-        val1.set(0, 0.);
-        val1.set(1, 0.);
+        var1.set(0, 0.);
+        var1.set(1, 0.);
       } else {
-        val1.set(0, dp.getX());
-        val1.set(1, dp.getY());
+        var1.set(0, dp.getX());
+        var1.set(1, dp.getY());
       }
-      for (int i = 2; i < val1.size(); i++) {
-        val1.set(i, (val0.get(i) - delta[i]) * inv[i]);
+      for (int i = 2; i < var1.size(); i++) {
+        var1.set(i, (val0.get(i) - delta[i]) * inv[i]);
       }
       return 1;
     }

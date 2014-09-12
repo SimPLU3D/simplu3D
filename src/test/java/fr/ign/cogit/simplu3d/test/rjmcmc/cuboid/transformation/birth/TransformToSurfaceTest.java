@@ -24,13 +24,25 @@ public class TransformToSurfaceTest {
         .makeGeOxygene("POLYGON (( 5 0, 5 -10, 15 -10, 15 -5, 10 -5, 10 0, 5 0 ))");
     double[] d = new double[] { 0, 0, 1, 1, 3, 0 };
     double[] v = new double[] { 10, 10, 5, 5, 3, Math.PI };
-    t = new TransformToSurface(d, v, polygon);
+
+    Vector<Double> ld = new Vector<>();
+    Vector<Double> lv = new Vector<>();
+
+    for (int i = 0; i < d.length; i++) {
+      ld.add(d[i]);
+    }
+
+    for (int i = 0; i < v.length; i++) {
+      lv.add(v[i]);
+    }
+
+    t = new TransformToSurface(ld, lv, polygon);
   }
 
   @Test
   public void testApply() {
 
-    int dimension = t.dimension(0, 0)-2;
+    int dimension = t.dimension(0, 0) - 2;
 
     /*
      * double[] in = new double[] { 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5 };
@@ -57,8 +69,7 @@ public class TransformToSurfaceTest {
     lvalOut.add(0.0);
     lvalOut.add(0.0);
     lvalOut.add(0.0);
-    
-    
+
     Vector<Double> lvarOut = new Vector<>();
     lvarOut.add(0.0);
     lvarOut.add(0.0);
@@ -96,7 +107,6 @@ public class TransformToSurfaceTest {
     lvarIn.add(0.5);
     lvarIn.add(0.5);
 
-
     lvalOut = new Vector<>();
     lvalOut.add(0.0);
     lvalOut.add(0.0);
@@ -104,12 +114,10 @@ public class TransformToSurfaceTest {
     lvalOut.add(0.0);
     lvalOut.add(0.0);
     lvalOut.add(0.0);
-    
-    
-     lvarOut = new Vector<>();
-    lvarOut.add(0.0);
-    lvarOut.add(0.0);
 
+    lvarOut = new Vector<>();
+    lvarOut.add(0.0);
+    lvarOut.add(0.0);
 
     outString = "";
 
@@ -125,8 +133,6 @@ public class TransformToSurfaceTest {
         lvalOut.get(3), lvalOut.get(4), lvalOut.get(5));
     System.out.println("Out = " + cuboidOut.toGeometry());
 
-
-
     // in = new double[] { 1, 1, 0.5, 0.5, 0.5, 0.5, 0.5 };
     lvalIn.clear();
     lvalIn.add(1.0);
@@ -135,11 +141,10 @@ public class TransformToSurfaceTest {
     lvalIn.add(0.5);
     lvalIn.add(0.5);
     lvalIn.add(0.5);
-    
+
     lvarIn.clear();
     lvarIn.add(0.5);
     lvarIn.add(0.5);
-
 
     lvalOut.clear();
     lvalOut.add(0.0);
@@ -148,12 +153,11 @@ public class TransformToSurfaceTest {
     lvalOut.add(0.0);
     lvalOut.add(0.0);
     lvalOut.add(0.0);
-    
-    
-     lvarOut.clear();
+
+    lvarOut.clear();
     lvarOut.add(0.0);
     lvarOut.add(0.0);
-    
+
     t.apply(true, lvalIn, lvarIn, lvalOut, lvarOut);
 
     // t.apply(in, out);
@@ -187,11 +191,10 @@ public class TransformToSurfaceTest {
       lvalIn.add(0.5);
       lvalIn.add(0.5);
       lvalIn.add(0.5);
-      
+
       lvarIn = new Vector<Double>();
       lvarIn.add(0.5);
       lvarIn.add(0.5);
-
 
       lvalOut = new Vector<>();
       lvalOut.add(0.0);
@@ -200,8 +203,7 @@ public class TransformToSurfaceTest {
       lvalOut.add(0.0);
       lvalOut.add(0.0);
       lvalOut.add(0.0);
-      
-      
+
       lvarOut = new Vector<>();
       lvarOut.add(0.0);
       lvarOut.add(0.0);
