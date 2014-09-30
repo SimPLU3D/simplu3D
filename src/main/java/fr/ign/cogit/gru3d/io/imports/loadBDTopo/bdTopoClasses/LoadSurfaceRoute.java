@@ -49,7 +49,7 @@ public class LoadSurfaceRoute {
 
       } else {
 
-        System.out.println("Nature inconnue" + nature);
+        //Nature inconnue
         continue;
 
       }

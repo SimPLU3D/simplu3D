@@ -154,7 +154,7 @@ public class OCLBuildingsCuboidFinalWithPredicate {
           p.getDouble("filmvisitorvecty"),p.getDouble("filmvisitorvectz"));
       Color c = new Color(p.getInteger("filmvisitorr"), p.getInteger("filmvisitorg"), p.getInteger("filmvisitorb"));
       FilmVisitor<Cuboid> visitorViewerFilmVisitor = new FilmVisitor<Cuboid>(dpCentre, viewTo,
-          p.getString("result"), c);
+          p.getString("result"), c,p);
       list.add(visitorViewerFilmVisitor);
     }
 

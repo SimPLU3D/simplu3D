@@ -2,6 +2,8 @@ package fr.ign.cogit.gru3d.io.imports.loadBDTopo.transformation;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 
 import fr.ign.cogit.geoxygene.api.feature.IPopulation;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
@@ -30,6 +32,8 @@ import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
 import fr.ign.cogit.sig3d.topology.TriangulationLoader;
 
 public class TransformBuilding {
+  
+  public static Logger LOGGER = Logger.getLogger(TransformBuilding.class);
 
   @SuppressWarnings("unchecked")
   public static IMultiSurface<IOrientableSurface> createBDTopoBuilding(
@@ -68,7 +72,7 @@ public class TransformBuilding {
 
     } else {
 
-      System.out.println("error  : " + geom.getClass().getName());
+      LOGGER.warn("error  : " + geom.getClass().getName());
     }
     return null;
 
@@ -178,7 +182,7 @@ public class TransformBuilding {
           finalSurface.add((GM_OrientableSurface) obj);
 
         } else {
-          System.out.println("Autre type : " + obj.getClass().getName());
+          LOGGER.warn("Autre type : " + obj.getClass().getName());
         }
 
         // On l'ajuste aux Z en entrée pour former le toit.

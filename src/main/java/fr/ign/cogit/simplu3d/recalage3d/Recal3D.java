@@ -1,24 +1,42 @@
 package fr.ign.cogit.simplu3d.recalage3d;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
+import org.apache.log4j.Logger;
 
 import com.vividsolutions.jts.geom.Geometry;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
+import fr.ign.cogit.geoxygene.api.feature.IPopulation;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
+import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IEnvelope;
+import fr.ign.cogit.geoxygene.api.spatial.coordgeom.ILineString;
+import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
-import fr.ign.cogit.geoxygene.api.spatial.geomprim.ISolid;
+import fr.ign.cogit.geoxygene.api.spatial.geomprim.IPoint;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
+import fr.ign.cogit.geoxygene.contrib.cartetopo.Arc;
+import fr.ign.cogit.geoxygene.contrib.cartetopo.CarteTopo;
+import fr.ign.cogit.geoxygene.contrib.cartetopo.Face;
+import fr.ign.cogit.geoxygene.contrib.cartetopo.Groupe;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToSurface;
+import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromPolygonToLineString;
 import fr.ign.cogit.geoxygene.sig3d.convert.transform.Extrusion2DObject;
+import fr.ign.cogit.geoxygene.sig3d.equation.ApproximatedPlanEquation;
 import fr.ign.cogit.geoxygene.sig3d.geometry.Box3D;
+import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
+import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_LineString;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
+import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
+import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
+import fr.ign.cogit.geoxygene.util.index.Tiling;
 import fr.ign.cogit.simplu3d.checker.VeryFastRuleChecker;
 import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.application.Building;
@@ -42,178 +60,422 @@ import fr.ign.rjmcmc.energy.UnaryEnergy;
 
 public class Recal3D {
 
+  private static Logger logger = Logger.getLogger(Recal3D.class);
+
   /**
    * @param args
    * @throws CloneNotSupportedException
    */
   public static void main(String[] args) throws CloneNotSupportedException {
 
-    String strShpOut = "E:/temp/";
-    String shpeIn = "E:/temp/shp_0_ene-21877.23719914085.shp";
-    
+    String strShpOut = "E:/temp2/";
+    String shpeIn = "E:/temp2/shp_0_ene-21877.23719914085.shp";
 
     List<Cuboid> lCuboid = LoaderCuboid2.loadFromShapeFile(shpeIn);
 
     IFeatureCollection<IFeature> featColl = new FT_FeatureCollection<>();
 
     List<AbstractBuilding> lAB = loadBuilding(lCuboid);
-    featColl.addAll(fusionneGeom(lAB));
+    featColl.addAll(fusionneGeom(lAB, 139.));
 
+    // featColl.addAll(fusionneGeomTemp(lAB, 139.));
     ShapefileWriter.write(featColl, strShpOut + "test2.shp");
 
-    /*
-     * 
-     * 
-     * 
-     * Parameters p = Parameters.unmarshall(new File(folderName + fileName));
-     * Environnement env = LoaderSHP.load(p.get("folder")); BasicPropertyUnit
-     * bpu = env.getBpU().get(1);
-     * 
-     * String configPath = p.get("config_shape_file").toString();
-     * 
-     * VeryFastRuleChecker vFR = new VeryFastRuleChecker(bpu);
-     * 
-     * CacheModelInstance<AbstractBuilding> cMI = new
-     * CacheModelInstance<AbstractBuilding>(bpu, vFR
-     * .getlModeInstance().get(0));
-     * 
-     * // /La configuration est prête
-     * 
-     * List<AbstractBuilding> lAB = loadBuilding(lCuboid);
-     * 
-     * boolean check = vFR.check(cMI.update(lAB, new
-     * ArrayList<AbstractBuilding>()));
-     * 
-     * if (check) {
-     * 
-     * // Changement de la hauteur lAB = changeHeight(lAB, 1, vFR, cMI);
-     * 
-     * IFeatureCollection<IFeature> featColl = new FT_FeatureCollection<>();
-     * 
-     * featColl.addAll(lAB);
-     * 
-     * ShapefileWriter.write(featColl, strShpOut + "test1.shp");
-     * featColl.clear(); // Fusion des géométries
-     * featColl.addAll(fusionneGeom(lAB));
-     * 
-     * ShapefileWriter.write(featColl, strShpOut + "test2.shp");
-     * 
-     * } else { System.out.println("pas check ?"); }
-     */
+  }
+
+  private static IFeatureCollection<? extends IFeature> fusionneGeomTemp(
+      List<? extends AbstractBuilding> lAB, double zMini) {
+
+    double threshold = 0.2;
+
+    // Récupération des polygones de la solution
+    IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
+
+    for (AbstractBuilding aB : lAB) {
+
+      Face f = new Face();
+
+      IPolygon poly = (IPolygon) aB.getFootprint().clone();
+
+      if (!poly.isValid()) {
+        System.out.println("Not valid");
+      }
+
+      if (poly.coord().size() != 5) {
+        System.out.println("Coord " + poly.coord().size());
+      }
+
+      ApproximatedPlanEquation epq = new ApproximatedPlanEquation(poly);
+
+      if (epq.getNormale().getZ() < 0) {
+        System.out.println("Erroooooor");
+      }
+
+      f.setGeometrie(poly);
+
+      featC.add(f);
+
+    }
+
+    // Création d'une carte topo
+    CarteTopo carteTopo = newCarteTopo("-aex90", featC, threshold);
+
+    IFeatureCollection<IFeature> featCollExport = new FT_FeatureCollection<>();
+
+    for (Arc a : carteTopo.getPopArcs()) {
+
+      IFeature feature = new DefaultFeature(a.getGeometrie());
+
+      AttributeManager.addAttribute(feature, "FaceD",
+          a.getFaceDroite(), "String");
+      AttributeManager.addAttribute(feature, "FaceG",
+          a.getFaceGauche(), "String");
+      featCollExport.add(feature);
+    }
+
+    ShapefileWriter.write(carteTopo.getPopFaces(), "E:/temp2/outFace.shp");
+
+    return featCollExport;
 
   }
 
   private static IFeatureCollection<IFeature> fusionneGeom(
-      List<? extends AbstractBuilding> lAB) {
+      List<? extends AbstractBuilding> lAB, double zMini) {
+    double threshold = 0.2;
 
-    int nbBat = lAB.size();
-    
-     
+    String attrzmax = "zMax";
 
-    // Conversion des géométries
-    List<IOrientableSurface> lGeom = new ArrayList<>();
-
-    List<Double> lMinZ = new ArrayList<>();
-    List<Double> lMaxZ = new ArrayList<>();
+    // Récupération des polygones de la solution
+    IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
 
     for (AbstractBuilding aB : lAB) {
 
-      Box3D b = new Box3D(aB.getGeom());
+      Face f = new Face();
+      f.setGeometrie((IPolygon) aB.getFootprint().clone());
 
-      lGeom.add(aB.getFootprint());
-      lMinZ.add(b.getLLDP().getZ());
-      lMaxZ.add(b.getURDP().getZ());
+      featC.add(f);
 
     }
 
-   bouclei : for (int i = 0; i < nbBat; i++) {
+    // Création d'une carte topo
+    CarteTopo carteTopo = newCarteTopo("-aex90", featC, threshold);
 
-      IOrientableSurface abi = lGeom.get(i);
+    IFeatureCollection<IFeature> featC2 = new FT_FeatureCollection<>();
 
-      for (int j = i + 1; j < nbBat; j++) {
+    // Affectation d'un zMax aux faces de la carte topo
+    for (AbstractBuilding aB : lAB) {
 
-        IOrientableSurface abj = lGeom.get(j);
+      IFeature feature = new DefaultFeature((IPolygon) aB.getFootprint());
 
-        if (!abi.intersects(abj)) {
+      Box3D b = new Box3D(aB.getGeom());
 
-          continue;
+      // System.out.println(b.getURDP().getZ());
 
-        }
+      AttributeManager.addAttribute(feature, attrzmax, zMini
+          + b.getURDP().getZ(), "Double");
 
-        double zMaxi = lMaxZ.get(i);
-        double zMini = lMinZ.get(i);
+      featC2.add(feature);
+    }
 
-        double zMaxj = lMaxZ.get(j);
-        double zMinj = lMinZ.get(j);
+    featC2.initSpatialIndex(Tiling.class, false);
 
-        int indexi, indexj;
+    Groupe gr = carteTopo.getPopGroupes().nouvelElement();
+    gr.setListeArcs(carteTopo.getListeArcs());
+    gr.setListeFaces(carteTopo.getListeFaces());
+    gr.setListeNoeuds(carteTopo.getListeNoeuds());
 
-        if (zMaxi > zMaxj) {
+    List<Groupe> lG = gr.decomposeConnexes();
 
-          indexi = j;
-          indexj = i;
+    IFeatureCollection<IFeature> featCollOut = new FT_FeatureCollection<>();
 
-          zMaxi = zMaxj;
-          zMini = zMinj;
-        } else {
-          indexi = i;
-          indexj = j;
-        }
+    logger.info("NB Groupes : " + lG.size());
+    System.out.println("NB Groupes : " + lG.size());
 
-        // indexi est forcément plus bas que indexj
+    for (Groupe g : lG) {
 
-        IOrientableSurface geomTemp = lGeom.get(indexi);
+      // On recrée les géométries
+      List<IOrientableSurface> lOS = new ArrayList<>();
 
-        IGeometry geom = geomTemp.difference(lGeom.get(indexj));
+      List<Face> lF = new ArrayList<>();
 
-        if (geom.area() < 0.001) {
-          continue;
-        }
+      for (Arc a : g.getListeArcs()) {
 
-        // on a la géométrie qui va remplacer i
+        Face fg = a.getFaceDroite();
+        Face fd = a.getFaceGauche();
 
-        nbBat--;
-        lGeom.remove(indexi);
-        lMinZ.remove(indexi);
-        lMaxZ.remove(indexi);
+        if (fg != null) {
 
-        List<IOrientableSurface> lOS = FromGeomToSurface.convertGeom(geom);
-
-        for (IOrientableSurface os : lOS) {
-
-          for (IDirectPosition dp : os.coord()) {
-            dp.setZ(0);
+          if (!lF.contains(fg)) {
+            lF.add(fg);
           }
 
-          lGeom.add(os);
-          lMinZ.add(zMini);
-          lMaxZ.add(zMaxi);
+        }
 
-          nbBat++;
+        if (fd != null) {
+
+          if (!lF.contains(fd)) {
+            lF.add(fd);
+          }
 
         }
 
       }
 
+      for (Face f : lF) {
+
+        if (f.isInfinite()) {
+          continue;
+        }
+
+        IPoint p = new GM_Point(getPointInPolygon(f.getGeometrie()));// f.getGeometrie().buffer(-0.05).coord().get(0));
+
+        if (!f.getGeometrie().contains(p)) {
+          logger.warn("Point not in polygon");
+        }
+
+        Collection<IFeature> featSelect = featC2.select(p);
+
+        double zMax = Double.NEGATIVE_INFINITY;
+
+        if (featSelect.isEmpty()) {
+
+          zMax = zMini;
+
+          logger.info("New empty face detected");
+          // System.exit(666);
+        }
+
+        for (IFeature feat : featSelect) {
+          zMax = Math.max(zMax,
+              Double.parseDouble(feat.getAttribute(attrzmax).toString()));
+        }
+
+        IPolygon poly = (IPolygon) f.getGeometrie().clone();
+
+        f.setArcsIgnores(zMax + "");
+
+        // On affecte
+        // AttributeManager.addAttribute(f, attrzmax, zMax, "Double");
+        for (IDirectPosition dp : poly.coord()) {
+          dp.setZ(zMax);
+        }
+
+        lOS.add(poly);
+
+      }
+
+      // Affectation d'un zMin et d'un zMax aux arêtes des faces
+
+      for (Arc a : g.getListeArcs()) {
+
+        Face fd = a.getFaceDroite();
+        Face fg = a.getFaceGauche();
+
+        double z1 = 0;
+        double z2 = 0;
+
+        if (fd == null || fd.isInfinite()) {
+
+          z1 = Double.parseDouble(fg.getArcsIgnores());
+          z2 = zMini;
+
+        } else if (fg == null || fg.isInfinite()) {
+
+          z1 = Double.parseDouble(fd.getArcsIgnores());
+          z2 = zMini;
+
+        } else {
+
+          z1 = Double.parseDouble(fg.getArcsIgnores());
+          z2 = Double.parseDouble(fd.getArcsIgnores());
+
+        }
+
+        double zMin = Math.min(z1, z2);
+        double zMax = Math.max(z1, z2);
+
+        if (zMax == zMini) {
+
+          continue;
+        }
+
+        // if(Double.isNaN(zMin) || Double.isNaN(zMax)){
+
+        // System.out.println("zMin : " + zMin + "  zMAx " + zMax);
+
+        // }
+
+        IGeometry geom = Extrusion2DObject.convertFromLine((ILineString) a
+            .getGeometrie().clone(), zMin, zMax);
+
+        lOS.addAll(FromGeomToSurface.convertGeom(geom));
+
+      }
+
+      featCollOut.add(new DefaultFeature(new GM_MultiSurface<>(lOS)));
+
     }
 
-    IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
+    return featCollOut;
 
-    for (int i = 0; i < nbBat; i++) {
+  }
 
-      ISolid sol = (ISolid) Extrusion2DObject.convertFromGeometry(lGeom.get(i),
-          lMinZ.get(i), lMaxZ.get(i));
-      featC.add(new DefaultFeature(new GM_MultiSurface<>(sol.getFacesList())));
+  public static IDirectPosition getPointInPolygon(IPolygon poly) {
+
+    IEnvelope env = poly.getEnvelope();
+
+    while (true) {
+
+      double x = Math.random()
+          * (env.getUpperCorner().getX() - env.getLowerCorner().getX())
+          + env.getLowerCorner().getX();
+      double y = Math.random()
+          * (env.getUpperCorner().getY() - env.getLowerCorner().getY())
+          + env.getLowerCorner().getY();
+
+      IDirectPosition dp = new DirectPosition(x, y);
+
+      if (poly.contains((new GM_Point(dp)).buffer(0.05))) {
+        return dp;
+      }
+
     }
 
-    System.out.println("NB geom : " + lGeom.size());
+  }
 
-    System.out.println("zMin : " + lMinZ.size());
+  public static CarteTopo newCarteTopo(String name,
+      IFeatureCollection<? extends IFeature> collection, double threshold) {
 
-    System.out.println("zMax : " + lMaxZ.size());
+    try {
+      // Initialisation d'une nouvelle CarteTopo
+      CarteTopo carteTopo = new CarteTopo(name);
+      carteTopo.setBuildInfiniteFace(true);
+      // Récupération des arcs de la carteTopo
+      IPopulation<Arc> arcs = carteTopo.getPopArcs();
+      // Import des arcs de la collection dans la carteTopo
+      for (IFeature feature : collection) {
 
-    // TODO Auto-generated method stub
-    return featC;
+        List<ILineString> lLLS = FromPolygonToLineString
+            .convertPolToLineStrings((IPolygon) FromGeomToSurface.convertGeom(
+                feature.getGeom()).get(0));
+
+        for (ILineString ls : lLLS) {
+
+          // affectation de la géométrie de l'objet issu de la collection
+          // à l'arc de la carteTopo
+          for (int i = 0; i < ls.numPoints() - 1; i++) {
+            // création d'un nouvel élément
+            Arc arc = arcs.nouvelElement();
+            arc.setGeometrie(new GM_LineString(ls.getControlPoint(i), ls
+                .getControlPoint(i + 1)));
+            // instanciation de la relation entre l'arc créé et l'objet
+            // issu de la collection
+            arc.addCorrespondant(feature);
+          }
+
+        }
+
+      }
+      if (!test(carteTopo)) {
+        logger.error("");
+        System.exit(0);
+      }
+      carteTopo.creeNoeudsManquants(0.01);
+      
+      
+      
+      if (!test(carteTopo)) {
+        logger.error("");
+        System.exit(0);
+      }
+
+      carteTopo.fusionNoeuds(threshold);
+      
+      
+      if (!test(carteTopo)) {
+        logger.error("");
+        System.exit(0);
+      }
+
+      carteTopo.decoupeArcs(0.1);
+
+      carteTopo.filtreArcsDoublons();
+      if (!test(carteTopo)) {
+        logger.error("");
+        System.exit(0);
+      }
+
+      // Création de la topologie Arcs Noeuds
+
+      carteTopo.creeTopologieArcsNoeuds(threshold);
+      // La carteTopo est rendue planaire
+      if (!test(carteTopo)) {
+        logger.error("");
+        System.exit(0);
+      }
+
+      carteTopo.rendPlanaire(threshold);
+      if (!test(carteTopo)) {
+        logger.error("");
+        System.exit(0);
+      }
+
+      /*
+       * if (!test(carteTopo)) { System.out.println("Error 4"); }
+       * carteTopo.filtreArcsDoublons(); if (!test(carteTopo)) {
+       * System.out.println("Error 5"); }
+       */
+
+      // DEBUG2.addAll(carteTopo.getListeArcs());
+
+      carteTopo.creeTopologieArcsNoeuds(threshold);
+      if (!test(carteTopo)) {
+        logger.error("");
+        System.exit(0);
+      }
+
+      /*
+       * if (!test(carteTopo)) { System.out.println("Error 6"); }
+       */
+
+      // carteTopo.creeTopologieFaces();
+
+      // carteTopo.filtreNoeudsSimples();
+      // if (!test(carteTopo)) {
+      // logger.error("");
+      // System.exit(0);
+      // }
+
+      // Création des faces de la carteTopo
+      carteTopo.creeTopologieFaces();
+      if (!test(carteTopo)) {
+        logger.error("");
+        System.out.println("Error 3");
+      }
+      /*
+       * if (!test(carteTopo)) { System.out.println("Error 7"); }
+       */
+
+      return carteTopo;
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    return null;
+  }
+
+  private static boolean test(CarteTopo ct) {
+    for (Arc a : ct.getPopArcs()) {
+
+      if (a.getGeometrie().coord().size() < 2) {
+        return false;
+      }
+
+    }
+
+    return true;
+
   }
 
   public static List<AbstractBuilding> loadBuilding(List<Cuboid> lC) {

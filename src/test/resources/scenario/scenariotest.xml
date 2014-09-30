@@ -73,6 +73,7 @@
 	<!-- Sortie viewer 3D -->
 	<param key="visitorviewer" value="false" />
 	<param key="showbackground" value="true" />
+	<param key="background_img" value="background3D.png" />
 	<param key="xminbg" value="1051042.85" />
 	<param key="xmaxbg" value="1051264.80" />
 	<param key="yminbg" value="6840539.08" />

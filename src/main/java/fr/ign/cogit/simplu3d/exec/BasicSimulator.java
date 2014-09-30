@@ -41,7 +41,7 @@ public class BasicSimulator {
         .getResource("scenario/").getPath();
 
     // String folderName = "./src/main/resources/scenario/";
-    String fileName = "building_parameters_project_expthese_3.xml";
+    String fileName = "building_parameters_project_expthese_1.xml";
 
     Parameters p = Parameters.unmarshall(new File(folderName + fileName));
 
@@ -53,7 +53,7 @@ public class BasicSimulator {
     // OCLBuildingsCuboidFinalDirectRejection();
     OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();
 
-    UXL3Predicate<Cuboid> pred = new UXL3Predicate<>(env.getBpU().get(1));
+   UXL3Predicate<Cuboid> pred = new UXL3Predicate<>(bPU);
 
     // UXL3PredicateBuildingSeparation<Cuboid2> pred = new
     // UXL3PredicateBuildingSeparation<>(

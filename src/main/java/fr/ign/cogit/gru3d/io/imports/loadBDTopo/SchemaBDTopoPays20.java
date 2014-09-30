@@ -2,6 +2,8 @@ package fr.ign.cogit.gru3d.io.imports.loadBDTopo;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import fr.ign.cogit.geoxygene.api.feature.type.FC_FeatureAttributeValue;
 import fr.ign.cogit.geoxygene.api.feature.type.GF_AttributeType;
 import fr.ign.cogit.geoxygene.schema.schemaConceptuelISOProduit.AttributeType;
@@ -9,6 +11,8 @@ import fr.ign.cogit.geoxygene.schema.schemaConceptuelISOProduit.FeatureType;
 import fr.ign.cogit.geoxygene.schema.schemaConceptuelISOProduit.SchemaConceptuelProduit;
 
 public class SchemaBDTopoPays20 {
+  
+  private static Logger LOGGER= Logger.getLogger(SchemaBDTopoPays20.class);
 
   public static SchemaConceptuelProduit creeSchemaBDTopoPays20() {
 
@@ -5194,27 +5198,27 @@ public class SchemaBDTopoPays20 {
     Integer compteurFT = 0;
     Integer compteurAT = 0;
     Integer compteurV = 0;
-    System.out.println("Récapitulons:");
+    LOGGER.info("Récapitulons:");
     List<FeatureType> listeFT = sProduit.getFeatureTypes();
     for (FeatureType type : listeFT) {
       compteurFT = compteurFT + 1;
-      System.out.println("Classe: " + type.getTypeName());
+      LOGGER.info("Classe: " + type.getTypeName());
       List<GF_AttributeType> listeAT = type.getFeatureAttributes();
       for (GF_AttributeType type2 : listeAT) {
         compteurAT = compteurAT + 1;
-        System.out.println("Attribut: " + type2.getMemberName());
+        LOGGER.info("Attribut: " + type2.getMemberName());
         if (type2.getValueDomainType()) {
           List<FC_FeatureAttributeValue> listeValeurs = type2.getValuesDomain();
           for (FC_FeatureAttributeValue value : listeValeurs) {
             compteurV = compteurV + 1;
-            System.out.println("Valeur: " + value.getLabel());
+            LOGGER.info("Valeur: " + value.getLabel());
           }
         }
       }
     }
-    System.out.println("Nb de FT = " + compteurFT);
-    System.out.println("Nb de AT = " + compteurAT);
-    System.out.println("Nb de V = " + compteurV);
+    LOGGER.info("Nb de FT = " + compteurFT);
+    LOGGER.info("Nb de AT = " + compteurAT);
+    LOGGER.info("Nb de V = " + compteurV);
 
     return sProduit;
   }

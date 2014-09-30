@@ -45,7 +45,7 @@
         <!-- Reprise d'une configuration existante !-->
         <!-- 0 = non 1 = oui !-->
         <param key="load_existing_config" value="0" />
-        <!-- Chemin de la configuration, cette configuraiton ne doit pas avoir subi de post tratier!-->
+        <!-- Chemin de la configuration, cette configuraiton ne doit pas avoir subi de post tratement!-->
         <param key="config_shape_file" value="C:/Users/mbrasebin/Desktop/Exp1/test1/Montage/Test/result_1975488   .shp" />
         
         
@@ -65,15 +65,17 @@
 		<param key="nbsave" value="50000" />
         <!-- Visiteurs utilisés-->
         <!-- Sortie console -->
-        <param key="outputstreamvisitor" value="false" />
+        <param key="outputstreamvisitor" value="true" />
         <!-- Sortie viewer 3D -->
-        <param key="visitorviewer" value="false" />
+        <param key="visitorviewer" value="true" />
         <param key="showbackground" value="true" />
-        <param key="xminbg" value="1051042.85" />
-        <param key="xmaxbg" value="1051264.80" />
-        <param key="yminbg" value="6840539.08" />
-        <param key="ymaxbg" value="6840679.27" />
+        <param key="background_img" value="background3D.png" />
+		<param key="xminbg" value="1051042.85" />
+		<param key="xmaxbg" value="1051264.80" />
+		<param key="yminbg" value="6840539.08" />
+		<param key="ymaxbg" value="6840679.27" />
         <param key="z" value="138" />
+
         
         <!-- Sortie ShapeFileWriter -->
         <param key="shapefilewriter" value="false" />   

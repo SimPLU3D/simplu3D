@@ -195,7 +195,7 @@ public class OptimisedBuildingsCuboidFinalDirectRejectionParallelTempering {
           
           
           FilmVisitor<Cuboid> visitorViewerFilmVisitor = new FilmVisitor<Cuboid>(
-              dpCentre, viewTo, p.getString("result"), c);
+              dpCentre, viewTo, p.getString("result"), c,p);
           list.add(visitorViewerFilmVisitor);
         }
 

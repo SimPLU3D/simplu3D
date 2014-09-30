@@ -168,7 +168,7 @@ public class LoadRoute {
         feat.setRepresentation(new Object2d(feat, Color.gray));
       } else {
 
-        System.out.println("Classe Load Route : Autre nature : " + nature);
+        //Nature inconnue
       }
 
     }
@@ -217,8 +217,7 @@ public class LoadRoute {
       gls.addAll((GM_MultiCurve<GM_LineString>) geomIni);
     } else {
 
-      System.out.println("Autre classe de géométrie "
-          + geomIni.getClass().toString());
+      //Autre classe
       return geomIni;
     }
 

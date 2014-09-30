@@ -74,7 +74,7 @@ public class LoadBatiIndustriel {
             LoadBatiIndustriel.VERTDEAU, Color.white, 1, 0.5));
 
       } else {
-        System.out.println("Nature inconnue : " + nature);
+        //Nature inconnue
 
         feat.setRepresentation(new ObjectCartoon(feat, Color.orange));
 

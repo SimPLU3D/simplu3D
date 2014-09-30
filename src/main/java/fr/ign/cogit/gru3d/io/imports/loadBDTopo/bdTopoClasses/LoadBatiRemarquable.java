@@ -96,7 +96,7 @@ public class LoadBatiRemarquable {
             LoadBatiRemarquable.BEIGEASSE));
 
       } else {
-        System.out.println("Nature inconnue : " + nature);
+        //Nature inconnue
 
         feat.setRepresentation(new ObjectCartoon(feat, Color.orange));
 

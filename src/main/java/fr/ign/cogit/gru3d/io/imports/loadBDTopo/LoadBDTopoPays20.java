@@ -5,6 +5,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IPopulation;
 import fr.ign.cogit.geoxygene.feature.DataSet;
@@ -40,6 +42,8 @@ import fr.ign.cogit.gru3d.io.imports.loadBDTopo.bdTopoClasses.LoadTronconVoieFer
 import fr.ign.cogit.gru3d.io.imports.loadBDTopo.bdTopoClasses.LoadZoneVegetation;
 
 public class LoadBDTopoPays20 {
+  
+  public static Logger LOGGER = Logger.getLogger(LoadBDTopoPays20.class); 
 
   private SchemaConceptuelJeu monschemabdt;
   private List<Layer> lLayers = new ArrayList<Layer>();
@@ -286,7 +290,7 @@ public class LoadBDTopoPays20 {
 
       } else {
 
-        System.out.println("Nom fichier BDTopo inconnue : " + nomF);
+        LOGGER.warn("Nom fichier BDTopo inconnue : " + nomF);
 
       }
 

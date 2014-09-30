@@ -175,7 +175,7 @@ public class OptimisedBuildingsCuboidFinalDirectRejection {
       Color c = new Color(p.getInteger("filmvisitorr"),
           p.getInteger("filmvisitorg"), p.getInteger("filmvisitorb"));
       FilmVisitor<Cuboid> visitorViewerFilmVisitor = new FilmVisitor<Cuboid>(
-          dpCentre, viewTo, p.getString("result"), c);
+          dpCentre, viewTo, p.getString("result"), c,p);
       list.add(visitorViewerFilmVisitor);
     }
  

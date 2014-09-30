@@ -67,6 +67,7 @@
         <!-- Sortie console -->
         <param key="outputstreamvisitor" value="true" />
         <!-- Sortie viewer 3D -->
+		<param key="background_img" value="background3D.png" />        	
         <param key="visitorviewer" value="false" />
         <param key="showbackground" value="true" />
         <param key="xminbg" value="1051157" />

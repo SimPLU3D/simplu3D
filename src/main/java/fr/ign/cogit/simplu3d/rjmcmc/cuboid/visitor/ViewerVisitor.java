@@ -205,9 +205,11 @@ public class ViewerVisitor<O extends SimpleObject> implements Visitor<O> {
     // feat.setRepresentation(new TexturedSurface(feat, TextureManager
     // .textureLoading(folder + "Env3D_86.png"), dpUR.getX()-dpLL.getX(),
     // dpUR.getY()-dpLL.getY()));
+    
+    String background = p.getParameters("background_img").toString();
 
     feat.setRepresentation(new TexturedSurface(feat, TextureManager
-        .textureLoading(env.folder + "background3D.png"), dpUR.getX()
+        .textureLoading(env.folder + background), dpUR.getX()
         - dpLL.getX(), dpUR.getY() - dpLL.getY()));
 
     mW.getInterfaceMap3D().getCurrent3DMap()

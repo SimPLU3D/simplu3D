@@ -4,6 +4,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
@@ -11,12 +13,15 @@ import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.sig3d.calculation.raycasting.IndicatorVisu;
 
 public class ExportStatistiques {
+  
+  
+  private static Logger LOGGER = Logger.getLogger(ExportStatistiques.class);
 
   public static void exportIndicatorVisu(List<IndicatorVisu> lVis, String file)
       throws IOException {
     FileWriter fw = new FileWriter(file);
 
-    System.out.println("ExportCommencé");
+    LOGGER.info("ExportCommencé");
 
     // //////Ecriture des en-têtes
 
@@ -46,7 +51,7 @@ public class ExportStatistiques {
     fw.flush();
     fw.close();
 
-    System.out.println("ExportTerminé");
+    LOGGER.info("ExportTerminé");
 
   }
 

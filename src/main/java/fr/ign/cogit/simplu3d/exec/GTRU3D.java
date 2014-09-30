@@ -1,6 +1,7 @@
 package fr.ign.cogit.simplu3d.exec;
 
 import java.awt.Color;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement.Theme;
+import fr.ign.parameters.Parameters;
 
 /**
  * Viewer avec quelques outils représentant les contraintes d'urbanisme
@@ -37,25 +39,33 @@ public class GTRU3D {
 
   public static boolean DEBUG = false;
 
-  public static final String folder = "E:/mbrasebin/Donnees/Strasbourg/GTRU/Project3/";
+  public static final String folder = BasicSimulator.class.getClassLoader()
+      .getResource("scenario/").getPath();
 
   public static IFeatureCollection<IFeature> DEBUG_FEAT = new FT_FeatureCollection<IFeature>();
 
-  public static void main(String[] args) throws CloneNotSupportedException {
+  public static void main(String[] args) throws Exception {
     ConstantRepresentation.backGroundColor = new Color(156, 180, 193);
+    
+    
+    String fileName = "building_parameters_project_expthese_3.xml";
+    
 
-    Environnement env = LoaderSHP.load(folder);
+    Parameters p = Parameters.unmarshall(new File(folder + fileName));
+
+    Environnement env = LoaderSHP.load(p.getString("folder"));
+
 
     MainWindow mW = new MainWindow();
 
     new GTRUToolBar(mW);
     new IOToolBar(mW);
 
-    represent(folder, env, mW);
+    represent(folder, env, mW,p );
 
   }
 
-  private static void represent(String folder, Environnement env, MainWindow mW) {
+  private static void represent(String folder, Environnement env, MainWindow mW, Parameters p) {
     List<Theme> lTheme = new ArrayList<RepEnvironnement.Theme>();
     lTheme.add(Theme.TOIT_BATIMENT);
     lTheme.add(Theme.FACADE_BATIMENT);
@@ -83,7 +93,7 @@ public class GTRU3D {
     mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
     mW.getInterfaceMap3D().moveLight(-140, 3, 120, 1);
 
-    double z = 140;
+
     //
     // 1051042.8513268954120576,6840539.0837931865826249 :
     // 1051264.8064121364150196,6840679.2711814027279615
@@ -94,8 +104,25 @@ public class GTRU3D {
     // DirectPosition(1051264.8064121364150196,6840679.2711814027279615,z);
 
     // Projet 3
-    IDirectPosition dpLL = new DirectPosition(1051157, 6840727, z);
-    IDirectPosition dpUR = new DirectPosition(1051322, 6840858, z);
+
+    
+    double z = p.getDouble("z");
+
+    double xmin = p.getDouble("xminbg");
+    double xmax = p.getDouble("xmaxbg");
+    double ymin = p.getDouble("yminbg");
+    double ymax = p.getDouble("ymaxbg");
+
+    //
+    // 1051042.8513268954120576,6840539.0837931865826249 :
+    // 1051264.8064121364150196,6840679.2711814027279615
+    // Projet 1
+    IDirectPosition dpLL = new DirectPosition(xmin, ymin, z);
+    IDirectPosition dpUR = new DirectPosition(xmax, ymax, z);
+
+    // Projet 3
+    // IDirectPosition dpLL = new DirectPosition(1051157, 6840727, z);
+    // IDirectPosition dpUR = new DirectPosition(1051322, 6840858, z);
 
     IDirectPositionList dpl = new DirectPositionList();
 
@@ -113,15 +140,32 @@ public class GTRU3D {
 
     IFeature feat = new DefaultFeature(new GM_Polygon(new GM_LineString(dpl)));
 
-    fc.add(feat);
+
 
     // feat.setRepresentation(new TexturedSurface(feat, TextureManager
     // .textureLoading(folder + "Env3D_86.png"), dpUR.getX()-dpLL.getX(),
     // dpUR.getY()-dpLL.getY()));
+    
+    String background = p.getString("background_img");
 
+    
+    String filePath = env.folder + background;
+    
+
+    
     feat.setRepresentation(new TexturedSurface(feat, TextureManager
-        .textureLoading(folder + "env3DPrj3.png"), dpUR.getX() - dpLL.getX(),
-        dpUR.getY() - dpLL.getY()));
+        .textureLoading(filePath), dpUR.getX()
+        - dpLL.getX(), dpUR.getY() - dpLL.getY()));
+    
+    fc.add(feat);
+    
+    
+    
+    
+    
+    // feat.setRepresentation(new TexturedSurface(feat, TextureManager
+    // .textureLoading(folder + "Env3D_86.png"), dpUR.getX()-dpLL.getX(),
+    // dpUR.getY()-dpLL.getY()));
 
     mW.getInterfaceMap3D().getCurrent3DMap()
         .addLayer(new VectorLayer(fc, "Fond"));

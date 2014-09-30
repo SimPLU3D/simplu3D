@@ -150,8 +150,7 @@ public class LoadTronconVoieFerree {
       gls.addAll((GM_MultiCurve<GM_LineString>) geomIni);
     } else {
 
-      System.out.println("Autre classe de géométrie "
-          + geomIni.getClass().toString());
+      //Autre classe de géométrie
       return geomIni;
     }
 
