@@ -20,8 +20,8 @@ import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 
 public class AlignementImporter {
 
-  public final static String ATT_TYPE = "TYPEPSC";
-  public final static String ATT_Param = "Param";
+  public final static String ATT_TYPE = "typepsc";
+  public final static String ATT_Param = "param";
 
   public static IFeatureCollection<Alignement> importRecul(
       IFeatureCollection<IFeature> prescriptions,

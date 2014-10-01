@@ -4,7 +4,7 @@ import tudresden.ocl20.pivot.model.IModel;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
-import fr.ign.cogit.geoxygene.sig3d.semantic.DTMArea;
+import fr.ign.cogit.geoxygene.sig3d.semantic.AbstractDTM;
 import fr.ign.cogit.sig3d.model.citygml.core.CG_CityModel;
 import fr.ign.cogit.simplu3d.importer.model.ImportModelInstanceEnvironnement;
 
@@ -28,7 +28,7 @@ public class Environnement extends CG_CityModel {
   public IFeatureCollection<Alignement> alignements = new FT_FeatureCollection<>();
   public IFeatureCollection<BasicPropertyUnit> bpU = new FT_FeatureCollection<>();
 
-  public DTMArea terrain;
+  public AbstractDTM terrain;
   public IFeatureCollection<Road> roads = new FT_FeatureCollection<Road>();
 
   public static double DEFAULT_ZERO_Z = 139; // 41; //138
@@ -97,11 +97,11 @@ public class Environnement extends CG_CityModel {
     this.alignements = alignements;
   }
 
-  public DTMArea getTerrain() {
+  public AbstractDTM getTerrain() {
     return terrain;
   }
 
-  public void setTerrain(DTMArea terrain) {
+  public void setTerrain(AbstractDTM terrain) {
     this.terrain = terrain;
   }
 

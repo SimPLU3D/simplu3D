@@ -3,7 +3,7 @@ package fr.ign.cogit.simplu3d.util;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.sig3d.semantic.DTM;
+import fr.ign.cogit.geoxygene.sig3d.semantic.AbstractDTM;
 import fr.ign.cogit.simplu3d.model.application.Alignement;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.Road;
@@ -19,7 +19,7 @@ import fr.ign.cogit.simplu3d.model.application.UrbaZone;
 public class AssignZ {
 
   public static void toParcelle(IFeatureCollection<CadastralParcel> parcelles,
-      DTM dtm, boolean sursampled) throws Exception {
+      AbstractDTM dtm, boolean sursampled) throws Exception {
 
     for (CadastralParcel p : parcelles) {
 
@@ -38,7 +38,7 @@ public class AssignZ {
   }
 
   public static void toSousParcelle(IFeatureCollection<SubParcel> parcelles,
-      DTM dtm, boolean sursampled) throws Exception {
+      AbstractDTM dtm, boolean sursampled) throws Exception {
 
     for (SubParcel p : parcelles) {
 
@@ -49,8 +49,8 @@ public class AssignZ {
 
   }
 
-  public static void toVoirie(IFeatureCollection<Road> voiries, DTM dtm,
-      boolean sursampled) throws Exception {
+  public static void toVoirie(IFeatureCollection<Road> voiries,
+      AbstractDTM dtm, boolean sursampled) throws Exception {
 
     for (Road z : voiries) {
 
@@ -61,8 +61,8 @@ public class AssignZ {
 
   }
 
-  public static void toZone(IFeatureCollection<UrbaZone> zones, DTM dtm,
-      boolean sursampled) throws Exception {
+  public static void toZone(IFeatureCollection<UrbaZone> zones,
+      AbstractDTM dtm, boolean sursampled) throws Exception {
 
     for (UrbaZone z : zones) {
 
@@ -77,8 +77,8 @@ public class AssignZ {
   }
 
   public static void toAlignement(
-      IFeatureCollection<Alignement> alignementColl, DTM dtm, boolean sursampled)
-      throws Exception {
+      IFeatureCollection<Alignement> alignementColl, AbstractDTM dtm,
+      boolean sursampled) throws Exception {
 
     for (Alignement a : alignementColl) {
 
