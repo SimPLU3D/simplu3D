@@ -1,7 +1,5 @@
 package fr.ign.cogit.simplu3d.exec;
 
-import java.io.File;
-
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
@@ -11,15 +9,15 @@ import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
-import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
+import fr.ign.cogit.simplu3d.io.load.application.LoadPostGIS;
+import fr.ign.cogit.simplu3d.io.load.application.ParametersPostgis;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.classconstrained.OptimisedBuildingsCuboidFinalDirectRejection;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.predicate.UXL3Predicate;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.classconstrained.OptimisedBuildingsCuboidDirectRejectionNoVisitor;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.predicate.UB16PredicateWithParameters;
 import fr.ign.mpp.configuration.GraphConfiguration;
-import fr.ign.parameters.Parameters;
 import fr.ign.rjmcmc.configuration.Configuration;
 
 /**
@@ -28,7 +26,7 @@ import fr.ign.rjmcmc.configuration.Configuration;
  * @author MBrasebin
  * 
  */
-public class BasicSimulator {
+public class BasicPostGISSimulator {
 
   /**
    * @param args
@@ -37,37 +35,39 @@ public class BasicSimulator {
   // [building_footprint_rectangle_cli_main
   public static void main(String[] args) throws Exception {
 
-    String folderName = BasicSimulator.class.getClassLoader()
-        .getResource("scenario/").getPath();
+    String host = "localhost";
+    String port = "5432";
+    String database = "gtru";
+    String user = "postgres";
+    String pw = "postgres";
 
-    // String folderName = "./src/main/resources/scenario/";
-    String fileName = "building_parameters_project_expthese_1.xml";
+    int idParameter = 2;
 
-    Parameters p = Parameters.unmarshall(new File(folderName + fileName));
+    // Chargement de l'environnement depuis PostGIS
+    LoadPostGIS lP = new LoadPostGIS(host, port, database, user, pw);
+    Environnement env = lP.loadNoOCLRules();
 
-    Environnement env = LoaderSHP.load(p.getString("folder"));
+    ParametersPostgis p = new ParametersPostgis(host, port, database, user, pw,
+        idParameter);
 
+    // Pour l'instant on prend le premier
     BasicPropertyUnit bPU = env.getBpU().get(1);
 
-    // OCLBuildingsCuboidFinalDirectRejection oCB = new
-    // OCLBuildingsCuboidFinalDirectRejection();
-    OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();
+    OptimisedBuildingsCuboidDirectRejectionNoVisitor oCB = new OptimisedBuildingsCuboidDirectRejectionNoVisitor();
 
-   UXL3Predicate<Cuboid> pred = new UXL3Predicate<>(bPU);
+    // UXL3Predicate<Cuboid> pred = new UXL3Predicate<>(bPU);
 
-    // UXL3PredicateBuildingSeparation<Cuboid2> pred = new
-    // UXL3PredicateBuildingSeparation<>(
-    // env.getBpU().get(1));
+    UB16PredicateWithParameters<Cuboid> pred = new UB16PredicateWithParameters<Cuboid>(
+        bPU, 3, 0.5);
 
-    // UXL3PredicateGroup<Cuboid2> pred = new
-    // UXL3PredicateGroup<Cuboid2>(env.getBpU().get(1),3);
+    /*
+     * for(BasicPropertyUnit bPUTemp: env.getBpU()){
+     * 
+     * System.out.println(bPUTemp.getCadastralParcel().get(0).getId());
+     * 
+     * }
+     */
 
-    // UB16PredicateWithParameters<Cuboid2> pred = new
-    // UB16PredicateWithParameters<Cuboid2>(bPU ,0,0.5);
-
-   
-   
-   
     Configuration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred);
 
     IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
@@ -93,19 +93,9 @@ public class BasicSimulator {
 
     }
 
-    ShapefileWriter.write(iFeatC, p.get("result").toString() + "out.shp");
+    ShapefileWriter.write(iFeatC, "out.shp");
 
     System.out.println("That's all folks");
-
-    // OCLBuildingsCuboidFinal oCB = new OCLBuildingsCuboidFinal(); //Rejection
-    // sampler => Arrivera t il à proposer une solution ? La réponse dans un
-    // prochain épisode
-
-    // OCLBuildingsCuboidFinalWithPredicate oCB = new
-    // OCLBuildingsCuboidFinalWithPredicate(); //Exécution de base
-    /* Configuration<Cuboid2> cc = */
-
-    // oCB.process(env.getBpU().get(1), p, env, 1);
 
   }
 

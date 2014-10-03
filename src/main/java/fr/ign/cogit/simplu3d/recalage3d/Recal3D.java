@@ -47,6 +47,7 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.energy.cuboid2.VolumeUnaryEnergy;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid2;
+import fr.ign.cogit.simplu3d.util.PointInPolygon;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
 import fr.ign.rjmcmc.configuration.Configuration;
@@ -227,7 +228,7 @@ public class Recal3D {
           continue;
         }
 
-        IPoint p = new GM_Point(getPointInPolygon(f.getGeometrie()));// f.getGeometrie().buffer(-0.05).coord().get(0));
+        IPoint p = new GM_Point(PointInPolygon.get(f.getGeometrie()));// f.getGeometrie().buffer(-0.05).coord().get(0));
 
         if (!f.getGeometrie().contains(p)) {
           logger.warn("Point not in polygon");
@@ -320,28 +321,7 @@ public class Recal3D {
 
   }
 
-  public static IDirectPosition getPointInPolygon(IPolygon poly) {
 
-    IEnvelope env = poly.getEnvelope();
-
-    while (true) {
-
-      double x = Math.random()
-          * (env.getUpperCorner().getX() - env.getLowerCorner().getX())
-          + env.getLowerCorner().getX();
-      double y = Math.random()
-          * (env.getUpperCorner().getY() - env.getLowerCorner().getY())
-          + env.getLowerCorner().getY();
-
-      IDirectPosition dp = new DirectPosition(x, y);
-
-      if (poly.contains((new GM_Point(dp)).buffer(0.05))) {
-        return dp;
-      }
-
-    }
-
-  }
 
   public static CarteTopo newCarteTopo(String name,
       IFeatureCollection<? extends IFeature> collection, double threshold) {

@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.rjmcmc.cuboid;
+package fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.ocl;
 
 import java.awt.Color;
 import java.util.ArrayList;

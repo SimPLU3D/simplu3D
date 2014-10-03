@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.rjmcmc.cuboid;
+package fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.ocl;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -21,14 +21,13 @@ import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.configuration.ModelInstanceGraphConfiguration;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.configuration.ModelInstanceGraphConfigurationModificationPredicate;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.configuration.ModelInstanceGraphConfigurationPredicate;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.endTest.StabilityEndTest;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.energy.cuboid2.DifferenceVolumeUnaryEnergy;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.energy.cuboid2.IntersectionVolumeBinaryEnergy;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.energy.cuboid2.VolumeUnaryEnergy;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid2;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.sampler.GreenSamplerBlockTemperature;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.ChangeHeight;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.ChangeLength;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.ChangeWidth;
@@ -42,7 +41,6 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.FilmVisitor;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.ShapefileVisitorCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.StatsVisitor;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.ViewerVisitor;
-import fr.ign.mpp.DirectRejectionSampler;
 import fr.ign.mpp.DirectSampler;
 import fr.ign.mpp.kernel.ObjectBuilder;
 import fr.ign.mpp.kernel.UniformBirth;
@@ -60,6 +58,8 @@ import fr.ign.rjmcmc.energy.MultipliesUnaryEnergy;
 import fr.ign.rjmcmc.energy.PlusUnaryEnergy;
 import fr.ign.rjmcmc.energy.UnaryEnergy;
 import fr.ign.rjmcmc.kernel.Kernel;
+import fr.ign.rjmcmc.sampler.GreenSampler;
+import fr.ign.rjmcmc.sampler.RejectionSampler;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.SimulatedAnnealing;
 import fr.ign.simulatedannealing.endtest.EndTest;
@@ -72,15 +72,15 @@ import fr.ign.simulatedannealing.visitor.OutputStreamVisitor;
 import fr.ign.simulatedannealing.visitor.Visitor;
 
 /**
- * Using a DirectRejectionSampler.
+ * Uses a RejectionSampler.
  * @author JPerret
  */
-public class OCLBuildingsCuboidFinalDirectRejection {
+public class OCLBuildingsCuboidFinal {
 
   private double coeffDec = Double.NaN;
   private double deltaConf = Double.NaN;
 
-  public OCLBuildingsCuboidFinalDirectRejection() {
+  public OCLBuildingsCuboidFinal() {
   }
 
   public void setCoeffDec(double coeffDec) {
@@ -95,7 +95,7 @@ public class OCLBuildingsCuboidFinalDirectRejection {
       Environnement env, int id) {
     // Géométrie de l'unité foncière sur laquelle porte la génération
     IGeometry geom = bpu.generateGeom().buffer(1);
-    ModelInstanceGraphConfigurationModificationPredicate<Cuboid> pred = new ModelInstanceGraphConfigurationModificationPredicate<Cuboid>(
+    ModelInstanceGraphConfigurationPredicate<Cuboid> pred = new ModelInstanceGraphConfigurationPredicate<Cuboid>(
         bpu);
     // Définition de la fonction d'optimisation (on optimise en décroissant)
     // relative au volume
@@ -109,8 +109,10 @@ public class OCLBuildingsCuboidFinalDirectRejection {
     } catch (Exception e) {
       e.printStackTrace();
     }
+
+    RandomGenerator rng = Random.random();
     // Création de l'échantilloneur
-    Sampler<Cuboid> samp = create_sampler(Random.random(),p, bpu, pred);
+    Sampler<Cuboid> samp = create_sampler(rng, p, bpu, pred);
     // Température
     Schedule<SimpleTemperature> sch = create_schedule(p);
 
@@ -149,23 +151,23 @@ public class OCLBuildingsCuboidFinalDirectRejection {
       list.add(shpVisitor);
     }
     if (p.getBoolean("visitorviewer")) {
-      ViewerVisitor<Cuboid> visitorViewer = new ViewerVisitor<Cuboid>(
-          "" + id, p);
+      ViewerVisitor<Cuboid> visitorViewer = new ViewerVisitor<Cuboid>("" + id,
+          p);
       list.add(visitorViewer);
     }
-    
+
     if (p.getBoolean("statsvisitor")) {
       StatsVisitor<Cuboid> statsViewer = new StatsVisitor<Cuboid>("Énergie");
       list.add(statsViewer);
     }
-    
-    
+
     if (p.getBoolean("filmvisitor")) {
       IDirectPosition dpCentre = new DirectPosition(
           p.getDouble("filmvisitorx"), p.getDouble("filmvisitory"),
           p.getDouble("filmvisitorz"));
       Vecteur viewTo = new Vecteur(p.getDouble("filmvisitorvectx"),
           p.getDouble("filmvisitorvecty"), p.getDouble("filmvisitorvectz"));
+
       Color c = new Color(p.getInteger("filmvisitorr"),
           p.getInteger("filmvisitorg"), p.getInteger("filmvisitorb"));
       FilmVisitor<Cuboid> visitorViewerFilmVisitor = new FilmVisitor<Cuboid>(
@@ -261,8 +263,9 @@ public class OCLBuildingsCuboidFinalDirectRejection {
    * @param r l'enveloppe dans laquelle on génère les positions
    * @return
    */
-  static Sampler<Cuboid> create_sampler(RandomGenerator rng,Parameters p, BasicPropertyUnit bpU,
-      ModelInstanceGraphConfigurationModificationPredicate<Cuboid> pred) {
+  static Sampler<Cuboid> create_sampler(RandomGenerator rng, Parameters p,
+      BasicPropertyUnit bpU,
+      ModelInstanceGraphConfigurationPredicate<Cuboid> pred) {
     // Un vecteur ?????
     double mindim = p.getDouble("mindim");
     double maxdim = p.getDouble("maxdim");
@@ -277,25 +280,23 @@ public class OCLBuildingsCuboidFinalDirectRejection {
         return 6;
       }
 
-
-
       @Override
       public Cuboid build(Vector<Double> val1) {
-       
-        return new Cuboid(val1.get(0),val1.get(1),val1.get(2),val1.get(3),val1.get(4),val1.get(5));
+
+        return new Cuboid(val1.get(0), val1.get(1), val1.get(2), val1.get(3),
+            val1.get(4), val1.get(5));
       }
 
       @Override
       public void setCoordinates(Cuboid t, List<Double> val1) {
-          val1.set(0, t.centerx);
-          val1.set(1, t.centery);
-          val1.set(2, t.length);
-          val1.set(3, t.width);
-          val1.set(4, t.height);
-          val1.set(5, t.orientation);
+        val1.set(0, t.centerx);
+        val1.set(1, t.centery);
+        val1.set(2, t.length);
+        val1.set(3, t.width);
+        val1.set(4, t.height);
+        val1.set(5, t.orientation);
       }
     };
-
 
     IEnvelope env = bpU.getGeom().envelope();
     // Sampler de naissance
@@ -304,6 +305,7 @@ public class OCLBuildingsCuboidFinalDirectRejection {
     // env.minY(), mindim, mindim, minheight, 0), new Cuboid2(env.maxX(),
     // env.maxY(), maxdim,
     // maxdim, maxheight, Math.PI), builder, bpU.getpol2D());
+
     UniformBirth<Cuboid> birth = new UniformBirth<Cuboid>(rng, new Cuboid(
         env.minX(), env.minY(), mindim, mindim, minheight, 0), new Cuboid(
         env.maxX(), env.maxY(), maxdim, maxdim, maxheight, Math.PI), builder,
@@ -313,34 +315,32 @@ public class OCLBuildingsCuboidFinalDirectRejection {
     PoissonDistribution distribution = new PoissonDistribution(rng,
         p.getDouble("poisson"));
 
-    DirectSampler<Cuboid> ds = new DirectRejectionSampler<Cuboid>(
-        distribution, birth, pred);
+    DirectSampler<Cuboid> ds = new DirectSampler<Cuboid>(distribution, birth);
 
     // Probabilité de naissance-morts modifications
     List<Kernel<Cuboid>> kernels = new ArrayList<Kernel<Cuboid>>(3);
 
-    kernels.add(Kernel.make_uniform_birth_death_kernel(rng,builder, birth,
-        p.getDouble("pbirth"),
-        p.getDouble("pdeath")));
+    kernels.add(Kernel.make_uniform_birth_death_kernel(rng, builder, birth,
+        p.getDouble("pbirth"), p.getDouble("pdeath")));
     double amplitudeMove = p.getDouble("amplitudeMove");
-    kernels.add(Kernel.make_uniform_modification_kernel(rng,builder,
+    kernels.add(Kernel.make_uniform_modification_kernel(rng, builder,
         new MoveCuboid(amplitudeMove), 0.2, "Move"));
-    double amplitudeRotate = p.getDouble("amplitudeRotate")
-        * Math.PI / 180;
-    kernels.add(Kernel.make_uniform_modification_kernel(rng,builder,
+    double amplitudeRotate = p.getDouble("amplitudeRotate") * Math.PI / 180;
+    kernels.add(Kernel.make_uniform_modification_kernel(rng, builder,
         new RotateCuboid(amplitudeRotate), 0.2, "Rotate"));
     double amplitudeMaxDim = p.getDouble("amplitudeMaxDim");
-    kernels.add(Kernel.make_uniform_modification_kernel(rng,builder,
+    kernels.add(Kernel.make_uniform_modification_kernel(rng, builder,
         new ChangeWidth(amplitudeMaxDim), 0.2, "ChgWidth"));
-    kernels.add(Kernel.make_uniform_modification_kernel(rng,builder,
+    kernels.add(Kernel.make_uniform_modification_kernel(rng, builder,
         new ChangeLength(amplitudeMaxDim), 0.2, "ChgLength"));
     double amplitudeHeight = p.getDouble("amplitudeHeight");
-    kernels.add(Kernel.make_uniform_modification_kernel(rng,builder,
+    kernels.add(Kernel.make_uniform_modification_kernel(rng, builder,
         new ChangeHeight(amplitudeHeight), 0.2, "ChgHeight"));
 
-    Sampler<Cuboid> s = new GreenSamplerBlockTemperature<Cuboid>(ds,
+    Sampler<Cuboid> s = new GreenSampler<Cuboid>(rng, ds,
         new MetropolisAcceptance<SimpleTemperature>(), kernels);
-    return s;
+    Sampler<Cuboid> rs = new RejectionSampler<Cuboid>(s, pred);
+    return rs;
   }
 
   private static EndTest<Cuboid> create_end_test(Parameters p) {
@@ -354,8 +354,7 @@ public class OCLBuildingsCuboidFinalDirectRejection {
     } else {
       loc_deltaconf = this.deltaConf;
     }
-    return new StabilityEndTest<Cuboid>(p.getInteger("nbiter"),
-        loc_deltaconf);
+    return new StabilityEndTest<Cuboid>(p.getInteger("nbiter"), loc_deltaconf);
   }
 
   private Schedule<SimpleTemperature> create_schedule(Parameters p) {
