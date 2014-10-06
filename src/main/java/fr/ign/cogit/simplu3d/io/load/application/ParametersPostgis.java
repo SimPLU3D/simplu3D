@@ -13,6 +13,7 @@ import fr.ign.parameters.Parameters;
 public class ParametersPostgis extends Parameters {
 
   public final static String PARAMETERS_TABLE = "parameters";
+  public final static String PARAMETERS_ID = "id";
   private ResultSet rs;
 
   private Logger log = Logger.getLogger(ParametersPostgis.class);
@@ -26,7 +27,8 @@ public class ParametersPostgis extends Parameters {
 
     Statement s = conn.createStatement();
 
-    String sql = "Select * from " + PARAMETERS_TABLE;
+    String sql = "Select * from " + PARAMETERS_TABLE + " where id ="
+        + PARAMETERS_ID;
 
     rs = s.executeQuery(sql);
 
@@ -46,7 +48,7 @@ public class ParametersPostgis extends Parameters {
   public Object get(String key) {
     // System.out.println("key = " + key);
     if (entry != null) {
-       try {
+      try {
         return rs.getObject(key);
       } catch (SQLException e) {
         // TODO Auto-generated catch block
