@@ -20,7 +20,7 @@ public class RulesImporter {
     if (f.exists()) {
       try {
         List<Constraint> lC = StandaloneFacade.INSTANCE.parseOclConstraints(
-            Environnement.model, f);
+            Environnement.getModel(), f);
 
         int id = 0;
 

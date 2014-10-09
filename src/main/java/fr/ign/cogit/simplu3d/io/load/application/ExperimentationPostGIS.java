@@ -59,7 +59,7 @@ public class ExperimentationPostGIS extends Parameters {
 
     Statement s = conn.createStatement();
 
-    String sql = "UPDATE " + EXPERIMENTATION_TABLE + "  set()  where "
+    String sql = "UPDATE " + EXPERIMENTATION_TABLE + "  set isprocessed = 't'  where "
         + EXPERIMENTATION_ID + " = " + id;
 
     boolean isOk = s.execute(sql);

@@ -3,8 +3,6 @@ package fr.ign.cogit.simplu3d.io.load.application;
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.sig3d.io.vector.PostgisManager;
-import fr.ign.cogit.geoxygene.sig3d.semantic.DTMPostGIS;
-import fr.ign.cogit.geoxygene.sig3d.util.ColorShade;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 
 public class LoadPostGIS {
@@ -19,17 +17,12 @@ public class LoadPostGIS {
   public final static String NOM_TABLE_PRESC_LINEAIRE = "prescription_lin";
 
   public final static String NOM_TABLE_TERRAIN = "mnt";
-  
-  
 
   String host = "";
   String port = "";
   String database = "";
   String user = "";
   String pw = "";
-
-  
-  
 
   public LoadPostGIS(String host, String port, String database, String user,
       String pw) {
@@ -41,11 +34,11 @@ public class LoadPostGIS {
     this.pw = pw;
   }
 
-  public  Environnement loadNoOCLRules() throws Exception {
+  public Environnement loadNoOCLRules() throws Exception {
     return load(null);
   }
 
-  public  Environnement load(String folder) throws Exception {
+  public Environnement load(String folder) throws Exception {
     Environnement env = Environnement.getInstance();
     env.folder = folder;
 
@@ -58,10 +51,11 @@ public class LoadPostGIS {
     IFeatureCollection<IFeature> batiColl = PostgisManager.loadGeometricTable(
         host, port, database, user, pw, NOM_TABLE_BATIMENTS);
     IFeatureCollection<IFeature> prescriptions = PostgisManager
-        .loadGeometricTable(host, port, database, user, pw, NOM_TABLE_PRESC_LINEAIRE);
+        .loadGeometricTable(host, port, database, user, pw,
+            NOM_TABLE_PRESC_LINEAIRE);
 
-    DTMPostGIS dtm = new DTMPostGIS(host, port, database, NOM_TABLE_TERRAIN,
-         user, pw, "Terrain", true, 1, ColorShade.BLUE_CYAN_GREEN_YELLOW_WHITE);
+    DTMPostGISNoJava3D dtm = new DTMPostGISNoJava3D(host, port, database,
+        NOM_TABLE_TERRAIN, user, pw, "DTM");
 
     return LoadFromCollection.load(zoneColl, parcelleColl, voirieColl,
         batiColl, prescriptions, folder, dtm);

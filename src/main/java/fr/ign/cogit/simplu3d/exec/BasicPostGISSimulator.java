@@ -1,5 +1,6 @@
 package fr.ign.cogit.simplu3d.exec;
 
+
 import fr.ign.cogit.simplu3d.io.load.application.ExperimentationPostGIS;
 import fr.ign.cogit.simplu3d.io.load.application.LoadPostGIS;
 import fr.ign.cogit.simplu3d.io.load.application.ParametersPostgis;
@@ -21,13 +22,19 @@ public class BasicPostGISSimulator {
 
   /**
    * @param args
+   * @throws Exception 
    */
+  
+  
+  public static void main() throws Exception{
+    main(null);
+  }
 
   // [building_footprint_rectangle_cli_main
   public static void main(String[] args) throws Exception {
 
     // Connexion à la base postgis
-    String host = "localhost";
+    String host = "rks1009w140";
     String port = "5432";
     String database = "gtru";
     String user = "postgres";

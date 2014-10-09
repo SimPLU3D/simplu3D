@@ -26,7 +26,7 @@ import fr.ign.cogit.simplu3d.util.AssignZ;
 
 public class LoadFromCollection {
 
-  public final static boolean SURSAMPLED = true;
+  public final static boolean SURSAMPLED = false;
 
   public static Environnement load(IFeatureCollection<IFeature> zoneColl,
       IFeatureCollection<IFeature> parcelleColl,

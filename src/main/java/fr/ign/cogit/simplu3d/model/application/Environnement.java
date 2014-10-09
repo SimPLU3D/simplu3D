@@ -16,8 +16,16 @@ public class Environnement extends CG_CityModel {
   public PLU plu;
 
   // On charge le modèle
-  public static IModel model = ImportModelInstanceEnvironnement
+  private static IModel model = null;
+  
+  public static IModel getModel(){
+    if(model == null){
+      model =  ImportModelInstanceEnvironnement
       .getModel("target/classes/fr/ign/cogit/simplu3d/importer/model/ModelProviderClass.class");
+    }
+    
+    return model;
+  }
 
   private static Environnement env = null;
 

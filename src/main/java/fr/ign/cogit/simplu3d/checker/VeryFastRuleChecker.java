@@ -96,7 +96,7 @@ public class VeryFastRuleChecker {
       for (SubParcel sP : cP.getSubParcel()) {
         sPList.add(sP);
         IModelInstance iM = ImportModelInstanceBasicPropertyUnit
-            .generateModelInstance(Environnement.model);
+            .generateModelInstance(Environnement.getModel());
         lModelInstance.add(iM);
         try {
           lRelevantObjects.add(ImportModelInstanceBasicPropertyUnit
