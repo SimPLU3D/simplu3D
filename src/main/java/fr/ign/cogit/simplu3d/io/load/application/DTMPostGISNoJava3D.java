@@ -67,7 +67,7 @@ public class DTMPostGISNoJava3D extends AbstractDTM {
   double[][] tabAlt = null;
 
   public DTMPostGISNoJava3D(String host, String port, String base,
-      String tablename, String user, String pw, String layerName)
+      String tablename, String user, String pw)
       throws SQLException {
 
     super();
@@ -76,7 +76,7 @@ public class DTMPostGISNoJava3D extends AbstractDTM {
     this.imagePath = null;
     this.imageEnvelope = null;
 
-    this.layerName = layerName;
+
     this.pw = pw;
     this.user = user;
 
@@ -170,8 +170,8 @@ public class DTMPostGISNoJava3D extends AbstractDTM {
 
     // On renseigne les différentes valeurs donnant des informations sur
     // le MNT
-    this.xIni = shiftX;
-    this.yIni = shiftY;
+    this.xIni = shiftX + this.stepX/2;
+    this.yIni = shiftY + this.stepY/2;
 
     int currentRow = 1;
 
@@ -191,6 +191,10 @@ public class DTMPostGISNoJava3D extends AbstractDTM {
 
         tabAlt[j][i] = Double.parseDouble(rs.getString(2));
       }
+      
+    currentRow++;
+      
+      
     }
 
     conn.close();
@@ -212,6 +216,7 @@ public class DTMPostGISNoJava3D extends AbstractDTM {
         + ",  false) As b1val FROM mnt CROSS JOIN generate_series(1, " + nbCol
         + "," + this.echantillonage + ") As y ;";
     logger.debug(sql);
+ 
 
     return s.executeQuery(sql);
 
@@ -233,11 +238,11 @@ public class DTMPostGISNoJava3D extends AbstractDTM {
     GeometryFactory fac = new GeometryFactory();
 
     // On récupère dans quels triangles se trouvent dpMin et dpMax
-    int posxMin = (int) ((xmin - this.xIni) / (this.stepX * this.stepX));
-    int posyMin = (int) ((ymin - this.yIni) / (this.stepY * this.stepY));
+    int posxMin = (int) ((xmin - this.xIni) / (this.stepX * this.echantillonage));
+    int posyMin = (int) ((ymin - this.yIni) / (this.stepY * this.echantillonage));
 
-    int posxMax = 1 + (int) ((xmax - this.xIni) / (this.stepX * this.stepX));
-    int posyMax = 1 + (int) ((ymax - this.yIni) / (this.stepY * this.stepY));
+    int posxMax = 1 + (int) ((xmax - this.xIni) / (this.stepX * this.echantillonage));
+    int posyMax = 1 + (int) ((ymax - this.yIni) / (this.stepY * this.echantillonage));
 
     // On récupère les sommets extérieurs de ces triangles (ceux qui
     // permettent d'englober totalement le rectangle dpMin, dpMax
@@ -309,11 +314,11 @@ public class DTMPostGISNoJava3D extends AbstractDTM {
       double xmax, double ymax) {
     GeometryFactory fact = new GeometryFactory();
     // On récupère l'indice des triangles contenant ces points
-    int posxMin = (int) ((xmin - this.xIni) / (this.stepX * this.stepX));
-    int posyMin = (int) ((ymin - this.yIni) / (this.stepY * this.stepY));
+    int posxMin = (int) ((xmin - this.xIni) / (this.stepX * this.echantillonage));
+    int posyMin = (int) ((ymin - this.yIni) / (this.stepY * this.echantillonage));
 
-    int posxMax = 1 + (int) ((xmax - this.xIni) / (this.stepX * this.stepX));
-    int posyMax = 1 + (int) ((ymax - this.yIni) / (this.stepY * this.stepY));
+    int posxMax = 1 + (int) ((xmax - this.xIni) / (this.stepX * this.echantillonage));
+    int posyMax = 1 + (int) ((ymax - this.yIni) / (this.stepY * this.echantillonage));
 
     // On récupère les points extrêmes appartenant à ces triangles
     Coordinate dpOrigin = new Coordinate(posxMin * this.stepX + this.xIni,
@@ -333,18 +338,18 @@ public class DTMPostGISNoJava3D extends AbstractDTM {
     int indL = 0;
 
     // On crée 3 lignes par maill du MNT
-    for (int i = 0; i < nbInterX - 1; i++) {
+    for (int i = 0; i < nbInterX ; i++) {
 
-      for (int j = 0; j < nbInterY - 1; j++) {
+      for (int j = 0; j < nbInterY ; j++) {
 
         Coordinate dp1 = new Coordinate(dpOrigin.x + i * this.stepX, dpOrigin.y
             + j * this.stepY);
-        Coordinate dp2 = new Coordinate(dpOrigin.x + (i + 1) * this.stepX,
+        Coordinate dp2 = new Coordinate(dpOrigin.x + (i + this.echantillonage) * this.stepX,
             dpOrigin.y + j * this.stepY);
         Coordinate dp3 = new Coordinate(dpOrigin.x + i * this.stepX, dpOrigin.y
-            + (j + 1) * this.stepY);
-        Coordinate dp4 = new Coordinate(dpOrigin.x + (i + 1) * this.stepX,
-            dpOrigin.y + (j + 1) * this.stepY);
+            + (j + this.echantillonage) * this.stepY);
+        Coordinate dp4 = new Coordinate(dpOrigin.x + (i + this.echantillonage) * this.stepX,
+            dpOrigin.y + (j + this.echantillonage) * this.stepY);
 
         Coordinate[] c1 = new Coordinate[2];
         Coordinate[] c2 = new Coordinate[2];
@@ -419,12 +424,12 @@ public class DTMPostGISNoJava3D extends AbstractDTM {
 
     DirectPosition pt12D = new DirectPosition(indexX * stepX + this.xIni,
         indexY * stepY + this.yIni, tabAlt[indexX][indexY]);
-    DirectPosition pt22D = new DirectPosition((indexX + 1) * stepX + this.xIni,
+    DirectPosition pt22D = new DirectPosition((indexX + this.echantillonage) * stepX + this.xIni,
         indexY * stepY + this.yIni, tabAlt[indexX + 1][indexY]);
     DirectPosition pt32D = new DirectPosition(indexX * stepX + this.xIni,
-        (indexY + 1) * stepY + this.yIni, tabAlt[indexX][indexY + 1]);
-    DirectPosition pt42D = new DirectPosition((indexX + 1) * stepX + this.xIni,
-        (indexY + 1) * stepY + this.yIni, tabAlt[indexX + 1][indexY + 1]);
+        (indexY + this.echantillonage) * stepY + this.yIni, tabAlt[indexX][indexY + 1]);
+    DirectPosition pt42D = new DirectPosition((indexX + this.echantillonage) * stepX + this.xIni,
+        (indexY + this.echantillonage) * stepY + this.yIni, tabAlt[indexX + 1][indexY + 1]);
 
     DirectPositionList dpl = new DirectPositionList();
 
@@ -477,12 +482,12 @@ public class DTMPostGISNoJava3D extends AbstractDTM {
 
       DirectPosition pt12D = new DirectPosition(posx * stepX + this.xIni, posy
           * stepY + this.yIni, tabAlt[posx][posy]);
-      DirectPosition pt22D = new DirectPosition((posx + 1) * stepX + this.xIni,
+      DirectPosition pt22D = new DirectPosition((posx + this.echantillonage) * stepX + this.xIni,
           posy * stepY + this.yIni, tabAlt[posx + 1][posy]);
       DirectPosition pt32D = new DirectPosition(posx * stepX + this.xIni,
-          (posy + 1) * stepY + this.yIni, tabAlt[posx][posy + 1]);
-      DirectPosition pt42D = new DirectPosition((posx + 1) * stepX + this.xIni,
-          (posy + 1) * stepY + this.yIni, tabAlt[posx + 1][posy + 1]);
+          (posy +this.echantillonage) * stepY + this.yIni, tabAlt[posx][posy + 1]);
+      DirectPosition pt42D = new DirectPosition((posx + this.echantillonage) * stepX + this.xIni,
+          (posy + this.echantillonage) * stepY + this.yIni, tabAlt[posx + 1][posy + 1]);
 
       DirectPosition ptloc2D = new DirectPosition(x, y);
 
@@ -554,7 +559,7 @@ public class DTMPostGISNoJava3D extends AbstractDTM {
 
   }
 
-  @Override
+
   public Box3D get3DEnvelope() {
     if (this.emprise == null) {
 
@@ -566,8 +571,8 @@ public class DTMPostGISNoJava3D extends AbstractDTM {
 
   @Override
   public GM_Object getGeometryAt(double x, double y) {
-    int posx = (int) ((x - this.xIni) / (this.stepX * this.stepX));
-    int posy = (int) ((y - this.yIni) / (this.stepY * this.stepY));
+    int posx = (int) ((x - this.xIni) / (this.stepX * this.echantillonage));
+    int posy = (int) ((y - this.yIni) / (this.stepY * this.echantillonage));
 
     DirectPositionList lTri = this.getTriangle(posx, posy, true);
     GM_Triangle tri = new GM_Triangle(new GM_LineString(lTri));
@@ -580,10 +585,6 @@ public class DTMPostGISNoJava3D extends AbstractDTM {
 
   }
 
-  @Override
-  public void refresh() {
-    // TODO Auto-generated method stub
 
-  }
 
 }

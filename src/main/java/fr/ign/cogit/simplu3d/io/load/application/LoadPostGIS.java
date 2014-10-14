@@ -55,7 +55,7 @@ public class LoadPostGIS {
             NOM_TABLE_PRESC_LINEAIRE);
 
     DTMPostGISNoJava3D dtm = new DTMPostGISNoJava3D(host, port, database,
-        NOM_TABLE_TERRAIN, user, pw, "DTM");
+        NOM_TABLE_TERRAIN, user,pw);
 
     return LoadFromCollection.load(zoneColl, parcelleColl, voirieColl,
         batiColl, prescriptions, folder, dtm);

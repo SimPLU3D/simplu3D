@@ -26,7 +26,7 @@ import fr.ign.cogit.simplu3d.util.AssignZ;
 
 public class LoadFromCollection {
 
-  public final static boolean SURSAMPLED = false;
+  public final static boolean SURSAMPLED = true;
 
   public static Environnement load(IFeatureCollection<IFeature> zoneColl,
       IFeatureCollection<IFeature> parcelleColl,
@@ -130,6 +130,7 @@ public class LoadFromCollection {
     env.setTerrain(dtm);
     try {
       AssignZ.toParcelle(env.getParcelles(), dtm, SURSAMPLED);
+
       AssignZ.toSousParcelle(env.getSubParcels(), dtm, SURSAMPLED);
       AssignZ.toVoirie(env.getRoads(), dtm, SURSAMPLED);
       AssignZ.toAlignement(alignementColl, dtm, SURSAMPLED);
