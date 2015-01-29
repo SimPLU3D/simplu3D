@@ -81,7 +81,11 @@ public class BuildingImporter {
    //     if (area / aireEmprise > RATIO_MIN) {
 
           int index = featTemp.getElements().indexOf(sp);
+          
+          
           collBPU.get(index).getBuildings().add(b);
+          collBPU.get(index).getCadastralParcel().get(0).getSubParcel().get(0).getBuildingsParts().add(b);
+          
           isAttached = true;
       //    System.out.println("Desactiver le hack de la classe BuildingImporter");
        //   break;

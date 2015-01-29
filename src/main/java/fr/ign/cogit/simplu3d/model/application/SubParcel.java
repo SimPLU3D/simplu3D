@@ -133,38 +133,7 @@ public class SubParcel extends CG_LandUse {
   }
 
   public double getces() {
-
-    double area = this.getArea();
-
-    int bP = this.getBuildingsParts().size();
-
-    if (bP == 0) {
-      return 0;
-    }
-
-    Geometry geom = null;
-    try {
-      geom = JtsGeOxygene.makeJtsGeom(this.getBuildingsParts().get(0)
-          .getFootprint());
-
-      for (int i = 0; i < bP; i++) {
-        geom = geom.union(JtsGeOxygene.makeJtsGeom(this.getBuildingsParts()
-            .get(i).getFootprint()));
-
-      }
-    } catch (Exception e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-
-    if (geom == null) {
-      return 0;
-    }
-
-    // System.out.println(areaB / area);
-
-    return geom.getArea() / area;
-
+    return new Double(null);
   }
 
   

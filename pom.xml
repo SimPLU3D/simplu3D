@@ -605,7 +605,7 @@
 		<dependency>
 			<groupId>fr.ign.cogit</groupId>
 			<artifactId>geoxygene-geopensim</artifactId>
-			<version>1.7-SNAPSHOT</version>
+			<version>1.6</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>ojb</artifactId>

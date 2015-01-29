@@ -41,9 +41,6 @@ public abstract class AbstractBuilding extends CG_AbstractBuilding {
     super();
   }
 
-  public double height(String s, String s2) {
-    return 0;
-  }
 
   public AbstractBuilding(IGeometry geom) {
     this.setGeom(geom);

@@ -138,14 +138,21 @@ public class VeryFastRuleChecker {
         if (!bool.isTrue()) {
           // System.out.println("Règle non vérifiée");
           // System.out.println(imiObject);
-          /*
-           * System.out.println("  " + result.getModelObject() + " (" +
-           * result.getConstraint().getKind() + ": " +
-           * result.getConstraint().getSpecification().getBody() + "): " +
-           * result.getResult());
-           */
+          
+        //   System.out.println("  " + result.getModelObject() + " (" +
+          //   result.getConstraint().getKind() + ": " +
+          //  result.getConstraint().getSpecification().getBody() + "): " +
+          // result.getResult());
+           
           return false;
         }
+        
+        System.out.println("  " + result.getModelObject() + " (" +
+        result.getConstraint().getKind() + ": " +
+        result.getConstraint().getSpecification().getBody() + "): " +
+        result.getResult());
+        
+        
       } else {
         System.out.println("  " + result.getModelObject() + " (" + result.getConstraint().getKind()
             + ": " + result.getConstraint().getSpecification().getBody() + "): "

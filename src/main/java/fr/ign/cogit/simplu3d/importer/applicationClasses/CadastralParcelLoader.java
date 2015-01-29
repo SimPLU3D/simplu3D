@@ -48,7 +48,7 @@ public class CadastralParcelLoader {
   public static final int LATERAL_TEMP = 98;
   
   
-  public static final String ATT_ID_PARC = "id_parcell";
+  public static final String ATT_ID_PARC = "ID_Parcell";
 
   private static Logger logger = Logger.getLogger(CadastralParcelLoader.class);
 

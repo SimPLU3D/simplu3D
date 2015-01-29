@@ -139,6 +139,8 @@ public class SHONCalculation {
       if (areaTemp == -1) {
         return -1;
       }
+      
+      DEBUG.addAll(lG);
 
       zActu = zActu + hauteurEtage;
 
@@ -149,6 +151,10 @@ public class SHONCalculation {
     if (areaSHON == 0 && nbFloor == 0 && (zMax - zMax) > HABITABLE_HAUTEUR) {
 
       List<IPolygon> lG = CutBuilding.cutAt(lOS, (zMax + zMax) / 2);
+      
+      
+      DEBUG.addAll(lG);
+      
 
       double areaTemp = calculAreaFromCut(lG);
 
