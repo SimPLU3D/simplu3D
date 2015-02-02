@@ -4,12 +4,12 @@ import java.io.File;
 
 import org.junit.Test;
 
+import fr.ign.cogit.simplu3d.exe.LoadDefaultEnvironment;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.classconstrained.OptimisedBuildingsCuboidFinalDirectRejection;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.predicate.UXL3Predicate;
-import fr.ign.cogit.simplu3d.test.io.load.application.LoaderSimpluSHPTest;
 import fr.ign.parameters.Parameters;
 
 public class SimulatorTest {
@@ -24,7 +24,7 @@ public class SimulatorTest {
 
     Parameters p = Parameters.unmarshall(new File(folderName + fileName));
 
-    Environnement env = LoaderSimpluSHPTest.getENVTest();
+    Environnement env = LoadDefaultEnvironment.getENVDEF();
 
     BasicPropertyUnit bPU = env.getBpU().get(1);
 
