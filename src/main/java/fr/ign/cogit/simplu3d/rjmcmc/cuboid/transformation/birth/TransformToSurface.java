@@ -14,15 +14,14 @@ import fr.ign.cogit.geoxygene.contrib.cartetopo.Face;
 import fr.ign.cogit.geoxygene.contrib.delaunay.TriangulationJTS;
 import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToSurface;
 import fr.ign.cogit.geoxygene.sig3d.distribution.EquiSurfaceDistribution;
+import fr.ign.cogit.geoxygene.sig3d.topology.TriangulationLoader;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
-import fr.ign.cogit.sig3d.topology.TriangulationLoader;
 import fr.ign.rjmcmc.kernel.Transform;
-
 
 /**
  * TODO : supprimer les deux constructeurs
  * @author MBrasebin
- *
+ * 
  */
 public class TransformToSurface implements Transform {
   /**
@@ -35,7 +34,7 @@ public class TransformToSurface implements Transform {
   private double inv[];
   private double determinant;
   private double absDeterminant;
-  
+
   public TransformToSurface(Vector<Double> d, Vector<Double> v, IGeometry geom) {
 
     // On prépare la géométrie pour être triangulée
@@ -45,7 +44,7 @@ public class TransformToSurface implements Transform {
     this.inv = new double[d.size()];
     this.determinant = 1.;
     for (int i = 2; i < d.size(); ++i) {
-      double dvalue =d.get(i);
+      double dvalue = d.get(i);
       determinant *= dvalue;
       mat[i] = dvalue;
       inv[i] = 1 / dvalue;
@@ -53,23 +52,24 @@ public class TransformToSurface implements Transform {
     }
     this.absDeterminant = 1;// Math.abs(determinant);
   }
-//  
-//  public TransformToSurface(double[] d, double[] v, IGeometry geom) {
-//    // On prépare la géométrie pour être triangulée
-//    prepareGeometry(geom);
-//    this.mat = new double[d.length];
-//    this.delta = new double[d.length];
-//    this.inv = new double[d.length];
-//    this.determinant = 1.;
-//    for (int i = 2; i < d.length; ++i) {
-//      double dvalue = d[i];
-//      determinant *= dvalue;
-//      mat[i] = dvalue;
-//      inv[i] = 1 / dvalue;
-//      delta[i] = v[i];
-//    }
-//    this.absDeterminant = 1;// Math.abs(determinant);
-//  }
+
+  //
+  // public TransformToSurface(double[] d, double[] v, IGeometry geom) {
+  // // On prépare la géométrie pour être triangulée
+  // prepareGeometry(geom);
+  // this.mat = new double[d.length];
+  // this.delta = new double[d.length];
+  // this.inv = new double[d.length];
+  // this.determinant = 1.;
+  // for (int i = 2; i < d.length; ++i) {
+  // double dvalue = d[i];
+  // determinant *= dvalue;
+  // mat[i] = dvalue;
+  // inv[i] = 1 / dvalue;
+  // delta[i] = v[i];
+  // }
+  // this.absDeterminant = 1;// Math.abs(determinant);
+  // }
 
   private EquiSurfaceDistribution eq;
 
