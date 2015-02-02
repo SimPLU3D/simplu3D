@@ -8,7 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
-import fr.ign.cogit.simplu3d.model.application.AbstractSimpleBuilding;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.rjmcmc.configuration.Configuration;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.Temperature;
@@ -21,12 +21,12 @@ public class CSVvisitor<O extends AbstractSimpleBuilding> implements Visitor<O> 
   private BufferedWriter writer;
   private String textSeparator = ";";
 
-
   public CSVvisitor(String fileName) {
 
     Path path = Paths.get(fileName);
     try {
-      writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
+      writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8,
+          StandardOpenOption.CREATE);
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -43,12 +43,9 @@ public class CSVvisitor<O extends AbstractSimpleBuilding> implements Visitor<O> 
   @Override
   public void begin(Configuration<O> config, Sampler<O> sampler, Temperature t) {
 
-    String s = "Iteration" + textSeparator + "NBCube" + textSeparator + "ENERGIE" + textSeparator
-        + "ENERGIE_MOY" + textSeparator + "NB_FALSE";
-
-
-
-
+    String s = "Iteration" + textSeparator + "NBCube" + textSeparator
+        + "ENERGIE" + textSeparator + "ENERGIE_MOY" + textSeparator
+        + "NB_FALSE";
 
     try {
       writer.append(s);
@@ -112,9 +109,6 @@ public class CSVvisitor<O extends AbstractSimpleBuilding> implements Visitor<O> 
 
     sB.append(energyMoy);
     sB.append(textSeparator);
-
-
-
 
     try {
       writer.append(sB.toString());

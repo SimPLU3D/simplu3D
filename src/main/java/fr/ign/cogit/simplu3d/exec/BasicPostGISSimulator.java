@@ -4,7 +4,8 @@ import fr.ign.cogit.simplu3d.io.load.application.ExperimentationPostGIS;
 import fr.ign.cogit.simplu3d.io.load.application.LoadPostGIS;
 import fr.ign.cogit.simplu3d.io.load.application.ParametersPostgis;
 import fr.ign.cogit.simplu3d.io.load.application.SaveEnergyPostGIS;
-import fr.ign.cogit.simplu3d.io.save.application.SaveGeneratedObjects;
+import fr.ign.cogit.simplu3d.io.save.SaveGeneratedObjects;
+
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
