@@ -140,7 +140,7 @@ public class RepEnvironnement {
     for (CadastralParcel sp : sPF) {
 
       IFeatureCollection<SpecificCadastralBoundary> featBord = sp
-          .getBoundary();
+          .getSpecificCadastralBoundary();
 
       for (SpecificCadastralBoundary b : featBord) {
         int type = b.getType();

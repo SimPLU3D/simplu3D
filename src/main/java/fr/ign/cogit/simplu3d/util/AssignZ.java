@@ -26,7 +26,7 @@ public class AssignZ {
       IGeometry geom = dtm.mapGeom(p.getGeom(), 0, true, sursampled);
       p.setGeom(geom);
 
-      for (SpecificCadastralBoundary b : p.getBoundary()) {
+      for (SpecificCadastralBoundary b : p.getSpecificCadastralBoundary()) {
 
         IGeometry geomB = dtm.mapGeom(b.getGeom(), 0, true, sursampled);
         b.setGeom(geomB);

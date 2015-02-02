@@ -92,12 +92,12 @@ public class LoaderSimpluSHPTest {
 
       for (CadastralParcel sp : bPU.getCadastralParcel()) {
 
-        count = count + sp.getBoundary().size();
+        count = count + sp.getSpecificCadastralBoundary().size();
 
-        Assert.assertNotNull(sp.getBoundary());
-        Assert.assertFalse(sp.getBoundary().isEmpty());
+        Assert.assertNotNull(sp.getSpecificCadastralBoundary());
+        Assert.assertFalse(sp.getSpecificCadastralBoundary().isEmpty());
 
-        for (SpecificCadastralBoundary b : sp.getBoundary()) {
+        for (SpecificCadastralBoundary b : sp.getSpecificCadastralBoundary()) {
           bordures.add(b);
 
         }

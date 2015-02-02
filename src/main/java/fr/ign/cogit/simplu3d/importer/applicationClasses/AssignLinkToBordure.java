@@ -27,7 +27,7 @@ public class AssignLinkToBordure {
     for (CadastralParcel sP : cadastralParcels) {
 
       IFeatureCollection<SpecificCadastralBoundary> bordures = sP
-          .getBoundary();
+          .getSpecificCadastralBoundary();
 
       for (SpecificCadastralBoundary b : bordures) {
 
@@ -93,7 +93,7 @@ public class AssignLinkToBordure {
       }
 
       IFeatureCollection<SpecificCadastralBoundary> lB = sousParcelle
-          .getBoundary();
+          .getSpecificCadastralBoundary();
 
       for (SpecificCadastralBoundary b2 : lB) {
 

@@ -55,7 +55,7 @@ public class CadastralParcel extends CG_LandUse {
 
   }
 
-  public IFeatureCollection<SpecificCadastralBoundary> getBoundary() {
+  public IFeatureCollection<SpecificCadastralBoundary> getSpecificCadastralBoundary() {
     return specificCB;
   }
 

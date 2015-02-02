@@ -26,7 +26,7 @@ public class UXL3Predicate<O extends AbstractBuilding> implements
 
     for (CadastralParcel cP : bPU.getCadastralParcel()) {
       // for (SubParcel sB : cP.getSubParcel()) {
-      for (SpecificCadastralBoundary sCB : cP.getBoundary()) {
+      for (SpecificCadastralBoundary sCB : cP.getSpecificCadastralBoundary()) {
 
         if (sCB.getType() != SpecificCadastralBoundary.INTRA) {
           IGeometry geom = sCB.getGeom();

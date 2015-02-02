@@ -303,7 +303,7 @@ public class CadastralParcelLoader {
       for (Arc a : listArc) {
         SpecificCadastralBoundary cB = new SpecificCadastralBoundary(
             a.getGeom());
-        p.getBoundary().add(cB);
+        p.getSpecificCadastralBoundary().add(cB);
 
         if (a.getOrientation() == SpecificCadastralBoundary.ROAD) {
           cB.setType(SpecificCadastralBoundary.ROAD);
@@ -357,7 +357,7 @@ public class CadastralParcelLoader {
       for (int j = 0; j < nbArcs; j++) {
 
         Arc a = lArc.get(j);
-        SpecificCadastralBoundary sCB = parc.getBoundary().get(j);
+        SpecificCadastralBoundary sCB = parc.getSpecificCadastralBoundary().get(j);
 
         if (sCB.getType() == SpecificCadastralBoundary.ROAD) {
           continue;
@@ -517,7 +517,7 @@ public class CadastralParcelLoader {
         SpecificCadastralBoundary b = new SpecificCadastralBoundary(a.getGeom());
         b.setType(a.getOrientation());
 
-        p.getBoundary().add(b);
+        p.getSpecificCadastralBoundary().add(b);
 
       }
 

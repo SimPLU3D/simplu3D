@@ -155,7 +155,7 @@ public class HauteurCalculation {
 
     for (CadastralParcel sp : spList.cadastralParcel) {
 
-      IFeatureCollection<SpecificCadastralBoundary> bordures = sp.getBoundary();
+      IFeatureCollection<SpecificCadastralBoundary> bordures = sp.getSpecificCadastralBoundary();
 
       for (SpecificCadastralBoundary bord : bordures) {
         if (bord.getType() == SpecificCadastralBoundary.ROAD

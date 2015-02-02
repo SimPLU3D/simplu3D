@@ -54,7 +54,7 @@ public class UB16PredicateWithParameters<O extends Cuboid> implements
     for (CadastralParcel cP : bPU.getCadastralParcel()) {
       // for (SubParcel sB : cP.getSubParcel()) {
 
-      for (SpecificCadastralBoundary sCB : cP.getBoundary()) {
+      for (SpecificCadastralBoundary sCB : cP.getSpecificCadastralBoundary()) {
 
         if (sCB.getType() == SpecificCadastralBoundary.ROAD) {
 

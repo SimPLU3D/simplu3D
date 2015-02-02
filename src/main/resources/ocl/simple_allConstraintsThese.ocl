@@ -12,24 +12,24 @@ Sequence{'Garage'}->includes(self.destination) and Prescription_SURF.allInstance
 
 
 context BasicPropertyUnit inv:
-self.getCadastralParcel().getSubParcel().getBoundary()->select(b | b.type = 'FRONT' and  b.geom.length()>4.5)->notEmpty()
+self.getCadastralParcel().getSubParcel().getSpecificCadastralBoundary()->select(b | b.type = 'FRONT' and  b.geom.length()>4.5)->notEmpty()
 
 
 context SubParcel inv:
-let geomL :Sequence(IGeometry)=self.getBoundary()->select(b | b.type = 'FRONT' and b.getAlignement()->isEmpty() and b.getRecoil()->isEmpty()).geom in
+let geomL :Sequence(IGeometry)=self.getSpecificCadastralBoundary()->select(b | b.type = 'FRONT' and b.getAlignement()->isEmpty() and b.getRecoil()->isEmpty()).geom in
 let geomB :Bag(IOrientableSurface)=self.getBuildingsParts().footprint in
 geomB->forAll(gB | geomL->forAll(gL | gL.distance(gB) > 1.5))
 
 
 context SubParcel inv:
-let recoils :Sequence(Recoil)=self.getBoundary().getRecoil() in
+let recoils :Sequence(Recoil)=self.getSpecificCadastralBoundary().getRecoil() in
 let geomB :Bag(IOrientableSurface)=self.getBuildingsParts().footprint in
 geomB->forAll(gB | recoils->forAll(rec | gB.distance(rec.getObjRef().getGeom()) > rec.getDistance()))
 
 
 
 context SubParcel inv:
-let alignements :Sequence(Alignement)=self.getBoundary().getAlignement() in
+let alignements :Sequence(Alignement)=self.getSpecificCadastralBoundary().getAlignement() in
 let geomB :Bag(IOrientableSurface)=self.getBuildingsParts().footprint in
 geomB->forAll(gB | alignements->forAll(ali | gB.distance(ali.getGeom()) > 0))
 
@@ -46,7 +46,7 @@ else
 endif
 
 context SubParcel inv:
-let lBPNeigh : Sequence(AbstractBuilding)= self.getBoundary().select(type='LAT').getFeatAdj().oclAsType(CadastralParcel).getSubParcel().getBuildingsParts()->select(bP | bP.footprint.contains(self.geom)) in
+let lBPNeigh : Sequence(AbstractBuilding)= self.getSpecificCadastralBoundary().select(type='LAT').getFeatAdj().oclAsType(CadastralParcel).getSubParcel().getBuildingsParts()->select(bP | bP.footprint.contains(self.geom)) in
 let occupGable : Integer= lBPNeigh.getRoofSurface().getGable()->select(g |self.getBuildingsParts().getRoofSurface().getGable() ->exists(g2 | g.contains(g2))) ->size() in
 if occupGable = lBPNeigh ->size() then 
 true 
@@ -55,18 +55,18 @@ self.getBuildingsParts() = occupGable
 endif
 
 context SubParcel inv:
-self.getBoundary().select(type<>'FIC').geom ->forAll(g |
+self.getSpecificCadastralBoundary().select(type<>'FIC').geom ->forAll(g |
 self.getBuildingsParts().footprint .distance(g)->min() > 1.9)
 
 context SubParcel inv:
 self.getBuildingsParts().bandEpsilon(self.getConsLine(), 0, 13).forAll(bP |
-self.getBoundary().select(type<>'FIC').geom.forAll(g | bP.prospect(g,0,0.5)))
+self.getSpecificCadastralBoundary().select(type<>'FIC').geom.forAll(g | bP.prospect(g,0,0.5)))
 
 context SubParcel inv:
-self.getBuildingsParts().bandEpsilon(self.getConsLine(), 20, 1).forAll(bP | self.getBoundary().select(type='BACK' or type='LAT').geom.forAll(g | bP.prospect(g,0,0.5)))
+self.getBuildingsParts().bandEpsilon(self.getConsLine(), 20, 1).forAll(bP | self.getSpecificCadastralBoundary().select(type='BACK' or type='LAT').geom.forAll(g | bP.prospect(g,0,0.5)))
 
 context SubParcel inv:
-self.getBoundary().select(type='BACK' or type='LAT').geom->forAll(g |self.getBuildingsParts().bandEpsilon(self.getConsLine(), 20, 1).footprint.distance(g)->min() > 3)
+self.getSpecificCadastralBoundary().select(type='BACK' or type='LAT').geom->forAll(g |self.getBuildingsParts().bandEpsilon(self.getConsLine(), 20, 1).footprint.distance(g)->min() > 3)
 
 --.select(b | f.isInPositiveSpace(b.geom))
 context BasicPropertyUnit inv:

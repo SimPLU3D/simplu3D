@@ -72,7 +72,7 @@ public class ImportModelInstanceBasicPropertyUnit {
     modelInstance.addModelInstanceElement(cP);
     modelInstance.addModelInstanceElement(cP.getGeom());
     modelInstance.addModelInstanceElement(cP.getConsLine());
-    for (SpecificCadastralBoundary sCB : cP.getBoundary()) {
+    for (SpecificCadastralBoundary sCB : cP.getSpecificCadastralBoundary()) {
       modelInstance.addModelInstanceElement(sCB);
       modelInstance.addModelInstanceElement(sCB.getGeom());
       IFeature feat = sCB.getFeatAdj();

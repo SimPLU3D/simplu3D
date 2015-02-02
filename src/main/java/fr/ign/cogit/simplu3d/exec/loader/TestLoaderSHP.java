@@ -66,15 +66,15 @@ public class TestLoaderSHP {
       
       
       
-      count = count + sp.getBoundary().size();
+      count = count + sp.getSpecificCadastralBoundary().size();
       
       IDirectPosition centroidParcel = sp.getGeom().centroid();
 
       AttributeManager.addAttribute(sp, "ID", sp.getId(), "Integer");
-      AttributeManager.addAttribute(sp, "NBBord", sp.getBoundary().size(), "Integer");
+      AttributeManager.addAttribute(sp, "NBBord", sp.getSpecificCadastralBoundary().size(), "Integer");
       AttributeManager.addAttribute(sp, "NBBat", bPU.getBuildings().size(), "Integer");
       
-      for (SpecificCadastralBoundary b : sp.getBoundary()) {
+      for (SpecificCadastralBoundary b : sp.getSpecificCadastralBoundary()) {
         bordures.add(b);
 
         AttributeManager.addAttribute(b, "ID", b.getId(), "Integer");
@@ -241,7 +241,7 @@ public class TestLoaderSHP {
       featOutTestCons.add(new DefaultFeature(sp.getConsLine()));
       
       
-      System.out.println(sp.getBoundary().size());
+      System.out.println(sp.getSpecificCadastralBoundary().size());
       
     }
     
