@@ -178,6 +178,108 @@
 
 
 	</build>
+        <profiles>
+    			<!-- Tests under Linux 32bits -->
+		<profile>
+			<id>lin32</id>
+			<activation>
+				<os>
+					<family>unix</family>
+					<arch>i386</arch>
+				</os>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<environmentVariables>
+								<PATH>${basedir}\lib\native_libraries\windows-linux-i386\</PATH>
+							</environmentVariables>
+							<skipTests>false</skipTests>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+					<!-- Tests under Linux 64bits -->
+		<profile>
+			<id>lin64</id>
+			<activation>
+				<os>
+					<family>unix</family>
+					<arch>amd64</arch>
+				</os>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<environmentVariables>
+								<PATH>${basedir}\lib\native_libraries\windows-amd64\</PATH>
+							</environmentVariables>
+							<skipTests>false</skipTests>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+
+		<!-- Tests under Windows 64bits -->
+		<profile>
+			<id>win64</id>
+			<activation>
+				<os>
+					<family>windows</family>
+					<arch>amd64</arch>
+				</os>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<environmentVariables>
+								<PATH>${basedir}\lib\native_libraries\windows-amd64\</PATH>
+							</environmentVariables>
+							<skipTests>false</skipTests>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<!-- Tests under Windows 32bits -->
+		<profile>
+			<id>win32</id>
+			<activation>
+				<os>
+					<family>windows</family>
+					<arch>x86</arch>
+				</os>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<environmentVariables>
+								<PATH>${basedir}\lib\native_libraries\windows-i586\</PATH>
+							</environmentVariables>
+							<skipTests>false</skipTests>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+ </profiles>
 
 	<repositories>
 		<repository>
