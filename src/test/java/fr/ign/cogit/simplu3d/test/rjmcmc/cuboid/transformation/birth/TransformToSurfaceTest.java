@@ -51,17 +51,21 @@ public class TransformToSurfaceTest {
 
     Vector<Double> lvalIn = new Vector<Double>();
 
-    lvalIn.add(0.5);
-    lvalIn.add(0.5);
-    lvalIn.add(0.5);
-    lvalIn.add(0.5);
-    lvalIn.add(0.5);
-    lvalIn.add(0.5);
+//    lvalIn.add(0.5);
+//    lvalIn.add(0.5);
+//    lvalIn.add(0.5);
+//    lvalIn.add(0.5);
+//    lvalIn.add(0.5);
+//    lvalIn.add(0.5);
 
     Vector<Double> lvarIn = new Vector<Double>();
     lvarIn.add(0.5);
     lvarIn.add(0.5);
-
+    lvarIn.add(0.5);
+    lvarIn.add(0.5);
+    lvarIn.add(0.5);
+    lvarIn.add(0.5);
+    
     Vector<Double> lvalOut = new Vector<>();
     lvalOut.add(0.0);
     lvalOut.add(0.0);
@@ -71,8 +75,8 @@ public class TransformToSurfaceTest {
     lvalOut.add(0.0);
 
     Vector<Double> lvarOut = new Vector<>();
-    lvarOut.add(0.0);
-    lvarOut.add(0.0);
+//    lvarOut.add(0.0);
+//    lvarOut.add(0.0);
 
     t.apply(true, lvalIn, lvarIn, lvalOut, lvarOut);
 
@@ -82,8 +86,8 @@ public class TransformToSurfaceTest {
       outString += lvalOut.get(i) + " ";
     }
 
-    outString += lvarOut.get(0) + " ";
-    outString += lvarOut.get(1) + " ";
+//    outString += lvarOut.get(0) + " ";
+//    outString += lvarOut.get(1) + " ";
 
     System.out.println("out = " + outString);
 
@@ -96,17 +100,21 @@ public class TransformToSurfaceTest {
      */
     lvalIn = new Vector<Double>();
 
-    lvalIn.add(0.0);
-    lvalIn.add(0.0);
-    lvalIn.add(0.5);
-    lvalIn.add(0.5);
-    lvalIn.add(0.5);
-    lvalOut.add(0.5);
+//    lvalIn.add(0.0);
+//    lvalIn.add(0.0);
+//    lvalIn.add(0.5);
+//    lvalIn.add(0.5);
+//    lvalIn.add(0.5);
+//    lvalOut.add(0.5);
 
     lvarIn = new Vector<Double>();
     lvarIn.add(0.5);
     lvarIn.add(0.5);
-
+    lvarIn.add(0.5);
+    lvarIn.add(0.5);
+    lvarIn.add(0.5);
+    lvarIn.add(0.5);
+    
     lvalOut = new Vector<>();
     lvalOut.add(0.0);
     lvalOut.add(0.0);
@@ -116,8 +124,8 @@ public class TransformToSurfaceTest {
     lvalOut.add(0.0);
 
     lvarOut = new Vector<>();
-    lvarOut.add(0.0);
-    lvarOut.add(0.0);
+//    lvarOut.add(0.0);
+//    lvarOut.add(0.0);
 
     outString = "";
 
@@ -125,8 +133,8 @@ public class TransformToSurfaceTest {
       outString += lvalOut.get(i) + " ";
     }
 
-    outString += lvarOut.get(0) + " ";
-    outString += lvarOut.get(1) + " ";
+//    outString += lvarOut.get(0) + " ";
+//    outString += lvarOut.get(1) + " ";
 
     System.out.println("out = " + outString);
     cuboidOut = new Cuboid(lvalOut.get(0), lvalOut.get(1), lvalOut.get(2),
@@ -135,17 +143,21 @@ public class TransformToSurfaceTest {
 
     // in = new double[] { 1, 1, 0.5, 0.5, 0.5, 0.5, 0.5 };
     lvalIn.clear();
-    lvalIn.add(1.0);
-    lvalIn.add(1.0);
-    lvalIn.add(0.5);
-    lvalIn.add(0.5);
-    lvalIn.add(0.5);
-    lvalIn.add(0.5);
+//    lvalIn.add(1.0);
+//    lvalIn.add(1.0);
+//    lvalIn.add(0.5);
+//    lvalIn.add(0.5);
+//    lvalIn.add(0.5);
+//    lvalIn.add(0.5);
 
     lvarIn.clear();
+    lvarIn.add(1.0);
+    lvarIn.add(1.0);
     lvarIn.add(0.5);
     lvarIn.add(0.5);
-
+    lvarIn.add(0.5);
+    lvarIn.add(0.5);
+    
     lvalOut.clear();
     lvalOut.add(0.0);
     lvalOut.add(0.0);
@@ -155,8 +167,8 @@ public class TransformToSurfaceTest {
     lvalOut.add(0.0);
 
     lvarOut.clear();
-    lvarOut.add(0.0);
-    lvarOut.add(0.0);
+//    lvarOut.add(0.0);
+//    lvarOut.add(0.0);
 
     t.apply(true, lvalIn, lvarIn, lvalOut, lvarOut);
 
@@ -168,8 +180,8 @@ public class TransformToSurfaceTest {
       outString += lvalOut.get(i) + " ";
     }
 
-    outString += lvarOut.get(0) + " ";
-    outString += lvarOut.get(1) + " ";
+//    outString += lvarOut.get(0) + " ";
+//    outString += lvarOut.get(1) + " ";
 
     System.out.println("out = " + outString);
     cuboidOut = new Cuboid(lvalOut.get(0), lvalOut.get(1), lvalOut.get(2),
@@ -185,14 +197,18 @@ public class TransformToSurfaceTest {
       // 0.5, 0.5, 0.5, 0.5 };
       lvalIn = new Vector<Double>();
 
-      lvalIn.add(generator.nextDouble());
-      lvalIn.add(generator.nextDouble());
-      lvalIn.add(0.5);
-      lvalIn.add(0.5);
-      lvalIn.add(0.5);
-      lvalIn.add(0.5);
+//      lvalIn.add(generator.nextDouble());
+//      lvalIn.add(generator.nextDouble());
+//      lvalIn.add(0.5);
+//      lvalIn.add(0.5);
+//      lvalIn.add(0.5);
+//      lvalIn.add(0.5);
 
       lvarIn = new Vector<Double>();
+      lvarIn.add(generator.nextDouble());
+      lvarIn.add(generator.nextDouble());
+      lvarIn.add(0.5);
+      lvarIn.add(0.5);
       lvarIn.add(0.5);
       lvarIn.add(0.5);
 
@@ -205,8 +221,8 @@ public class TransformToSurfaceTest {
       lvalOut.add(0.0);
 
       lvarOut = new Vector<>();
-      lvarOut.add(0.0);
-      lvarOut.add(0.0);
+//      lvarOut.add(0.0);
+//      lvarOut.add(0.0);
 
       t.apply(true, lvalIn, lvarIn, lvalOut, lvarOut);
 

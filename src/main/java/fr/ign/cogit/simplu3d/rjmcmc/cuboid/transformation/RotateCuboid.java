@@ -12,24 +12,15 @@ public class RotateCuboid implements Transform {
     amplitudeRotate = amp;
   }
 
-
-
   @Override
   public double apply(boolean direct, Vector<Double> val0, Vector<Double> var0,
       Vector<Double> val1, Vector<Double> var1) {
-
     double dor = var0.get(0);
-    
-    
-    
     double newAngle = val0.get(5) + (0.5 - dor) * amplitudeRotate;
     double modulo = newAngle % (Math.PI);
     if (modulo < 0) {
       modulo = Math.PI + modulo;
     }
-    
-    
-
     val1.set(0, val0.get(0));
     val1.set(1, val0.get(1));
     val1.set(2, val0.get(2));
@@ -38,19 +29,16 @@ public class RotateCuboid implements Transform {
     val1.set(5, modulo);
 
     var1.set(0, 1 - dor);
-
     return 1;
   }
 
   @Override
   public double getAbsJacobian(boolean direct) {
-    // TODO Auto-generated method stub
     return 1;
   }
 
   @Override
   public int dimension(int n0, int n1) {
-    // TODO Auto-generated method stub
     return 7;
   }
 }
