@@ -21,6 +21,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<librjmcmc4j.version>1.0-SNAPSHOT</librjmcmc4j.version>
 	</properties>
 
 	<developers>
@@ -219,8 +220,9 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
+        					<argLine>-Djava.library.path=${basedir}/lib/native_libraries/linux-amd64</argLine>
 							<environmentVariables>
-								<PATH>${basedir}\lib\native_libraries\windows-amd64\</PATH>
+								<PATH>${basedir}/lib/native_libraries/linux-amd64</PATH>
 							</environmentVariables>
 							<skipTests>false</skipTests>
 						</configuration>
@@ -324,6 +326,12 @@
 			<name>Atlassian</name>
 			<url>https://maven.atlassian.com/maven1/maven2</url>
 		</repository>
+		<repository>
+			<snapshots><enabled>true</enabled></snapshots>
+			<id>iscpif-ign-snapshots</id>
+			<name>ISCPIF Snapshot repository for IGN</name>
+			<url>http://maven.iscpif.fr/ign-snapshots/</url>
+		</repository>
 	</repositories>
 
 
@@ -342,14 +350,18 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.ign</groupId>
-			<artifactId>librjmcmc4j</artifactId>
-			<version>1.0-SNAPSHOT</version>
-			<type>jar</type>
+			<artifactId>librjmcmc4j-core</artifactId>
+			<version>${librjmcmc4j.version}</version>
 		</dependency>
 		<dependency>
-		<groupId>fr.ign.cogit</groupId>
-	<artifactId>cogit-sig3d</artifactId>
-	<version>1.0-SNAPSHOT</version>
+			<groupId>fr.ign</groupId>
+			<artifactId>librjmcmc4j-geometry</artifactId>
+			<version>${librjmcmc4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.ign.cogit</groupId>
+			<artifactId>cogit-sig3d</artifactId>
+			<version>1.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>

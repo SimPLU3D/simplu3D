@@ -10,7 +10,8 @@ import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.classconstrained.OptimisedBuildingsCuboidDirectRejectionNoVisitor;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.predicate.UB16PredicateWithParameters;
-import fr.ign.rjmcmc.configuration.Configuration;
+import fr.ign.mpp.configuration.BirthDeathModification;
+import fr.ign.mpp.configuration.GraphConfiguration;
 
 /**
  * Simulateur standard
@@ -59,11 +60,11 @@ public class BasicPostGISSimulator {
       OptimisedBuildingsCuboidDirectRejectionNoVisitor oCB = new OptimisedBuildingsCuboidDirectRejectionNoVisitor();
 
       // Chargement des règles à appliquer
-      UB16PredicateWithParameters<Cuboid> pred = new UB16PredicateWithParameters<Cuboid>(
+      UB16PredicateWithParameters<Cuboid,GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new UB16PredicateWithParameters<>(
           bPU, exp.getDouble("hini"), exp.getDouble("slope"));
 
       // Exécution de l'optimisation
-      Configuration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred);
+      GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred);
 
       // Identifiant de la parcelle
 

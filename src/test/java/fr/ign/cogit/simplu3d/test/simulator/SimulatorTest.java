@@ -10,6 +10,8 @@ import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.classconstrained.OptimisedBuildingsCuboidFinalDirectRejection;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.predicate.UXL3Predicate;
+import fr.ign.mpp.configuration.BirthDeathModification;
+import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
 
 public class SimulatorTest {
@@ -30,7 +32,7 @@ public class SimulatorTest {
 
     OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();
 
-    UXL3Predicate<Cuboid> pred = new UXL3Predicate<>(env.getBpU().get(1));
+    UXL3Predicate<Cuboid,GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new UXL3Predicate<>(env.getBpU().get(1));
 
     oCB.process(bPU, p, env, 1, pred);
   }

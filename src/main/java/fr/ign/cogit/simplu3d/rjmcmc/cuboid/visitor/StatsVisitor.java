@@ -20,14 +20,14 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
 
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
-import fr.ign.mpp.configuration.GraphConfiguration;
-import fr.ign.rjmcmc.configuration.Configuration;
-import fr.ign.rjmcmc.kernel.SimpleObject;
+import fr.ign.mpp.configuration.AbstractBirthDeathModification;
+import fr.ign.mpp.configuration.AbstractGraphConfiguration;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.Temperature;
 import fr.ign.simulatedannealing.visitor.Visitor;
 
-public class StatsVisitor<O extends SimpleObject> implements Visitor<O> {
+public class StatsVisitor<O extends Cuboid, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>>
+implements Visitor<C, M> {
 
   private int dump;
   private int iter;
@@ -164,21 +164,19 @@ public class StatsVisitor<O extends SimpleObject> implements Visitor<O> {
     this.dump = dump;
   }
 
-  @SuppressWarnings("unchecked")
   @Override
-  public void visit(Configuration<O> config, Sampler<O> sampler, Temperature t) {
+  public void visit(C config, Sampler<C,M> sampler, Temperature t) {
     ++iter;
 
     this.bestEnergy = Math.min(config.getEnergy(), bestEnergy);
 
     if (iter % dump == 0) {
-      this.addInformationToMainWindow((GraphConfiguration<Cuboid>) config);
+      this.addInformationToMainWindow(config);
     }
 
   }
 
-  private void addInformationToMainWindow(GraphConfiguration<Cuboid> config) {
-    // TODO Auto-generated method stub
+  private void addInformationToMainWindow(C config) {
 
     series.add(iter, config.getEnergy());
     seriesUnary.add(iter, config.getUnaryEnergy());
@@ -189,12 +187,11 @@ public class StatsVisitor<O extends SimpleObject> implements Visitor<O> {
   }
 
   @Override
-  public void begin(Configuration<O> config, Sampler<O> sampler, Temperature t) {
+  public void begin(C config, Sampler<C,M> sampler, Temperature t) {
   }
 
   @Override
-  public void end(Configuration<O> config, Sampler<O> sampler, Temperature t) {
-
+  public void end(C config, Sampler<C,M> sampler, Temperature t) {
   }
 
 }

@@ -19,9 +19,10 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCub
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.classconstrained.OptimisedBuildingsCuboidFinalDirectRejection;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.predicate.UXL3Predicate;
+import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
+import fr.ign.mpp.configuration.GraphVertex;
 import fr.ign.parameters.Parameters;
-import fr.ign.rjmcmc.configuration.Configuration;
 
 /**
  * Classe pour étudier les variations du coefficient de température
@@ -31,97 +32,96 @@ import fr.ign.rjmcmc.configuration.Configuration;
  */
 public class InfluCoeffTemp {
 
+	// [building_footprint_rectangle_cli_main
+	public static void main(String[] args) throws Exception {
 
-  // [building_footprint_rectangle_cli_main
-  public static void main(String[] args) throws Exception {
+		String folderName = "./src/main/resources/scenario/";
 
-    String folderName = "./src/main/resources/scenario/";
+		String fileName = "building_parameters_project_expthese_1.xml";
 
-    String fileName = "building_parameters_project_expthese_1.xml";
-    
-    Parameters p = Parameters.unmarshall(new File(folderName + fileName));
+		Parameters p = Parameters.unmarshall(new File(folderName + fileName));
 
+		int nbIt = 1;
+		int nbInter = 5;
 
+		double bMin = 0.99699993;
+		double bMax = 0.9999999;
 
-    int nbIt = 1;
-    int nbInter = 5;
+		int count = 0;
 
-    double bMin = 0.99699993;
-    double bMax = 0.9999999;
+		List<Double> ld = new ArrayList<>();
 
-    int count = 0;
+		for (int i = 0; i < nbInter; i++) {
 
-    List<Double> ld = new ArrayList<>();
+			ld.add(i * (bMax - bMin) / nbInter + bMin);
 
-    for (int i = 0; i < nbInter; i++) {
+		}
 
-      ld.add(i * (bMax - bMin) / nbInter + bMin);
+		ld.add(bMax);
 
-    }
+		Object[] valCoeff = ld.toArray();
 
-     ld.add(bMax);
+		for (int i = 0; i < valCoeff.length; i++) {
 
-    Object[] valCoeff = ld.toArray();
+			// writer.append(valCoeff[i] + ";");
 
-    for (int i = 0; i < valCoeff.length; i++) {
+			for (int j = 0; j < nbIt; j++) {
+				Environnement env = LoaderSHP.load(p.getString("folder"));
 
-      // writer.append(valCoeff[i] + ";");
+				OptimisedBuildingsCuboidFinalDirectRejection ocb = new OptimisedBuildingsCuboidFinalDirectRejection();
+				UXL3Predicate<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new UXL3Predicate<>(
+						env.getBpU().get(1));
 
-      for (int j = 0; j < nbIt; j++) {
-        Environnement env = LoaderSHP.load(p.getString("folder"));
+				// OCLBuildingsCuboidFinal ocb = new OCLBuildingsCuboidFinal();
+				ocb.setCoeffDec((double) valCoeff[i]);
 
-        OptimisedBuildingsCuboidFinalDirectRejection ocb = new OptimisedBuildingsCuboidFinalDirectRejection();
-        UXL3Predicate<Cuboid> pred = new UXL3Predicate<>(env.getBpU().get(1));
+				double timeMs = System.currentTimeMillis();
 
-        // OCLBuildingsCuboidFinal ocb = new OCLBuildingsCuboidFinal();
-        ocb.setCoeffDec((double) valCoeff[i]);
+				GraphConfiguration<Cuboid> cc = ocb.process(
+						env.getBpU().get(1), p, env, 1, pred);
 
-        double timeMs = System.currentTimeMillis();
+				IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
 
-        Configuration<Cuboid> cc = ocb.process(env.getBpU().get(1), p, env, 1,
-            pred);
+				for (GraphVertex<Cuboid> v : cc.getGraph().vertexSet()) {
 
-        IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
+					IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<>();
+					iMS.addAll(GenerateSolidFromCuboid.generate(v.getValue())
+							.getFacesList());
 
-        for (GraphConfiguration<Cuboid>.GraphVertex v : ((GraphConfiguration<Cuboid>) cc)
-            .getGraph().vertexSet()) {
+					IFeature feat = new DefaultFeature(iMS);
 
-          IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<>();
-          iMS.addAll(GenerateSolidFromCuboid.generate(v.getValue())
-              .getFacesList());
+					AttributeManager.addAttribute(feat, "Longueur",
+							Math.max(v.getValue().length, v.getValue().width),
+							"Double");
+					AttributeManager.addAttribute(feat, "Largeur",
+							Math.min(v.getValue().length, v.getValue().width),
+							"Double");
+					AttributeManager.addAttribute(feat, "Hauteur",
+							v.getValue().height, "Double");
+					AttributeManager.addAttribute(feat, "Rotation",
+							v.getValue().orientation, "Double");
 
-          IFeature feat = new DefaultFeature(iMS);
+					iFeatC.add(feat);
 
-          AttributeManager.addAttribute(feat, "Longueur",
-              Math.max(v.getValue().length, v.getValue().width), "Double");
-          AttributeManager.addAttribute(feat, "Largeur",
-              Math.min(v.getValue().length, v.getValue().width), "Double");
-          AttributeManager.addAttribute(feat, "Hauteur", v.getValue().height,
-              "Double");
-          AttributeManager.addAttribute(feat, "Rotation",
-              v.getValue().orientation, "Double");
+				}
 
-          iFeatC.add(feat);
+				ShapefileWriter.write(iFeatC,
+						p.get("result").toString() + "shp_" + ld.get(i) + "_ "
+								+ j + "_ene" + cc.getEnergy() + ".shp");
 
-        }
+				System.out.println(valCoeff[i] + "," + ocb.getCount() + ","
+						+ (System.currentTimeMillis() - timeMs) + ","
+						+ cc.getEnergy());
 
-        ShapefileWriter.write(iFeatC,
-            p.get("result").toString() + "shp_" + ld.get(i) + "_ " + j + "_ene"
-                + cc.getEnergy() + ".shp");
+				count++;
 
-        System.out.println(valCoeff[i] + "," + ocb.getCount() + ","
-            + (System.currentTimeMillis() - timeMs) + "," + cc.getEnergy());
+				System.out.println("État itération : " + count + "  / "
+						+ (valCoeff.length * nbIt));
 
-        count++;
+			}
 
-        System.out.println("État itération : " + count + "  / "
-            + (valCoeff.length * nbIt));
+		}
 
-      }
-
-    }
-
-  }
-
+	}
 
 }

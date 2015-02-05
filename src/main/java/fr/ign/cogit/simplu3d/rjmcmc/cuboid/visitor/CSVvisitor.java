@@ -8,13 +8,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
-import fr.ign.rjmcmc.configuration.Configuration;
+import fr.ign.mpp.configuration.ListConfiguration;
+import fr.ign.rjmcmc.configuration.Modification;
+import fr.ign.rjmcmc.kernel.SimpleObject;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.Temperature;
 import fr.ign.simulatedannealing.visitor.Visitor;
 
-public class CSVvisitor<O extends AbstractSimpleBuilding> implements Visitor<O> {
+public class CSVvisitor<O extends SimpleObject, C extends ListConfiguration<O, C, M>, M extends Modification<C, M>> implements Visitor<C,M> {
   private int dump;
   private int save;
   private int iter;
@@ -41,7 +42,7 @@ public class CSVvisitor<O extends AbstractSimpleBuilding> implements Visitor<O> 
   }
 
   @Override
-  public void begin(Configuration<O> config, Sampler<O> sampler, Temperature t) {
+  public void begin(C config, Sampler<C,M> sampler, Temperature t) {
 
     String s = "Iteration" + textSeparator + "NBCube" + textSeparator
         + "ENERGIE" + textSeparator + "ENERGIE_MOY" + textSeparator
@@ -58,7 +59,7 @@ public class CSVvisitor<O extends AbstractSimpleBuilding> implements Visitor<O> 
   }
 
   @Override
-  public void end(Configuration<O> config, Sampler<O> sampler, Temperature t) {
+  public void end(C config, Sampler<C,M> sampler, Temperature t) {
     try {
       writer.flush();
       writer.close();
@@ -74,7 +75,7 @@ public class CSVvisitor<O extends AbstractSimpleBuilding> implements Visitor<O> 
   double energyMoy = 0;
 
   @Override
-  public void visit(Configuration<O> config, Sampler<O> sampler, Temperature t) {
+  public void visit(C config, Sampler<C,M> sampler, Temperature t) {
 
     ++iter;
 
@@ -95,7 +96,7 @@ public class CSVvisitor<O extends AbstractSimpleBuilding> implements Visitor<O> 
 
   }
 
-  public void doWrite(Configuration<O> config, Sampler<O> sampler) {
+  public void doWrite(C config, Sampler<C,M> sampler) {
 
     StringBuffer sB = new StringBuffer();
 

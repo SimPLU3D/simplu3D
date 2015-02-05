@@ -8,16 +8,16 @@ import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
-import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
-import fr.ign.rjmcmc.configuration.Configuration;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
+import fr.ign.mpp.configuration.AbstractBirthDeathModification;
+import fr.ign.mpp.configuration.AbstractGraphConfiguration;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
-import fr.ign.rjmcmc.configuration.Modification;
 
-public class UXL3PredicateBuildingSeparation<O extends AbstractBuilding>
-    implements ConfigurationModificationPredicate<O> {
+public class UXL3PredicateBuildingSeparation<O extends AbstractSimpleBuilding, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>>
+    implements ConfigurationModificationPredicate<C, M> {
 
   IMultiCurve<IOrientableCurve> curveS;
 
@@ -53,7 +53,7 @@ public class UXL3PredicateBuildingSeparation<O extends AbstractBuilding>
   }
 
   @Override
-  public boolean check(Configuration<O> c, Modification<O, Configuration<O>> m) {
+  public boolean check(C c, M m) {
 
     List<O> lO = m.getBirth();
 

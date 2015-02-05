@@ -6,11 +6,11 @@ import org.apache.log4j.Logger;
 
 import tudresden.ocl20.pivot.modelinstancetype.types.IModelInstanceObject;
 import fr.ign.cogit.simplu3d.checker.VeryFastRuleChecker;
-import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
-import fr.ign.rjmcmc.configuration.Configuration;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
+import fr.ign.mpp.configuration.BirthDeathModification;
+import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
-import fr.ign.rjmcmc.configuration.Modification;
 
 /**
  * A modification predicate used in a DirectRejectionSampler. When a modification is proposed, it
@@ -18,8 +18,8 @@ import fr.ign.rjmcmc.configuration.Modification;
  * @author JPerret
  * @param <O>
  */
-public class ModelInstanceGraphConfigurationModificationPredicate<O extends AbstractBuilding>
-    implements ConfigurationModificationPredicate<O> {
+public class ModelInstanceGraphConfigurationModificationPredicate<O extends AbstractSimpleBuilding>
+    implements ConfigurationModificationPredicate<ModelInstanceGraphConfiguration<O>, ModelInstanceModification<O>> {
   /**
    * Logger.
    */
@@ -38,16 +38,15 @@ public class ModelInstanceGraphConfigurationModificationPredicate<O extends Abst
   }
 
   @Override
-  public boolean check(Configuration<O> c, Modification<O, Configuration<O>> m) {
+  public boolean check(ModelInstanceGraphConfiguration<O> c, ModelInstanceModification<O> m) {
     return this.check(c, m, true);
   }
 
-  public boolean check(Configuration<O> c, Modification<O, Configuration<O>> m, boolean cancelUpdate) {
-    ModelInstanceGraphConfiguration<O> conf = (ModelInstanceGraphConfiguration<O>) c;
-    List<IModelInstanceObject> list = conf.update(m);
+  public boolean check(ModelInstanceGraphConfiguration<O> c, ModelInstanceModification<O> m, boolean cancelUpdate) {
+    List<IModelInstanceObject> list = c.update(m);
     boolean result = this.vFR.check(list);
     if (cancelUpdate) {
-      conf.cancelUpdate(m);
+      c.cancelUpdate(m);
     }
     return result;
   }

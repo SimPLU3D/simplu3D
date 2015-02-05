@@ -48,7 +48,6 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid2;
 import fr.ign.cogit.simplu3d.util.PointInPolygon;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
-import fr.ign.rjmcmc.configuration.Configuration;
 import fr.ign.rjmcmc.energy.BinaryEnergy;
 import fr.ign.rjmcmc.energy.ConstantEnergy;
 import fr.ign.rjmcmc.energy.MinusUnaryEnergy;
@@ -849,7 +848,7 @@ public class Recal3D {
    * @return la configuration chargée, c'est à dire la formulation énergétique
    *         prise en compte
    */
-  public static Configuration<Cuboid> create_configuration(Parameters p,
+  public static GraphConfiguration<Cuboid> create_configuration(Parameters p,
       Geometry bpu) {
 
     // Énergie constante : à la création d'un nouvel objet
@@ -887,7 +886,7 @@ public class Recal3D {
         c3, b1);
     // empty initial configuration*/
 
-    Configuration<Cuboid> conf = new GraphConfiguration<Cuboid>(unaryEnergy,
+    GraphConfiguration<Cuboid> conf = new GraphConfiguration<Cuboid>(unaryEnergy,
         binaryEnergy);
 
     return conf;

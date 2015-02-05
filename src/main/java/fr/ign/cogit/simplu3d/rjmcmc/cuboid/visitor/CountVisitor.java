@@ -1,12 +1,12 @@
 package fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor;
 
 import fr.ign.rjmcmc.configuration.Configuration;
-import fr.ign.rjmcmc.kernel.SimpleObject;
+import fr.ign.rjmcmc.configuration.Modification;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.Temperature;
 import fr.ign.simulatedannealing.visitor.Visitor;
 
-public class CountVisitor<O extends SimpleObject> implements Visitor<O> {
+public class CountVisitor<C extends Configuration<C, M>, M extends Modification<C, M>> implements Visitor<C, M> {
 
   private int count = 0;
 
@@ -20,17 +20,16 @@ public class CountVisitor<O extends SimpleObject> implements Visitor<O> {
   }
 
   @Override
-  public void begin(Configuration<O> config, Sampler<O> sampler, Temperature t) {
+  public void begin(C config, Sampler<C,M> sampler, Temperature t) {
   }
 
   @Override
-  public void end(Configuration<O> config, Sampler<O> sampler, Temperature t) {
+  public void end(C config, Sampler<C,M> sampler, Temperature t) {
 
   }
 
   @Override
-  public void visit(Configuration<O> config, Sampler<O> sampler, Temperature t) {
-
+  public void visit(C config, Sampler<C,M> sampler, Temperature t) {
     count++;
   }
 

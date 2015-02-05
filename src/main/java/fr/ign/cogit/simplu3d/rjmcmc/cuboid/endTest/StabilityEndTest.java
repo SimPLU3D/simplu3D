@@ -1,12 +1,13 @@
 package fr.ign.cogit.simplu3d.rjmcmc.cuboid.endTest;
 
 import fr.ign.rjmcmc.configuration.Configuration;
+import fr.ign.rjmcmc.configuration.Modification;
 import fr.ign.rjmcmc.kernel.SimpleObject;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.endtest.EndTest;
 import fr.ign.simulatedannealing.temperature.Temperature;
 
-public class StabilityEndTest<O extends SimpleObject> implements EndTest<O> {
+public class StabilityEndTest<O extends SimpleObject> implements EndTest {
   int iterations;
   double lastEnergy;
   int iterationCount;
@@ -18,8 +19,8 @@ public class StabilityEndTest<O extends SimpleObject> implements EndTest<O> {
   }
 
   @Override
-  public boolean evaluate(Configuration<O> config, Sampler<O> sampler, Temperature t) {
-
+  public <C extends Configuration<C, M>, M extends Modification<C, M>> boolean evaluate(
+  		C config, Sampler<C, M> sampler, Temperature t) {
     double currentEnergy = config.getEnergy();
 
     if (currentEnergy != 0 && Math.abs(currentEnergy - lastEnergy) > 40) {

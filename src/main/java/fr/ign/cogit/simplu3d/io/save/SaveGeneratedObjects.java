@@ -14,70 +14,70 @@ import fr.ign.cogit.geoxygene.util.conversion.WktGeOxygene;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.mpp.configuration.GraphConfiguration;
-import fr.ign.rjmcmc.configuration.Configuration;
+import fr.ign.mpp.configuration.GraphVertex;
 
 public class SaveGeneratedObjects {
 
-  private final static Logger logger = Logger
-      .getLogger(SaveGeneratedObjects.class.getName());
+	private final static Logger logger = Logger
+			.getLogger(SaveGeneratedObjects.class.getName());
 
-  
-  public final static String SRID = "2154";
-  
-  public static final String TABLE_GENERATED_BUILDING = "generatedbuildings";
+	public final static String SRID = "2154";
 
-  public static boolean save(String host, String port, String database, String user,
-      String pw, Configuration<Cuboid> cc, int idExperiment, int idParcelle) {
+	public static final String TABLE_GENERATED_BUILDING = "generatedbuildings";
 
-    try {
+	public static boolean save(String host, String port, String database,
+			String user, String pw, GraphConfiguration<Cuboid> cc,
+			int idExperiment, int idParcelle) {
 
-      // Création de l'URL de chargement
-      String url = "jdbc:postgresql://" + host + ":" + port + "/" + database;
-      SaveGeneratedObjects.logger.info(Messages.getString("PostGIS.Try") + url);
-    
-      
-      
-      // Connexion
-      Connection conn = DriverManager.getConnection(url, user, pw);
+		try {
 
-      Statement s = conn.createStatement();
+			// Création de l'URL de chargement
+			String url = "jdbc:postgresql://" + host + ":" + port + "/"
+					+ database;
+			SaveGeneratedObjects.logger.info(Messages.getString("PostGIS.Try")
+					+ url);
 
-      for (GraphConfiguration<Cuboid>.GraphVertex v : ((GraphConfiguration<Cuboid>) cc)
-          .getGraph().vertexSet()) {
+			// Connexion
+			Connection conn = DriverManager.getConnection(url, user, pw);
 
-        double longueur = Math.max(v.getValue().length, v.getValue().width);
-        double largeur = Math.min(v.getValue().length, v.getValue().width);
-        double hauteur = v.getValue().height;
-        double orientation = v.getValue().orientation;
+			Statement s = conn.createStatement();
 
+			for (GraphVertex<Cuboid> v : cc.getGraph().vertexSet()) {
 
-        IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<>();
-        iMS.addAll(GenerateSolidFromCuboid.generate(v.getValue())
-            .getFacesList());
+				double longueur = Math.max(v.getValue().length,
+						v.getValue().width);
+				double largeur = Math.min(v.getValue().length,
+						v.getValue().width);
+				double hauteur = v.getValue().height;
+				double orientation = v.getValue().orientation;
 
-        String geomWKT =  "ST_GeomFromText('" + WktGeOxygene.makeWkt(iMS)+ "'," + SRID+ ")";
+				IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<>();
+				iMS.addAll(GenerateSolidFromCuboid.generate(v.getValue())
+						.getFacesList());
 
-        
-        
-        String sql = "Insert into "
-            + TABLE_GENERATED_BUILDING
-            + "(idparcelle,largeur,longueur,hauteur,orientation,idexperiment, the_geom) values ("
-            + idParcelle + "," + largeur + "," + longueur + "," + hauteur + ","
-            + orientation + "," + idExperiment + "," + geomWKT + ")";
+				String geomWKT = "ST_GeomFromText('"
+						+ WktGeOxygene.makeWkt(iMS) + "'," + SRID + ")";
 
-        System.out.println(sql);
+				String sql = "Insert into "
+						+ TABLE_GENERATED_BUILDING
+						+ "(idparcelle,largeur,longueur,hauteur,orientation,idexperiment, the_geom) values ("
+						+ idParcelle + "," + largeur + "," + longueur + ","
+						+ hauteur + "," + orientation + "," + idExperiment
+						+ "," + geomWKT + ")";
 
-        s.addBatch(sql);
-      }
+				System.out.println(sql);
 
-      s.executeBatch();
-      conn.close();
+				s.addBatch(sql);
+			}
 
-    } catch (Exception e) {
-      e.printStackTrace();
-      return false;
-    }
-    return true;
-  }
+			s.executeBatch();
+			conn.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
 
 }

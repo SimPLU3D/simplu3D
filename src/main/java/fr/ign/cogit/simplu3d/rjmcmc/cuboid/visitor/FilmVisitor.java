@@ -35,288 +35,295 @@ import fr.ign.cogit.simplu3d.representation.RepEnvironnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement.Theme;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
-import fr.ign.mpp.configuration.GraphConfiguration;
+import fr.ign.mpp.configuration.AbstractBirthDeathModification;
+import fr.ign.mpp.configuration.AbstractGraphConfiguration;
+import fr.ign.mpp.configuration.GraphVertex;
 import fr.ign.parameters.Parameters;
-import fr.ign.rjmcmc.configuration.Configuration;
-import fr.ign.rjmcmc.kernel.SimpleObject;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.Temperature;
 import fr.ign.simulatedannealing.visitor.Visitor;
 
-public class FilmVisitor<O extends SimpleObject> implements Visitor<O> {
+public class FilmVisitor<O extends Cuboid, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>>
+		implements Visitor<C, M> {
 
-  private MainWindow mW = null;
-  private int save;
-  private int iter;
+	private MainWindow mW = null;
+	private int save;
+	private int iter;
 
-  private final static String PREFIX_NAME_STRING = "Étape";
-  private static int MIN_LAYER = 3;
+	private final static String PREFIX_NAME_STRING = "Étape";
+	private static int MIN_LAYER = 3;
 
-  private GraphConfiguration<Cuboid> bestConfig = null;
-  private double bestValue = Double.POSITIVE_INFINITY;
+	private C bestConfig = null;
+	private double bestValue = Double.POSITIVE_INFINITY;
 
-  private IDirectPosition dp;
-  private Vecteur vectOrientation;
-  private String folder;
-  private int count = 0;
-  private Color col;
+	private IDirectPosition dp;
+	private Vecteur vectOrientation;
+	private String folder;
+	private int count = 0;
+	private Color col;
 
-  public FilmVisitor(IDirectPosition dp, Vecteur vectOrientation,
-      String folder, Color col, Parameters p) {
-    mW = new MainWindow();
-    represent(Environnement.getInstance(), mW, p);
-    this.dp = dp;
-    this.vectOrientation = vectOrientation;
-    this.folder = folder;
-    this.col = col;
-  }
+	public FilmVisitor(IDirectPosition dp, Vecteur vectOrientation,
+			String folder, Color col, Parameters p) {
+		mW = new MainWindow();
+		represent(Environnement.getInstance(), mW, p);
+		this.dp = dp;
+		this.vectOrientation = vectOrientation;
+		this.folder = folder;
+		this.col = col;
+	}
 
-  @Override
-  public void init(int dump, int save) {
-    this.iter = 0;
-    this.save = save;
+	@Override
+	public void init(int dump, int save) {
+		this.iter = 0;
+		this.save = save;
 
-    mW.getInterfaceMap3D().zoomOn(dp.getX(), dp.getY(), dp.getZ(),
-        vectOrientation);
+		mW.getInterfaceMap3D().zoomOn(dp.getX(), dp.getY(), dp.getZ(),
+				vectOrientation);
 
-  }
+	}
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public void visit(Configuration<O> config, Sampler<O> sampler, Temperature t) {
-    ++iter;
+	@Override
+	public void visit(C config, Sampler<C,M> sampler, Temperature t) {
+		++iter;
 
-    if (config.getEnergy() < bestValue) {
-      bestValue = config.getEnergy();
-      bestConfig = (GraphConfiguration<Cuboid>) config;
+		if (config.getEnergy() < bestValue) {
+			bestValue = config.getEnergy();
+			bestConfig = config;
 
-    }
+		}
 
-    if ((save > 0) && (iter % save == 0)) {
-      this.addInformationToMainWindow((GraphConfiguration<Cuboid>) config);
-    }
-  }
+		if ((save > 0) && (iter % save == 0)) {
+			this.addInformationToMainWindow(config);
+		}
+	}
 
-  @Override
-  public void begin(Configuration<O> config, Sampler<O> sampler, Temperature t) {
-  }
+	@Override
+	public void begin(C config, Sampler<C, M> sampler, Temperature t) {
+	}
 
-  @Override
-  public void end(Configuration<O> config, Sampler<O> sampler, Temperature t) {
+	@Override
+	public void end(C config, Sampler<C, M> sampler, Temperature t) {
 
-    this.addInformationToMainWindow(bestConfig);
-  }
+		this.addInformationToMainWindow(bestConfig);
+	}
 
-  private void addInformationToMainWindow(GraphConfiguration<Cuboid> config) {
+	private void addInformationToMainWindow(C config) {
 
-    IFeatureCollection<IFeature> feat = new FT_FeatureCollection<>();
+		IFeatureCollection<IFeature> feat = new FT_FeatureCollection<>();
 
-    for (GraphConfiguration<?>.GraphVertex v : config.getGraph().vertexSet()) {
+		for (GraphVertex<O> v : config.getGraph().vertexSet()) {
 
-      IGeometry geom = null;
+			IGeometry geom = null;
 
-      Object o = v.getValue();
+			Object o = v.getValue();
 
-      if (v.getValue() instanceof Cuboid) {
-        geom = GenerateSolidFromCuboid.generate((Cuboid) o);
+			if (v.getValue() instanceof Cuboid) {
+				geom = GenerateSolidFromCuboid.generate((Cuboid) o);
 
-      }
+			}
 
-      if (geom == null) {
-        continue;
-      }
+			if (geom == null) {
+				continue;
+			}
 
-      DefaultFeature df = new DefaultFeature(geom);
-      AttributeManager.addAttribute(df, "Energy", v.getEnergy(), "Double");
+			DefaultFeature df = new DefaultFeature(geom);
+			AttributeManager
+					.addAttribute(df, "Energy", v.getEnergy(), "Double");
 
-      df.setRepresentation(new ObjectCartoon(df, col));
+			df.setRepresentation(new ObjectCartoon(df, col));
 
-      feat.add(df);
+			feat.add(df);
 
-    }
+		}
 
-    if (!feat.isEmpty()) {
-      VectorLayer vl = new VectorLayer(feat, PREFIX_NAME_STRING + " : " + iter);
+		if (!feat.isEmpty()) {
+			VectorLayer vl = new VectorLayer(feat, PREFIX_NAME_STRING + " : "
+					+ iter);
 
-      int nbLayer = mW.getInterfaceMap3D().getCurrent3DMap().getLayerList()
-          .size();
+			int nbLayer = mW.getInterfaceMap3D().getCurrent3DMap()
+					.getLayerList().size();
 
-      if (nbLayer > MIN_LAYER) {
-        mW.getInterfaceMap3D().getCurrent3DMap().getLayerList()
-            .get(nbLayer - 1).setVisible(false);
-        mW.getInterfaceMap3D()
-            .getCurrent3DMap()
-            .removeLayer(
-                mW.getInterfaceMap3D().getCurrent3DMap().getLayerList()
-                    .get(nbLayer - 1).getLayerName());
-      }
+			if (nbLayer > MIN_LAYER) {
+				mW.getInterfaceMap3D().getCurrent3DMap().getLayerList()
+						.get(nbLayer - 1).setVisible(false);
+				mW.getInterfaceMap3D()
+						.getCurrent3DMap()
+						.removeLayer(
+								mW.getInterfaceMap3D().getCurrent3DMap()
+										.getLayerList().get(nbLayer - 1)
+										.getLayerName());
+			}
+
+			mW.getInterfaceMap3D().getCurrent3DMap().addLayer(vl);
+
+		}
+
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		boolean works = this.screenCapture(folder, "img" + (count++) + ".jpg",
+				mW.getInterfaceMap3D());
 
-      mW.getInterfaceMap3D().getCurrent3DMap().addLayer(vl);
+		if (!works) {
+			System.out.println("Not work");
+		}
+	}
+
+	/**
+	 * Permet d'enregistrer une image à partir de l'écran Ne fonctionne qu'avec
+	 * l'IHM actuel (Offset nécessaire) Ne prends pas compte de l'existance d'un
+	 * fichier de même nom
+	 * 
+	 * @param path
+	 *            le dossier dans lequel l'impr ecran sera supprime
+	 * @param fileName
+	 *            le nom du fichier
+	 * @return indique si la capture s'est effectuée avec succès
+	 */
+	public boolean screenCapture(String path, String fileName,
+			InterfaceMap3D iMap3D) {
 
-    }
+		try {
 
-    try {
-      Thread.sleep(1000);
-    } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+			ChartPanel v = StatsVisitor.CHARTSINGLETON;
 
-    boolean works = this.screenCapture(folder, "img" + (count++) + ".jpg",
-        mW.getInterfaceMap3D());
+			int xSup = 0;
+			int ySup = 0;
 
-    if (!works) {
-      System.out.println("Not work");
-    }
-  }
+			boolean hasStats = (v != null);
 
-  /**
-   * Permet d'enregistrer une image à partir de l'écran Ne fonctionne qu'avec
-   * l'IHM actuel (Offset nécessaire) Ne prends pas compte de l'existance d'un
-   * fichier de même nom
-   * @param path le dossier dans lequel l'impr ecran sera supprime
-   * @param fileName le nom du fichier
-   * @return indique si la capture s'est effectuée avec succès
-   */
-  public boolean screenCapture(String path, String fileName,
-      InterfaceMap3D iMap3D) {
+			if (hasStats) {
 
-    try {
+				xSup = v.getSize().width;
+				ySup = v.getSize().height;
 
-      ChartPanel v = StatsVisitor.CHARTSINGLETON;
+			}
 
-      int xSup = 0;
-      int ySup = 0;
+			int xSize = iMap3D.getSize().width + xSup;
+			int ySize = Math.max(iMap3D.getSize().height, ySup);
 
-      boolean hasStats = (v != null);
+			BufferedImage bufImage = new BufferedImage(xSize, ySize,
+					BufferedImage.TYPE_INT_RGB);
 
-      if (hasStats) {
+			Graphics g = bufImage.createGraphics();
 
-        xSup = v.getSize().width;
-        ySup = v.getSize().height;
+			g.setColor(Color.white);
 
-      }
+			// g.drawRect(0, 0, xSize, ySize);
 
-      int xSize = iMap3D.getSize().width + xSup;
-      int ySize = Math.max(iMap3D.getSize().height, ySup);
+			g.fillRect(0, 0, xSize, ySize);
 
-      BufferedImage bufImage = new BufferedImage(xSize, ySize,
-          BufferedImage.TYPE_INT_RGB);
+			iMap3D.getCanvas3D().paint(g);
 
-      Graphics g = bufImage.createGraphics();
+			if (hasStats) {
 
-      g.setColor(Color.white);
+				g.drawImage(v.getChart().createBufferedImage(xSup, ySup),
+						iMap3D.getSize().width, (ySize - ySup) / 2, null);
 
-      // g.drawRect(0, 0, xSize, ySize);
+			}
 
-      g.fillRect(0, 0, xSize, ySize);
+			File fichier = new File(path, fileName);
+			if (fichier.exists()) {
+				System.out.println("Fail");
+				return false;
+			} else {
+				ImageIO.write(bufImage, "jpg", fichier);
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 
-      iMap3D.getCanvas3D().paint(g);
+	private static void represent(Environnement env, MainWindow mW, Parameters p) {
 
-      if (hasStats) {
+		List<Theme> lTheme = new ArrayList<RepEnvironnement.Theme>();
+		// lTheme.add(Theme.TOIT_BATIMENT);
+		// lTheme.add(Theme.FACADE_BATIMENT);
+		// lTheme.add(Theme.FAITAGE);
+		// lTheme.add(Theme.PIGNON);
+		// lTheme.add(Theme.GOUTTIERE);
+		// lTheme.add(Theme.VOIRIE);
+		// lTheme.add(Theme.PARCELLE);
+		// lTheme.add(Theme.BORDURE);
+		// lTheme.add(Theme.ZONE);
+		// lTheme.add(Theme.PAN);
 
-        g.drawImage(v.getChart().createBufferedImage(xSup, ySup),
-            iMap3D.getSize().width, (ySize - ySup) / 2, null);
+		Theme[] tab = lTheme.toArray(new Theme[0]);
 
-      }
+		List<VectorLayer> vl = RepEnvironnement.represent(env, tab);
 
-      File fichier = new File(path, fileName);
-      if (fichier.exists()) {
-        System.out.println("Fail");
-        return false;
-      } else {
-        ImageIO.write(bufImage, "jpg", fichier);
-        return true;
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return false;
-  }
+		System.out.println("Adding " + vl.size() + " layers");
+		for (VectorLayer l : vl) {
+			mW.getInterfaceMap3D().getCurrent3DMap().addLayer(l);
+		}
 
-  private static void represent(Environnement env, MainWindow mW, Parameters p) {
+		double z = p.getDouble("z");
 
-    List<Theme> lTheme = new ArrayList<RepEnvironnement.Theme>();
-    // lTheme.add(Theme.TOIT_BATIMENT);
-    // lTheme.add(Theme.FACADE_BATIMENT);
-    // lTheme.add(Theme.FAITAGE);
-    // lTheme.add(Theme.PIGNON);
-    // lTheme.add(Theme.GOUTTIERE);
-    // lTheme.add(Theme.VOIRIE);
-    // lTheme.add(Theme.PARCELLE);
-    // lTheme.add(Theme.BORDURE);
-    // lTheme.add(Theme.ZONE);
-    // lTheme.add(Theme.PAN);
+		double xmin = p.getDouble("xminbg");
+		double xmax = p.getDouble("xmaxbg");
+		double ymin = p.getDouble("yminbg");
+		double ymax = p.getDouble("ymaxbg");
 
-    Theme[] tab = lTheme.toArray(new Theme[0]);
+		//
+		// 1051042.8513268954120576,6840539.0837931865826249 :
+		// 1051264.8064121364150196,6840679.2711814027279615
+		// Projet 1
+		IDirectPosition dpLL = new DirectPosition(xmin, ymin, z);
+		IDirectPosition dpUR = new DirectPosition(xmax, ymax, z);
 
-    List<VectorLayer> vl = RepEnvironnement.represent(env, tab);
+		// Projet 3
+		// IDirectPosition dpLL = new DirectPosition(1051157, 6840727, z);
+		// IDirectPosition dpUR = new DirectPosition(1051322, 6840858, z);
 
-    System.out.println("Adding " + vl.size() + " layers");
-    for (VectorLayer l : vl) {
-      mW.getInterfaceMap3D().getCurrent3DMap().addLayer(l);
-    }
+		IDirectPositionList dpl = new DirectPositionList();
 
-    double z = p.getDouble("z");
+		IDirectPosition dp2 = new DirectPosition(dpUR.getX(), dpLL.getY(), z);
 
-    double xmin = p.getDouble("xminbg");
-    double xmax = p.getDouble("xmaxbg");
-    double ymin = p.getDouble("yminbg");
-    double ymax = p.getDouble("ymaxbg");
+		IDirectPosition dp4 = new DirectPosition(dpLL.getX(), dpUR.getY(), z);
 
-    //
-    // 1051042.8513268954120576,6840539.0837931865826249 :
-    // 1051264.8064121364150196,6840679.2711814027279615
-    // Projet 1
-    IDirectPosition dpLL = new DirectPosition(xmin, ymin, z);
-    IDirectPosition dpUR = new DirectPosition(xmax, ymax, z);
+		dpl.add(dpLL);
+		dpl.add(dp2);
+		dpl.add(dpUR);
+		dpl.add(dp4);
+		dpl.add(dpLL);
 
-    // Projet 3
-    // IDirectPosition dpLL = new DirectPosition(1051157, 6840727, z);
-    // IDirectPosition dpUR = new DirectPosition(1051322, 6840858, z);
+		IFeatureCollection<IFeature> fc = new FT_FeatureCollection<IFeature>();
 
-    IDirectPositionList dpl = new DirectPositionList();
+		IFeature feat = new DefaultFeature(new GM_Polygon(
+				new GM_LineString(dpl)));
 
-    IDirectPosition dp2 = new DirectPosition(dpUR.getX(), dpLL.getY(), z);
+		fc.add(feat);
 
-    IDirectPosition dp4 = new DirectPosition(dpLL.getX(), dpUR.getY(), z);
+		// feat.setRepresentation(new TexturedSurface(feat, TextureManager
+		// .textureLoading(folder + "Env3D_86.png"), dpUR.getX()-dpLL.getX(),
+		// dpUR.getY()-dpLL.getY()));
 
-    dpl.add(dpLL);
-    dpl.add(dp2);
-    dpl.add(dpUR);
-    dpl.add(dp4);
-    dpl.add(dpLL);
+		String background = p.getParameters("background_img").toString();
 
-    IFeatureCollection<IFeature> fc = new FT_FeatureCollection<IFeature>();
+		feat.setRepresentation(new TexturedSurface(feat, TextureManager
+				.textureLoading(env.folder + background), dpUR.getX()
+				- dpLL.getX(), dpUR.getY() - dpLL.getY()));
 
-    IFeature feat = new DefaultFeature(new GM_Polygon(new GM_LineString(dpl)));
+		mW.getInterfaceMap3D().getCurrent3DMap()
+				.addLayer(new VectorLayer(fc, "Fond"));
 
-    fc.add(feat);
+		mW.getInterfaceMap3D().removeLight(0);
+		mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
+		mW.getInterfaceMap3D().moveLight(dpUR.getX(), dpUR.getY(), 140, 0);
 
-    // feat.setRepresentation(new TexturedSurface(feat, TextureManager
-    // .textureLoading(folder + "Env3D_86.png"), dpUR.getX()-dpLL.getX(),
-    // dpUR.getY()-dpLL.getY()));
+		mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
+		mW.getInterfaceMap3D().moveLight(dpUR.getX(), dpLL.getY(), 140, 1);
 
-    String background = p.getParameters("background_img").toString();
+		mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
+		mW.getInterfaceMap3D().moveLight(dpLL.getX(), dpUR.getY(), 10000, 2);
 
-    feat.setRepresentation(new TexturedSurface(feat, TextureManager
-        .textureLoading(env.folder + background), dpUR.getX() - dpLL.getX(),
-        dpUR.getY() - dpLL.getY()));
+		MIN_LAYER = lTheme.size() + 1;
 
-    mW.getInterfaceMap3D().getCurrent3DMap()
-        .addLayer(new VectorLayer(fc, "Fond"));
-
-    mW.getInterfaceMap3D().removeLight(0);
-    mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
-    mW.getInterfaceMap3D().moveLight(dpUR.getX(), dpUR.getY(), 140, 0);
-
-    mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
-    mW.getInterfaceMap3D().moveLight(dpUR.getX(), dpLL.getY(), 140, 1);
-
-    mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
-    mW.getInterfaceMap3D().moveLight(dpLL.getX(), dpUR.getY(), 10000, 2);
-
-    MIN_LAYER = lTheme.size() + 1;
-
-  }
+	}
 }

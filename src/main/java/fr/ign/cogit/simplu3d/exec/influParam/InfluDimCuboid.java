@@ -24,9 +24,10 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCub
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.classconstrained.OptimisedBuildingsCuboidFinalDirectRejection;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.predicate.UXL3Predicate;
+import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
+import fr.ign.mpp.configuration.GraphVertex;
 import fr.ign.parameters.Parameters;
-import fr.ign.rjmcmc.configuration.Configuration;
 
 /**
  * Classe pour étudier l'influence des variations des dimensions des boîtes
@@ -36,136 +37,138 @@ import fr.ign.rjmcmc.configuration.Configuration;
  */
 public class InfluDimCuboid {
 
+	// [building_footprint_rectangle_cli_main
+	public static void main(String[] args) throws Exception {
 
-  // [building_footprint_rectangle_cli_main
-  public static void main(String[] args) throws Exception {
+		String folderName = "./src/main/resources/scenario/";
 
-    String folderName = "./src/main/resources/scenario/";
+		String fileName = "building_parameters_project_expthese_1_maison.xml";
 
-    String fileName = "building_parameters_project_expthese_1_maison.xml";
+		Parameters p = Parameters.unmarshall(new File(folderName + fileName));
 
-    Parameters p = Parameters.unmarshall(new File(folderName + fileName));
+		int nbValMin = 4;
+		int nbValMax = 4;
 
-    int nbValMin = 4;
-    int nbValMax = 4;
+		double[] valsMinDimBox = new double[nbValMin];
+		double[] valsMaxDimBox = new double[nbValMax];
 
-    double[] valsMinDimBox = new double[nbValMin];
-    double[] valsMaxDimBox = new double[nbValMax];
+		valsMinDimBox[0] = 1;
+		valsMinDimBox[1] = 5;
+		valsMinDimBox[2] = 10;
+		valsMinDimBox[3] = 20;
 
-    valsMinDimBox[0] = 1;
-    valsMinDimBox[1] = 5;
-    valsMinDimBox[2] = 10;
-    valsMinDimBox[3] = 20;
+		valsMaxDimBox[0] = 30;
+		valsMaxDimBox[1] = 50;
+		valsMaxDimBox[2] = 75;
+		valsMaxDimBox[3] = 100;
 
-    valsMaxDimBox[0] = 30;
-    valsMaxDimBox[1] = 50;
-    valsMaxDimBox[2] = 75;
-    valsMaxDimBox[3] = 100;
+		int nbIt = 10;
 
-    int nbIt =10;
+		int count = 0;
 
-    int count = 0;
-    
-    
-    BufferedWriter bf = createBufferWriter(p.get("result")+ "influDimCuboid.csv");
-    bf.write("DimCuboidMin, DimCuboidMax, Iteration, Energy,Box");
-    bf.newLine();
-    bf.flush();
+		BufferedWriter bf = createBufferWriter(p.get("result")
+				+ "influDimCuboid.csv");
+		bf.write("DimCuboidMin, DimCuboidMax, Iteration, Energy,Box");
+		bf.newLine();
+		bf.flush();
 
-    for (int indexMin = 0; indexMin < valsMinDimBox.length; indexMin++) {
+		for (int indexMin = 0; indexMin < valsMinDimBox.length; indexMin++) {
 
-      for (int indexMax = 0; indexMax < valsMinDimBox.length; indexMax++) {
+			for (int indexMax = 0; indexMax < valsMinDimBox.length; indexMax++) {
 
-        // writer.append(valCoeff[i] + ";");
+				// writer.append(valCoeff[i] + ";");
 
-        for (int j = 10; j < 20; j++) {
-          Environnement env = LoaderSHP.load(p.getString("folder"));
+				for (int j = 10; j < 20; j++) {
+					Environnement env = LoaderSHP.load(p.getString("folder"));
 
-          OptimisedBuildingsCuboidFinalDirectRejection ocb = new OptimisedBuildingsCuboidFinalDirectRejection();
-          UXL3Predicate<Cuboid> pred = new UXL3Predicate<>(env.getBpU().get(1));
+					OptimisedBuildingsCuboidFinalDirectRejection ocb = new OptimisedBuildingsCuboidFinalDirectRejection();
+					UXL3Predicate<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new UXL3Predicate<>(
+							env.getBpU().get(1));
 
-          // OCLBuildingsCuboidFinal ocb = new OCLBuildingsCuboidFinal();
-          ocb.setMinDimBox(valsMinDimBox[indexMin]);
-          ocb.setMaxDimBox(valsMaxDimBox[indexMax]);
+					// OCLBuildingsCuboidFinal ocb = new
+					// OCLBuildingsCuboidFinal();
+					ocb.setMinDimBox(valsMinDimBox[indexMin]);
+					ocb.setMaxDimBox(valsMaxDimBox[indexMax]);
 
-          double timeMs = System.currentTimeMillis();
+					double timeMs = System.currentTimeMillis();
 
-          Configuration<Cuboid> cc = ocb.process(env.getBpU().get(1), p, env,
-              1, pred);
+					GraphConfiguration<Cuboid> cc = ocb.process(env.getBpU()
+							.get(1), p, env, 1, pred);
 
-          IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
+					IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
 
-          for (GraphConfiguration<Cuboid>.GraphVertex v : ((GraphConfiguration<Cuboid>) cc)
-              .getGraph().vertexSet()) {
+					for (GraphVertex<Cuboid> v : cc.getGraph().vertexSet()) {
 
-            IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<>();
-            iMS.addAll(GenerateSolidFromCuboid.generate(v.getValue())
-                .getFacesList());
+						IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<>();
+						iMS.addAll(GenerateSolidFromCuboid.generate(
+								v.getValue()).getFacesList());
 
-            IFeature feat = new DefaultFeature(iMS);
+						IFeature feat = new DefaultFeature(iMS);
 
-            AttributeManager.addAttribute(feat, "Longueur",
-                Math.max(v.getValue().length, v.getValue().width), "Double");
-            AttributeManager.addAttribute(feat, "Largeur",
-                Math.min(v.getValue().length, v.getValue().width), "Double");
-            AttributeManager.addAttribute(feat, "Hauteur", v.getValue().height,
-                "Double");
-            AttributeManager.addAttribute(feat, "Rotation",
-                v.getValue().orientation, "Double");
+						AttributeManager.addAttribute(feat, "Longueur", Math
+								.max(v.getValue().length, v.getValue().width),
+								"Double");
+						AttributeManager.addAttribute(feat, "Largeur", Math
+								.min(v.getValue().length, v.getValue().width),
+								"Double");
+						AttributeManager.addAttribute(feat, "Hauteur",
+								v.getValue().height, "Double");
+						AttributeManager.addAttribute(feat, "Rotation",
+								v.getValue().orientation, "Double");
 
-            iFeatC.add(feat);
+						iFeatC.add(feat);
 
-          }
+					}
 
-          ShapefileWriter.write(iFeatC, p.get("result").toString()
-              + "shp_mindim" + valsMinDimBox[indexMin] + "_maxDim_ "
-              + valsMaxDimBox[indexMax] + "_ene" + cc.getEnergy() + ".shp");
+					ShapefileWriter.write(iFeatC, p.get("result").toString()
+							+ "shp_mindim" + valsMinDimBox[indexMin]
+							+ "_maxDim_ " + valsMaxDimBox[indexMax] + "_ene"
+							+ cc.getEnergy() + ".shp");
 
-          System.out.println("mindim" + valsMinDimBox[indexMin] + "_maxDim_ "
-              + valsMaxDimBox[indexMax] + "_ene" + cc.getEnergy() + ","
-              + ocb.getCount() + "," + (System.currentTimeMillis() - timeMs)
-              + "," + cc.getEnergy());
+					System.out.println("mindim" + valsMinDimBox[indexMin]
+							+ "_maxDim_ " + valsMaxDimBox[indexMax] + "_ene"
+							+ cc.getEnergy() + "," + ocb.getCount() + ","
+							+ (System.currentTimeMillis() - timeMs) + ","
+							+ cc.getEnergy());
 
-          count++;
+					count++;
 
-          System.out.println("État itération : " + count + "  / "
-              + (indexMin * indexMax * nbIt));
-          
-          
-          bf.write( valsMinDimBox[indexMin] +","+ valsMaxDimBox[indexMax] +"," + j + "," + cc.getEnergy() + "," + cc.size());
-          bf.newLine();
-          bf.flush();
+					System.out.println("État itération : " + count + "  / "
+							+ (indexMin * indexMax * nbIt));
 
-        }
+					bf.write(valsMinDimBox[indexMin] + ","
+							+ valsMaxDimBox[indexMax] + "," + j + ","
+							+ cc.getEnergy() + "," + cc.size());
+					bf.newLine();
+					bf.flush();
 
-      }
-    }
+				}
 
-  }
+			}
+		}
 
+	}
 
-  private static BufferedWriter createBufferWriter(String fileName) {
-    BufferedWriter writer = null;
-    try {
+	private static BufferedWriter createBufferWriter(String fileName) {
+		BufferedWriter writer = null;
+		try {
 
-      File f = new File(fileName);
+			File f = new File(fileName);
 
-      if (!f.exists()) {
-        f.createNewFile();
-      }
+			if (!f.exists()) {
+				f.createNewFile();
+			}
 
-      Path path = Paths.get(fileName);
+			Path path = Paths.get(fileName);
 
-      writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8,
-          StandardOpenOption.APPEND);
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+			writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8,
+					StandardOpenOption.APPEND);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-    return writer;
-  }
-  
-  
+		return writer;
+	}
 
 }

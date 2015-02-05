@@ -26,10 +26,10 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCub
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.classconstrained.OptimisedBuildingsCuboidFinalDirectRejection;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.predicate.UXL3Predicate;
+import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
+import fr.ign.mpp.configuration.GraphVertex;
 import fr.ign.parameters.Parameters;
-import fr.ign.rjmcmc.configuration.Configuration;
-
 
 /**
  * Classe pour étudier l'influence des variations d'énergie de création
@@ -50,7 +50,7 @@ public class InfluEnergyCreation {
 
 		String fileName = "building_parameters_project_expthese_1.xml";
 
-	    Parameters p = Parameters.unmarshall(new File(folderName + fileName));
+		Parameters p = Parameters.unmarshall(new File(folderName + fileName));
 
 		int count = 0;
 
@@ -68,8 +68,6 @@ public class InfluEnergyCreation {
 		bf.newLine();
 		bf.flush();
 
-		
-	
 		for (int j = 0; j < nbIt; j++) {
 
 			for (int i = 0; i < ld.size(); i++) {
@@ -79,20 +77,19 @@ public class InfluEnergyCreation {
 				Environnement env = LoaderSHP.load(p.getString("folder"));
 
 				OptimisedBuildingsCuboidFinalDirectRejection ocb = new OptimisedBuildingsCuboidFinalDirectRejection();
-				UXL3Predicate<Cuboid> pred = new UXL3Predicate<>(env.getBpU()
-						.get(1));
+				UXL3Predicate<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new UXL3Predicate<>(
+						env.getBpU().get(1));
 
 				ocb.setEnergyCreation(ld.get(i));
 
 				double timeMs = System.currentTimeMillis();
 
-				Configuration<Cuboid> cc = ocb.process(env.getBpU().get(1), p,
-						env, 1, pred);
+				GraphConfiguration<Cuboid> cc = ocb.process(
+						env.getBpU().get(1), p, env, 1, pred);
 
 				IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
 
-				for (GraphConfiguration<Cuboid>.GraphVertex v : ((GraphConfiguration<Cuboid>) cc)
-						.getGraph().vertexSet()) {
+				for (GraphVertex<Cuboid> v : cc.getGraph().vertexSet()) {
 
 					IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<>();
 					iMS.addAll(GenerateSolidFromCuboid.generate(v.getValue())
@@ -162,5 +159,4 @@ public class InfluEnergyCreation {
 		return writer;
 	}
 
-	
 }

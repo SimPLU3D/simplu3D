@@ -3,8 +3,8 @@ package fr.ign.cogit.simplu3d.rjmcmc.cuboid.configuration;
 import org.apache.log4j.Logger;
 
 import fr.ign.cogit.simplu3d.checker.VeryFastRuleChecker;
-import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.rjmcmc.configuration.Configuration;
 import fr.ign.rjmcmc.configuration.ConfigurationPredicate;
 
@@ -15,8 +15,8 @@ import fr.ign.rjmcmc.configuration.ConfigurationPredicate;
  * @author JPerret
  * @param <O>
  */
-public class ModelInstanceGraphConfigurationPredicate<O extends AbstractBuilding> implements
-    ConfigurationPredicate<O> {
+public class ModelInstanceGraphConfigurationPredicate<O extends AbstractSimpleBuilding> implements
+    ConfigurationPredicate<ModelInstanceGraphConfiguration<O>> {
   /**
    * Logger.
    */
@@ -35,8 +35,7 @@ public class ModelInstanceGraphConfigurationPredicate<O extends AbstractBuilding
   }
 
   @Override
-  public boolean check(Configuration<O> c) {
-    ModelInstanceGraphConfiguration<O> conf = (ModelInstanceGraphConfiguration<O>) c;
+  public boolean check(ModelInstanceGraphConfiguration<O> conf) {
     return this.vFR.check(conf.getBuildings());
   }
 }

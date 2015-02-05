@@ -26,10 +26,10 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCub
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.classconstrained.OptimisedBuildingsCuboidFinalDirectRejection;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.predicate.UXL3PredicateGroup;
+import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
+import fr.ign.mpp.configuration.GraphVertex;
 import fr.ign.parameters.Parameters;
-import fr.ign.rjmcmc.configuration.Configuration;
-
 
 /**
  * Classe pour étudier l'influence des variations du nombre de boîtes
@@ -38,132 +38,130 @@ import fr.ign.rjmcmc.configuration.Configuration;
  *
  */
 public class InfluNumberOfBoxesInGroup {
-  // [building_footprint_rectangle_cli_main
-  public static void main(String[] args) throws Exception {
+	// [building_footprint_rectangle_cli_main
+	public static void main(String[] args) throws Exception {
 
-    String folderName = "./src/main/resources/scenario/";
+		String folderName = "./src/main/resources/scenario/";
 
-    String fileName = "building_parameters_project_expthese_1.xml";
+		String fileName = "building_parameters_project_expthese_1.xml";
 
-    Parameters p = Parameters.unmarshall(new File(folderName + fileName));
+		Parameters p = Parameters.unmarshall(new File(folderName + fileName));
 
+		int count = 0;
 
-    int count = 0;
+		List<Integer> ld = new ArrayList<>();
 
-    List<Integer> ld = new ArrayList<>();
+		// ld.add(2);
+		// ld.add(3);
+		// ld.add(4);
+		// ld.add(5);
 
-    // ld.add(2);
-    // ld.add(3);
-    // ld.add(4);
-    // ld.add(5);
-    
-    ld.add(6);
-    ld.add(7);
-    ld.add(8);
-    ld.add(9);
+		ld.add(6);
+		ld.add(7);
+		ld.add(8);
+		ld.add(9);
 
-//    ld.add(10);
-    //    ld.add(20);
-    
-    
-    int nbIt = 1;
+		// ld.add(10);
+		// ld.add(20);
 
-    BufferedWriter bf = createBufferWriter(p.get("result")+ "influenceNumberOfBoxesInGroup.csv");
-    bf.write("NombreMaxParGroupe,Iteration,Energy,Box");
-    bf.newLine();
-    bf.flush();
+		int nbIt = 1;
 
-    for (int i = 0; i < ld.size(); i++) {
+		BufferedWriter bf = createBufferWriter(p.get("result")
+				+ "influenceNumberOfBoxesInGroup.csv");
+		bf.write("NombreMaxParGroupe,Iteration,Energy,Box");
+		bf.newLine();
+		bf.flush();
 
-      // writer.append(valCoeff[i] + ";");
+		for (int i = 0; i < ld.size(); i++) {
 
-      for (int j = 0; j < nbIt; j++) {
+			// writer.append(valCoeff[i] + ";");
 
-        Environnement env = LoaderSHP.load(p.getString("folder"));
+			for (int j = 0; j < nbIt; j++) {
 
-        OptimisedBuildingsCuboidFinalDirectRejection ocb = new OptimisedBuildingsCuboidFinalDirectRejection();
+				Environnement env = LoaderSHP.load(p.getString("folder"));
 
-        
-        UXL3PredicateGroup<Cuboid> pred = new  UXL3PredicateGroup<Cuboid>(env.getBpU().get(1),(int) ld.get(i));
-        
-        ocb.process(env.getBpU().get(1), p, env, 1, pred);
+				OptimisedBuildingsCuboidFinalDirectRejection ocb = new OptimisedBuildingsCuboidFinalDirectRejection();
 
-        
-        double timeMs = System.currentTimeMillis();
+				UXL3PredicateGroup<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new UXL3PredicateGroup<>(
+						env.getBpU().get(1), (int) ld.get(i));
 
-        Configuration<Cuboid> cc = ocb.process(env.getBpU().get(1), p, env, 1,
-            pred);
+				ocb.process(env.getBpU().get(1), p, env, 1, pred);
 
-        IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
+				double timeMs = System.currentTimeMillis();
 
-        for (GraphConfiguration<Cuboid>.GraphVertex v : ((GraphConfiguration<Cuboid>) cc)
-            .getGraph().vertexSet()) {
+				GraphConfiguration<Cuboid> cc = ocb.process(
+						env.getBpU().get(1), p, env, 1, pred);
 
-          IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<>();
-          iMS.addAll(GenerateSolidFromCuboid.generate(v.getValue())
-              .getFacesList());
+				IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
 
-          IFeature feat = new DefaultFeature(iMS);
+				for (GraphVertex<Cuboid> v : cc.getGraph().vertexSet()) {
 
-          AttributeManager.addAttribute(feat, "Longueur",
-              Math.max(v.getValue().length, v.getValue().width), "Double");
-          AttributeManager.addAttribute(feat, "Largeur",
-              Math.min(v.getValue().length, v.getValue().width), "Double");
-          AttributeManager.addAttribute(feat, "Hauteur", v.getValue().height,
-              "Double");
-          AttributeManager.addAttribute(feat, "Rotation",
-              v.getValue().orientation, "Double");
+					IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<>();
+					iMS.addAll(GenerateSolidFromCuboid.generate(v.getValue())
+							.getFacesList());
 
-          iFeatC.add(feat);
+					IFeature feat = new DefaultFeature(iMS);
 
-        }
+					AttributeManager.addAttribute(feat, "Longueur",
+							Math.max(v.getValue().length, v.getValue().width),
+							"Double");
+					AttributeManager.addAttribute(feat, "Largeur",
+							Math.min(v.getValue().length, v.getValue().width),
+							"Double");
+					AttributeManager.addAttribute(feat, "Hauteur",
+							v.getValue().height, "Double");
+					AttributeManager.addAttribute(feat, "Rotation",
+							v.getValue().orientation, "Double");
 
-        ShapefileWriter.write(iFeatC,
-            p.get("result").toString() + "shp_" + ld.get(i) + "_ " + j + "_ene"
-                + cc.getEnergy() + ".shp");
+					iFeatC.add(feat);
 
-        bf.write(ld.get(i) + "," + j + "," + cc.getEnergy() + "," + cc.size());
-        bf.newLine();
-        bf.flush();
+				}
 
-        count++;
+				ShapefileWriter.write(iFeatC,
+						p.get("result").toString() + "shp_" + ld.get(i) + "_ "
+								+ j + "_ene" + cc.getEnergy() + ".shp");
 
-        System.out.println(ld.get(i) + "," + ocb.getCount() + ","
-            + (System.currentTimeMillis() - timeMs) + "," + cc.getEnergy()
-            + "État itération : " + count + "  / " + (ld.size() * nbIt));
+				bf.write(ld.get(i) + "," + j + "," + cc.getEnergy() + ","
+						+ cc.size());
+				bf.newLine();
+				bf.flush();
 
-      }
+				count++;
 
+				System.out.println(ld.get(i) + "," + ocb.getCount() + ","
+						+ (System.currentTimeMillis() - timeMs) + ","
+						+ cc.getEnergy() + "État itération : " + count + "  / "
+						+ (ld.size() * nbIt));
 
+			}
 
-    }
-    
-    bf.flush();
-    bf.close();
+		}
 
-  }
+		bf.flush();
+		bf.close();
 
-  private static BufferedWriter createBufferWriter(String fileName) {
-    BufferedWriter writer = null;
-    try {
+	}
 
-      File f = new File(fileName);
+	private static BufferedWriter createBufferWriter(String fileName) {
+		BufferedWriter writer = null;
+		try {
 
-      if (!f.exists()) {
-        f.createNewFile();
-      }
+			File f = new File(fileName);
 
-      Path path = Paths.get(fileName);
+			if (!f.exists()) {
+				f.createNewFile();
+			}
 
-      writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8,
-          StandardOpenOption.APPEND);
-    } catch (IOException e) {
+			Path path = Paths.get(fileName);
 
-      e.printStackTrace();
-    }
+			writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8,
+					StandardOpenOption.APPEND);
+		} catch (IOException e) {
 
-    return writer;
-  }
+			e.printStackTrace();
+		}
 
+		return writer;
+	}
 
 }

@@ -21,12 +21,12 @@ import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
-import fr.ign.rjmcmc.configuration.Configuration;
+import fr.ign.mpp.configuration.AbstractBirthDeathModification;
+import fr.ign.mpp.configuration.AbstractGraphConfiguration;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
-import fr.ign.rjmcmc.configuration.Modification;
 
-public class UB16PredicateWithParameters<O extends Cuboid> implements
-    ConfigurationModificationPredicate<O> {
+public class UB16PredicateWithParameters<O extends Cuboid, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>> implements
+    ConfigurationModificationPredicate<C,M> {
 
   IMultiCurve<IOrientableCurve> curveVoirie;
   IMultiCurve<IOrientableCurve> curveLatBot;
@@ -144,7 +144,7 @@ public class UB16PredicateWithParameters<O extends Cuboid> implements
   }
 
   @Override
-  public boolean check(Configuration<O> c, Modification<O, Configuration<O>> m) {
+  public boolean check(C c, M m) {
 
     List<O> lO = m.getBirth();
 
