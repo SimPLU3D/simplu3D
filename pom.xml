@@ -177,7 +177,7 @@
 
 
 	</build>
-        <profiles>
+           <profiles>
     			<!-- Tests under Linux 32bits -->
 		<profile>
 			<id>lin32</id>
@@ -193,9 +193,7 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
-							<environmentVariables>
-								<PATH>${basedir}\lib\native_libraries\windows-linux-i386\</PATH>
-							</environmentVariables>
+        					<argLine>-Djava.library.path=${basedir}/lib/native_libraries/linux-i386</argLine>
 							<skipTests>false</skipTests>
 						</configuration>
 					</plugin>
@@ -219,9 +217,6 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
         					<argLine>-Djava.library.path=${basedir}/lib/native_libraries/linux-amd64</argLine>
-							<environmentVariables>
-								<PATH>${basedir}/lib/native_libraries/linux-amd64</PATH>
-							</environmentVariables>
 							<skipTests>false</skipTests>
 						</configuration>
 					</plugin>
@@ -245,9 +240,7 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
-							<environmentVariables>
-								<PATH>${basedir}\lib\native_libraries\windows-amd64\</PATH>
-							</environmentVariables>
+        					<argLine>-Djava.library.path=${basedir}/lib/native_libraries/windows-amd64</argLine>
 							<skipTests>false</skipTests>
 						</configuration>
 					</plugin>
@@ -270,9 +263,7 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
-							<environmentVariables>
-								<PATH>${basedir}\lib\native_libraries\windows-i586\</PATH>
-							</environmentVariables>
+        					<argLine>-Djava.library.path=${basedir}/lib/native_libraries/windows-i586</argLine>
 							<skipTests>false</skipTests>
 						</configuration>
 					</plugin>
