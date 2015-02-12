@@ -19,10 +19,21 @@ import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.rjmcmc.kernel.Transform;
 
 /**
- * TODO : supprimer les deux constructeurs
- * @author MBrasebin
  * 
- */
+ *        This software is released under the licence CeCILL
+ * 
+ *        see LICENSE.TXT
+ * 
+ *        see <http://www.cecill.info/ http://www.cecill.info/
+ * 
+ * @TODO Suppress constructor
+ * 
+ * @copyright IGN
+ * 
+ * @author Brasebin Mickaël
+ * 
+ * @version 1.0
+ **/ 
 public class TransformToSurface implements Transform {
   /**
    * Logger.

@@ -21,10 +21,24 @@ import fr.ign.rjmcmc.energy.BinaryEnergy;
 import fr.ign.rjmcmc.energy.UnaryEnergy;
 
 /**
+ * 
+ *        This software is released under the licence CeCILL
+ * 
+ *        see LICENSE.TXT
+ * 
+ *        see <http://www.cecill.info/ http://www.cecill.info/
+ * 
+ * 
+ * 
+ * @copyright IGN
+ * 
+ * @author Brasebin Mickaël
+ * @author JPerret
+ * @version 1.0
+ *
  * A specific graph configuration. It can be used in a DirectRejection approach
  * or in a RejectionSampler approach.
  * 
- * @author JPerret
  * @param <T>
  */
 public class ModelInstanceGraphConfiguration<T extends AbstractSimpleBuilding>

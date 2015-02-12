@@ -21,10 +21,24 @@ import fr.ign.simulatedannealing.temperature.Temperature;
 
 /**
  * 
+ *        This software is released under the licence CeCILL
+ * 
+ *        see LICENSE.TXT
+ * 
+ *        see <http://www.cecill.info/ http://www.cecill.info/
+ * 
+ * 
+ * 
+ * @copyright IGN
+ * 
+ * @author Brasebin Mickaël
+ * 
+ * @version 1.0
+ *
+ * 
  * Sampler bloquant la diminution de la température si une configuration ne
  * vérifie pas les résutlats
  * 
- * @author MBrasebin
  *
  * @param <O>
  */

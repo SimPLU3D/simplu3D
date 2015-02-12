@@ -13,9 +13,24 @@ import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
 
 /**
+ * 
+ *        This software is released under the licence CeCILL
+ * 
+ *        see LICENSE.TXT
+ * 
+ *        see <http://www.cecill.info/ http://www.cecill.info/
+ * 
+ * 
+ * 
+ * @copyright IGN
+ * 
+ * @author Brasebin Mickaël
+ * @author JPerret
+ * @version 1.0
+ *
  * A modification predicate used in a DirectRejectionSampler. When a modification is proposed, it
  * will first try to apply in it and check the predicate, then cancel the modification.
- * @author JPerret
+ * 
  * @param <O>
  */
 public class ModelInstanceGraphConfigurationModificationPredicate<O extends AbstractSimpleBuilding>

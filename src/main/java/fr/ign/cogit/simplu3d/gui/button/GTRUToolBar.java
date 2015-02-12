@@ -26,10 +26,24 @@ import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 
 
 /**
+ * 
+ *        This software is released under the licence CeCILL
+ * 
+ *        see LICENSE.TXT
+ * 
+ *        see <http://www.cecill.info/ http://www.cecill.info/
+ * 
+ * 
+ * 
+ * @copyright IGN
+ * 
+ * @author Brasebin Mickaël
+ * 
+ * @version 1.0
+ *
  * Barre d'outils permettant la génération de certains éléments réglementaires 
  * 
  * 
- * @author MBrasebin
  *
  */
 public class GTRUToolBar extends JMenu implements ActionListener {

@@ -32,9 +32,23 @@ import fr.ign.mpp.configuration.GraphVertex;
 import fr.ign.parameters.Parameters;
 
 /**
+ * 
+ *        This software is released under the licence CeCILL
+ * 
+ *        see LICENSE.TXT
+ * 
+ *        see <http://www.cecill.info/ http://www.cecill.info/
+ * 
+ * 
+ * 
+ * @copyright IGN
+ * 
+ * @author Brasebin Mickaël
+ * 
+ * @version 1.0
+ *
  * Classe pour étudier l'influence des variations du nombre de boîtes
  * 
- * @author MBrasebin
  *
  */
 public class InfluNumberOfBoxesInGroup {

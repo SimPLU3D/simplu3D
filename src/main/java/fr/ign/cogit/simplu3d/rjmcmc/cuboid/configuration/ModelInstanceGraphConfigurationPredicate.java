@@ -9,10 +9,24 @@ import fr.ign.rjmcmc.configuration.Configuration;
 import fr.ign.rjmcmc.configuration.ConfigurationPredicate;
 
 /**
+ * 
+ *        This software is released under the licence CeCILL
+ * 
+ *        see LICENSE.TXT
+ * 
+ *        see <http://www.cecill.info/ http://www.cecill.info/
+ * 
+ * 
+ * 
+ * @copyright IGN
+ * 
+ * @author Brasebin Mickaël
+ * @author JPerret
+ * @version 1.0
+ *
  * A predicate on the current graph configuration. It needs to check the entire configuration
  * buildings since it is used in a RejectionSampler that allows to sample from unchecked
  * configurations (no guarantee on the previously generated buildings).
- * @author JPerret
  * @param <O>
  */
 public class ModelInstanceGraphConfigurationPredicate<O extends AbstractSimpleBuilding> implements

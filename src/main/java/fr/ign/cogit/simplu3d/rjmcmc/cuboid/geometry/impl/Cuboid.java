@@ -22,7 +22,22 @@ import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.model.application.FastBuildingPart;
 import fr.ign.geometry.Primitive;
 import fr.ign.geometry.Rectangle2D;
-
+/**
+ * 
+ *        This software is released under the licence CeCILL
+ * 
+ *        see LICENSE.TXT
+ * 
+ *        see <http://www.cecill.info/ http://www.cecill.info/
+ * 
+ * 
+ * 
+ * @copyright IGN
+ * 
+ * @author Brasebin Mickaël
+ * 
+ * @version 1.0
+ **/
 public class Cuboid extends AbstractSimpleBuilding implements Primitive {
   public double centerx;
   public double centery;

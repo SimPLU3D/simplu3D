@@ -9,11 +9,25 @@ import fr.ign.cogit.simplu3d.exec.BasicSimulator;
 import fr.ign.parameters.Parameters;
 
 /**
+ * 
+ *        This software is released under the licence CeCILL
+ * 
+ *        see LICENSE.TXT
+ * 
+ *        see <http://www.cecill.info/ http://www.cecill.info/
+ * 
+ * 
+ * 
+ * @copyright IGN
+ * 
+ * @author Brasebin Mickaël
+ * 
+ * @version 1.0
+ *
  * Classe pour charger dans PostGIS les paramètres xml des fichiers de
  * configuration. Le script tableParameter.sql doit être exécuté au préalable
  * pour crééer la table parameters.
  * 
- * @author MBrasebin
  * 
  */
 public class ParametersToPostGRES {

@@ -58,10 +58,23 @@ import fr.ign.simulatedannealing.visitor.CompositeVisitor;
 import fr.ign.simulatedannealing.visitor.Visitor;
 
 /**
+ * 
+ *        This software is released under the licence CeCILL
+ * 
+ *        see LICENSE.TXT
+ * 
+ *        see <http://www.cecill.info/ http://www.cecill.info/
+ * 
+ * 
+ * 
+ * @copyright IGN
+ * 
+ * @author Brasebin Mickaël
+ * 
+ * @version 1.0
+ *
  * Classe d'optimisation sans visiteur pour calcul distribués
  * 
- * 
- * @author MBrasebin
  * 
  */
 public class OptimisedBuildingsCuboidDirectRejectionNoVisitor {

@@ -21,9 +21,24 @@ import fr.ign.rjmcmc.energy.BinaryEnergy;
 import fr.ign.rjmcmc.energy.UnaryEnergy;
 
 /**
+ * 
+ *        This software is released under the licence CeCILL
+ * 
+ *        see LICENSE.TXT
+ * 
+ *        see <http://www.cecill.info/ http://www.cecill.info/
+ * 
+ * 
+ * 
+ * @copyright IGN
+ * 
+ * @author Brasebin Mickaël
+  @author JPerret
+ * 
+ * @version 1.0
+ *
  * Checks a predicate before applying the modifications.
  * 
- * @author JPerret
  * @param <T>
  */
 public class GraphConfigurationWithPredicate<T extends AbstractSimpleBuilding>

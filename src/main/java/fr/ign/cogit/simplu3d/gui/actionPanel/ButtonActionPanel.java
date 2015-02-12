@@ -23,9 +23,23 @@ import fr.ign.cogit.simplu3d.representation.theme.RepresentationBatiment;
 
 
 /**
+ * 
+ *        This software is released under the licence CeCILL
+ * 
+ *        see LICENSE.TXT
+ * 
+ *        see <http://www.cecill.info/ http://www.cecill.info/
+ * 
+ * 
+ * 
+ * @copyright IGN
+ * 
+ * @author Brasebin Mickaël
+ * 
+ * @version 1.0
+ *
  * Classe permettant d'appliquer des modifications sur les bâtiments paramétrés
  * 
- * @author MBrasebin
  *
  */
 public class ButtonActionPanel extends JPanel implements ActionListener {

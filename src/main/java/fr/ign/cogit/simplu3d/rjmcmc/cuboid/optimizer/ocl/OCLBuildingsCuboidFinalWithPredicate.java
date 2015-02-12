@@ -69,9 +69,23 @@ import fr.ign.simulatedannealing.visitor.OutputStreamVisitor;
 import fr.ign.simulatedannealing.visitor.Visitor;
 
 /**
+ * 
+ *        This software is released under the licence CeCILL
+ * 
+ *        see LICENSE.TXT
+ * 
+ *        see <http://www.cecill.info/ http://www.cecill.info/
+ * 
+ * 
+ * 
+ * @copyright IGN
+ * 
+ * @author Brasebin Mickaël
+ * @author JPerret
+ * @version 1.0
+ *
  * Uses a GraphConfigurationWithPredicate.
  * 
- * @author JPerret
  */
 public class OCLBuildingsCuboidFinalWithPredicate {
 

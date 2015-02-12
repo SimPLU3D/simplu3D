@@ -30,7 +30,22 @@ import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
 import fr.ign.cogit.simplu3d.generation.TopologieBatiment;
 import fr.ign.cogit.simplu3d.generation.TopologieBatiment.FormeEmpriseEnum;
 import fr.ign.cogit.simplu3d.model.application.RoofSurface;
-
+/**
+ * 
+ *        This software is released under the licence CeCILL
+ * 
+ *        see LICENSE.TXT
+ * 
+ *        see <http://www.cecill.info/ http://www.cecill.info/
+ * 
+ * 
+ * 
+ * @copyright IGN
+ * 
+ * @author Brasebin Mickaël
+ * 
+ * @version 1.0
+ **/
 public class GenerationToitSymetrique {
 
   public static IMultiSurface<IPolygon> generate(TopologieBatiment tB, RoofSurface t,
