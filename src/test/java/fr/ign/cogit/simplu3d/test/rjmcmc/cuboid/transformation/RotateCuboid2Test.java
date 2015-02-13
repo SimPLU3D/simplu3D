@@ -21,7 +21,7 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.RotateCuboid;
  * 
  * @copyright IGN
  * 
- * @author Brasebin Mickaël
+ * @author Brasebin MickaÃ«l
  * 
  * @version 1.0
  **/ 

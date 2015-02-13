@@ -26,7 +26,7 @@ import fr.ign.random.Random;
  * 
  * @copyright IGN
  * 
- * @author Brasebin Mickaël
+ * @author Brasebin MickaÃ«l
  * 
  * @version 1.0
  **/ 

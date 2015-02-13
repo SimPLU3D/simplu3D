@@ -31,7 +31,7 @@ import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
  * 
  * @copyright IGN
  * 
- * @author Brasebin Mickaël
+ * @author Brasebin MickaÃ«l
  * 
  * @version 1.0
  **/
