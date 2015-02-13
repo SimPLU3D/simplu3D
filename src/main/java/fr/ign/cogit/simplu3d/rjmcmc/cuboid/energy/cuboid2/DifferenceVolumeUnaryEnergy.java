@@ -17,7 +17,7 @@ import fr.ign.rjmcmc.energy.UnaryEnergy;
  * 
  * @copyright IGN
  * 
- * @author Brasebin Mickaël
+ * @author Brasebin MickaÃ«l
  * 
  * @version 1.0
  **/

@@ -20,7 +20,7 @@ import fr.ign.rjmcmc.configuration.ConfigurationPredicate;
  * 
  * @copyright IGN
  * 
- * @author Brasebin Mickaël
+ * @author Brasebin MickaÃ«l
  * @author JPerret
  * @version 1.0
  *

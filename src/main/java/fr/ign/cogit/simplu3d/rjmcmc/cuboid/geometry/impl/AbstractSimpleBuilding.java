@@ -16,7 +16,7 @@ import fr.ign.rjmcmc.kernel.SimpleObject;
  * 
  * @copyright IGN
  * 
- * @author Brasebin Mickaël
+ * @author Brasebin MickaÃ«l
  * 
  * @version 1.0
  **/
