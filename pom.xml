@@ -328,6 +328,10 @@
 			<name>ISCPIF Snapshot repository for IGN</name>
 			<url>http://maven.iscpif.fr/ign-snapshots/</url>
 		</repository>
+		<repository>
+			<id>osgeo-geotools</id>
+			<url>http://download.osgeo.org/webdav/geotools/</url>
+		</repository>
 	</repositories>
 
 
