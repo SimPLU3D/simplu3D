@@ -319,7 +319,7 @@ public class FilmVisitor<O extends Cuboid, C extends AbstractGraphConfiguration<
 		// .textureLoading(folder + "Env3D_86.png"), dpUR.getX()-dpLL.getX(),
 		// dpUR.getY()-dpLL.getY()));
 
-		String background = p.getParameters("background_img").toString();
+		String background = p.getString("background_img").toString();
 
 		feat.setRepresentation(new TexturedSurface(feat, TextureManager
 				.textureLoading(env.folder + background), dpUR.getX()
