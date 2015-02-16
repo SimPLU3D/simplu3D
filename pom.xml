@@ -1,6 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>fr.ign.cogit</groupId>
@@ -177,8 +177,8 @@
 
 
 	</build>
-           <profiles>
-    			<!-- Tests under Linux 32bits -->
+	<profiles>
+		<!-- Tests under Linux 32bits -->
 		<profile>
 			<id>lin32</id>
 			<activation>
@@ -193,15 +193,15 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
-        					<argLine>-Djava.library.path=${basedir}/lib/native_libraries/linux-i386</argLine>
+							<argLine>-Djava.library.path=${basedir}/lib/native_libraries/linux-i386</argLine>
 							<skipTests>false</skipTests>
 						</configuration>
 					</plugin>
 				</plugins>
 			</build>
 		</profile>
-		
-					<!-- Tests under Linux 64bits -->
+
+		<!-- Tests under Linux 64bits -->
 		<profile>
 			<id>lin64</id>
 			<activation>
@@ -216,14 +216,14 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
-        					<argLine>-Djava.library.path=${basedir}/lib/native_libraries/linux-amd64</argLine>
+							<argLine>-Djava.library.path=${basedir}/lib/native_libraries/linux-amd64</argLine>
 							<skipTests>false</skipTests>
 						</configuration>
 					</plugin>
 				</plugins>
 			</build>
 		</profile>
-		
+
 
 		<!-- Tests under Windows 64bits -->
 		<profile>
@@ -240,7 +240,7 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
-        					<argLine>-Djava.library.path=${basedir}/lib/native_libraries/windows-amd64</argLine>
+							<argLine>-Djava.library.path=${basedir}/lib/native_libraries/windows-amd64</argLine>
 							<skipTests>false</skipTests>
 						</configuration>
 					</plugin>
@@ -263,16 +263,21 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
-        					<argLine>-Djava.library.path=${basedir}/lib/native_libraries/windows-i586</argLine>
+							<argLine>-Djava.library.path=${basedir}/lib/native_libraries/windows-i586</argLine>
 							<skipTests>false</skipTests>
 						</configuration>
 					</plugin>
 				</plugins>
 			</build>
 		</profile>
- </profiles>
+	</profiles>
 
 	<repositories>
+		<repository>
+			<id>iscpif-ign-releases</id>
+			<name>ISCPIF Release repository for IGN</name>
+			<url>http://maven.iscpif.fr/ign-releases/</url>
+		</repository>
 		<repository>
 			<id>Central</id>
 			<name>Central Repository</name>
@@ -316,7 +321,9 @@
 			<url>https://maven.atlassian.com/maven1/maven2</url>
 		</repository>
 		<repository>
-			<snapshots><enabled>true</enabled></snapshots>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 			<id>iscpif-ign-snapshots</id>
 			<name>ISCPIF Snapshot repository for IGN</name>
 			<url>http://maven.iscpif.fr/ign-snapshots/</url>
@@ -326,7 +333,7 @@
 
 
 	<dependencies>
-	    <dependency>
+		<dependency>
 			<groupId>campskeleton</groupId>
 			<artifactId>campskeleton</artifactId>
 			<version>6.0</version>
@@ -349,8 +356,25 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.ign.cogit</groupId>
+			<artifactId>geoxygene-geopensim</artifactId>
+			<version>1.7-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.ign.cogit</groupId>
 			<artifactId>cogit-sig3d</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
+	<distributionManagement>
+		<repository>
+			<id>iscpif-ign-releases</id>
+			<name>ISCPIF Release repository for IGN</name>
+			<url>http://maven.iscpif.fr/ign-releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>iscpif-ign-snapshots</id>
+			<name>ISCPIF Snapshot repository for IGN</name>
+			<url>http://maven.iscpif.fr/ign-snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
 </project>
