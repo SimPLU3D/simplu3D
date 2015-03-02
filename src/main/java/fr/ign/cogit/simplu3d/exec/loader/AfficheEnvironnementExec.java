@@ -11,6 +11,7 @@ import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
+import fr.ign.cogit.geoxygene.sig3d.gui.MainWindow;
 import fr.ign.cogit.geoxygene.sig3d.representation.ConstantRepresentation;
 import fr.ign.cogit.geoxygene.sig3d.representation.basic.Object1d;
 import fr.ign.cogit.geoxygene.sig3d.representation.texture.TextureManager;
@@ -20,20 +21,20 @@ import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_LineString;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Polygon;
-import fr.ign.cogit.sig3d.COGITLauncher3D;
 import fr.ign.cogit.simplu3d.gui.button.GTRUToolBar;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement.Theme;
 import fr.ign.parameters.Parameters;
+
 /**
  * 
- *        This software is released under the licence CeCILL
+ * This software is released under the licence CeCILL
  * 
- *        see LICENSE.TXT
+ * see LICENSE.TXT
  * 
- *        see <http://www.cecill.info/ http://www.cecill.info/
+ * see <http://www.cecill.info/ http://www.cecill.info/
  * 
  * 
  * 
@@ -67,19 +68,19 @@ public class AfficheEnvironnementExec {
     // lTheme.add(Theme.FAITAGE);
     // lTheme.add(Theme.PIGNON);
     // lTheme.add(Theme.GOUTTIERE);
-   lTheme.add(Theme.VOIRIE);
+    lTheme.add(Theme.VOIRIE);
     // lTheme.add(Theme.PARCELLE);
     // lTheme.add(Theme.SOUS_PARCELLE);
     // lTheme.add(Theme.ZONE);
     // lTheme.add(Theme.PAN);
     // lTheme.add(Theme.PAN_MUR);
-   // lTheme.add(Theme.BORDURE);
+    // lTheme.add(Theme.BORDURE);
 
     Theme[] tab = lTheme.toArray(new Theme[0]);
 
     List<VectorLayer> vl = RepEnvironnement.represent(env, tab);
-
-    COGITLauncher3D mW = new COGITLauncher3D();
+    MainWindow mW = new MainWindow();
+    // COGITLauncher3D mW = new COGITLauncher3D();
 
     for (VectorLayer l : vl) {
 
@@ -138,6 +139,5 @@ public class AfficheEnvironnementExec {
     mW.getInterfaceMap3D().getCurrent3DMap()
         .addLayer(new VectorLayer(fc, "Fond"));
   }
-
 
 }

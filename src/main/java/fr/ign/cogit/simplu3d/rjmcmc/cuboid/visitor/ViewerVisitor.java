@@ -21,7 +21,6 @@ import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_LineString;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Polygon;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
-import fr.ign.cogit.sig3d.gui.toolbar.IOToolBar;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement.Theme;
@@ -71,7 +70,7 @@ public class ViewerVisitor<O extends SimpleObject, C extends AbstractGraphConfig
 		prefix = prefixe;
 		if (mW == null) {
 			mW = new MainWindow();
-			mW.getMainMenuBar().add(new IOToolBar(mW));
+		//	mW.getMainMenuBar().add(new IOToolBar(mW));
 			represent(Environnement.getInstance(), mW, p);
 			MIN_LAYER = mW.getInterfaceMap3D().getCurrent3DMap().getLayerList()
 					.size();

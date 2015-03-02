@@ -20,7 +20,6 @@ import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_LineString;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Polygon;
-import fr.ign.cogit.sig3d.gui.toolbar.IOToolBar;
 import fr.ign.cogit.simplu3d.gui.button.GTRUToolBar;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
@@ -30,11 +29,11 @@ import fr.ign.parameters.Parameters;
 
 /**
  * 
- *        This software is released under the licence CeCILL
+ * This software is released under the licence CeCILL
  * 
- *        see LICENSE.TXT
+ * see LICENSE.TXT
  * 
- *        see <http://www.cecill.info/ http://www.cecill.info/
+ * see <http://www.cecill.info/ http://www.cecill.info/
  * 
  * 
  * 
@@ -43,8 +42,8 @@ import fr.ign.parameters.Parameters;
  * @author Brasebin Mickaël
  * 
  * @version 1.0
- *
- * Viewer avec quelques outils représentant les contraintes d'urbanisme
+ * 
+ *          Viewer avec quelques outils représentant les contraintes d'urbanisme
  * 
  * 
  * 
@@ -60,26 +59,24 @@ public class Simplu3D {
 
   public static void main(String[] args) throws Exception {
     ConstantRepresentation.backGroundColor = new Color(156, 180, 193);
-    
-    
+
     String fileName = "building_parameters_project_expthese_3.xml";
-    
 
     Parameters p = Parameters.unmarshall(new File(folder + fileName));
 
     Environnement env = LoaderSHP.load(p.getString("folder"));
 
-
     MainWindow mW = new MainWindow();
 
     new GTRUToolBar(mW);
-    new IOToolBar(mW);
+    // new IOToolBar(mW);
 
-    represent(folder, env, mW,p );
+    represent(folder, env, mW, p);
 
   }
 
-  private static void represent(String folder, Environnement env, MainWindow mW, Parameters p) {
+  private static void represent(String folder, Environnement env,
+      MainWindow mW, Parameters p) {
     List<Theme> lTheme = new ArrayList<RepEnvironnement.Theme>();
     lTheme.add(Theme.TOIT_BATIMENT);
     lTheme.add(Theme.FACADE_BATIMENT);
@@ -107,7 +104,6 @@ public class Simplu3D {
     mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
     mW.getInterfaceMap3D().moveLight(-140, 3, 120, 1);
 
-
     //
     // 1051042.8513268954120576,6840539.0837931865826249 :
     // 1051264.8064121364150196,6840679.2711814027279615
@@ -119,7 +115,6 @@ public class Simplu3D {
 
     // Projet 3
 
-    
     double z = p.getDouble("z");
 
     double xmin = p.getDouble("xminbg");
@@ -154,29 +149,20 @@ public class Simplu3D {
 
     IFeature feat = new DefaultFeature(new GM_Polygon(new GM_LineString(dpl)));
 
-
-
     // feat.setRepresentation(new TexturedSurface(feat, TextureManager
     // .textureLoading(folder + "Env3D_86.png"), dpUR.getX()-dpLL.getX(),
     // dpUR.getY()-dpLL.getY()));
-    
+
     String background = p.getString("background_img");
 
-    
     String filePath = env.folder + background;
-    
 
-    
     feat.setRepresentation(new TexturedSurface(feat, TextureManager
-        .textureLoading(filePath), dpUR.getX()
-        - dpLL.getX(), dpUR.getY() - dpLL.getY()));
-    
+        .textureLoading(filePath), dpUR.getX() - dpLL.getX(), dpUR.getY()
+        - dpLL.getY()));
+
     fc.add(feat);
-    
-    
-    
-    
-    
+
     // feat.setRepresentation(new TexturedSurface(feat, TextureManager
     // .textureLoading(folder + "Env3D_86.png"), dpUR.getX()-dpLL.getX(),
     // dpUR.getY()-dpLL.getY()));
