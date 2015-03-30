@@ -163,7 +163,7 @@ public class SamplePredicate<O extends AbstractSimpleBuilding, C extends Abstrac
       // Existe t il ?
       if (!this.curveLimiteFondParcel.isEmpty()) {
         // On vérifie la distance (on récupère le foot
-        if (this.curveLimiteFondParcel.distance(cuboid.getFootprint()) < this.distReculFond) {
+        if (this.curveLimiteFondParcel.distance(cuboid.getFootprint()) <= this.distReculFond) {
           // elle n'est pas respectée, on retourne faux
           return false;
 
@@ -176,7 +176,7 @@ public class SamplePredicate<O extends AbstractSimpleBuilding, C extends Abstrac
       // Existe t il ?
       if (!this.curveLimiteFrontParcel.isEmpty()) {
         // On vérifie la distance
-        if (this.curveLimiteFrontParcel.distance(cuboid.getFootprint()) < this.distReculVoirie) {
+        if (this.curveLimiteFrontParcel.distance(cuboid.getFootprint()) <= this.distReculVoirie) {
           // elle n'est pas respectée, on retourne faux
           return false;
 
@@ -189,7 +189,7 @@ public class SamplePredicate<O extends AbstractSimpleBuilding, C extends Abstrac
       // Existe t il ?
       if (!this.curveLimiteLatParcel.isEmpty()) {
         // On vérifie la distance
-        if (this.curveLimiteLatParcel.distance(cuboid.getFootprint()) < this.distReculLat) {
+        if (this.curveLimiteLatParcel.distance(cuboid.getFootprint()) <= this.distReculLat) {
           // elle n'est pas respectée, on retourne faux
           return false;
 
