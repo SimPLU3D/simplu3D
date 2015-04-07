@@ -42,7 +42,7 @@ public class SaveGeneratedObjects {
 
 	public static boolean save(String host, String port, String database,
 			String user, String pw, GraphConfiguration<Cuboid> cc,
-			int idExperiment, int idParcelle) {
+			int idExperiment, int idParcelle, int idRun) {
 
 		try {
 
@@ -75,10 +75,10 @@ public class SaveGeneratedObjects {
 
 				String sql = "Insert into "
 						+ TABLE_GENERATED_BUILDING
-						+ "(idparcelle,largeur,longueur,hauteur,orientation,idexperiment, the_geom) values ("
+						+ "(idparcelle,largeur,longueur,hauteur,orientation,idexperiment, the_geom, run) values ("
 						+ idParcelle + "," + largeur + "," + longueur + ","
 						+ hauteur + "," + orientation + "," + idExperiment
-						+ "," + geomWKT + ")";
+						+ "," + geomWKT +"," + idRun + ")";
 
 				System.out.println(sql);
 

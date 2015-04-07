@@ -15,11 +15,11 @@ import fr.ign.mpp.configuration.GraphConfiguration;
 
 /**
  * 
- *        This software is released under the licence CeCILL
+ * This software is released under the licence CeCILL
  * 
- *        see LICENSE.TXT
+ * see LICENSE.TXT
  * 
- *        see <http://www.cecill.info/ http://www.cecill.info/
+ * see <http://www.cecill.info/ http://www.cecill.info/
  * 
  * 
  * 
@@ -50,49 +50,57 @@ public class BasicPostGISSimulator {
     String user = "postgres";
     String pw = "postgres";
 
+    int lastExpID = 2;
+    int nbRun = 2;
+
     // id de l'expérimentation considérée
-    int idExperiment = 1;
+    for (int idExperiment = 1; idExperiment <= lastExpID; idExperiment++) {
 
-    // Chargement de l'expérimentation
-    ExperimentationPostGIS exp = new ExperimentationPostGIS(host, port,
-        database, user, pw, idExperiment);
+      // id du run
+      for (int run = 0; run < nbRun; run++) {
 
-    // Chargement de l'environnement depuis PostGIS
-    LoadPostGIS lP = new LoadPostGIS(host, port, database, user, pw);
-    Environnement env = lP.loadNoOCLRules();
+        // Chargement de l'expérimentation
+        ExperimentationPostGIS exp = new ExperimentationPostGIS(host, port,
+            database, user, pw, idExperiment);
 
-    // Chargement des paramètres de simulation
-    ParametersPostgis p = new ParametersPostgis(host, port, database, user, pw,
-        exp.getInteger(ExperimentationPostGIS.EXPERIMENTATION_ID_PARAM));
+        // Chargement de l'environnement depuis PostGIS
+        LoadPostGIS lP = new LoadPostGIS(host, port, database, user, pw);
+        Environnement env = lP.loadNoOCLRules();
 
-    for (BasicPropertyUnit bPU : env.getBpU()) {
-      // Chargement de l'optimiseur
-      OptimisedBuildingsCuboidDirectRejectionNoVisitor oCB = new OptimisedBuildingsCuboidDirectRejectionNoVisitor();
+        // Chargement des paramètres de simulation
+        ParametersPostgis p = new ParametersPostgis(host, port, database, user,
+            pw, exp.getInteger(ExperimentationPostGIS.EXPERIMENTATION_ID_PARAM));
 
-      // Chargement des règles à appliquer
-      UB16PredicateWithParameters<Cuboid,GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new UB16PredicateWithParameters<>(
-          bPU, exp.getDouble("hini"), exp.getDouble("slope"));
+        for (BasicPropertyUnit bPU : env.getBpU()) {
+          // Chargement de l'optimiseur
+          OptimisedBuildingsCuboidDirectRejectionNoVisitor oCB = new OptimisedBuildingsCuboidDirectRejectionNoVisitor();
 
-      // Exécution de l'optimisation
-      GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred);
+          // Chargement des règles à appliquer
+          UB16PredicateWithParameters<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new UB16PredicateWithParameters<>(
+              bPU, exp.getDouble("hini"), exp.getDouble("slope"));
 
-      // Identifiant de la parcelle
+          // Exécution de l'optimisation
+          GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred);
 
-      int idParcelle = bPU.getCadastralParcel().get(0).getId();
+          // Identifiant de la parcelle
 
-      // On sauve les objets
-      SaveGeneratedObjects.save(host, port, database, user, pw, cc,
-          idExperiment, idParcelle);
+          int idParcelle = bPU.getCadastralParcel().get(0).getId();
 
-      // On sauve la valeur de l'optimisation
-      SaveEnergyPostGIS.save(host, port, database, user, pw, idExperiment,
-          idParcelle, cc.getEnergy());
+          // On sauve les objets
+          SaveGeneratedObjects.save(host, port, database, user, pw, cc,
+              idExperiment, idParcelle, run);
 
+          // On sauve la valeur de l'optimisation
+          SaveEnergyPostGIS.save(host, port, database, user, pw, idExperiment,
+              idParcelle, run, cc.getEnergy());
+
+        }
+
+        // On a bien effectué l'expérimentation
+        exp.setProcessed();
+
+      }
     }
-
-    // On a bien effectué l'expérimentation
-    exp.setProcessed();
-
     System.out.println("That's all folks");
 
   }

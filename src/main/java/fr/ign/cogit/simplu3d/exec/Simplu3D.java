@@ -20,6 +20,7 @@ import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_LineString;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Polygon;
+import fr.ign.cogit.simplu3d.exe.LoadDefaultEnvironment;
 import fr.ign.cogit.simplu3d.gui.button.GTRUToolBar;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
@@ -64,7 +65,7 @@ public class Simplu3D {
 
     Parameters p = Parameters.unmarshall(new File(folder + fileName));
 
-    Environnement env = LoaderSHP.load(p.getString("folder"));
+    Environnement env =  LoadDefaultEnvironment.getENVDEF();//; LoaderSHP.load(p.getString("folder"));
 
     MainWindow mW = new MainWindow();
 

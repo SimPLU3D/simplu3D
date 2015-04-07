@@ -271,7 +271,6 @@ public class SamplePredicate<O extends AbstractSimpleBuilding, C extends Abstrac
 
       }
 
-      return false;
     }
     return true;
 
