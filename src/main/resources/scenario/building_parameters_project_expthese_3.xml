@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <parameters>
         <!-- Dossier contenant l'environnement géon il contient bati.shp, parcelle.shp, route.shp, zonage.shp, PRESRIPTION_SURF.shp-->
-		<param key="folder" value="E:/mbrasebin/Donnees/Strasbourg/GTRU/ProjectT3/"/>
+		<param key="folder" value=""/>
         <!-- Paramètres relatifs à l'énergie -->
         <!-- Énergie de création d'un cube dans une configuration m^3-->
 		<param key="energy" value="5" />
@@ -47,7 +47,7 @@
         <param key="load_existing_config" value="0" />
         
         <!-- Chemin de la configuration, cette configuraiton ne doit pas avoir subi de post tratement!-->
-        <param key="config_shape_file" value="C:/Users/mbrasebin/Desktop/Exp1/test1/Montage/Test/result_1975488   .shp" />
+        <param key="config_shape_file" value="" />
         
         
         <!-- Nombre d'itération!-->
