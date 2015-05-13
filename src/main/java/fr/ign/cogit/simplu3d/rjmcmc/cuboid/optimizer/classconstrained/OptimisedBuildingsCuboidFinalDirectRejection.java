@@ -130,7 +130,7 @@ public class OptimisedBuildingsCuboidFinalDirectRejection {
 
 		try {
 			conf = create_configuration(p,
-					AdapterFactory.toGeometry(new GeometryFactory(), geom), bpu);
+					geom, bpu);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -242,6 +242,14 @@ public class OptimisedBuildingsCuboidFinalDirectRejection {
 	public int getCount() {
 		return countV.getCount();
 	}
+	
+	
+	public GraphConfiguration<Cuboid> create_configuration(Parameters p,
+			IGeometry geom, BasicPropertyUnit bpu) throws Exception {
+		
+		return this.create_configuration(p, AdapterFactory.toGeometry(new GeometryFactory(), geom), bpu);
+		
+	}
 
 	// Création de la configuration
 	/**
@@ -305,7 +313,7 @@ public class OptimisedBuildingsCuboidFinalDirectRejection {
 	 *            l'enveloppe dans laquelle on génère les positions
 	 * @return
 	 */
-	Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> create_sampler(
+	public Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> create_sampler(
 			RandomGenerator rng,
 			Parameters p,
 			BasicPropertyUnit bpU,
