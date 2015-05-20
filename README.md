@@ -23,6 +23,12 @@ Library installation
 ---------------------
 The project is build with Maven and is coded in Java (JDK 1.7 is required), it has been tested in most common OS. If you are not familiar with Maven, we suggest installing developer tools and versions as described in [GeOxygene install guide](http://oxygene-project.sourceforge.net/documentation/developer/install.html).
 
+Vidéo
+---------------------
+[Generating a building with n boxes](https://www.youtube.com/watch?v=dH9woKexsVw)
+
+[Generating n buildings with 1 box](https://www.youtube.com/watch?v=LwsPW0rcB44)
+
 Test class
 ---------------------
 fr.ign.cogit.simplu3d.exec.BasicSimulator class using predefined resource  files is runnable. It generates a built composed by a set of intersecting boxes.
