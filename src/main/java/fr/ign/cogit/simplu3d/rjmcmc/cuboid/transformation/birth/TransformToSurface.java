@@ -101,7 +101,7 @@ public class TransformToSurface implements Transform {
             }
 
             for (Face f : triangulation.getPopFaces()) {
-              if (lOS.get(0).buffer(0.5).contains(f.getGeom())) {
+              if (oS.buffer(0.5).contains(f.getGeom())) {
                 iMS.add(f.getGeometrie());
               }
             }
