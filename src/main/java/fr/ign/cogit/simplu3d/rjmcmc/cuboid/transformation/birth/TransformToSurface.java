@@ -86,20 +86,29 @@ public class TransformToSurface implements Transform {
 
   private void prepareGeometry(IGeometry geom) {
     List<IOrientableSurface> lOS = FromGeomToSurface.convertGeom(geom);
-    TriangulationJTS triangulation = TriangulationLoader
-        .generate((IPolygon) lOS.get(0));
-    try {
-      triangulation.triangule();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+    
+    
     IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<>();
-    for (Face f : triangulation.getPopFaces()) {
-      if (lOS.get(0).buffer(0.5).contains(f.getGeom())) {
-        iMS.add(f.getGeometrie());
-      }
+    
+    for(IOrientableSurface oS : lOS){
+    	
+        TriangulationJTS triangulation = TriangulationLoader
+                .generate((IPolygon) oS);
+            try {
+              triangulation.triangule();
+            } catch (Exception e) {
+              e.printStackTrace();
+            }
+
+            for (Face f : triangulation.getPopFaces()) {
+              if (lOS.get(0).buffer(0.5).contains(f.getGeom())) {
+                iMS.add(f.getGeometrie());
+              }
+            }
+    	
     }
-    // DistributionAssesment.featCD.add(new DefaultFeature(iMS));
+    
+
     eq = new EquiSurfaceDistribution(iMS);
   }
 
