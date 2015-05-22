@@ -91,6 +91,12 @@ public class OptimisedBuildingsCuboidFinalDirectRejection {
 	private double minDimBox = Double.NaN;
 	private double maxDimBox = Double.NaN;
 	private double energyCreation = Double.NaN;
+	private IGeometry samplingSurface = null;
+	
+	
+	public void setSamplingSurface(IGeometry geom){
+		samplingSurface = geom;
+	}
 
 	public void setEnergyCreation(double energyCreation) {
 		this.energyCreation = energyCreation;
@@ -361,11 +367,18 @@ public class OptimisedBuildingsCuboidFinalDirectRejection {
 		// env.minY(), mindim, mindim, minheight, 0), new Cuboid2(env.maxX(),
 		// env.maxY(), maxdim,
 		// maxdim, maxheight, Math.PI), builder, bpU.getpol2D());
+		
+		
+		if(samplingSurface == null){
+			samplingSurface = bpU.getpol2D();
+		}
+		
+		
 		UniformBirth<Cuboid> birth = new UniformBirth<Cuboid>(rng, new Cuboid(
 				env.minX(), env.minY(), mindim, mindim, minheight, 0),
 				new Cuboid(env.maxX(), env.maxY(), maxdim, maxdim, maxheight,
 						Math.PI), builder, TransformToSurface.class,
-				bpU.getpol2D());
+				samplingSurface);
 
 		// Distribution de poisson
 		PoissonDistribution distribution = new PoissonDistribution(rng,
