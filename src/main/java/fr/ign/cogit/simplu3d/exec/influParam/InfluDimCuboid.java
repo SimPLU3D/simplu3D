@@ -100,8 +100,11 @@ public class InfluDimCuboid {
 
 					// OCLBuildingsCuboidFinal ocb = new
 					// OCLBuildingsCuboidFinal();
-					ocb.setMinDimBox(valsMinDimBox[indexMin]);
-					ocb.setMaxDimBox(valsMaxDimBox[indexMax]);
+					ocb.setMinLengthBox(valsMinDimBox[indexMin]);
+					ocb.setMaxLengthBox(valsMaxDimBox[indexMax]);
+					
+					ocb.setMinWidthBox(valsMinDimBox[indexMin]);
+					ocb.setMaxWidthBox(valsMaxDimBox[indexMax]);
 
 					double timeMs = System.currentTimeMillis();
 

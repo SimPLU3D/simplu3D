@@ -81,20 +81,39 @@ public class OptimisedBuildingsCuboidDirectRejectionNoVisitor {
 
 	private double coeffDec = Double.NaN;
 	private double deltaConf = Double.NaN;
-	private double minDimBox = Double.NaN;
-	private double maxDimBox = Double.NaN;
+	
+	private double minLengthBox = Double.NaN;
+	private double maxLengthBox = Double.NaN;
+	private double minWidthBox = Double.NaN;
+	private double maxWidthBox = Double.NaN;
 	private double energyCreation = Double.NaN;
+	
+	private IGeometry samplingSurface = null;
+	
+	public void setSamplingSurface(IGeometry geom){
+		samplingSurface = geom;
+	}
+
 
 	public void setEnergyCreation(double energyCreation) {
 		this.energyCreation = energyCreation;
 	}
 
-	public void setMinDimBox(double minDimBox) {
-		this.minDimBox = minDimBox;
+
+	public void setMinLengthBox(double minLengthBox) {
+		this.minLengthBox = minLengthBox;
 	}
 
-	public void setMaxDimBox(double maxDimBox) {
-		this.maxDimBox = maxDimBox;
+	public void setMaxLengthBox(double maxLengthBox) {
+		this.maxLengthBox = maxLengthBox;
+	}
+
+	public void setMinWidthBox(double minWidthBox) {
+		this.minWidthBox = minWidthBox;
+	}
+
+	public void setMaxWidthBox(double maxWidthBox) {
+		this.maxWidthBox = maxWidthBox;
 	}
 
 	public OptimisedBuildingsCuboidDirectRejectionNoVisitor() {
@@ -235,10 +254,17 @@ public class OptimisedBuildingsCuboidDirectRejectionNoVisitor {
 			BasicPropertyUnit bpU,
 			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred) {
 		// Un vecteur ?????
-		double mindim = Double.isNaN(this.minDimBox) ? p.getDouble("mindim")
-				: this.minDimBox;
-		double maxdim = Double.isNaN(this.maxDimBox) ? p.getDouble("maxdim")
-				: this.maxDimBox;
+		double minlen = Double.isNaN(this.minLengthBox) ? p.getDouble("minlen")
+				: this.minLengthBox;
+		double maxlen = Double.isNaN(this.maxLengthBox) ? p.getDouble("maxlen")
+				: this.maxLengthBox;
+
+		
+		double minwid = Double.isNaN(this.minWidthBox) ? p.getDouble("minwid")
+				: this.minWidthBox;
+		double maxwid = Double.isNaN(this.maxWidthBox) ? p.getDouble("maxwid")
+				: this.maxWidthBox;
+
 
 		double minheight = p.getDouble("minheight");
 		double maxheight = p.getDouble("maxheight");
@@ -269,6 +295,13 @@ public class OptimisedBuildingsCuboidDirectRejectionNoVisitor {
 			}
 		};
 
+		
+		
+		if(samplingSurface == null){
+			samplingSurface = bpU.getpol2D();
+		}
+		
+		
 		IEnvelope env = bpU.getGeom().envelope();
 		// Sampler de naissance
 		// UniformBirthInGeom<Cuboid2> birth = new
@@ -278,10 +311,10 @@ public class OptimisedBuildingsCuboidDirectRejectionNoVisitor {
 		// env.maxY(), maxdim,
 		// maxdim, maxheight, Math.PI), builder, bpU.getpol2D());
 		UniformBirth<Cuboid> birth = new UniformBirth<Cuboid>(rng, new Cuboid(
-				env.minX(), env.minY(), mindim, mindim, minheight, 0),
-				new Cuboid(env.maxX(), env.maxY(), maxdim, maxdim, maxheight,
+				env.minX(), env.minY(), minlen, minwid, minheight, 0),
+				new Cuboid(env.maxX(), env.maxY(), maxlen, maxwid, maxheight,
 						Math.PI), builder, TransformToSurface.class,
-				bpU.getpol2D());
+						samplingSurface);
 
 		// Distribution de poisson
 		PoissonDistribution distribution = new PoissonDistribution(rng,

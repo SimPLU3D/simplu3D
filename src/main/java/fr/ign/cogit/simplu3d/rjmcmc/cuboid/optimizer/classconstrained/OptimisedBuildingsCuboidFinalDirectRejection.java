@@ -88,8 +88,13 @@ public class OptimisedBuildingsCuboidFinalDirectRejection {
 
 	private double coeffDec = Double.NaN;
 	private double deltaConf = Double.NaN;
-	private double minDimBox = Double.NaN;
-	private double maxDimBox = Double.NaN;
+	
+	private double minLengthBox = Double.NaN;
+	private double maxLengthBox = Double.NaN;
+	private double minWidthBox = Double.NaN;
+	private double maxWidthBox = Double.NaN;
+	
+	
 	private double energyCreation = Double.NaN;
 	private IGeometry samplingSurface = null;
 	
@@ -102,12 +107,23 @@ public class OptimisedBuildingsCuboidFinalDirectRejection {
 		this.energyCreation = energyCreation;
 	}
 
-	public void setMinDimBox(double minDimBox) {
-		this.minDimBox = minDimBox;
+
+	
+
+	public void setMinLengthBox(double minLengthBox) {
+		this.minLengthBox = minLengthBox;
 	}
 
-	public void setMaxDimBox(double maxDimBox) {
-		this.maxDimBox = maxDimBox;
+	public void setMaxLengthBox(double maxLengthBox) {
+		this.maxLengthBox = maxLengthBox;
+	}
+
+	public void setMinWidthBox(double minWidthBox) {
+		this.minWidthBox = minWidthBox;
+	}
+
+	public void setMaxWidthBox(double maxWidthBox) {
+		this.maxWidthBox = maxWidthBox;
 	}
 
 	public OptimisedBuildingsCuboidFinalDirectRejection() {
@@ -325,11 +341,21 @@ public class OptimisedBuildingsCuboidFinalDirectRejection {
 			BasicPropertyUnit bpU,
 			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred) {
 		// Un vecteur ?????
-		double mindim = Double.isNaN(this.minDimBox) ? p.getDouble("mindim")
-				: this.minDimBox;
-		double maxdim = Double.isNaN(this.maxDimBox) ? p.getDouble("maxdim")
-				: this.maxDimBox;
+		double minlen = Double.isNaN(this.minLengthBox) ? p.getDouble("minlen")
+				: this.minLengthBox;
+		double maxlen = Double.isNaN(this.maxLengthBox) ? p.getDouble("maxlen")
+				: this.maxLengthBox;
 
+		
+		double minwid = Double.isNaN(this.minWidthBox) ? p.getDouble("minwid")
+				: this.minWidthBox;
+		double maxwid = Double.isNaN(this.maxWidthBox) ? p.getDouble("maxwid")
+				: this.maxWidthBox;
+
+
+		
+		
+		
 		double minheight = p.getDouble("minheight");
 		double maxheight = p.getDouble("maxheight");
 		// A priori on redéfini le constructeur de l'objet
@@ -375,8 +401,8 @@ public class OptimisedBuildingsCuboidFinalDirectRejection {
 		
 		
 		UniformBirth<Cuboid> birth = new UniformBirth<Cuboid>(rng, new Cuboid(
-				env.minX(), env.minY(), mindim, mindim, minheight, 0),
-				new Cuboid(env.maxX(), env.maxY(), maxdim, maxdim, maxheight,
+				env.minX(), env.minY(), minlen, minwid, minheight, 0),
+				new Cuboid(env.maxX(), env.maxY(), maxlen, maxwid, maxheight,
 						Math.PI), builder, TransformToSurface.class,
 				samplingSurface);
 

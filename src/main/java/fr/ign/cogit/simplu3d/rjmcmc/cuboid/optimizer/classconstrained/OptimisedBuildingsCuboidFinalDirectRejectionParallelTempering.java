@@ -47,9 +47,7 @@ import fr.ign.mpp.kernel.UniformBirth;
 import fr.ign.parameters.Parameters;
 import fr.ign.random.Random;
 import fr.ign.rjmcmc.acceptance.MetropolisAcceptance;
-import fr.ign.rjmcmc.configuration.Configuration;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
-import fr.ign.rjmcmc.configuration.Modification;
 import fr.ign.rjmcmc.distribution.PoissonDistribution;
 import fr.ign.rjmcmc.energy.BinaryEnergy;
 import fr.ign.rjmcmc.energy.ConstantEnergy;
@@ -72,11 +70,11 @@ import fr.ign.simulatedannealing.visitor.Visitor;
 
 /**
  * 
- *        This software is released under the licence CeCILL
+ * This software is released under the licence CeCILL
  * 
- *        see LICENSE.TXT
+ * see LICENSE.TXT
  * 
- *        see <http://www.cecill.info/ http://www.cecill.info/
+ * see <http://www.cecill.info/ http://www.cecill.info/
  * 
  * 
  * 
@@ -88,25 +86,41 @@ import fr.ign.simulatedannealing.visitor.Visitor;
  **/
 public class OptimisedBuildingsCuboidFinalDirectRejectionParallelTempering {
 
-	private double minDimBox = Double.NaN;
-	private double maxDimBox = Double.NaN;
+	private double minLengthBox = Double.NaN;
+	private double maxLengthBox = Double.NaN;
+	private double minWidthBox = Double.NaN;
+	private double maxWidthBox = Double.NaN;
 
 	private int numberOfReplicas = 1;
 
 	private double tempMax = 1;
 
-	public void setMinDimBox(double minDimBox) {
-		this.minDimBox = minDimBox;
+	public void setMinLengthBox(double minLengthBox) {
+		this.minLengthBox = minLengthBox;
 	}
 
-	public void setMaxDimBox(double maxDimBox) {
-		this.maxDimBox = maxDimBox;
+	public void setMaxLengthBox(double maxLengthBox) {
+		this.maxLengthBox = maxLengthBox;
+	}
+
+	public void setMinWidthBox(double minWidthBox) {
+		this.minWidthBox = minWidthBox;
+	}
+
+	public void setMaxWidthBox(double maxWidthBox) {
+		this.maxWidthBox = maxWidthBox;
 	}
 
 	public OptimisedBuildingsCuboidFinalDirectRejectionParallelTempering(
 			int nbReplicas, double tempMax) {
 		numberOfReplicas = nbReplicas;
 		this.tempMax = tempMax;
+	}
+	
+	private IGeometry samplingSurface = null;
+	
+	public void setSamplingSurface(IGeometry geom){
+		samplingSurface = geom;
 	}
 
 	public void process(
@@ -333,10 +347,17 @@ public class OptimisedBuildingsCuboidFinalDirectRejectionParallelTempering {
 			BasicPropertyUnit bpU,
 			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred) {
 		// Un vecteur ?????
-		double mindim = Double.isNaN(this.minDimBox) ? p.getDouble("mindim")
-				: this.minDimBox;
-		double maxdim = Double.isNaN(this.maxDimBox) ? p.getDouble("maxdim")
-				: this.maxDimBox;
+		double minlen = Double.isNaN(this.minLengthBox) ? p.getDouble("minlen")
+				: this.minLengthBox;
+		double maxlen = Double.isNaN(this.maxLengthBox) ? p.getDouble("maxlen")
+				: this.maxLengthBox;
+
+		
+		double minwid = Double.isNaN(this.minWidthBox) ? p.getDouble("minwid")
+				: this.minWidthBox;
+		double maxwid = Double.isNaN(this.maxWidthBox) ? p.getDouble("maxwid")
+				: this.maxWidthBox;
+
 
 		double minheight = p.getDouble("minheight");
 		double maxheight = p.getDouble("maxheight");
@@ -375,11 +396,18 @@ public class OptimisedBuildingsCuboidFinalDirectRejectionParallelTempering {
 		// env.minY(), mindim, mindim, minheight, 0), new Cuboid2(env.maxX(),
 		// env.maxY(), maxdim,
 		// maxdim, maxheight, Math.PI), builder, bpU.getpol2D());
+		
+		
+		
+		if(samplingSurface == null){
+			samplingSurface = bpU.getpol2D();
+		}
+		
 		UniformBirth<Cuboid> birth = new UniformBirth<Cuboid>(rnd, new Cuboid(
-				env.minX(), env.minY(), mindim, mindim, minheight, 0),
-				new Cuboid(env.maxX(), env.maxY(), maxdim, maxdim, maxheight,
+				env.minX(), env.minY(), minlen, minwid, minheight, 0),
+				new Cuboid(env.maxX(), env.maxY(), maxlen, maxwid, maxheight,
 						Math.PI), builder, TransformToSurface.class,
-				bpU.getpol2D());
+						samplingSurface);
 
 		// Distribution de poisson
 		PoissonDistribution distribution = new PoissonDistribution(rnd,
