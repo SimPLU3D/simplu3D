@@ -7,10 +7,7 @@
 		<param key="energy" value="5" />
         <!-- Pondération du critère de volume-->
     	<param key="ponderation_volume" value="1" />
-        <!-- Pondération négative du volume dépassant de la parcelle-->
-        <param key="ponderation_difference_ext" value="5" />         
-        <!-- Pondération négative d'une boîte en intersectant une autre-->
-		<param key="ponderation_volume_inter" value="1" />         
+ 
         
         
         <!--Distribution (équiprobable) des dimensions des boîtes-->
