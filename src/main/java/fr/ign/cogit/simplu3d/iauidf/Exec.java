@@ -155,7 +155,7 @@ public class Exec {
 		Regulation r2 = orderedRegulation.get(1);
 
 		List<IMultiSurface<IOrientableSurface>> lSurface = BandProduction
-				.getBands(bPU, r1, r2, p.getDouble("minwid"));
+				.getBands(bPU, r1, r2, p.getDouble("minlen"));
 		
 		debugSurface.addAll(lSurface);
 		
