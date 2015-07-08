@@ -28,11 +28,12 @@ public class BandProduction {
 		// On créé la géométrie des limites donnant sur la voirie
 		IMultiCurve<IOrientableCurve> iMSRoad = new GM_MultiCurve<>();
 		IFeatureCollection<SpecificCadastralBoundary> lBordureVoirie = bPU
-				.getCadastralParcel().get(0).getSubParcel().get(0)
-				.getBorduresRoad();
+				.getCadastralParcel().get(0).getBorduresFront();
 		for (SpecificCadastralBoundary sc : lBordureVoirie) {
 			iMSRoad.add((IOrientableCurve) sc.getGeom());
 		}
+		
+		System.out.println("size road" + iMSRoad.size());
 
 		double profBande = r1.getBande();
 		// BANDE Profondeur de la bande principale x > 0 profondeur de la bande
