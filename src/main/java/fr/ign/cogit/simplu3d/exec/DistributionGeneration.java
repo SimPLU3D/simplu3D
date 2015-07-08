@@ -205,7 +205,7 @@ public class DistributionGeneration {
 		UniformBirth<Cuboid> birth = new UniformBirth<Cuboid>(rng, new Cuboid(
 				0, 0, mindim, mindim, minheight, 0), new Cuboid(1, 1, maxdim,
 				maxdim, maxheight, Math.PI), builder, TransformToSurface.class,
-				bpU.getpol2D());
+				bpU.generateGeom());
 
 		DirectSampler<Cuboid, ModelInstanceGraphConfiguration<Cuboid>, ModelInstanceModification<Cuboid>> ds = new DirectSampler<>(
 				new UniformDistribution(rng, 0, 1), birth);
