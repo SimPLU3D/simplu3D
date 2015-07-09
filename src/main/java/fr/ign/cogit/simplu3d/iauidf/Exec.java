@@ -30,13 +30,12 @@ public class Exec {
 
 	private static Logger log = Logger.getLogger(Exec.class);
 
-
 	public final static String nomDTM = "MNT_BD3D.asc";
 
 	public static Parameters p;
-	
+
 	public static List<IMultiSurface<IOrientableSurface>> lMS = new ArrayList<>();
-	
+
 	private static List<IMultiSurface<IOrientableSurface>> debugSurface = new ArrayList<>();
 
 	// Initialisation des attributs différents du schéma de base
@@ -56,7 +55,6 @@ public class Exec {
 
 	public static void main(String[] args) throws Exception {
 
-		
 		// Dossier contenant IMU_MANTES_TEST.csv et les sous dossier par code
 		// IMU
 		String folder = "C:/Users/mbrasebin/Desktop/Ilots_test/COGIT78/";
@@ -77,8 +75,8 @@ public class Exec {
 		// On traite indépendamment chaque zone imu
 		for (int imu : mapReg.keySet()) {
 
-			boolean simul = simulRegulationByIMU(imu, mapReg.get(imu), folder
-					+ imu + "/");
+			boolean simul = simulRegulationByIMU(imu, mapReg.remove(imu),
+					folder + imu + "/");
 
 			if (!simul) {
 				log.warn("--Probleme pour la simulation : " + imu);
@@ -100,10 +98,10 @@ public class Exec {
 	public static boolean simulRegulationByIMU(int imu, List<Regulation> lReg,
 			String folderImu) throws FileNotFoundException,
 			CloneNotSupportedException {
-		
-		
+
 		debugSurface = new ArrayList<>();
 
+		// On instancie l'environnement associé à l'IMU
 		Environnement env = LoaderSHP.load(folderImu, new FileInputStream(
 				folderImu + nomDTM));
 
@@ -115,20 +113,21 @@ public class Exec {
 			isOk = isOk && simulRegulationByBasicPropertyUnit(bPU, imu, lReg);
 
 		}
-		
+
 		System.out.println("-- Nombre de surface : " + debugSurface.size());
-		
+
 		IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
-		
-		for(IMultiSurface<IOrientableSurface> iS : debugSurface){
-			if(iS != null && iS.isValid() && ! iS.isEmpty()){
+
+		// Petit script pour sauvegarder les bandes pour vérification
+		// Le fichier généré se trouve dans le dossier imu
+		for (IMultiSurface<IOrientableSurface> iS : debugSurface) {
+			if (iS != null && iS.isValid() && !iS.isEmpty()) {
 				featC.add(new DefaultFeature(iS));
 			}
-			
+
 		}
-		
-		ShapefileWriter.write(featC, folderImu + "generatedBand.shp"); 
-		
+
+		ShapefileWriter.write(featC, folderImu + "generatedBand.shp");
 
 		return isOk;
 	}
@@ -154,11 +153,20 @@ public class Exec {
 		Regulation r1 = orderedRegulation.get(0);
 		Regulation r2 = orderedRegulation.get(1);
 
-		List<IMultiSurface<IOrientableSurface>> lSurface = BandProduction
-				.getBands(bPU, r1, r2, p.getDouble("minlen"));
-		
-		debugSurface.addAll(lSurface);
-		
+		// ART_5 Superficie minimale 88= non renseignable, 99= non réglementé
+		int r_art5 = r1.getArt_5();
+		if (r_art5 != 99) {
+			if (bPU.generateGeom().area() < r_art5) {
+				return true;
+			}
+
+		}
+
+		BandProduction bP = new BandProduction(bPU, r1, r2);
+
+		debugSurface.add(r1.getGeomBande());
+		debugSurface.add(r2.getGeomBande());
+
 		// Création du Sampler (qui va générer les propositions de solutions)
 		// A voir quand on aura le nouveau sampler
 

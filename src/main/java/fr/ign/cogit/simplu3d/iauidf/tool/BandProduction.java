@@ -17,16 +17,16 @@ import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 
 public class BandProduction {
 
-	public static List<IMultiSurface<IOrientableSurface>> getBands(
-			BasicPropertyUnit bPU, Regulation r1, Regulation r2, double largBat) {
+	List<IMultiSurface<IOrientableSurface>> lOut = new ArrayList<>();
+	IMultiCurve<IOrientableCurve> iMSRoad = new GM_MultiCurve<>();
 
-		List<IMultiSurface<IOrientableSurface>> lOut = new ArrayList<>();
+	public BandProduction(BasicPropertyUnit bPU, Regulation r1, Regulation r2) {
 
 		// On récupère le polygone surlequel on va faire la découpe
 		IPolygon pol_BPU = bPU.getpol2D();
 
 		// On créé la géométrie des limites donnant sur la voirie
-		IMultiCurve<IOrientableCurve> iMSRoad = new GM_MultiCurve<>();
+
 		IFeatureCollection<SpecificCadastralBoundary> lBordureVoirie = bPU
 				.getCadastralParcel().get(0).getBorduresFront();
 		for (SpecificCadastralBoundary sc : lBordureVoirie) {
@@ -113,19 +113,30 @@ public class BandProduction {
 					.difference(iMSLim.buffer(r2_art72)));
 		}
 
-		if (iMSBande1 != null && !iMSBande1.isEmpty()) {
-			iMSBande1 = FromGeomToSurface.convertMSGeom(iMSBande1
-					.buffer(-largBat));
-		}
-		if (iMSBande2 != null && !iMSBande2.isEmpty()) {
-			iMSBande2 = FromGeomToSurface.convertMSGeom(iMSBande2
-					.buffer(-largBat));
-		}
+		/*
+		 * 
+		 * En fait on va réinjecter ça dans le sampler Sinon on peut pas vérifer
+		 * que les boites sont bien dans les bandes
+		 * 
+		 * if (iMSBande1 != null && !iMSBande1.isEmpty()) { iMSBande1 =
+		 * FromGeomToSurface.convertMSGeom(iMSBande1 .buffer(-largBat)); } if
+		 * (iMSBande2 != null && !iMSBande2.isEmpty()) { iMSBande2 =
+		 * FromGeomToSurface.convertMSGeom(iMSBande2 .buffer(-largBat)); }
+		 */
 
 		lOut.add(iMSBande1);
 		lOut.add(iMSBande2);
 
-		return lOut;
+		r1.setGeomBande(iMSBande1);
+
+		if (iMSBande2 != null && !iMSBande2.isEmpty()) {
+			r2.setGeomBande(iMSBande2);
+		}
 
 	}
+
+	public IMultiCurve<IOrientableCurve> getLineRoad() {
+		return this.iMSRoad;
+	}
+
 }
