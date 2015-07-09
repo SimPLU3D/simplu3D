@@ -4,11 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
+import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
+import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
+import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
+import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToLineString;
 import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToSurface;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.simplu3d.iauidf.regulation.Regulation;
@@ -19,6 +23,7 @@ public class BandProduction {
 
 	List<IMultiSurface<IOrientableSurface>> lOut = new ArrayList<>();
 	IMultiCurve<IOrientableCurve> iMSRoad = new GM_MultiCurve<>();
+	private IMultiCurve<IOrientableCurve> lineRoad = null;
 
 	public BandProduction(BasicPropertyUnit bPU, Regulation r1, Regulation r2) {
 
@@ -133,10 +138,67 @@ public class BandProduction {
 			r2.setGeomBande(iMSBande2);
 		}
 
+		double rArt6 = r1.getArt_6();
+		if (rArt6 != 99 && rArt6 != 88) {
+
+			if (rArt6 == 0) {
+				lineRoad = (IMultiCurve<IOrientableCurve>) (iMSRoad.clone());
+			} else {
+				lineRoad = shiftRoad(bPU, rArt6);
+
+			}
+
+		}
+
+	}
+
+	private IMultiCurve<IOrientableCurve> shiftRoad(BasicPropertyUnit bPU,
+			double valShiftB) {
+
+		IMultiCurve<IOrientableCurve> iMS = new GM_MultiCurve<>();
+
+		IDirectPosition centroidParcel = bPU.generateGeom().centroid();
+
+		for (IOrientableCurve oC : iMSRoad) {
+			
+			if(oC.isEmpty()){
+				continue;
+			}
+
+			IDirectPosition centroidGeom = oC.coord().get(0);
+			Vecteur v = new Vecteur(centroidParcel, centroidGeom);
+
+			Vecteur v2 = new Vecteur(oC.coord().get(0), oC.coord().get(
+					oC.coord().size() - 1));
+			v2.setZ(0);
+			v2.normalise();
+
+			Vecteur vOut = v2.prodVectoriel(new Vecteur(0, 0, 1));
+
+			IGeometry geom = ((IGeometry) oC.clone());
+
+			if (v.prodScalaire(vOut) < 0) {
+				vOut = vOut.multConstante(-1);
+			}
+
+			IGeometry geom2 = geom.translate(valShiftB * vOut.getX(), valShiftB
+					* vOut.getY(), 0);
+
+			if (!geom2.intersects(bPU.getGeom())) {
+				geom2 = geom.translate(-valShiftB * vOut.getX(), -valShiftB
+						* vOut.getY(), 0);
+			}
+
+			iMS.addAll(FromGeomToLineString.convert(geom2));
+
+		}
+
+		return iMS;
+
 	}
 
 	public IMultiCurve<IOrientableCurve> getLineRoad() {
-		return this.iMSRoad;
+		return this.lineRoad;
 	}
 
 }

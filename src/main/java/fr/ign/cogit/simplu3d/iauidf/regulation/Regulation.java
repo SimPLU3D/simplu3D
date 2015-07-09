@@ -320,6 +320,19 @@ public class Regulation {
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	IMultiSurface<IOrientableSurface> geomBande = null;
 
 
