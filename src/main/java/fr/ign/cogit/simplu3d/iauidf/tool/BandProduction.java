@@ -87,17 +87,20 @@ public class BandProduction {
 		// On créé la géométrie des autres limites séparatives
 		IMultiCurve<IOrientableCurve> iMSLim = new GM_MultiCurve<>();
 		IFeatureCollection<SpecificCadastralBoundary> lBordureLat = bPU
-				.getCadastralParcel().get(0).getSubParcel().get(0)
-				.getBorduresLat();
-		for (SpecificCadastralBoundary sc : lBordureLat) {
-			iMSLim.add((IOrientableCurve) sc.getGeom());
-		}
+				.getCadastralParcel().get(0).getSpecificCadastralBoundary();
 
+		for (SpecificCadastralBoundary sc : lBordureLat) {
+
+			if (sc.getType() == SpecificCadastralBoundary.LAT) {
+				iMSLim.add((IOrientableCurve) sc.getGeom());
+			}
+		}
 		IFeatureCollection<SpecificCadastralBoundary> lBordureFond = bPU
-				.getCadastralParcel().get(0).getSubParcel().get(0)
-				.getBorduresFond();
+				.getCadastralParcel().get(0).getSpecificCadastralBoundary();
 		for (SpecificCadastralBoundary sc : lBordureFond) {
-			iMSLim.add((IOrientableCurve) sc.getGeom());
+			if (sc.getType() == SpecificCadastralBoundary.BOT) {
+				iMSLim.add((IOrientableCurve) sc.getGeom());
+			}
 		}
 
 		// On enlève la bande de x m à partir des limites séparatives
@@ -134,8 +137,8 @@ public class BandProduction {
 
 		r1.setGeomBande(iMSBande1);
 
-			r2.setGeomBande(iMSBande2);
-		
+		r2.setGeomBande(iMSBande2);
+
 		double rArt6 = r1.getArt_6();
 		if (rArt6 != 99 && rArt6 != 88) {
 
@@ -158,8 +161,8 @@ public class BandProduction {
 		IDirectPosition centroidParcel = bPU.getpol2D().centroid();
 
 		for (IOrientableCurve oC : iMSRoad) {
-			
-			if(oC.isEmpty()){
+
+			if (oC.isEmpty()) {
 				continue;
 			}
 
