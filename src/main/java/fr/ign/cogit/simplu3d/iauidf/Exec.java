@@ -11,7 +11,9 @@ import org.apache.log4j.Logger;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
+import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
+import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
@@ -28,6 +30,8 @@ import fr.ign.parameters.Parameters;
 
 public class Exec {
 
+  public static boolean DEBUG_MODE = true;
+
   private static Logger log = Logger.getLogger(Exec.class);
 
   public final static String nomDTM = "MNT_BD3D.asc";
@@ -37,6 +41,7 @@ public class Exec {
   public static List<IMultiSurface<IOrientableSurface>> lMS = new ArrayList<>();
 
   private static List<IMultiSurface<IOrientableSurface>> debugSurface = new ArrayList<>();
+  private static List<IMultiCurve<IOrientableCurve>> debugLine = new ArrayList<>();
 
   // Initialisation des attributs différents du schéma de base
   // et le fichier de paramètre commun à toutes les simulations
@@ -56,7 +61,7 @@ public class Exec {
 
     // Dossier contenant IMU_MANTES_TEST.csv et les sous dossier par code
     // IMU
-    String folder = "/home/adminlocal/IAUIDF/";
+    String folder = "C:/Users/mbrasebin/Desktop/Ilots_test/COGIT78/";
     String csvFile = folder + "IMU_MANTES_TEST.csv";
 
     // Chargement des règlement par code IMU (on peut avoir plusieurs
@@ -95,8 +100,12 @@ public class Exec {
   public static boolean simulRegulationByIMU(int imu, List<Regulation> lReg, String folderImu)
       throws FileNotFoundException, CloneNotSupportedException {
 
-    debugSurface = new ArrayList<>();
+    if (DEBUG_MODE) {
+      debugSurface = new ArrayList<>();
+      debugLine = new ArrayList<>();
+    }
 
+    // On instancie l'environnement associé à l'IMU
     Environnement env = LoaderSHP.load(folderImu, new FileInputStream(folderImu + nomDTM));
 
     boolean isOk = true;
@@ -110,16 +119,9 @@ public class Exec {
 
     System.out.println("-- Nombre de surface : " + debugSurface.size());
 
-    IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
-
-    for (IMultiSurface<IOrientableSurface> iS : debugSurface) {
-      if (iS != null && iS.isValid() && !iS.isEmpty()) {
-        featC.add(new DefaultFeature(iS));
-      }
-
+    if (DEBUG_MODE) {
+      saveShapeTest(folderImu);
     }
-
-    ShapefileWriter.write(featC, folderImu + "generatedBand.shp");
 
     return isOk;
   }
@@ -144,10 +146,23 @@ public class Exec {
     Regulation r1 = orderedRegulation.get(0);
     Regulation r2 = orderedRegulation.get(1);
 
-    List<IMultiSurface<IOrientableSurface>> lSurface = BandProduction.getBands(bPU, r1, r2, p.getDouble("minwid"));
+    // ART_5 Superficie minimale 88= non renseignable, 99= non réglementé
 
-    debugSurface.addAll(lSurface);
+    int r_art5 = r1.getArt_5();
+    if (r_art5 != 99) {
+      if (bPU.generateGeom().area() < r_art5) {
+        return true;
+      }
 
+    }
+
+    BandProduction bP = new BandProduction(bPU, r1, r2);
+
+    if (DEBUG_MODE) {
+      debugSurface.add(r1.getGeomBande());
+      debugSurface.add(r2.getGeomBande());
+      debugLine.add(bP.getLineRoad());
+    }
     // Création du Sampler (qui va générer les propositions de solutions)
     // A voir quand on aura le nouveau sampler
 
@@ -158,6 +173,7 @@ public class Exec {
       // TODO OUPS, that didn't work
       e.printStackTrace();
     }
+
     return true;
   }
 
@@ -209,6 +225,35 @@ public class Exec {
       }
 
     }
+
+  }
+
+  private static void saveShapeTest(String folderImu) {
+    IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
+
+    // Petit script pour sauvegarder les bandes pour vérification
+    // Le fichier généré se trouve dans le dossier imu
+    for (IMultiSurface<IOrientableSurface> iS : debugSurface) {
+      if (iS != null && iS.isValid() && !iS.isEmpty()) {
+        featC.add(new DefaultFeature(iS));
+      }
+
+    }
+
+    ShapefileWriter.write(featC, folderImu + "generatedBand.shp");
+
+    IFeatureCollection<IFeature> featC2 = new FT_FeatureCollection<>();
+
+    // Petit script pour sauvegarder les bandes pour vérification
+    // Le fichier généré se trouve dans le dossier imu
+    for (IMultiCurve<IOrientableCurve> iS : debugLine) {
+      if (iS != null && iS.isValid() && !iS.isEmpty()) {
+        featC2.add(new DefaultFeature(iS));
+      }
+
+    }
+
+    ShapefileWriter.write(featC2, folderImu + "generatedLine.shp");
 
   }
 

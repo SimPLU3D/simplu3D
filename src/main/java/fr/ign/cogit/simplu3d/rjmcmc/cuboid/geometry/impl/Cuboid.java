@@ -15,6 +15,7 @@ import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToSurface;
+import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.geoxygene.util.conversion.JtsGeOxygene;
 import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
@@ -80,10 +81,11 @@ public class Cuboid extends AbstractSimpleBuilding implements Primitive {
 		return polyGeox;
 	}
 
+	private static 		GeometryFactory geomFact = new GeometryFactory();
 	@Override
 	public Polygon toGeometry() {
 		if (geomJTS == null) {
-			GeometryFactory geomFact = new GeometryFactory();
+	
 			Coordinate[] pts = new Coordinate[5];
 			double cosOrient = Math.cos(orientation);
 			double sinOrient = Math.sin(orientation);
@@ -276,14 +278,33 @@ public class Cuboid extends AbstractSimpleBuilding implements Primitive {
 	}
 
 	public boolean prospect(IGeometry geom, double slope, double hIni) {
-		double h = -1;
+		try {
+			return prospectJTS(AdapterFactory.toGeometry(geomFact, geom), slope, hIni);
+		} catch (Exception e) {
+	
+			e.printStackTrace();
+		}
+		return false;
+		/*double h = -1;
 		double distance = this.getFootprint().distance(geom);
+
+		h = ((Cuboid) this).height;
+
+		return distance * slope + hIni > h;*/
+	}
+
+	
+	public boolean prospectJTS(Geometry geom, double slope, double hIni) {
+		double h = -1;
+		double distance = this.toGeometry().distance(geom);
 
 		h = ((Cuboid) this).height;
 
 		return distance * slope + hIni > h;
 	}
-
+	
+	
+	
 	@Override
 	public double[] toArray() {
 		return new double[] { this.centerx, this.centery, this.length, this.width, this.height, this.orientation };

@@ -11,6 +11,13 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+
+import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
+import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
+import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
+
 public class Regulation {
 
 	private final static String CSV_SEPARATOR = ";";
@@ -310,5 +317,56 @@ public class Regulation {
 				+ ", art_9=" + art_9 + ", art_102=" + art_102 + ", art_12="
 				+ art_12 + ", art_14=" + art_14 + "]";
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	IMultiSurface<IOrientableSurface> geomBande = null;
 
+
+	/**
+	 * @return the geomBande
+	 */
+	public IMultiSurface<IOrientableSurface> getGeomBande() {
+		return geomBande;
+	}
+
+	/**
+	 * @param geomBande the geomBande to set
+	 */
+	public void setGeomBande(IMultiSurface<IOrientableSurface> geomBande) {
+		this.geomBande = geomBande;
+	}
+
+	
+	Geometry jtsGeometry = null;
+	
+	private static GeometryFactory gf = new GeometryFactory();
+	
+	public Geometry getJTSBand(){
+		
+		
+		if(jtsGeometry == null){
+			try {
+				jtsGeometry = AdapterFactory.toGeometry(gf, this.getGeomBande());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return jtsGeometry;
+	}
+	
 }
