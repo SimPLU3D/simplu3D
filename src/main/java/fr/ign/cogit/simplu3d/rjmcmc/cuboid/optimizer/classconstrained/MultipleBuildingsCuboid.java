@@ -52,6 +52,7 @@ import fr.ign.mpp.kernel.ObjectSampler;
 import fr.ign.mpp.kernel.UniformTypeView;
 import fr.ign.parameters.Parameters;
 import fr.ign.random.Random;
+import fr.ign.rjmcmc.acceptance.Acceptance;
 import fr.ign.rjmcmc.acceptance.MetropolisAcceptance;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
 import fr.ign.rjmcmc.distribution.PoissonDistribution;
@@ -174,8 +175,7 @@ public class MultipleBuildingsCuboid {
     CompositeVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> mVisitor = new CompositeVisitor<>(list);
     init_visitor(p, mVisitor);
     /*
-     * < This is the way to launch the optimization process. Here, the magic
-     * happen... >
+     * < This is the way to launch the optimization process. Here, the magic happen... >
      */
     SimulatedAnnealing.optimize(Random.random(), conf, samp, sch, end, mVisitor);
     return conf;
@@ -207,8 +207,7 @@ public class MultipleBuildingsCuboid {
    *          paramètres importés depuis le fichier XML
    * @param bpu
    *          l'unité foncière considérée
-   * @return la configuration chargée, c'est à dire la formulation énergétique
-   *         prise en compte
+   * @return la configuration chargée, c'est à dire la formulation énergétique prise en compte
    */
   public GraphConfiguration<Cuboid> create_configuration(Parameters p, Geometry geom, BasicPropertyUnit bpu) {
     // Énergie constante : à la création d'un nouvel objet
@@ -270,11 +269,7 @@ public class MultipleBuildingsCuboid {
     double maxheight = p.getDouble("maxheight");
 
     IEnvelope env = bpU.getGeom().envelope();
-
-    // in multi object situations, we need an object builder for each
-    // subtype
-    // and a sampler for the supertype (end of file)
-
+    // in multi object situations, we need an object builder for each subtype and a sampler for the supertype (end of file)
     Vector<Double> v = new Vector<>();
     v.add(env.minX());
     v.add(env.minY());
@@ -292,81 +287,66 @@ public class MultipleBuildingsCuboid {
     for (int i = 0; i < d.size(); i++) {
       d.set(i, d.get(i) - v.get(i));
     }
-
-    // TODO we should give the proper sampling surface and the limits
     Transform transformParallel = new ParallelPolygonTransform(d, v, r1.getGeomBande(), bP.getLineRoad().toArray());
     Transform transformSimple = new TransformToSurface(d, v, r2.getGeomBande());
 
-    // When direct sampling (solomon, etc.), what is the prob to choose a
-    // simple
-    // cuboid
+    // When direct sampling (solomon, etc.), what is the prob to choose a simple cuboid
     double p_simple = 0.5;
     CuboidSampler objectSampler = new CuboidSampler(rng, p_simple, transformSimple, transformParallel);
 
-    // Distribution de poisson
+    // poisson distribution
     PoissonDistribution distribution = new PoissonDistribution(rng, p.getDouble("poisson"));
+    DirectSampler<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> ds = new DirectRejectionSampler<>(distribution, objectSampler, pred);
 
-    DirectSampler<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> ds = new DirectRejectionSampler<>(
-        distribution, objectSampler, pred);
-
+    Variate variate = new Variate(rng);
     // Probabilité de naissance-morts modifications
     List<Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> kernels = new ArrayList<>(3);
     KernelFactory<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> factory = new KernelFactory<>();
 
-    UniformTypeView<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> simpleCuboidView = new UniformTypeView<>(
-        SimpleCuboid.class, simplebuilder);
+    NullView<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> nullView = new NullView<>();
+    UniformTypeView<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> sView = new UniformTypeView<>(SimpleCuboid.class, sbuilder);
     // we also need one birthdeath kernel per object subtype
-    Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> kernel1 = new Kernel<>(
-        new NullView<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>(), simpleCuboidView, new Variate(rng),
-        new Variate(rng), transformSimple, p.getDouble("pbirthdeath"), p.getDouble("pbirth"));
+    Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> kernel1 = new Kernel<>(nullView, sView, variate,
+        variate, transformSimple, p.getDouble("pbirthdeath"), p.getDouble("pbirth"));
     kernel1.setName("BirthDeathSimple");
     kernels.add(kernel1);
 
-    UniformTypeView<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> parallelCuboidView = new UniformTypeView<>(
-        ParallelCuboid.class, parallelbuilder);
-    Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> kernel2 = new Kernel<>(
-        new NullView<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>(), parallelCuboidView,
-        new Variate(rng), new Variate(rng), transformParallel, p.getDouble("pbirthdeath"), p.getDouble("pbirth"));
+    UniformTypeView<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pView = new UniformTypeView<>(ParallelCuboid.class, pbuilder);
+    Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> kernel2 = new Kernel<>(nullView, pView, variate, variate, transformParallel,
+        p.getDouble("pbirthdeath"), p.getDouble("pbirth"));
     kernel2.setName("BirthDeathParallel");
     kernels.add(kernel2);
 
-    // each move should either work on the super type or on the subtype and
-    // use a uniformtypeview
-    Variate variate = new Variate(rng);
+    // each move should either work on the super type or on the subtype and use a uniformtypeview
     double amplitudeMove = p.getDouble("amplitudeMove");
-    // kernels.add(factory
-    // .make_uniform_modification_kernel(rng, simplebuilder, new
-    // MoveCuboid(amplitudeMove), 0.2, "Move"));
-    // TODO add move kernels
-    
+    // kernels.add(factory.make_uniform_modification_kernel(rng, simplebuilder, new MoveCuboid(amplitudeMove), 0.2, "Move"));
+
+    // TODO add move kernel for parallel cuboid?
+    Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> simpleMovekernel = new Kernel<>(sView, sView, variate, variate,
+        new MoveCuboid(amplitudeMove), 0.2, 0.5);
+    simpleMovekernel.setName("SimpleMove");
+    kernels.add(simpleMovekernel);
+
     double amplitudeRotate = p.getDouble("amplitudeRotate") * Math.PI / 180;
-    // kernels.add(factory.make_uniform_modification_kernel(rng, simplebuilder,
-    // new RotateCuboid(amplitudeRotate), 0.2,
-    // "Rotate"));
-    // A kernel to change the orientation of simple cuboids (not relevant to
-    // parallel cuboids)
-    Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> simpleRotatekernel = new Kernel<>(
-        simpleCuboidView, simpleCuboidView, variate, variate, new RotateCuboid(amplitudeRotate), 0.2, 0.5);
+    // kernels.add(factory.make_uniform_modification_kernel(rng, simplebuilder, new RotateCuboid(amplitudeRotate), 0.2, "Rotate"));
+    // A kernel to change the orientation of simple cuboids (not relevant to parallel cuboids)
+    Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> simpleRotatekernel = new Kernel<>(sView, sView, variate, variate,
+        new RotateCuboid(amplitudeRotate), 0.2, 0.5);
     simpleRotatekernel.setName("Rotate");
     kernels.add(simpleRotatekernel);
     double amplitudeMaxDim = p.getDouble("amplitudeMaxDim");
-    // kernels.add(factory.make_uniform_modification_kernel(rng,
-    // simplebuilder, new ChangeWidth(amplitudeMaxDim), 0.2,
-    // "ChgWidth"));
-    // A kernel to change the width of simple cuboids (not relevant to parallel
-    // cuboids)
-    Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> simpleWidthkernel = new Kernel<>(
-        simpleCuboidView, simpleCuboidView, variate, variate, new ChangeWidth(amplitudeMaxDim), 0.2, 0.5);
+    // kernels.add(factory.make_uniform_modification_kernel(rng, simplebuilder, new ChangeWidth(amplitudeMaxDim), 0.2, "ChgWidth"));
+    // A kernel to change the width of simple cuboids (not relevant to parallel cuboids)
+    Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> simpleWidthkernel = new Kernel<>(sView, sView, variate, variate,
+        new ChangeWidth(amplitudeMaxDim), 0.2, 0.5);
     simpleWidthkernel.setName("ChgWidth");
     kernels.add(simpleWidthkernel);
-    kernels.add(factory.make_uniform_modification_kernel(rng, simplebuilder, new ChangeLength(amplitudeMaxDim), 0.2,
-        "ChgLength"));
+    kernels.add(factory.make_uniform_modification_kernel(rng, sbuilder, new ChangeLength(amplitudeMaxDim), 0.2, "ChgLength"));
     double amplitudeHeight = p.getDouble("amplitudeHeight");
-    kernels.add(factory.make_uniform_modification_kernel(rng, simplebuilder, new ChangeHeight(amplitudeHeight), 0.2,
-        "ChgHeight"));
+    kernels.add(factory.make_uniform_modification_kernel(rng, sbuilder, new ChangeHeight(amplitudeHeight), 0.2, "ChgHeight"));
 
-    Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> s = new GreenSamplerBlockTemperature<>(ds,
-        new MetropolisAcceptance<SimpleTemperature>(), kernels);
+    Acceptance<SimpleTemperature> acceptance = new MetropolisAcceptance<>();
+    Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> s = new GreenSamplerBlockTemperature<>(ds, acceptance, kernels);
     return s;
   }
 
@@ -386,7 +366,7 @@ public class MultipleBuildingsCuboid {
     return new GeometricSchedule<SimpleTemperature>(new SimpleTemperature(p.getDouble("temp")), coefDef);
   }
 
-  static ObjectBuilder<Cuboid> simplebuilder = new ObjectBuilder<Cuboid>() {
+  static ObjectBuilder<Cuboid> sbuilder = new ObjectBuilder<Cuboid>() {
     @Override
     public Cuboid build(Vector<Double> coordinates) {
       return new SimpleCuboid(coordinates.get(0), coordinates.get(1), coordinates.get(2), coordinates.get(3),
@@ -410,7 +390,7 @@ public class MultipleBuildingsCuboid {
     }
   };
 
-  static ObjectBuilder<Cuboid> parallelbuilder = new ObjectBuilder<Cuboid>() {
+  static ObjectBuilder<Cuboid> pbuilder = new ObjectBuilder<Cuboid>() {
     @Override
     public Cuboid build(Vector<Double> coordinates) {
       return new ParallelCuboid(coordinates.get(0), coordinates.get(1), coordinates.get(2), coordinates.get(3),
@@ -459,14 +439,14 @@ public class MultipleBuildingsCuboid {
         val1.setSize(6);
         double phi = this.variate.compute(var0);
         double jacob = this.transformSimple.apply(true, new Vector<Double>(0), var0, val1, new Vector<Double>(0));
-        this.object = simplebuilder.build(val1);
+        this.object = sbuilder.build(val1);
         return phi / jacob;
       }
       var0.setSize(6);
       val1.setSize(6);
       double phi = this.variate.compute(var0);
       double jacob = this.transformParallel.apply(true, new Vector<Double>(0), var0, val1, new Vector<Double>(0));
-      this.object = parallelbuilder.build(val1);
+      this.object = pbuilder.build(val1);
       return phi / jacob;
     }
 
@@ -475,7 +455,7 @@ public class MultipleBuildingsCuboid {
       if (SimpleCuboid.class.isInstance(t)) {
         Vector<Double> val1 = new Vector<>();
         val1.setSize(6);
-        simplebuilder.setCoordinates(t, val1);
+        sbuilder.setCoordinates(t, val1);
         Vector<Double> val0 = new Vector<>();
         val0.setSize(6);
         double J10 = this.transformSimple.apply(false, val1, new Vector<Double>(0), new Vector<Double>(0), val0);
@@ -484,7 +464,7 @@ public class MultipleBuildingsCuboid {
       }
       Vector<Double> val1 = new Vector<>();
       val1.setSize(6);
-      parallelbuilder.setCoordinates(t, val1);
+      pbuilder.setCoordinates(t, val1);
       Vector<Double> val0 = new Vector<>();
       val0.setSize(6);
       double J10 = this.transformParallel.apply(false, val1, new Vector<Double>(0), new Vector<Double>(0), val0);
