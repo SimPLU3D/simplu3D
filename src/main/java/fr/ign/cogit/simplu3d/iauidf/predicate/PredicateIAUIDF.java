@@ -17,6 +17,8 @@ import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.ParallelCuboid;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.SimpleCuboid;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
@@ -171,8 +173,24 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		// @TODO : il faudrait déterminer dans quel bande est le nouvel objet
 		// pour pointer sur la bonne réglementation
 		O birth = m.getBirth().get(0);
-		if (birth != null && !checkBandRegulation(r1, birth)) {
-			return false;
+
+		if (birth != null) {
+
+			if (birth instanceof ParallelCuboid) {
+				if (!checkBandRegulation(r1, birth)) {
+					return false;
+				}
+			} else if (birth instanceof SimpleCuboid) {
+				if (!checkBandRegulation(r2, birth)) {
+					return false;
+				}
+
+			} else {
+				System.out
+						.println("Predicate IAUIDF - Unexpected class during object birth : "
+								+ birth.getClass().getCanonicalName());
+			}
+
 		}
 
 		return false;

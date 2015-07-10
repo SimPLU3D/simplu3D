@@ -19,13 +19,17 @@ import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.exec.BasicSimulator;
+import fr.ign.cogit.simplu3d.iauidf.predicate.PredicateIAUIDF;
 import fr.ign.cogit.simplu3d.iauidf.regulation.Regulation;
 import fr.ign.cogit.simplu3d.iauidf.tool.BandProduction;
 import fr.ign.cogit.simplu3d.importer.applicationClasses.RoadImporter;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.classconstrained.MultipleBuildingsCuboid;
+import fr.ign.mpp.configuration.BirthDeathModification;
+import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
 
 public class Exec {
@@ -94,11 +98,10 @@ public class Exec {
    * @param imu
    * @param lReg
    * @return
-   * @throws CloneNotSupportedException
-   * @throws FileNotFoundException
+ * @throws Exception 
    */
   public static boolean simulRegulationByIMU(int imu, List<Regulation> lReg, String folderImu)
-      throws FileNotFoundException, CloneNotSupportedException {
+      throws Exception {
 
     if (DEBUG_MODE) {
       debugSurface = new ArrayList<>();
@@ -113,7 +116,7 @@ public class Exec {
     // On parcourt chaque parcelle et on applique la simulation dessus
     for (BasicPropertyUnit bPU : env.getBpU()) {
 
-      isOk = isOk && simulRegulationByBasicPropertyUnit(bPU, imu, lReg);
+      isOk = isOk && simulRegulationByBasicPropertyUnit(env, bPU, imu, lReg);
 
     }
 
@@ -132,8 +135,9 @@ public class Exec {
    * @param imu
    * @param lReg
    * @return
+ * @throws Exception 
    */
-  public static boolean simulRegulationByBasicPropertyUnit(BasicPropertyUnit bPU, int imu, List<Regulation> lReg) {
+  public static boolean simulRegulationByBasicPropertyUnit(Environnement env, BasicPropertyUnit bPU, int imu, List<Regulation> lReg) throws Exception {
 
     // //////On découpe la parcelle en bande en fonction des règlements
 
@@ -150,7 +154,7 @@ public class Exec {
 
     int r_art5 = r1.getArt_5();
     if (r_art5 != 99) {
-      if (bPU.generateGeom().area() < r_art5) {
+      if (bPU.getpol2D().area() < r_art5) {
         return true;
       }
 
@@ -167,12 +171,15 @@ public class Exec {
     // A voir quand on aura le nouveau sampler
 
     MultipleBuildingsCuboid oCB = new MultipleBuildingsCuboid();
-    try {
-      oCB.process(bPU, p, null, imu, null);
-    } catch (Exception e) {
-      // TODO OUPS, that didn't work
-      e.printStackTrace();
-    }
+    
+    PredicateIAUIDF<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred  = new PredicateIAUIDF<>(bPU, r1, r2);
+    
+
+	// Lancement de l'optimisation avec unité foncière, paramètres,
+	// environnement, id et prédicat
+	GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred, r1, r2, bP);
+    
+
 
     return true;
   }

@@ -157,7 +157,7 @@ public class BandProduction {
 
 		IMultiCurve<IOrientableCurve> iMS = new GM_MultiCurve<>();
 
-		IDirectPosition centroidParcel = bPU.generateGeom().centroid();
+		IDirectPosition centroidParcel = bPU.getpol2D().centroid();
 
 		for (IOrientableCurve oC : iMSRoad) {
 			
