@@ -8,14 +8,10 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiCurve;
-import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
-import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
-import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
-import fr.ign.cogit.simplu3d.iauidf.Exec;
 import fr.ign.cogit.simplu3d.iauidf.regulation.Regulation;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
@@ -76,7 +72,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 					IGeometry geom = sCB.getGeom();
 
-					if (geom instanceof IOrientableCurve) {
+					if (geom instanceof IOrientableCurve&& !geom.isEmpty()) {
 						curveLimiteFondParcel.add((IOrientableCurve) geom);
 
 					} else {
@@ -92,7 +88,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 					IGeometry geom = sCB.getGeom();
 
-					if (geom instanceof IOrientableCurve) {
+					if (geom instanceof IOrientableCurve && !geom.isEmpty()) {
 						curveLimiteLatParcel.add((IOrientableCurve) geom);
 
 					} else {
@@ -108,7 +104,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 					IGeometry geom = sCB.getGeom();
 
-					if (geom instanceof IOrientableCurve) {
+					if (geom instanceof IOrientableCurve && !geom.isEmpty()) {
 						curveLimiteFrontParcel.add((IOrientableCurve) geom);
 
 					} else {
@@ -145,15 +141,29 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 	@Override
 	public boolean check(C c, M m) {
 		
-		O birth = m.getBirth().get(0);
-
-		IMultiSurface<IOrientableSurface> gm = new GM_MultiSurface<>();
-		gm.add(birth.getFootprint());
-		if(Exec.debugSurface.size() < 100){
-			Exec.debugSurface.add(gm);
+		// Pour produire des boîtes séparées et vérifier que la distance inter
+		// bâtiment est respectée
+		// ART_8 Distance minimale des constructions par rapport aux autres sur
+		// une même propriété imposée en mètre 88= non renseignable, 99= non
+		// réglementé
+		if (!checkDistanceInterBuildings(c, m, r1.getArt_8())) {
+			return false;
 		}
+
 		
-		
+
+
+		O birth = null;
+
+		if (!m.getBirth().isEmpty()) {
+			birth = m.getBirth().get(0);
+			// IMultiSurface<IOrientableSurface> gm = new GM_MultiSurface<>();
+			// gm.add(birth.getFootprint());
+			// if(Exec.debugSurface.size() < 100){
+			// Exec.debugSurface.add(gm);
+			// }
+
+		}
 
 		// Vérification des règles au niveau de la parcelle
 
@@ -168,15 +178,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 			return false;
 		}
 
-		// Pour produire des boîtes séparées et vérifier que la distance inter
-		// bâtiment est respectée
-		// ART_8 Distance minimale des constructions par rapport aux autres sur
-		// une même propriété imposée en mètre 88= non renseignable, 99= non
-		// réglementé
-		if (!checkDistanceInterBuildings(c, m, r1.getArt_8())) {
-			return false;
-		}
-
+	
 		// Vérification des règles au niveau des bandes (localement)
 
 		// ART_6 Distance minimale des constructions par rapport à la voirie
@@ -186,7 +188,6 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 		// @TODO : il faudrait déterminer dans quel bande est le nouvel objet
 		// pour pointer sur la bonne réglementation
-
 
 		if (birth != null) {
 
@@ -207,9 +208,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 		}
 
-
-		
-//System.out.println("Je retourne true");
+		// System.out.println("Je retourne true");
 		return true;
 	}
 
@@ -283,6 +282,21 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 	public boolean checkBandRegulation(Regulation r, O cuboid) {
 
+
+
+	
+
+		
+		
+		if (r == null
+				|| !r.getJTSBand().buffer(0.5).contains(cuboid.toGeometry())) {
+			return false;
+		}
+	
+		
+
+		
+
 		// On vérifie que la boite est bien dans la bande (optionnel ? )
 		// if(! r.getJTSBand().contains(cuboid.toGeometry())){
 		// return false;
@@ -294,10 +308,10 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		// (voirie)
 		// Existe t il ?
 		int r_art6 = r.getArt_6();
-		if (this.jtsCurveLimiteFrontParcel != null && r_art6 != 88
+		if ( this.jtsCurveLimiteFrontParcel != null && r_art6 != 88
 				&& r_art6 != 99) {
 			// On vérifie la distance
-			if (this.jtsCurveLimiteFrontParcel.distance(cuboid.toGeometry()) <= r_art6) {
+			if (this.jtsCurveLimiteFrontParcel.distance(cuboid.toGeometry()) < r_art6) {
 				// elle n'est pas respectée, on retourne faux
 				return false;
 
@@ -314,7 +328,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		int r_art72 = r.getArt_72();
 		if (jtsCurveLimiteLatParcel != null && r_art72 != 88 && r_art72 != 99) {
 			// On vérifie la distance
-			if (this.jtsCurveLimiteLatParcel.distance(cuboid.toGeometry()) <= r_art72) {
+			if (this.jtsCurveLimiteLatParcel.distance(cuboid.toGeometry()) < r_art72) {
 				// elle n'est pas respectée, on retourne faux
 				return false;
 
@@ -329,7 +343,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		int r_art73 = r.getArt_73();
 		if (jtsCurveLimiteFondParcel != null && r_art73 != 88 && r_art73 != 99) {
 			// On vérifie la distance (on récupère le foot
-			if (this.jtsCurveLimiteFondParcel.distance(cuboid.toGeometry()) <= r_art73) {
+			if (this.jtsCurveLimiteFondParcel.distance(cuboid.toGeometry()) < r_art73) {
 				// elle n'est pas respectée, on retourne faux
 				return false;
 
@@ -397,15 +411,20 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 			}
 
-			if (this.jtsCurveLimiteFondParcel != null && !cuboid.prospectJTS(this.jtsCurveLimiteFondParcel, slope, hIni)) {
+			if (this.jtsCurveLimiteFondParcel != null
+					&& !cuboid.prospectJTS(this.jtsCurveLimiteFondParcel,
+							slope, hIni)) {
 				return false;
 			}
 
-			if (this.jtsCurveLimiteLatParcel != null && !cuboid.prospectJTS(this.jtsCurveLimiteLatParcel, slope, hIni)) {
+			if (this.jtsCurveLimiteLatParcel != null
+					&& !cuboid.prospectJTS(this.jtsCurveLimiteLatParcel, slope,
+							hIni)) {
 				return false;
 			}
 		}
 
+	//	System.out.println("Je return true");
 		return true;
 
 	}

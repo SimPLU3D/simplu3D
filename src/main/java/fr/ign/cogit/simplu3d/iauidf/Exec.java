@@ -86,7 +86,13 @@ public class Exec {
 
 		// On traite indépendamment chaque zone imu
 		for (int imu : mapReg.keySet()) {
+			
+			
 
+			//	int imu = 78020432;  78020440; //(int) mapReg.keySet().toArray()[0];
+	
+	
+			System.out.println("Numéro imu : " + imu);
 			boolean simul = simulRegulationByIMU(imu, mapReg.get(imu), folder
 					+ imu + "/");
 
@@ -123,22 +129,34 @@ public class Exec {
 		// Stocke les résultats en sorties
 		IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
 
+		int count = 0;
 		// On parcourt chaque parcelle et on applique la simulation dessus
-		for (BasicPropertyUnit bPU : env.getBpU()) {
+		
+		int nbBPU = env.getBpU().size();
+		for(int i=0;i<nbBPU;i++){
+		
 
+			System.out.println("Parcelle numéro : "+(count++));
+			
 			IFeatureCollection<IFeature> featCTemp = simulRegulationByBasicPropertyUnit(
-					env, bPU, imu, lReg);
+					env, env.getBpU().get(i), imu, lReg);
 
+			System.out.println("Nombre de blocs : " + featCTemp.size());
+			
 			isOk = isOk && (featCTemp != null);
 
 			if (featCTemp != null) {
 				featC.addAll(featCTemp);
 			}
+			
+			
 
 		}
 
 		System.out.println("-- Nombre de surface : " + debugSurface.size());
-		ShapefileWriter.write(featC, folderImu + "simul_" + imu + ".shp");
+		String fileName =  folderImu + "simul_" + imu + ".shp";
+		System.out.println(fileName);
+		ShapefileWriter.write(featC, fileName);
 
 		if (DEBUG_MODE) {
 			saveShapeTest(folderImu);
@@ -177,17 +195,32 @@ public class Exec {
 
 		int r_art5 = r1.getArt_5();
 		if (r_art5 != 99) {
-			if (bPU.getpol2D().area() < r_art5) {
+			if (bPU.getpol2D().area() < r_art5 ) {
 				return featC;
 			}
 
 		}
-
 		BandProduction bP = new BandProduction(bPU, r1, r2);
+		
+		
+		if( r1.getGeomBande() == null || r1.getGeomBande().isEmpty()){
+			return featC;
+		}
+		
+		if(r2.getGeomBande() == null || r2.getGeomBande().isEmpty()){
+			r2 = null;
+			System.out.println("Une seule bande");
+		}
+		
+
+
 
 		if (DEBUG_MODE) {
 			debugSurface.add(r1.getGeomBande());
-			debugSurface.add(r2.getGeomBande());
+			if(r2!=null && r2.getGeomBande() != null){
+				debugSurface.add(r2.getGeomBande());
+			}
+		
 			debugLine.add(bP.getLineRoad());
 		}
 		// Création du Sampler (qui va générer les propositions de solutions)

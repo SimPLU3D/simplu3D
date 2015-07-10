@@ -21,8 +21,6 @@ import fr.ign.cogit.simplu3d.iauidf.tool.BandProduction;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.endTest.StabilityEndTest;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.energy.cuboid2.DifferenceVolumeUnaryEnergy;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.energy.cuboid2.IntersectionVolumeBinaryEnergy;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.energy.cuboid2.VolumeUnaryEnergy;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.ParallelCuboid;
@@ -56,12 +54,9 @@ import fr.ign.rjmcmc.acceptance.Acceptance;
 import fr.ign.rjmcmc.acceptance.MetropolisAcceptance;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
 import fr.ign.rjmcmc.distribution.PoissonDistribution;
-import fr.ign.rjmcmc.energy.BinaryEnergy;
 import fr.ign.rjmcmc.energy.ConstantEnergy;
 import fr.ign.rjmcmc.energy.MinusUnaryEnergy;
-import fr.ign.rjmcmc.energy.MultipliesBinaryEnergy;
 import fr.ign.rjmcmc.energy.MultipliesUnaryEnergy;
-import fr.ign.rjmcmc.energy.PlusUnaryEnergy;
 import fr.ign.rjmcmc.energy.UnaryEnergy;
 import fr.ign.rjmcmc.kernel.Kernel;
 import fr.ign.rjmcmc.kernel.NullView;
@@ -96,385 +91,464 @@ import fr.ign.simulatedannealing.visitor.Visitor;
  **/
 public class MultipleBuildingsCuboid {
 
-  public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, Parameters p, Environnement env, int id,
-      ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred,
-      Regulation r1, Regulation r2, BandProduction bP) throws Exception {
-    // Géométrie de l'unité foncière sur laquelle porte la génération
-    IGeometry geom = bpu.getpol2D().buffer(1);
+	public GraphConfiguration<Cuboid> process(
+			BasicPropertyUnit bpu,
+			Parameters p,
+			Environnement env,
+			int id,
+			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred,
+			Regulation r1, Regulation r2, BandProduction bP) throws Exception {
+		// Géométrie de l'unité foncière sur laquelle porte la génération
+		IGeometry geom = bpu.getpol2D().buffer(1);
 
-    // Définition de la fonction d'optimisation (on optimise en décroissant)
-    // relative au volume
-    GraphConfiguration<Cuboid> conf = null;
+		// Définition de la fonction d'optimisation (on optimise en décroissant)
+		// relative au volume
+		GraphConfiguration<Cuboid> conf = null;
 
-    try {
-      conf = create_configuration(p, geom, bpu);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    // Création de l'échantilloneur
-    Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> samp = create_sampler(Random.random(), p, bpu,
-        pred, r1, r2, bP);
-    // Température
-    Schedule<SimpleTemperature> sch = create_schedule(p);
+		try {
+			conf = create_configuration(p, geom, bpu);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		// Création de l'échantilloneur
+		Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> samp = create_sampler(
+				Random.random(), p, bpu, pred, r1, r2, bP);
+		// Température
+		Schedule<SimpleTemperature> sch = create_schedule(p);
 
-    EndTest end = null;
-    if (p.getBoolean(("isAbsoluteNumber"))) {
-      end = create_end_test(p);
-    } else {
-      end = create_end_test_stability(p);
-    }
+		EndTest end = null;
+		if (p.getBoolean(("isAbsoluteNumber"))) {
+			end = create_end_test(p);
+		} else {
+			end = create_end_test_stability(p);
+		}
 
-    List<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> list = new ArrayList<>();
-    if (p.getBoolean("outputstreamvisitor")) {
-      Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> visitor = new OutputStreamVisitor<>(
-          System.out);
-      list.add(visitor);
-    }
-    if (p.getBoolean("shapefilewriter")) {
-      Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> shpVisitor = new ShapefileVisitorCuboid<>(p
-          .get("result").toString() + "result");
-      list.add(shpVisitor);
-    }
-    if (p.getBoolean("visitorviewer")) {
-      ViewerVisitor<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> visitorViewer = new ViewerVisitor<>(
-          "" + id, p);
-      list.add(visitorViewer);
-    }
+		List<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> list = new ArrayList<>();
+		if (p.getBoolean("outputstreamvisitor")) {
+			Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> visitor = new OutputStreamVisitor<>(
+					System.out);
+			list.add(visitor);
+		}
+		if (p.getBoolean("shapefilewriter")) {
+			Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> shpVisitor = new ShapefileVisitorCuboid<>(
+					p.get("result").toString() + "result");
+			list.add(shpVisitor);
+		}
+		if (p.getBoolean("visitorviewer")) {
+			ViewerVisitor<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> visitorViewer = new ViewerVisitor<>(
+					"" + id, p);
+			list.add(visitorViewer);
+		}
 
-    if (p.getBoolean("statsvisitor")) {
-      StatsVisitor<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> statsViewer = new StatsVisitor<>(
-          "Énergie");
-      list.add(statsViewer);
-    }
+		if (p.getBoolean("statsvisitor")) {
+			StatsVisitor<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> statsViewer = new StatsVisitor<>(
+					"Énergie");
+			list.add(statsViewer);
+		}
 
-    if (p.getBoolean("filmvisitor")) {
-      IDirectPosition dpCentre = new DirectPosition(p.getDouble("filmvisitorx"), p.getDouble("filmvisitory"),
-          p.getDouble("filmvisitorz"));
-      Vecteur viewTo = new Vecteur(p.getDouble("filmvisitorvectx"), p.getDouble("filmvisitorvecty"),
-          p.getDouble("filmvisitorvectz"));
-      Color c = new Color(p.getInteger("filmvisitorr"), p.getInteger("filmvisitorg"), p.getInteger("filmvisitorb"));
-      FilmVisitor<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> visitorViewerFilmVisitor = new FilmVisitor<>(
-          dpCentre, viewTo, p.getString("result"), c, p);
-      list.add(visitorViewerFilmVisitor);
-    }
+		if (p.getBoolean("filmvisitor")) {
+			IDirectPosition dpCentre = new DirectPosition(
+					p.getDouble("filmvisitorx"), p.getDouble("filmvisitory"),
+					p.getDouble("filmvisitorz"));
+			Vecteur viewTo = new Vecteur(p.getDouble("filmvisitorvectx"),
+					p.getDouble("filmvisitorvecty"),
+					p.getDouble("filmvisitorvectz"));
+			Color c = new Color(p.getInteger("filmvisitorr"),
+					p.getInteger("filmvisitorg"), p.getInteger("filmvisitorb"));
+			FilmVisitor<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> visitorViewerFilmVisitor = new FilmVisitor<>(
+					dpCentre, viewTo, p.getString("result"), c, p);
+			list.add(visitorViewerFilmVisitor);
+		}
 
-    if (p.getBoolean("csvvisitorend")) {
-      String fileName = p.get("result").toString() + p.get("csvfilenamend");
-      CSVendStats<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> statsViewer = new CSVendStats<>(
-          fileName);
-      list.add(statsViewer);
-    }
-    if (p.getBoolean("csvvisitor")) {
-      String fileName = p.get("result").toString() + p.get("csvfilename");
-      CSVvisitor<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> statsViewer = new CSVvisitor<>(
-          fileName);
-      list.add(statsViewer);
-    }
-    countV = new CountVisitor<>();
-    list.add(countV);
-    CompositeVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> mVisitor = new CompositeVisitor<>(list);
-    init_visitor(p, mVisitor);
-    /*
-     * < This is the way to launch the optimization process. Here, the magic happen... >
-     */
-    SimulatedAnnealing.optimize(Random.random(), conf, samp, sch, end, mVisitor);
-    return conf;
-  }
+		if (p.getBoolean("csvvisitorend")) {
+			String fileName = p.get("result").toString()
+					+ p.get("csvfilenamend");
+			CSVendStats<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> statsViewer = new CSVendStats<>(
+					fileName);
+			list.add(statsViewer);
+		}
+		if (p.getBoolean("csvvisitor")) {
+			String fileName = p.get("result").toString() + p.get("csvfilename");
+			CSVvisitor<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> statsViewer = new CSVvisitor<>(
+					fileName);
+			list.add(statsViewer);
+		}
+		countV = new CountVisitor<>();
+		list.add(countV);
+		CompositeVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> mVisitor = new CompositeVisitor<>(
+				list);
+		init_visitor(p, mVisitor);
+		/*
+		 * < This is the way to launch the optimization process. Here, the magic
+		 * happen... >
+		 */
+		SimulatedAnnealing.optimize(Random.random(), conf, samp, sch, end,
+				mVisitor);
+		return conf;
+	}
 
-  // Initialisation des visiteurs
-  // nbdump => affichage dans la console
-  // nbsave => sauvegarde en shapefile
-  static void init_visitor(Parameters p, Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> v) {
-    v.init(p.getInteger("nbdump"), p.getInteger("nbsave"));
-  }
+	// Initialisation des visiteurs
+	// nbdump => affichage dans la console
+	// nbsave => sauvegarde en shapefile
+	static void init_visitor(
+			Parameters p,
+			Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> v) {
+		v.init(p.getInteger("nbdump"), p.getInteger("nbsave"));
+	}
 
-  CountVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> countV = null;
+	CountVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> countV = null;
 
-  public int getCount() {
-    return countV.getCount();
-  }
+	public int getCount() {
+		return countV.getCount();
+	}
 
-  public GraphConfiguration<Cuboid> create_configuration(Parameters p, IGeometry geom, BasicPropertyUnit bpu)
-      throws Exception {
+	public GraphConfiguration<Cuboid> create_configuration(Parameters p,
+			IGeometry geom, BasicPropertyUnit bpu) throws Exception {
 
-    return this.create_configuration(p, AdapterFactory.toGeometry(new GeometryFactory(), geom), bpu);
+		return this.create_configuration(p,
+				AdapterFactory.toGeometry(new GeometryFactory(), geom), bpu);
 
-  }
+	}
 
-  // Création de la configuration
-  /**
-   * @param p
-   *          paramètres importés depuis le fichier XML
-   * @param bpu
-   *          l'unité foncière considérée
-   * @return la configuration chargée, c'est à dire la formulation énergétique prise en compte
-   */
-  public GraphConfiguration<Cuboid> create_configuration(Parameters p, Geometry geom, BasicPropertyUnit bpu) {
-    // Énergie constante : à la création d'un nouvel objet
+	// Création de la configuration
+	/**
+	 * @param p
+	 *            paramètres importés depuis le fichier XML
+	 * @param bpu
+	 *            l'unité foncière considérée
+	 * @return la configuration chargée, c'est à dire la formulation énergétique
+	 *         prise en compte
+	 */
+	public GraphConfiguration<Cuboid> create_configuration(Parameters p,
+			Geometry geom, BasicPropertyUnit bpu) {
+		// Énergie constante : à la création d'un nouvel objet
 
-    double energyCrea = p.getDouble("energy");
+		double energyCrea = p.getDouble("energy");
 
-    ConstantEnergy<Cuboid, Cuboid> energyCreation = new ConstantEnergy<Cuboid, Cuboid>(energyCrea);
+		ConstantEnergy<Cuboid, Cuboid> energyCreation = new ConstantEnergy<Cuboid, Cuboid>(
+				energyCrea);
 
-    // Énergie constante : pondération de l'intersection
-    ConstantEnergy<Cuboid, Cuboid> ponderationVolume = new ConstantEnergy<Cuboid, Cuboid>(
-        p.getDouble("ponderation_volume"));
-    // Énergie unaire : aire dans la parcelle
-    UnaryEnergy<Cuboid> energyVolume = new VolumeUnaryEnergy<Cuboid>();
-    // Multiplication de l'énergie d'intersection et de l'aire
-    UnaryEnergy<Cuboid> energyVolumePondere = new MultipliesUnaryEnergy<Cuboid>(ponderationVolume, energyVolume);
+		// Énergie constante : pondération de l'intersection
+		ConstantEnergy<Cuboid, Cuboid> ponderationVolume = new ConstantEnergy<Cuboid, Cuboid>(
+				p.getDouble("ponderation_volume"));
+		// Énergie unaire : aire dans la parcelle
+		UnaryEnergy<Cuboid> energyVolume = new VolumeUnaryEnergy<Cuboid>();
+		// Multiplication de l'énergie d'intersection et de l'aire
+		UnaryEnergy<Cuboid> energyVolumePondere = new MultipliesUnaryEnergy<Cuboid>(
+				ponderationVolume, energyVolume);
 
-    // On retire de l'énergie de création, l'énergie de l'aire
-    UnaryEnergy<Cuboid> u3 = new MinusUnaryEnergy<Cuboid>(energyCreation, energyVolumePondere);
+		// On retire de l'énergie de création, l'énergie de l'aire
+		UnaryEnergy<Cuboid> u3 = new MinusUnaryEnergy<Cuboid>(energyCreation,
+				energyVolumePondere);
 
-    // Énergie constante : pondération de la différence
-    ConstantEnergy<Cuboid, Cuboid> ponderationDifference = new ConstantEnergy<Cuboid, Cuboid>(
-        p.getDouble("ponderation_difference_ext"));
-    // On ajoute l'énergie de différence : la zone en dehors de la parcelle
-    UnaryEnergy<Cuboid> u4 = new DifferenceVolumeUnaryEnergy<Cuboid>(geom);
-    UnaryEnergy<Cuboid> u5 = new MultipliesUnaryEnergy<Cuboid>(ponderationDifference, u4);
-    UnaryEnergy<Cuboid> unaryEnergy = new PlusUnaryEnergy<Cuboid>(u3, u5);
+		/*
+		 * // Énergie constante : pondération de la différence
+		 * ConstantEnergy<Cuboid, Cuboid> ponderationDifference = new
+		 * ConstantEnergy<Cuboid, Cuboid>(
+		 * p.getDouble("ponderation_difference_ext")); // On ajoute l'énergie de
+		 * différence : la zone en dehors de la parcelle UnaryEnergy<Cuboid> u4
+		 * = new DifferenceVolumeUnaryEnergy<Cuboid>(geom); UnaryEnergy<Cuboid>
+		 * u5 = new MultipliesUnaryEnergy<Cuboid>(ponderationDifference, u4);
+		 * UnaryEnergy<Cuboid> unaryEnergy = new PlusUnaryEnergy<Cuboid>(u3,
+		 * u5);
+		 * 
+		 * // Énergie binaire : intersection entre deux rectangles
+		 * ConstantEnergy<Cuboid, Cuboid> c3 = new ConstantEnergy<Cuboid,
+		 * Cuboid>(p.getDouble("ponderation_volume_inter"));
+		 * BinaryEnergy<Cuboid, Cuboid> b1 = new
+		 * IntersectionVolumeBinaryEnergy<Cuboid>(); BinaryEnergy<Cuboid,
+		 * Cuboid> binaryEnergy = new MultipliesBinaryEnergy<Cuboid, Cuboid>(c3,
+		 * b1);
+		 */
+		// empty initial configuration*/
+		GraphConfiguration<Cuboid> conf = new GraphConfiguration<>(u3,
+				new ConstantEnergy<Cuboid, Cuboid>(0));
+		return conf;
+	}
 
-    // Énergie binaire : intersection entre deux rectangles
-    ConstantEnergy<Cuboid, Cuboid> c3 = new ConstantEnergy<Cuboid, Cuboid>(p.getDouble("ponderation_volume_inter"));
-    BinaryEnergy<Cuboid, Cuboid> b1 = new IntersectionVolumeBinaryEnergy<Cuboid>();
-    BinaryEnergy<Cuboid, Cuboid> binaryEnergy = new MultipliesBinaryEnergy<Cuboid, Cuboid>(c3, b1);
-    // empty initial configuration*/
-    GraphConfiguration<Cuboid> conf = new GraphConfiguration<>(unaryEnergy, binaryEnergy);
-    return conf;
-  }
+	/**
+	 * Sampler
+	 * 
+	 * @param p
+	 *            les paramètres chargés depuis le fichier xml
+	 * @param r
+	 *            l'enveloppe dans laquelle on génère les positions
+	 * @return
+	 * @throws Exception
+	 */
+	public Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> create_sampler(
+			RandomGenerator rng,
+			Parameters p,
+			BasicPropertyUnit bpU,
+			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred,
+			Regulation r1, Regulation r2, BandProduction bP) throws Exception {
+		// Un vecteur ?????
+		double minlen = p.getDouble("minlen");
+		double maxlen = p.getDouble("maxlen");
 
-  /**
-   * Sampler
-   * 
-   * @param p
-   *          les paramètres chargés depuis le fichier xml
-   * @param r
-   *          l'enveloppe dans laquelle on génère les positions
-   * @return
-   * @throws Exception
-   */
-  public Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> create_sampler(RandomGenerator rng,
-      Parameters p, BasicPropertyUnit bpU,
-      ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred,
-      Regulation r1, Regulation r2, BandProduction bP) throws Exception {
-    // Un vecteur ?????
-    double minlen = p.getDouble("minlen");
-    double maxlen = p.getDouble("maxlen");
+		double minwid = p.getDouble("minwid");
+		double maxwid = p.getDouble("maxwid");
 
-    double minwid = p.getDouble("minwid");
-    double maxwid = p.getDouble("maxwid");
+		double minheight = p.getDouble("minheight");
+		double maxheight = p.getDouble("maxheight");
 
-    double minheight = p.getDouble("minheight");
-    double maxheight = p.getDouble("maxheight");
+		IEnvelope env = bpU.getGeom().envelope();
+		// in multi object situations, we need an object builder for each
+		// subtype and a sampler for the supertype (end of file)
+		Vector<Double> v = new Vector<>();
+		v.add(env.minX());
+		v.add(env.minY());
+		v.add(minlen);
+		v.add(minwid);
+		v.add(minheight);
+		v.add(0.);
+		Vector<Double> d = new Vector<>();
+		d.add(env.maxX());
+		d.add(env.maxY());
+		d.add(maxlen);
+		d.add(maxwid);
+		d.add(maxheight);
+		d.add(Math.PI);
+		for (int i = 0; i < d.size(); i++) {
+			d.set(i, d.get(i) - v.get(i));
+		}
+		Transform transformParallel = new ParallelPolygonTransform(d, v,
+				r1.getGeomBande(), bP.getLineRoad().toArray());
+		IGeometry geomBand = null;
+		if(r2 != null){
+			geomBand = 	r2.getGeomBande();
+		}
+		
+		Transform transformSimple = new TransformToSurface(d, v,geomBand);
 
-    IEnvelope env = bpU.getGeom().envelope();
-    // in multi object situations, we need an object builder for each subtype and a sampler for the supertype (end of file)
-    Vector<Double> v = new Vector<>();
-    v.add(env.minX());
-    v.add(env.minY());
-    v.add(minlen);
-    v.add(minwid);
-    v.add(minheight);
-    v.add(0.);
-    Vector<Double> d = new Vector<>();
-    d.add(env.maxX());
-    d.add(env.maxY());
-    d.add(maxlen);
-    d.add(maxwid);
-    d.add(maxheight);
-    d.add(Math.PI);
-    for (int i = 0; i < d.size(); i++) {
-      d.set(i, d.get(i) - v.get(i));
-    }
-    Transform transformParallel = new ParallelPolygonTransform(d, v, r1.getGeomBande(), bP.getLineRoad().toArray());
-    Transform transformSimple = new TransformToSurface(d, v, r2.getGeomBande());
+		// When direct sampling (solomon, etc.), what is the prob to choose a
+		// simple cuboid
+		boolean hasTwoBand = (r2 != null) && (r2.getGeomBande() != null)
+				&& (!r2.getGeomBande().isEmpty());
 
-    // When direct sampling (solomon, etc.), what is the prob to choose a simple cuboid
-    double p_simple = 0.5;
-    CuboidSampler objectSampler = new CuboidSampler(rng, p_simple, transformSimple, transformParallel);
+		double p_simple = hasTwoBand ? 0.5 : 0.0;
+		CuboidSampler objectSampler = new CuboidSampler(rng, p_simple,
+				transformSimple, transformParallel);
 
-    // poisson distribution
-    PoissonDistribution distribution = new PoissonDistribution(rng, p.getDouble("poisson"));
-    DirectSampler<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> ds = new DirectRejectionSampler<>(distribution, objectSampler, pred);
+		// poisson distribution
+		PoissonDistribution distribution = new PoissonDistribution(rng,
+				p.getDouble("poisson"));
+		DirectSampler<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> ds = new DirectRejectionSampler<>(
+				distribution, objectSampler, pred);
 
-    Variate variate = new Variate(rng);
-    // Probabilité de naissance-morts modifications
-    List<Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> kernels = new ArrayList<>(3);
-    KernelFactory<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> factory = new KernelFactory<>();
+		Variate variate = new Variate(rng);
+		// Probabilité de naissance-morts modifications
+		List<Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> kernels = new ArrayList<>(
+				3);
+		KernelFactory<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> factory = new KernelFactory<>();
 
-    NullView<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> nullView = new NullView<>();
-    UniformTypeView<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> sView = new UniformTypeView<>(SimpleCuboid.class, sbuilder);
-    // we also need one birthdeath kernel per object subtype
-    Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> kernel1 = new Kernel<>(nullView, sView, variate,
-        variate, transformSimple, p.getDouble("pbirthdeath"), p.getDouble("pbirth"));
-    kernel1.setName("BirthDeathSimple");
-    kernels.add(kernel1);
+		NullView<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> nullView = new NullView<>();
+		UniformTypeView<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> sView = new UniformTypeView<>(
+				SimpleCuboid.class, sbuilder);
+		// we also need one birthdeath kernel per object subtype
+		Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> kernel1 = new Kernel<>(
+				nullView, sView, variate, variate, transformSimple,
+				p.getDouble("pdeath"), p.getDouble("pbirth"));
+		kernel1.setName("BirthDeathSimple");
 
-    UniformTypeView<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pView = new UniformTypeView<>(ParallelCuboid.class, pbuilder);
-    Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> kernel2 = new Kernel<>(nullView, pView, variate, variate, transformParallel,
-        p.getDouble("pbirthdeath"), p.getDouble("pbirth"));
-    kernel2.setName("BirthDeathParallel");
-    kernels.add(kernel2);
+		if (p_simple != 0) {
+			kernels.add(kernel1);
+		}
 
-    // each move should either work on the super type or on the subtype and use a uniformtypeview
-    double amplitudeMove = p.getDouble("amplitudeMove");
-    // kernels.add(factory.make_uniform_modification_kernel(rng, simplebuilder, new MoveCuboid(amplitudeMove), 0.2, "Move"));
+		UniformTypeView<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pView = new UniformTypeView<>(
+				ParallelCuboid.class, pbuilder);
+		Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> kernel2 = new Kernel<>(
+				nullView, pView, variate, variate, transformParallel,
+				p.getDouble("pdeath"), p.getDouble("pbirth"));
+		kernel2.setName("BirthDeathParallel");
+		kernels.add(kernel2);
 
-    // TODO add move kernel for parallel cuboid?
-    Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> simpleMovekernel = new Kernel<>(sView, sView, variate, variate,
-        new MoveCuboid(amplitudeMove), 0.2, 0.5);
-    simpleMovekernel.setName("SimpleMove");
-    kernels.add(simpleMovekernel);
+		// each move should either work on the super type or on the subtype and
+		// use a uniformtypeview
+		double amplitudeMove = p.getDouble("amplitudeMove");
+		// kernels.add(factory.make_uniform_modification_kernel(rng,
+		// simplebuilder, new MoveCuboid(amplitudeMove), 0.2, "Move"));
 
-    double amplitudeRotate = p.getDouble("amplitudeRotate") * Math.PI / 180;
-    // kernels.add(factory.make_uniform_modification_kernel(rng, simplebuilder, new RotateCuboid(amplitudeRotate), 0.2, "Rotate"));
-    // A kernel to change the orientation of simple cuboids (not relevant to parallel cuboids)
-    Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> simpleRotatekernel = new Kernel<>(sView, sView, variate, variate,
-        new RotateCuboid(amplitudeRotate), 0.2, 0.5);
-    simpleRotatekernel.setName("Rotate");
-    kernels.add(simpleRotatekernel);
-    double amplitudeMaxDim = p.getDouble("amplitudeMaxDim");
-    // kernels.add(factory.make_uniform_modification_kernel(rng, simplebuilder, new ChangeWidth(amplitudeMaxDim), 0.2, "ChgWidth"));
-    // A kernel to change the width of simple cuboids (not relevant to parallel cuboids)
-    Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> simpleWidthkernel = new Kernel<>(sView, sView, variate, variate,
-        new ChangeWidth(amplitudeMaxDim), 0.2, 0.5);
-    simpleWidthkernel.setName("ChgWidth");
-    kernels.add(simpleWidthkernel);
-    kernels.add(factory.make_uniform_modification_kernel(rng, sbuilder, new ChangeLength(amplitudeMaxDim), 0.2, "ChgLength"));
-    double amplitudeHeight = p.getDouble("amplitudeHeight");
-    kernels.add(factory.make_uniform_modification_kernel(rng, sbuilder, new ChangeHeight(amplitudeHeight), 0.2, "ChgHeight"));
+		// TODO add move kernel for parallel cuboid?
+		Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> simpleMovekernel = new Kernel<>(
+				sView, sView, variate, variate, new MoveCuboid(amplitudeMove),
+				0.2, 0.5);
+		simpleMovekernel.setName("SimpleMove");
+		kernels.add(simpleMovekernel);
 
-    Acceptance<SimpleTemperature> acceptance = new MetropolisAcceptance<>();
-    Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> s = new GreenSamplerBlockTemperature<>(ds, acceptance, kernels);
-    return s;
-  }
+		double amplitudeRotate = p.getDouble("amplitudeRotate") * Math.PI / 180;
+		// kernels.add(factory.make_uniform_modification_kernel(rng,
+		// simplebuilder, new RotateCuboid(amplitudeRotate), 0.2, "Rotate"));
+		// A kernel to change the orientation of simple cuboids (not relevant to
+		// parallel cuboids)
+		Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> simpleRotatekernel = new Kernel<>(
+				sView, sView, variate, variate, new RotateCuboid(
+						amplitudeRotate), 0.2, 0.5);
+		simpleRotatekernel.setName("Rotate");
+		kernels.add(simpleRotatekernel);
+		double amplitudeMaxDim = p.getDouble("amplitudeMaxDim");
+		// kernels.add(factory.make_uniform_modification_kernel(rng,
+		// simplebuilder, new ChangeWidth(amplitudeMaxDim), 0.2, "ChgWidth"));
+		// A kernel to change the width of simple cuboids (not relevant to
+		// parallel cuboids)
+		Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> simpleWidthkernel = new Kernel<>(
+				sView, sView, variate, variate,
+				new ChangeWidth(amplitudeMaxDim), 0.2, 0.5);
+		simpleWidthkernel.setName("ChgWidth");
+		kernels.add(simpleWidthkernel);
+		
+		Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> simpleLength= new Kernel<>(
+				sView, sView, variate, variate, new ChangeLength(amplitudeMaxDim), 0.2, 0.5);
+		simpleLength.setName("ChgLength");
+		kernels.add(simpleLength);
 
-  private static EndTest create_end_test(Parameters p) {
-    return new MaxIterationEndTest(p.getInteger("nbiter"));
-  }
+		double amplitudeHeight = p.getDouble("amplitudeHeight");
+		Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> simpleHeight= new Kernel<>(
+				sView, sView, variate, variate, new ChangeHeight(amplitudeHeight), 0.2, 0.5);
+		simpleHeight.setName("ChgHeight");
+		kernels.add(simpleHeight);
 
-  private EndTest create_end_test_stability(Parameters p) {
-    double loc_deltaconf = p.getDouble("delta");
+		Acceptance<SimpleTemperature> acceptance = new MetropolisAcceptance<>();
+		Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> s = new GreenSamplerBlockTemperature<>(
+				ds, acceptance, kernels);
+		return s;
+	}
 
-    return new StabilityEndTest<Cuboid>(p.getInteger("nbiter"), loc_deltaconf);
-  }
+	private static EndTest create_end_test(Parameters p) {
+		return new MaxIterationEndTest(p.getInteger("nbiter"));
+	}
 
-  private Schedule<SimpleTemperature> create_schedule(Parameters p) {
-    double coefDef = p.getDouble("deccoef");
+	private EndTest create_end_test_stability(Parameters p) {
+		double loc_deltaconf = p.getDouble("delta");
 
-    return new GeometricSchedule<SimpleTemperature>(new SimpleTemperature(p.getDouble("temp")), coefDef);
-  }
+		return new StabilityEndTest<Cuboid>(p.getInteger("nbiter"),
+				loc_deltaconf);
+	}
 
-  static ObjectBuilder<Cuboid> sbuilder = new ObjectBuilder<Cuboid>() {
-    @Override
-    public Cuboid build(Vector<Double> coordinates) {
-      return new SimpleCuboid(coordinates.get(0), coordinates.get(1), coordinates.get(2), coordinates.get(3),
-          coordinates.get(4), coordinates.get(5));
-    }
+	private Schedule<SimpleTemperature> create_schedule(Parameters p) {
+		double coefDef = p.getDouble("deccoef");
 
-    @Override
-    public int size() {
-      return 6;
-    }
+		return new GeometricSchedule<SimpleTemperature>(new SimpleTemperature(
+				p.getDouble("temp")), coefDef);
+	}
 
-    @Override
-    public void setCoordinates(Cuboid t, List<Double> coordinates) {
-      SimpleCuboid sc = (SimpleCuboid) t;
-      coordinates.set(0, sc.centerx);
-      coordinates.set(1, sc.centery);
-      coordinates.set(2, sc.length);
-      coordinates.set(3, sc.width);
-      coordinates.set(4, sc.height);
-      coordinates.set(5, sc.orientation);
-    }
-  };
+	static ObjectBuilder<Cuboid> sbuilder = new ObjectBuilder<Cuboid>() {
+		@Override
+		public Cuboid build(Vector<Double> coordinates) {
+			return new SimpleCuboid(coordinates.get(0), coordinates.get(1),
+					coordinates.get(2), coordinates.get(3), coordinates.get(4),
+					coordinates.get(5));
+		}
 
-  static ObjectBuilder<Cuboid> pbuilder = new ObjectBuilder<Cuboid>() {
-    @Override
-    public Cuboid build(Vector<Double> coordinates) {
-      return new ParallelCuboid(coordinates.get(0), coordinates.get(1), coordinates.get(2), coordinates.get(3),
-          coordinates.get(4), coordinates.get(5));
-    }
+		@Override
+		public int size() {
+			return 6;
+		}
 
-    @Override
-    public int size() {
-      return 6;
-    }
+		@Override
+		public void setCoordinates(Cuboid t, List<Double> coordinates) {
+			Cuboid sc = (Cuboid) t;
+			coordinates.set(0, sc.centerx);
+			coordinates.set(1, sc.centery);
+			coordinates.set(2, sc.length);
+			coordinates.set(3, sc.width);
+			coordinates.set(4, sc.height);
+			coordinates.set(5, sc.orientation);
+		}
+	};
 
-    @Override
-    public void setCoordinates(Cuboid t, List<Double> coordinates) {
-      ParallelCuboid pc = (ParallelCuboid) t;
-      coordinates.set(0, pc.centerx);
-      coordinates.set(1, pc.centery);
-      coordinates.set(2, pc.length);
-      coordinates.set(3, pc.width);
-      coordinates.set(4, pc.height);
-      coordinates.set(5, pc.orientation);
-    }
-  };
+	static ObjectBuilder<Cuboid> pbuilder = new ObjectBuilder<Cuboid>() {
+		@Override
+		public Cuboid build(Vector<Double> coordinates) {
+			return new ParallelCuboid(coordinates.get(0), coordinates.get(1),
+					coordinates.get(2), coordinates.get(3), coordinates.get(4),
+					coordinates.get(5));
+		}
 
-  public static class CuboidSampler implements ObjectSampler<Cuboid> {
-    RandomGenerator engine;
-    double p_simple;
-    Cuboid object;
-    Variate variate;
-    Transform transformSimple;
-    Transform transformParallel;
+		@Override
+		public int size() {
+			return 6;
+		}
 
-    public CuboidSampler(RandomGenerator e, double p_simple, Transform transformSimple, Transform transformParallel) {
-      this.engine = e;
-      this.p_simple = p_simple;
-      this.transformSimple = transformSimple;
-      this.transformParallel = transformParallel;
-      this.variate = new Variate(e);
-    }
+		@Override
+		public void setCoordinates(Cuboid t, List<Double> coordinates) {
+			ParallelCuboid pc = (ParallelCuboid) t;
+			coordinates.set(0, pc.centerx);
+			coordinates.set(1, pc.centery);
+			coordinates.set(2, pc.length);
+			coordinates.set(3, pc.width);
+			coordinates.set(4, pc.height);
+			coordinates.set(5, pc.orientation);
+		}
+	};
 
-    @Override
-    public double sample(RandomGenerator e) {
-      Vector<Double> var0 = new Vector<>();
-      Vector<Double> val1 = new Vector<>();
-      if (engine.nextDouble() < p_simple) {
-        var0.setSize(6);
-        val1.setSize(6);
-        double phi = this.variate.compute(var0);
-        double jacob = this.transformSimple.apply(true, new Vector<Double>(0), var0, val1, new Vector<Double>(0));
-        this.object = sbuilder.build(val1);
-        return phi / jacob;
-      }
-      var0.setSize(6);
-      val1.setSize(6);
-      double phi = this.variate.compute(var0);
-      double jacob = this.transformParallel.apply(true, new Vector<Double>(0), var0, val1, new Vector<Double>(0));
-      this.object = pbuilder.build(val1);
-      return phi / jacob;
-    }
+	public static class CuboidSampler implements ObjectSampler<Cuboid> {
+		RandomGenerator engine;
+		double p_simple;
+		Cuboid object;
+		Variate variate;
+		Transform transformSimple;
+		Transform transformParallel;
 
-    @Override
-    public double pdf(Cuboid t) {
-      if (SimpleCuboid.class.isInstance(t)) {
-        Vector<Double> val1 = new Vector<>();
-        val1.setSize(6);
-        sbuilder.setCoordinates(t, val1);
-        Vector<Double> val0 = new Vector<>();
-        val0.setSize(6);
-        double J10 = this.transformSimple.apply(false, val1, new Vector<Double>(0), new Vector<Double>(0), val0);
-        double pdf = this.variate.pdf(val0);
-        return pdf * J10;
-      }
-      Vector<Double> val1 = new Vector<>();
-      val1.setSize(6);
-      pbuilder.setCoordinates(t, val1);
-      Vector<Double> val0 = new Vector<>();
-      val0.setSize(6);
-      double J10 = this.transformParallel.apply(false, val1, new Vector<Double>(0), new Vector<Double>(0), val0);
-      double pdf = this.variate.pdf(val0);
-      return pdf * J10;
-    }
+		public CuboidSampler(RandomGenerator e, double p_simple,
+				Transform transformSimple, Transform transformParallel) {
+			this.engine = e;
+			this.p_simple = p_simple;
+			this.transformSimple = transformSimple;
+			this.transformParallel = transformParallel;
+			this.variate = new Variate(e);
+		}
 
-    @Override
-    public Cuboid getObject() {
-      return this.object;
-    }
-  }
+		@Override
+		public double sample(RandomGenerator e) {
+			Vector<Double> var0 = new Vector<>();
+			Vector<Double> val1 = new Vector<>();
+			if (engine.nextDouble() < p_simple) {
+				var0.setSize(6);
+				val1.setSize(6);
+				double phi = this.variate.compute(var0);
+				double jacob = this.transformSimple.apply(true,
+						new Vector<Double>(0), var0, val1,
+						new Vector<Double>(0));
+				this.object = sbuilder.build(val1);
+				return phi / jacob;
+			}
+			var0.setSize(6);
+			val1.setSize(6);
+			double phi = this.variate.compute(var0);
+			double jacob = this.transformParallel.apply(true,
+					new Vector<Double>(0), var0, val1, new Vector<Double>(0));
+			this.object = pbuilder.build(val1);
+			return phi / jacob;
+		}
+
+		@Override
+		public double pdf(Cuboid t) {
+			if (SimpleCuboid.class.isInstance(t)) {
+				Vector<Double> val1 = new Vector<>();
+				val1.setSize(6);
+				sbuilder.setCoordinates(t, val1);
+				Vector<Double> val0 = new Vector<>();
+				val0.setSize(6);
+				double J10 = this.transformSimple.apply(false, val1,
+						new Vector<Double>(0), new Vector<Double>(0), val0);
+				double pdf = this.variate.pdf(val0);
+				return pdf * J10;
+			}
+			Vector<Double> val1 = new Vector<>();
+			val1.setSize(6);
+			pbuilder.setCoordinates(t, val1);
+			Vector<Double> val0 = new Vector<>();
+			val0.setSize(6);
+			double J10 = this.transformParallel.apply(false, val1,
+					new Vector<Double>(0), new Vector<Double>(0), val0);
+			double pdf = this.variate.pdf(val0);
+			return pdf * J10;
+		}
+
+		@Override
+		public Cuboid getObject() {
+			return this.object;
+		}
+	}
 }

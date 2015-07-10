@@ -81,6 +81,8 @@ public class ParallelPolygonTransform implements Transform {
     } else {
       var1.set(2, (val0.get(2) - deltaLength) / rangeLength);
       var1.set(3, (val0.get(4) - deltaHeight) / rangeHeight);
+      var1.set(4, 0.0);
+      var1.set(5, 0.0);
       return pt * this.absJacobian[1];
     }
   }
@@ -92,6 +94,6 @@ public class ParallelPolygonTransform implements Transform {
 
   @Override
   public int dimension(int n0, int n1) {
-    return 4;
+    return 6; //4;
   }
 }

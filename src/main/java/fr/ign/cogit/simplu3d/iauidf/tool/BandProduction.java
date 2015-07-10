@@ -134,10 +134,8 @@ public class BandProduction {
 
 		r1.setGeomBande(iMSBande1);
 
-		if (iMSBande2 != null && !iMSBande2.isEmpty()) {
 			r2.setGeomBande(iMSBande2);
-		}
-
+		
 		double rArt6 = r1.getArt_6();
 		if (rArt6 != 99 && rArt6 != 88) {
 

@@ -348,6 +348,7 @@ public class Regulation {
 	 */
 	public void setGeomBande(IMultiSurface<IOrientableSurface> geomBande) {
 		this.geomBande = geomBande;
+		this.jtsGeometry = null;
 	}
 
 	
