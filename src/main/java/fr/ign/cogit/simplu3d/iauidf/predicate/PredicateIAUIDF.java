@@ -8,10 +8,14 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiCurve;
+import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
+import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
+import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
+import fr.ign.cogit.simplu3d.iauidf.Exec;
 import fr.ign.cogit.simplu3d.iauidf.regulation.Regulation;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
@@ -140,6 +144,16 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 	@Override
 	public boolean check(C c, M m) {
+		
+		O birth = m.getBirth().get(0);
+
+		IMultiSurface<IOrientableSurface> gm = new GM_MultiSurface<>();
+		gm.add(birth.getFootprint());
+		if(Exec.debugSurface.size() < 100){
+			Exec.debugSurface.add(gm);
+		}
+		
+		
 
 		// Vérification des règles au niveau de la parcelle
 
@@ -172,7 +186,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 		// @TODO : il faudrait déterminer dans quel bande est le nouvel objet
 		// pour pointer sur la bonne réglementation
-		O birth = m.getBirth().get(0);
+
 
 		if (birth != null) {
 
@@ -193,7 +207,10 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 		}
 
-		return false;
+
+		
+//System.out.println("Je retourne true");
+		return true;
 	}
 
 	public boolean checkParcelRegulation(Regulation r, C c, M m) {
@@ -380,11 +397,11 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 			}
 
-			if (!cuboid.prospectJTS(this.jtsCurveLimiteFondParcel, slope, hIni)) {
+			if (this.jtsCurveLimiteFondParcel != null && !cuboid.prospectJTS(this.jtsCurveLimiteFondParcel, slope, hIni)) {
 				return false;
 			}
 
-			if (!cuboid.prospectJTS(this.jtsCurveLimiteLatParcel, slope, hIni)) {
+			if (this.jtsCurveLimiteLatParcel != null && !cuboid.prospectJTS(this.jtsCurveLimiteLatParcel, slope, hIni)) {
 				return false;
 			}
 		}

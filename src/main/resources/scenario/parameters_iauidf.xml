@@ -12,7 +12,7 @@
         
         <!--Distribution (équiprobable) des dimensions des boîtes-->
         <!-- Largeur et longueur !-->
-        <param key="minlen" value="10" />
+        <param key="minlen" value="1" />
 		<param key="maxlen" value="20" />
 		
 		<param key="minwid" value="1" />
@@ -68,7 +68,7 @@
         <!-- Sortie console -->
         <param key="outputstreamvisitor" value="true" />
         <!-- Sortie viewer 3D -->
-        <param key="visitorviewer" value="true" />
+        <param key="visitorviewer" value="false" />
         <param key="showbackground" value="true" />
         <param key="background_img" value="background3D.png" />
 		<param key="xminbg" value="1051042.85" />
