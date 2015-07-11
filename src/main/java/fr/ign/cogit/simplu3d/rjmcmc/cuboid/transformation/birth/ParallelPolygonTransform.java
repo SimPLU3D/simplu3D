@@ -58,7 +58,7 @@ public class ParallelPolygonTransform implements Transform {
     }
     this.limits = factory.createMultiLineString(lineStrings);
     Geometry pp = AdapterFactory.toGeometry(factory, polygon);
-    this.polygonTransform = new PolygonTransform(pp.intersection(this.limits.buffer(d.get(3) / 2 + v.get(3))), 0.1);
+    this.polygonTransform = new PolygonTransform(pp, 0.1);
     this.absJacobian = new double[2];
     this.absJacobian[0] = Math.abs(determinant) * this.polygonTransform.getAbsJacobian(true);
     this.absJacobian[1] = Math.abs(1 / determinant) * this.polygonTransform.getAbsJacobian(false);

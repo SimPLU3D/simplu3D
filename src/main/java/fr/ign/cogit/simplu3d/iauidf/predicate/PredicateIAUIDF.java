@@ -293,7 +293,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 			return false;
 		}
 	
-		
+		/*
 
 		
 
@@ -349,7 +349,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 			}
 
-		}
+		}*/
 
 		// ART_74 Distance minimum des constructions par rapport aux limites
 		// séparatives, exprimée par rapport à la hauteur du bâtiment

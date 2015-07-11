@@ -69,7 +69,7 @@ public class Exec {
 
 		// Dossier contenant IMU_MANTES_TEST.csv et les sous dossier par code
 		// IMU
-		String folder = "C:/Users/mbrasebin/Desktop/Ilots_test/COGIT78/";
+		String folder = "C:/Users/travail/Desktop/COGIT78/";
 		String csvFile = folder + "IMU_MANTES_TEST.csv";
 
 		// Chargement des règlement par code IMU (on peut avoir plusieurs
@@ -133,6 +133,7 @@ public class Exec {
 		// On parcourt chaque parcelle et on applique la simulation dessus
 		
 		int nbBPU = env.getBpU().size();
+	
 		for(int i=0;i<nbBPU;i++){
 		
 
@@ -235,6 +236,9 @@ public class Exec {
 		// environnement, id et prédicat
 		GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred, r1,
 				r2, bP);
+		if(cc == null){
+			return featC;
+		}
 
 		for (GraphVertex<Cuboid> v : cc.getGraph().vertexSet()) {
 

@@ -113,6 +113,10 @@ public class MultipleBuildingsCuboid {
 		// Création de l'échantilloneur
 		Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> samp = create_sampler(
 				Random.random(), p, bpu, pred, r1, r2, bP);
+		if(samp == null){
+			return null;
+		}
+		
 		// Température
 		Schedule<SimpleTemperature> sch = create_schedule(p);
 
@@ -312,8 +316,11 @@ public class MultipleBuildingsCuboid {
 		for (int i = 0; i < d.size(); i++) {
 			d.set(i, d.get(i) - v.get(i));
 		}
+		
+		IGeometry geom = r1.getGeomBande().intersection(bP.getLineRoad().buffer(d.get(3) / 2 + v.get(3)));	
 		Transform transformParallel = new ParallelPolygonTransform(d, v,
-				r1.getGeomBande(), bP.getLineRoad().toArray());
+				geom, bP.getLineRoad().toArray());
+		
 		IGeometry geomBand = null;
 		if(r2 != null){
 			geomBand = 	r2.getGeomBande();
@@ -327,6 +334,22 @@ public class MultipleBuildingsCuboid {
 				&& (!r2.getGeomBande().isEmpty());
 
 		double p_simple = hasTwoBand ? 0.5 : 0.0;
+		
+		//Si on ne peut pas construire dans la deuxième bande ni dans la première ça sert à rien de continue
+		//Sinon on construit tout dans la première
+		if(p_simple == 0.0){
+			if(geom == null || geom.isEmpty()){
+				return null;
+			}
+			
+		}else{
+			if(geom == null || geom.isEmpty()){
+				p_simple = 1.0;
+			}
+			
+		}
+		
+		
 		CuboidSampler objectSampler = new CuboidSampler(rng, p_simple,
 				transformSimple, transformParallel);
 
