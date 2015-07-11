@@ -299,6 +299,7 @@ public class MultipleBuildingsCuboid {
 		IEnvelope env = bpU.getGeom().envelope();
 		// in multi object situations, we need an object builder for each
 		// subtype and a sampler for the supertype (end of file)
+		//TODO : bloquer fixer la hauteur max s'il n'y a pas de prospect
 		Vector<Double> v = new Vector<>();
 		v.add(env.minX());
 		v.add(env.minY());
@@ -395,7 +396,7 @@ public class MultipleBuildingsCuboid {
 			List<Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> kernels = new ArrayList<>();
 			
 			
-
+			//Kernel de naissance
 			UniformTypeView<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pView = new UniformTypeView<>(
 					ParallelCuboid.class, pbuilder);
 			Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> kernel2 = new Kernel<>(
@@ -403,6 +404,28 @@ public class MultipleBuildingsCuboid {
 					p.getDouble("pdeath"), p.getDouble("pbirth"));
 			kernel2.setName("BirthDeathParallel");
 			kernels.add(kernel2);
+			
+
+			//TODO : bloquer le kernel s'il n'y a pas de prospect
+			double amplitudeHeight = p.getDouble("amplitudeHeight");
+			Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> simpleHeight= new Kernel<>(
+					pView, pView, variate, variate, new ChangeHeight(amplitudeHeight), 0.2, 0.5);
+			simpleHeight.setName("ChgHeight");
+			kernels.add(simpleHeight);
+			
+			
+			
+			Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> simpleMovekernel = new Kernel<>(
+					pView, pView, variate, variate, new MoveCuboid( p.getDouble("amplitudeMove")),
+					0.2, 0.5);
+			simpleMovekernel.setName("SimpleMove");
+			kernels.add(simpleMovekernel);
+			
+			Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> simpleLength= new Kernel<>(
+					pView, pView, variate, variate, new ChangeLength(p.getDouble("amplitudeMaxDim")), 0.2, 0.5);
+			simpleLength.setName("ChgLength");
+			kernels.add(simpleLength);
+			
 			
 			return kernels;
 		
@@ -444,6 +467,7 @@ public class MultipleBuildingsCuboid {
 		simpleLength.setName("ChgLength");
 		kernels.add(simpleLength);
 
+		//TODO : bloquer le kernel s'il n'y a pas de prospect
 		double amplitudeHeight = p.getDouble("amplitudeHeight");
 		Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> simpleHeight= new Kernel<>(
 				sView, sView, variate, variate, new ChangeHeight(amplitudeHeight), 0.2, 0.5);
