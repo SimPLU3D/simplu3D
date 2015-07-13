@@ -52,6 +52,7 @@ public class InversionBirth {
 
     IFeatureCollection<IFeature> feat = ShapefileReader.read(file);
 
+    if (feat == null || feat.isEmpty()) return;
     List<IOrientableSurface> lOS = FromGeomToSurface.convertGeom(feat.get(1)
         .getGeom());
 

@@ -1,7 +1,5 @@
 package fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation;
 
-import java.util.Vector;
-
 import fr.ign.rjmcmc.kernel.Transform;
 /**
  * 
@@ -29,32 +27,29 @@ public class ChangeWidth implements Transform {
 
 
   @Override
-  public double apply(boolean direct, Vector<Double> val0, Vector<Double> var0,
-      Vector<Double> val1, Vector<Double> var1) {
+  public double apply(boolean direct, double[] val0, double[] val1) {
 
-    double dl = var0.get(0);
+    double dl = val0[6];
 
-    val1.set(0, val0.get(0));
-    val1.set(1, val0.get(1));
-    val1.set(2, val0.get(2));
-    val1.set(3, val0.get(3) +   (0.5 - dl) * amplitude);
-    val1.set(4, val0.get(4));
-    val1.set(5, val0.get(5));
+    val1[0] = val0[0];
+    val1[1] = val0[1];
+    val1[2] = val0[2];
+    val1[3] = val0[3] +   (0.5 - dl) * amplitude;
+    val1[4] = val0[4];
+    val1[5] = val0[5];
 
-    var1.set(0, 1 - dl);
+    val1[6] = 1 - dl;
 
     return 1;
   }
 
-  @Override
+//  @Override
   public double getAbsJacobian(boolean direct) {
-    // TODO Auto-generated method stub
     return 1;
   }
 
   @Override
-  public int dimension(int n0, int n1) {
-    // TODO Auto-generated method stub
+  public int dimension() {
     return 7;
   }
 }

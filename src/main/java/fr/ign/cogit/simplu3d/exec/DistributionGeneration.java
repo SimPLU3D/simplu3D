@@ -3,7 +3,6 @@ package fr.ign.cogit.simplu3d.exec;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
@@ -178,20 +177,20 @@ public class DistributionGeneration {
 			}
 
 			@Override
-			public Cuboid build(Vector<Double> val1) {
+			public Cuboid build(double[] val1) {
 
-				return new Cuboid(val1.get(0), val1.get(1), val1.get(2),
-						val1.get(3), val1.get(4), val1.get(5));
+				return new Cuboid(val1[0], val1[1], val1[2],
+						val1[3], val1[4], val1[5]);
 			}
 
 			@Override
-			public void setCoordinates(Cuboid t, List<Double> val1) {
-				val1.set(0, t.centerx);
-				val1.set(1, t.centery);
-				val1.set(2, t.length);
-				val1.set(3, t.width);
-				val1.set(4, t.height);
-				val1.set(5, t.orientation);
+			public void setCoordinates(Cuboid t, double[] val1) {
+				val1[0] = t.centerx;
+				val1[1] = t.centery;
+				val1[2] = t.length;
+				val1[3] = t.width;
+				val1[4] = t.height;
+				val1[5] = t.orientation;
 			}
 		};
 

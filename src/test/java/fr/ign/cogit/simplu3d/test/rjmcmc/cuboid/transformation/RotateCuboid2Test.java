@@ -1,7 +1,5 @@
 package fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation;
 
-import java.util.Vector;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -9,13 +7,14 @@ import com.vividsolutions.jts.util.Assert;
 
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.RotateCuboid;
+
 /**
  * 
- *        This software is released under the licence CeCILL
+ * This software is released under the licence CeCILL
  * 
- *        see LICENSE.TXT
+ * see LICENSE.TXT
  * 
- *        see <http://www.cecill.info/ http://www.cecill.info/
+ * see <http://www.cecill.info/ http://www.cecill.info/
  * 
  * 
  * 
@@ -24,109 +23,81 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.RotateCuboid;
  * @author Brasebin Mickaël
  * 
  * @version 1.0
- **/ 
+ **/
 public class RotateCuboid2Test {
-	RotateCuboid t;
+  RotateCuboid t;
 
-	@Before
-	public void setUp() throws Exception {
-		t = new RotateCuboid(5 * Math.PI / 180);
-	}
+  @Before
+  public void setUp() throws Exception {
+    t = new RotateCuboid(5 * Math.PI / 180);
+  }
 
-	@Test
-	public void testApply() {
-		int dimension = t.dimension(0, 0) - 1;
-		// double[] in = new double[] { 0, 0, 5, 1, 20, 0, 1 };
-		Vector<Double> lvalIn = new Vector<Double>();
-		lvalIn.add(0.0);
-		lvalIn.add(5.0);
-		lvalIn.add(1.0);
-		lvalIn.add(20.0);
-		lvalIn.add(0.0);
-		lvalIn.add(0.0);
-		Vector<Double> lvarIn = new Vector<Double>();
-		lvarIn.add(1.0);
-		// double[] out = new double[dimension];
-		Vector<Double> lvalOut = new Vector<>();
-		lvalOut.setSize(6);
-		Vector<Double> lvarOut = new Vector<>();
-		lvarOut.setSize(1);
-		t.apply(true, lvalIn, lvarIn, lvalOut, lvarOut);
-		String outString = "";
-		for (int i = 0; i < dimension; i++) {
-			outString += lvalOut.get(i) + " ";
-		}
-		outString += lvarOut.get(0);
-		System.out.println("out = " + outString);
-		Cuboid cuboidIn = new Cuboid(lvalIn.get(0), lvalIn.get(1),
-				lvalIn.get(2), lvalIn.get(3), lvalIn.get(4), lvalIn.get(5));
-		Cuboid cuboidOut = new Cuboid(lvalOut.get(0), lvalOut.get(1),
-				lvalOut.get(2), lvalOut.get(3), lvalOut.get(4), lvalOut.get(5));
-		System.out.println("In = " + cuboidIn.toGeometry());
-		System.out.println("Out = " + cuboidOut.toGeometry());
-//		Assert.equals(cuboidIn.toGeometry().toString(), cuboidOut.toGeometry()
-//				.toString());
-	}
+  @Test
+  public void testApply() {
+    int dimension = t.dimension() - 1;
+    // double[] in = new double[] { 0, 0, 5, 1, 20, 0, 1 };
+    double[] in = new double[] { 0.0, 5.0, 1.0, 20.0, 0.0, 0.0, 1.0 };
+    double[] out = new double[7];
+    t.apply(true, in, out);
+    String outString = "";
+    for (int i = 0; i < dimension; i++) {
+      outString += out[i] + " ";
+    }
+    outString += out[dimension];
+    System.out.println("out = " + outString);
+    Cuboid cuboidIn = new Cuboid(in[0], in[1],
+        in[2], in[3], in[4], in[5]);
+    Cuboid cuboidOut = new Cuboid(out[0], out[1],
+        out[2], out[3], out[4], out[5]);
+    System.out.println("In = " + cuboidIn.toGeometry());
+    System.out.println("Out = " + cuboidOut.toGeometry());
+    // Assert.equals(cuboidIn.toGeometry().toString(), cuboidOut.toGeometry()
+    // .toString());
+  }
 
-	@Test
-	public void testInverse() {
+  @Test
+  public void testInverse() {
 
-		int dimension = t.dimension(0, 0) - 1;
-		// double[] in = new double[] { 0, 0, 5, 1, 20, 0, 1 };
-		Vector<Double> lvalIn = new Vector<Double>();
+    int dimension = t.dimension() - 1;
+    // double[] in = new double[] { 0, 0, 5, 1, 20, 0, 1 };
+    double[] lvalIn = new double[] { 0.0, 5.0, 1.0, 20.0, 0.0, 0.0, 1.0 };
 
-		lvalIn.add(0.0);
-		lvalIn.add(5.0);
-		lvalIn.add(1.0);
-		lvalIn.add(20.0);
-		lvalIn.add(0.0);
-		lvalIn.add(0.0);
+    // double[] out = new double[dimension];
+    double[] lvalOut = new double[7];
+    t.apply(true, lvalIn, lvalOut);
 
-		Vector<Double> lvarIn = new Vector<Double>();
-		lvarIn.add(1.0);
+    double[] lvalOutInv = new double[7];
 
-		// double[] out = new double[dimension];
-		Vector<Double> lvalOut = new Vector<>();
-		lvalOut.setSize(6);
-		Vector<Double> lvarOut = new Vector<>();
-		lvarOut.setSize(1);
-		t.apply(true, lvalIn, lvarIn, lvalOut, lvarOut);
+    t.apply(false, lvalOut, lvalOutInv);
 
-		Vector<Double> lvalOutInv = new Vector<>();
-		lvalOutInv.setSize(6);
-		Vector<Double> lvarOutInv = new Vector<>();
-		lvarOutInv.setSize(1);
+    String inString = "";
+    for (int i = 0; i < dimension; i++) {
+      inString += lvalIn[i] + " ";
+    }
+    inString += lvalIn[dimension];
 
-		t.apply(false, lvalOut, lvarOut, lvalOutInv, lvarOutInv);
+    System.out.println("in = " + inString);
 
-		String inString = "";
-		for (int i = 0; i < dimension; i++) {
-			inString += lvalIn.get(i) + " ";
-		}
-		inString += lvarIn.get(0);
+    String outString = "";
+    for (int i = 0; i < dimension; i++) {
+      outString += lvalOutInv[i] + " ";
+    }
+    outString += lvalOutInv[dimension];
 
-		System.out.println("in = " + inString);
+    System.out.println("outInv = " + outString);
+    Cuboid cuboidOutInv = new Cuboid(lvalOutInv[0], lvalOutInv[1],
+        lvalOutInv[2], lvalOutInv[3], lvalOutInv[4],
+        lvalOutInv[5]);
+    System.out.println("Inv = " + cuboidOutInv.toGeometry());
+    Cuboid cuboidIn = new Cuboid(lvalIn[0], lvalIn[1],
+        lvalIn[2], lvalIn[3], lvalIn[4], lvalIn[5]);
+    Assert.equals(cuboidOutInv.toGeometry().toString(), cuboidIn
+        .toGeometry().toString());
+  }
 
-		String outString = "";
-		for (int i = 0; i < dimension; i++) {
-			outString += lvalOutInv.get(i) + " ";
-		}
-		outString += lvarOutInv.get(0);
-
-		System.out.println("outInv = " + outString);
-		Cuboid cuboidOutInv = new Cuboid(lvalOutInv.get(0), lvalOutInv.get(1),
-				lvalOutInv.get(2), lvalOutInv.get(3), lvalOutInv.get(4),
-				lvalOutInv.get(5));
-		System.out.println("Inv = " + cuboidOutInv.toGeometry());
-		Cuboid cuboidIn = new Cuboid(lvalIn.get(0), lvalIn.get(1),
-				lvalIn.get(2), lvalIn.get(3), lvalIn.get(4), lvalIn.get(5));
-		Assert.equals(cuboidOutInv.toGeometry().toString(), cuboidIn
-				.toGeometry().toString());
-	}
-
-	@Test
-	public void testDimension() {
-		int dimension = t.dimension(0, 0);
-		Assert.equals(7, dimension);
-	}
+  @Test
+  public void testDimension() {
+    int dimension = t.dimension();
+    Assert.equals(7, dimension);
+  }
 }

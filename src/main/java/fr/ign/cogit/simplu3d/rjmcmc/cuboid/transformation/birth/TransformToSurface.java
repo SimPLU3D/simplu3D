@@ -1,7 +1,6 @@
 package fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth;
 
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
@@ -20,11 +19,11 @@ import fr.ign.rjmcmc.kernel.Transform;
 
 /**
  * 
- *        This software is released under the licence CeCILL
+ * This software is released under the licence CeCILL
  * 
- *        see LICENSE.TXT
+ * see LICENSE.TXT
  * 
- *        see <http://www.cecill.info/ http://www.cecill.info/
+ * see <http://www.cecill.info/ http://www.cecill.info/
  * 
  * @TODO Suppress constructor
  * 
@@ -33,7 +32,7 @@ import fr.ign.rjmcmc.kernel.Transform;
  * @author Brasebin Mickaël
  * 
  * @version 1.0
- **/ 
+ **/
 public class TransformToSurface implements Transform {
   /**
    * Logger.
@@ -46,20 +45,20 @@ public class TransformToSurface implements Transform {
   private double determinant;
   private double absDeterminant;
 
-  public TransformToSurface(Vector<Double> d, Vector<Double> v, IGeometry geom) {
+  public TransformToSurface(double[] d, double[] v, IGeometry geom) {
 
     // On prépare la géométrie pour être triangulée
     prepareGeometry(geom);
-    this.mat = new double[d.size()];
-    this.delta = new double[d.size()];
-    this.inv = new double[d.size()];
+    this.mat = new double[d.length];
+    this.delta = new double[d.length];
+    this.inv = new double[d.length];
     this.determinant = 1.;
-    for (int i = 2; i < d.size(); ++i) {
-      double dvalue = d.get(i);
+    for (int i = 2; i < d.length; ++i) {
+      double dvalue = d[i];
       determinant *= dvalue;
       mat[i] = dvalue;
       inv[i] = 1 / dvalue;
-      delta[i] = v.get(i);
+      delta[i] = v[i];
     }
     this.absDeterminant = 1;// Math.abs(determinant);
   }
@@ -86,28 +85,26 @@ public class TransformToSurface implements Transform {
 
   private void prepareGeometry(IGeometry geom) {
     List<IOrientableSurface> lOS = FromGeomToSurface.convertGeom(geom);
-    
-    
-    IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<>();
-    
-    for(IOrientableSurface oS : lOS){
-    	
-        TriangulationJTS triangulation = TriangulationLoader
-                .generate((IPolygon) oS);
-            try {
-              triangulation.triangule();
-            } catch (Exception e) {
-              e.printStackTrace();
-            }
 
-            for (Face f : triangulation.getPopFaces()) {
-              if (oS.buffer(0.5).contains(f.getGeom())) {
-                iMS.add(f.getGeometrie());
-              }
-            }
-    	
+    IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<>();
+
+    for (IOrientableSurface oS : lOS) {
+
+      TriangulationJTS triangulation = TriangulationLoader
+          .generate((IPolygon) oS);
+      try {
+        triangulation.triangule();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+
+      for (Face f : triangulation.getPopFaces()) {
+        if (oS.buffer(0.5).contains(f.getGeom())) {
+          iMS.add(f.getGeometrie());
+        }
+      }
+
     }
-    
 
     eq = new EquiSurfaceDistribution(iMS);
   }
@@ -117,38 +114,37 @@ public class TransformToSurface implements Transform {
   }
 
   @Override
-  public double apply(boolean direct, Vector<Double> val0, Vector<Double> var0,
-      Vector<Double> val1, Vector<Double> var1) {
+  public double apply(boolean direct, double[] val0, double[] val1) {
     if (direct) {
-      IDirectPosition dp = eq.sample(var0.get(0), var0.get(1));
+      IDirectPosition dp = eq.sample(val0[0], val0[1]);
       if (dp == null) {
-        val1.set(0, 0.);
-        val1.set(1, 0.);
+        val1[0] = 0.;
+        val1[1] = 0.;
       } else {
-        val1.set(0, dp.getX());
-        val1.set(1, dp.getY());
+        val1[0] = dp.getX();
+        val1[1] = dp.getY();
       }
-      for (int i = 2; i < val1.size(); i++) {
-        val1.set(i, var0.get(i) * mat[i] + delta[i]);
+      for (int i = 2; i < val1.length; i++) {
+        val1[i] = val0[i] * mat[i] + delta[i];
       }
       return 1;
     } else {
-      IDirectPosition dp = eq.inversample(val0.get(0), val0.get(1));
+      IDirectPosition dp = eq.inversample(val0[0], val0[1]);
       if (dp == null) {
-        var1.set(0, 0.);
-        var1.set(1, 0.);
+        val1[0] = 0.;
+        val1[1] = 0.;
       } else {
-        var1.set(0, dp.getX());
-        var1.set(1, dp.getY());
+        val1[0] = dp.getX();
+        val1[1] = dp.getY();
       }
-      for (int i = 2; i < var1.size(); i++) {
-        var1.set(i, (val0.get(i) - delta[i]) * inv[i]);
+      for (int i = 2; i < val1.length; i++) {
+        val1[i] = (val0[i] - delta[i]) * inv[i];
       }
       return 1;
     }
   }
 
-  @Override
+//  @Override
   public double getAbsJacobian(boolean direct) {
     if (direct)
       return this.absDeterminant;
@@ -156,7 +152,7 @@ public class TransformToSurface implements Transform {
   }
 
   @Override
-  public int dimension(int n0, int n1) {
+  public int dimension() {
     return this.mat.length;
   }
 }

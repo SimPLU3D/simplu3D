@@ -31,47 +31,32 @@ public class ParallelPolygonTransformTest {
     double[] d = new double[] { 0, 0, 1, 3, 3, 0 };
     double[] v = new double[] { 0, 0, 5, 0, 30, 0 };
 
-    Vector<Double> ld = new Vector<>();
-    Vector<Double> lv = new Vector<>();
-
-    for (int i = 0; i < d.length; i++) {
-      ld.add(d[i]);
-    }
-
-    for (int i = 0; i < v.length; i++) {
-      lv.add(v[i]);
-    }
-
-    t = new ParallelPolygonTransform(ld, lv, polygon, new ILineString[] { limit1, limit2 });
+    t = new ParallelPolygonTransform(d, v, polygon, new ILineString[] { limit1, limit2 });
   }
 
   @Test
   public void testApply() {
     // int dimension = 6;
     for (int index = 0; index < 100; index++) {
-      Vector<Double> lvalIn = new Vector<Double>();
-      Vector<Double> lvarIn = new Vector<Double>();
+      double[] lvalIn = new double[4];
       RandomGenerator generator = Random.random();
-      lvarIn.add(generator.nextDouble());
-      lvarIn.add(generator.nextDouble());
-      lvarIn.add(generator.nextDouble());
-      lvarIn.add(generator.nextDouble());
-
-      Vector<Double> lvalOut = new Vector<>();
-      lvalOut.setSize(6);
+      for (int i = 0; i < 4; i++) {
+        lvalIn[i] = generator.nextDouble();
+      }
+      double[] lvalOut = new double[4];
 
       Vector<Double> lvarOut = new Vector<>();
-      t.apply(true, lvalIn, lvarIn, lvalOut, lvarOut);
+      t.apply(true, lvalIn, lvalOut);
 
       // String outString = "";
       // for (int i = 0; i < dimension; i++) {
       // outString += lvalOut.get(i) + " ";
       // }
       // System.out.println("out = " + outString);
-      Cuboid cuboidOut = new Cuboid(lvalOut.get(0), lvalOut.get(1), lvalOut.get(2), lvalOut.get(3), lvalOut.get(4),
-          lvalOut.get(5));
-
-      System.out.println(cuboidOut.toGeometry());
+//      Cuboid cuboidOut = new ParallelCuboid(lvalOut[0], lvalOut.get(1), lvalOut.get(2), lvalOut.get(3), lvalOut.get(4),
+//          lvalOut.get(5));
+//
+//      System.out.println(cuboidOut.toGeometry());
     }
     // lvalIn = new Vector<Double>();
     // lvarIn = new Vector<Double>();

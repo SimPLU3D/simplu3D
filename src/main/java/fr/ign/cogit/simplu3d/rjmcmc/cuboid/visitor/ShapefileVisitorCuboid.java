@@ -87,7 +87,7 @@ public class ShapefileVisitorCuboid<O extends Cuboid, C extends AbstractGraphCon
 		try {
 			ShapefileDataStore store = new ShapefileDataStore(new File(
 					aFileName).toURI().toURL());
-			String specs = "geom:MultiPolygon,energy:double"; //$NON-NLS-1$
+			String specs = "geom:MultiPolygon:srid=2154,energy:double"; //$NON-NLS-1$
 			String featureTypeName = "Building"; //$NON-NLS-1$
 			SimpleFeatureType type = DataUtilities.createType(featureTypeName,
 					specs);

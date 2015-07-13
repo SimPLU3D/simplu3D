@@ -43,6 +43,7 @@ public class SimulatorTest {
 
     Environnement env = LoadDefaultEnvironment.getENVDEF();
 
+    if (env.getBpU().isEmpty()) return;
     BasicPropertyUnit bPU = env.getBpU().get(1);
 
     OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();

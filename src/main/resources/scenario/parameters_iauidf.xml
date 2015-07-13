@@ -24,8 +24,8 @@
         <!-- Probabilités !-->
         <!-- Création/destruction d'une boîte !-->
         <!-- Les autre smouvements sont équiprobables !-->
-		<param key="pbirth" value="0.2" />
-		<param key="pdeath" value="0.5" />
+		<param key="pbirthdeath" value="0.2" />
+		<param key="pbirth" value="0.5" />
          <!-- Déplacements !-->
          <!-- Amplitude max d'un changement de dimension (m) !-->
          <param key="amplitudeMaxDim" value="2" />
@@ -61,9 +61,9 @@
         
         <!-- Paramètres relatifs aux visiteur!-->
          <!-- Nombre d'itérations de dump!-->
-		<param key="nbdump" value="1000" />
+		<param key="nbdump" value="10000" />
          <!-- Nombre d'itérations de save!-->
-		<param key="nbsave" value="50000" />
+		<param key="nbsave" value="5000000" />
         <!-- Visiteurs utilisés-->
         <!-- Sortie console -->
         <param key="outputstreamvisitor" value="true" />
@@ -79,7 +79,7 @@
 
         
         <!-- Sortie ShapeFileWriter -->
-        <param key="shapefilewriter" value="false" />   
+        <param key="shapefilewriter" value="true" />   
         <!-- Sortie Statsvisitor -->
         <param key="statsvisitor" value="false" />      
         <!-- Sortie FilmVisitor -->
@@ -95,7 +95,7 @@
         <param key="filmvisitorb" value="180" />  
         
        <!-- Sortie CSV -->
-       <param key="csvvisitor" value="false" />  
+       <param key="csvvisitor" value="true" />  
        <param key="csvfilename" value="export.csv" />  
        
               <!-- Sortie CSVEnd -->
@@ -103,7 +103,7 @@
        <param key="csvfilenamend" value="exportEndStats.csv" />  
         
         <!-- Dossier des sorties des visiteur -->
-        <param key="result" value="E:/temp2/" />           
+        <param key="result" value="/home/adminlocal/tmp/" />
 </parameters>
 
 

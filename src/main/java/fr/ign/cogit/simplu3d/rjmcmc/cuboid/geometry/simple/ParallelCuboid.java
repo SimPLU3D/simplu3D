@@ -26,18 +26,18 @@ public class ParallelCuboid extends Cuboid {
   }
   @Override
   public Object[] getArray() {
-    return new Object[] { this.centerx, this.centery, this.length, this.width, this.height, this.orientation };
+    return new Object[] { this.centerx, this.centery, this.length/*, this.width*/, this.height/*, this.orientation*/ };
   }
 
   @Override
   public int size() {
-    return 6;
+    return 4;
   }
 
   @Override
   public int hashCode() {
     int hashCode = 1;
-    double[] array = { this.centerx, this.centery, this.length, this.width, this.orientation, this.height };
+    double[] array = { this.centerx, this.centery, this.length/*, this.width*/, this.orientation/*, this.height*/ };
     for (double e : array)
       hashCode = 31 * hashCode + hashCode(e);
     return hashCode;
@@ -61,7 +61,7 @@ public class ParallelCuboid extends Cuboid {
   }
   @Override
   public double[] toArray() {
-    return new double[] { this.centerx, this.centery, this.length, this.width, this.height, this.orientation };
+    return new double[] { this.centerx, this.centery, this.length/*, this.width*/, this.height/*, this.orientation*/ };
   }
 
   @Override
@@ -69,9 +69,9 @@ public class ParallelCuboid extends Cuboid {
     this.centerx = list.get(0);
     this.centery = list.get(1);
     this.length = list.get(2);
-    this.width = list.get(3);
-    this.height = list.get(4);
-    this.orientation = list.get(5);
+//    this.width = list.get(3);
+    this.height = list.get(3);
+//    this.orientation = list.get(5);
     this.isNew = true;
   }
 }
