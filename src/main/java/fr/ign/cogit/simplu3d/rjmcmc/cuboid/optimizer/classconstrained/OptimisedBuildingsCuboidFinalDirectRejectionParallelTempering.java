@@ -3,7 +3,6 @@ package fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.classconstrained;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
@@ -136,14 +135,17 @@ public class OptimisedBuildingsCuboidFinalDirectRejectionParallelTempering {
 		// relative au volume
 
 		// Création de l'échantilloneur
-		Schedule<SimpleTemperature>[] samp = new Schedule[this.numberOfReplicas];
+		@SuppressWarnings("unchecked")
+    Schedule<SimpleTemperature>[] samp = new Schedule[this.numberOfReplicas];
 		// Température
 
 		int loadExistingConfig = p.getInteger("load_existing_config");
 
-		GraphConfiguration<Cuboid>[] tabConfig = new GraphConfiguration[this.numberOfReplicas];
+		@SuppressWarnings("unchecked")
+    GraphConfiguration<Cuboid>[] tabConfig = new GraphConfiguration[this.numberOfReplicas];
 
-		Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>[] tabVisitor = new Visitor[this.numberOfReplicas];
+		@SuppressWarnings("unchecked")
+    Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>[] tabVisitor = new Visitor[this.numberOfReplicas];
 
 		Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> sampler = create_sampler(
 				Random.random(), p, bpu, pred);
@@ -417,26 +419,19 @@ public class OptimisedBuildingsCuboidFinalDirectRejectionParallelTempering {
 				distribution, birth, pred);
 
 		// Probabilité de naissance-morts modifications
-		List<Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> kernels = new ArrayList<>(
-				3);
+		List<Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> kernels = new ArrayList<>(3);
 		KernelFactory<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> factory = new KernelFactory<>();
-
-		kernels.add(factory.make_uniform_birth_death_kernel(rnd, builder,
-				birth, p.getDouble("pbirth"), p.getDouble("pdeath")));
+    //TODO Use a KernelProposalRatio to propose only birth when size is 0
+		kernels.add(factory.make_uniform_birth_death_kernel(rnd, builder, birth, p.getDouble("pbirth"), 1.0, "BirthDeath"));
 		double amplitudeMove = p.getDouble("amplitudeMove");
-		kernels.add(factory.make_uniform_modification_kernel(rnd, builder,
-				new MoveCuboid(amplitudeMove), 0.2, "Move"));
+		kernels.add(factory.make_uniform_modification_kernel(rnd, builder, new MoveCuboid(amplitudeMove), 0.2, "Move"));
 		double amplitudeRotate = p.getDouble("amplitudeRotate") * Math.PI / 180;
-		kernels.add(factory.make_uniform_modification_kernel(rnd, builder,
-				new RotateCuboid(amplitudeRotate), 0.2, "Rotate"));
+		kernels.add(factory.make_uniform_modification_kernel(rnd, builder, new RotateCuboid(amplitudeRotate), 0.2, "Rotate"));
 		double amplitudeMaxDim = p.getDouble("amplitudeMaxDim");
-		kernels.add(factory.make_uniform_modification_kernel(rnd, builder,
-				new ChangeWidth(amplitudeMaxDim), 0.2, "ChgWidth"));
-		kernels.add(factory.make_uniform_modification_kernel(rnd, builder,
-				new ChangeLength(amplitudeMaxDim), 0.2, "ChgLength"));
+		kernels.add(factory.make_uniform_modification_kernel(rnd, builder, new ChangeWidth(amplitudeMaxDim), 0.2, "ChgWidth"));
+		kernels.add(factory.make_uniform_modification_kernel(rnd, builder, new ChangeLength(amplitudeMaxDim), 0.2, "ChgLength"));
 		double amplitudeHeight = p.getDouble("amplitudeHeight");
-		kernels.add(factory.make_uniform_modification_kernel(rnd, builder,
-				new ChangeHeight(amplitudeHeight), 0.2, "ChgHeight"));
+		kernels.add(factory.make_uniform_modification_kernel(rnd, builder, new ChangeHeight(amplitudeHeight), 0.2, "ChgHeight"));
 
 		Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> s = new GreenSamplerBlockTemperature<>(
 				ds, new MetropolisAcceptance<SimpleTemperature>(), kernels);

@@ -7,9 +7,7 @@
 		<param key="energy" value="1" />
         <!-- Pondération du critère de volume-->
     	<param key="ponderation_volume" value="1" />
- 
-        
-        
+
         <!--Distribution (équiprobable) des dimensions des boîtes-->
         <!-- Largeur et longueur !-->
         <param key="minlen" value="2" />
@@ -25,7 +23,7 @@
         <!-- Création/destruction d'une boîte !-->
         <!-- Les autre smouvements sont équiprobables !-->
 		<param key="pbirthdeath" value="0.2" />
-		<param key="pbirth" value="0.5" />
+		<param key="pbirth" value="1.0" />
          <!-- Déplacements !-->
          <!-- Amplitude max d'un changement de dimension (m) !-->
          <param key="amplitudeMaxDim" value="2" />

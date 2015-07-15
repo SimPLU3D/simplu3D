@@ -3,7 +3,6 @@ package fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.ocl;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
@@ -348,25 +347,19 @@ public class OCLBuildingsCuboidFinal {
 				distribution, birth);
 
 		// Probabilité de naissance-morts modifications
-		List<Kernel<ModelInstanceGraphConfiguration<Cuboid>, ModelInstanceModification<Cuboid>>> kernels = new ArrayList<>(
-				3);
+		List<Kernel<ModelInstanceGraphConfiguration<Cuboid>, ModelInstanceModification<Cuboid>>> kernels = new ArrayList<>(3);
 		KernelFactory<Cuboid,ModelInstanceGraphConfiguration<Cuboid>, ModelInstanceModification<Cuboid>> factory = new KernelFactory<>();
-		kernels.add(factory .make_uniform_birth_death_kernel(rng, builder, birth,
-				p.getDouble("pbirth"), p.getDouble("pdeath")));
+    //TODO Use a KernelProposalRatio to propose only birth when size is 0
+		kernels.add(factory .make_uniform_birth_death_kernel(rng, builder, birth, p.getDouble("pbirth"), 1.0, "BirthDeath"));
 		double amplitudeMove = p.getDouble("amplitudeMove");
-		kernels.add(factory .make_uniform_modification_kernel(rng, builder,
-				new MoveCuboid(amplitudeMove), 0.2, "Move"));
+		kernels.add(factory .make_uniform_modification_kernel(rng, builder, new MoveCuboid(amplitudeMove), 0.2, "Move"));
 		double amplitudeRotate = p.getDouble("amplitudeRotate") * Math.PI / 180;
-		kernels.add(factory .make_uniform_modification_kernel(rng, builder,
-				new RotateCuboid(amplitudeRotate), 0.2, "Rotate"));
+		kernels.add(factory .make_uniform_modification_kernel(rng, builder, new RotateCuboid(amplitudeRotate), 0.2, "Rotate"));
 		double amplitudeMaxDim = p.getDouble("amplitudeMaxDim");
-		kernels.add(factory .make_uniform_modification_kernel(rng, builder,
-				new ChangeWidth(amplitudeMaxDim), 0.2, "ChgWidth"));
-		kernels.add(factory .make_uniform_modification_kernel(rng, builder,
-				new ChangeLength(amplitudeMaxDim), 0.2, "ChgLength"));
+		kernels.add(factory .make_uniform_modification_kernel(rng, builder, new ChangeWidth(amplitudeMaxDim), 0.2, "ChgWidth"));
+		kernels.add(factory .make_uniform_modification_kernel(rng, builder, new ChangeLength(amplitudeMaxDim), 0.2, "ChgLength"));
 		double amplitudeHeight = p.getDouble("amplitudeHeight");
-		kernels.add(factory .make_uniform_modification_kernel(rng, builder,
-				new ChangeHeight(amplitudeHeight), 0.2, "ChgHeight"));
+		kernels.add(factory .make_uniform_modification_kernel(rng, builder, new ChangeHeight(amplitudeHeight), 0.2, "ChgHeight"));
 
 		Sampler<ModelInstanceGraphConfiguration<Cuboid>, ModelInstanceModification<Cuboid>> s = new GreenSampler<ModelInstanceGraphConfiguration<Cuboid>, ModelInstanceModification<Cuboid>>(
 				rng, ds, new MetropolisAcceptance<SimpleTemperature>(), kernels);
