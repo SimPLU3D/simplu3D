@@ -304,6 +304,9 @@ public class Cuboid extends AbstractSimpleBuilding implements Primitive {
 		double distance = this.toGeometry().distance(geom);
 
 		h = ((Cuboid) this).height;
+		
+	//	System.out.println("Height : " + height);
+		//	System.out.println("Distance : " + distance + "  slope " + slope + "  hIni "+ hIni);
 
 		return distance * slope + hIni > h;
 	}

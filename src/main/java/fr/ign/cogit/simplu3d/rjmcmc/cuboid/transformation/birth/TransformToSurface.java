@@ -13,6 +13,7 @@ import fr.ign.cogit.geoxygene.contrib.cartetopo.Face;
 import fr.ign.cogit.geoxygene.contrib.delaunay.TriangulationJTS;
 import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToSurface;
 import fr.ign.cogit.geoxygene.sig3d.distribution.EquiSurfaceDistribution;
+import fr.ign.cogit.geoxygene.sig3d.distribution.EquiSurfaceDistributionJTS;
 import fr.ign.cogit.geoxygene.sig3d.topology.TriangulationLoader;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.rjmcmc.kernel.Transform;
@@ -81,7 +82,7 @@ public class TransformToSurface implements Transform {
   // this.absDeterminant = 1;// Math.abs(determinant);
   // }
 
-  private EquiSurfaceDistribution eq;
+  private EquiSurfaceDistributionJTS eq;
 
   private void prepareGeometry(IGeometry geom) {
     List<IOrientableSurface> lOS = FromGeomToSurface.convertGeom(geom);
@@ -106,7 +107,12 @@ public class TransformToSurface implements Transform {
 
     }
 
-    eq = new EquiSurfaceDistribution(iMS);
+    try {
+		eq = new EquiSurfaceDistributionJTS(iMS);
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
   }
 
   public double getDeterminant() {

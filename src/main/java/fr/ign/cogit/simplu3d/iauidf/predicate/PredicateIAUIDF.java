@@ -19,6 +19,7 @@ import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.ParallelCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.SimpleCuboid;
+import fr.ign.geometry.SquaredDistance;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
@@ -153,6 +154,8 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		
 
 
+	
+
 		O birth = null;
 
 		if (!m.getBirth().isEmpty()) {
@@ -282,17 +285,17 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 	public boolean checkBandRegulation(Regulation r, O cuboid) {
 
-
-
-	
-
-		
 		
 		if (r == null
 				|| !r.getEpsilonBuffer().contains(cuboid.toGeometry())) {
 			return false;
 		}
 	
+
+
+
+		
+		
 		/*
 
 		
@@ -410,6 +413,10 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 				break;
 
 			}
+			
+			
+
+		
 
 			if (this.jtsCurveLimiteFondParcel != null
 					&& !cuboid.prospectJTS(this.jtsCurveLimiteFondParcel,
@@ -424,7 +431,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 			}
 		}
 
-	//	System.out.println("Je return true");
+	//System.out.println("Je return true " + cuboid.toString());
 		return true;
 
 	}
@@ -460,12 +467,14 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 			// On parcourt les boîtes que l'on ajoute
 			for (O ab : lO) {
+				
+				
 
 				// On regarde si la distance entre les boîtes qui restent et
 				// celles que
 				// l'on ajoute
 				// respecte la distance entre boîtes
-				if (batTemp.toGeometry().distance(ab.toGeometry()) < distanceInterBati) {
+				if ((new SquaredDistance(ab.getRectangle2D(), batTemp.getRectangle2D() )).getSquaredDistance() < distanceInterBati) {
 					return false;
 				}
 

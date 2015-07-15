@@ -310,10 +310,14 @@ public class MultipleBuildingsCuboid {
     kernels.add(kernel2);
 
     // TODO : bloquer le kernel s'il n'y a pas de prospect
-    double amplitudeHeight = p.getDouble("amplitudeHeight");
-    Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> parallelHeight = new Kernel<>(pView, pView, variate, variate,
-        new ChangeValue(amplitudeHeight, 5, 3), 0.2, 1.0, "ChgHeightP");
-    kernels.add(parallelHeight);
+    
+    if((p.getDouble("maxheight")- p.getDouble("minheight")) > 0.2){
+        double amplitudeHeight = p.getDouble("amplitudeHeight");
+        Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> parallelHeight = new Kernel<>(pView, pView, variate, variate,
+            new ChangeValue(amplitudeHeight, 5, 3), 0.2, 1.0, "ChgHeightP");
+        kernels.add(parallelHeight);
+    }
+
 
     Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> parallelMovekernel = new Kernel<>(pView, pView, variate, variate,
         new MoveParallelCuboid(p.getDouble("amplitudeMove")), 0.2, 1.0, "SimpleMoveP");
@@ -356,10 +360,18 @@ public class MultipleBuildingsCuboid {
     kernels.add(simpleLength);
 
     // TODO : bloquer le kernel s'il n'y a pas de prospect
-    double amplitudeHeight = p.getDouble("amplitudeHeight");
-    Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> simpleHeight = new Kernel<>(sView, sView, variate, variate, new ChangeHeight(
-        amplitudeHeight), 0.2, 1.0, "ChgHeightS");
-    kernels.add(simpleHeight);
+    
+    
+    if((p.getDouble("maxheight")- p.getDouble("minheight")) > 0.2){
+        
+        double amplitudeHeight = p.getDouble("amplitudeHeight");
+        Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> simpleHeight = new Kernel<>(sView, sView, variate, variate, new ChangeHeight(
+            amplitudeHeight), 0.2, 1.0, "ChgHeightS");
+        kernels.add(simpleHeight);
+    }
+    		
+    
+
     return kernels;
   }
 
