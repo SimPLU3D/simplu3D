@@ -16,6 +16,7 @@ import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
+import fr.ign.cogit.geoxygene.sig3d.calculation.OrientedBoundingBox;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
@@ -70,8 +71,8 @@ public class Exec {
 		init();
 		// On traite indépendamment chaque zone imu
 		for (int imu : mapReg.keySet()) {
-		//	if (imu != 78020561)
-			//		continue;
+			 if (imu != 78020561)
+			 continue;
 			// int imu = 78020432; 78020440; //(int)
 			// mapReg.keySet().toArray()[0];
 			System.out.println("Numéro imu : " + imu);
@@ -103,13 +104,13 @@ public class Exec {
 		boolean isOk = true;
 		// Stocke les résultats en sorties
 		IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
-	
+
 		// On parcourt chaque parcelle et on applique la simulation dessus
 		int nbBPU = env.getBpU().size();
 		for (int i = 0; i < nbBPU; i++) {
 
-			//if (i != 13)
-			//	continue;
+			// if (i != 13)
+			// continue;
 			System.out.println("Parcelle numéro : " + i);
 			System.out.println(env.getBpU().get(i).getGeom());
 			IFeatureCollection<IFeature> featCTemp = simulRegulationByBasicPropertyUnit(
@@ -139,56 +140,68 @@ public class Exec {
 		String fileName = "parameters_iauidf.xml";
 		p = Parameters.unmarshall(new File(folderName + fileName));
 
-		/*
-		 * if (r2 != null) {
-		 * 
-		 * p.set("maxheight", Math.max(r1.getArt_102(), r2.getArt_102())); }
-		 * else { p.set("maxheight", r1.getArt_102()); }
-		 * 
-		 * if (p.getDouble("maxheight") < p.getDouble("minheight")) { return
-		 * false; }
-		 * 
-		 * 
-		 * 
-		 * System.out.println("Hauteur " + p.getDouble("minheight") + " "
-		 * +p.getDouble("maxheight"));
-		 * 
-		 * if (r2 != null) { if ((r1.getArt_74() == 0) && (r2.getArt_74() == 0))
-		 * { p.set("minheight", p.getDouble("maxheight") - 0.1); } } else { if
-		 * ((r1.getArt_74() == 0)) { p.set("minheight", p.getDouble("maxheight")
-		 * - 0.1); } }
-		 * 
-		 * OrientedBoundingBox oBB1 = new
-		 * OrientedBoundingBox(r1.getGeomBande());
-		 * 
-		 * 
-		 * double longueur1 = oBB1.getLength();
-		 * 
-		 * if (r2 != null) { OrientedBoundingBox oBB2 = new
-		 * OrientedBoundingBox(r2.getGeomBande());
-		 * 
-		 * double longueur2 = oBB2.getLength();
-		 * 
-		 * p.set("maxlen", Math.min(p.getDouble("minlen"), Math.max(longueur1,
-		 * longueur2)));
-		 * 
-		 * p.set("maxwid", Math.min(p.getDouble("maxwid"), Math.max(longueur1,
-		 * longueur2)));
-		 * 
-		 * } else { p.set("maxlen", Math.min(p.getDouble("minlen"), longueur1));
-		 * p.set("maxwid", Math.min(p.getDouble("maxwid"), longueur1));
-		 * 
-		 * }
-		 * 
-		 * 
-		 * if (p.getDouble("maxlen") < p.getDouble("minlen")) { return false; }
-		 * 
-		 * if (p.getDouble("maxwid") < p.getDouble("minwid")) { return false; }
-		 * 
-		 * 
-		 * p.set("temp", Math.min(p.getDouble("temp"), p.getDouble("maxlen") *
-		 * p.getDouble("minlen") * p.getDouble("minheight")));
-		 */
+		if (r2 != null) {
+
+			p.set("maxheight", Math.max(r1.getArt_102(), r2.getArt_102()));
+		} else {
+			p.set("maxheight", r1.getArt_102());
+		}
+
+		if (p.getDouble("maxheight") < p.getDouble("minheight")) {
+			return false;
+		}
+
+		System.out.println("Hauteur " + p.getDouble("minheight") + " "
+				+ p.getDouble("maxheight"));
+
+		if (r2 != null) {
+			if ((r1.getArt_74() == 0) && (r2.getArt_74() == 0)) {
+				p.set("minheight", p.getDouble("maxheight") - 0.1);
+			}
+		} else {
+			if ((r1.getArt_74() == 0)) {
+				p.set("minheight", p.getDouble("maxheight") - 0.1);
+			}
+		}
+
+		OrientedBoundingBox oBB1 = new OrientedBoundingBox(r1.getGeomBande());
+
+		double longueur1 = oBB1.getLength();
+
+		if (r2 != null) {
+			OrientedBoundingBox oBB2 = new OrientedBoundingBox(
+					r2.getGeomBande());
+
+			double longueur2 = oBB2.getLength();
+
+			p.set("maxlen",
+					Math.min(p.getDouble("maxlen"),
+							Math.max(longueur1, longueur2)));
+
+			p.set("maxwid",
+					Math.min(p.getDouble("maxwid"),
+							Math.max(longueur1, longueur2)));
+
+		} else {
+			p.set("maxlen", Math.min(p.getDouble("maxlen"), longueur1));
+			p.set("maxwid", Math.min(p.getDouble("maxwid"), longueur1));
+
+		}
+
+		if (p.getDouble("maxlen") < p.getDouble("minlen")) {
+			return false;
+		}
+
+		if (p.getDouble("maxwid") < p.getDouble("minwid")) {
+			return false;
+		}
+
+		p.set("temp",
+				Math.min(
+						p.getDouble("temp"),
+						p.getDouble("maxlen") * p.getDouble("maxlen")
+								* p.getDouble("maxheight")));
+
 		return true;
 	}
 
@@ -312,7 +325,7 @@ public class Exec {
 		return orderedList;
 	}
 
-	// Affiche les règlements chargés
+	// Affiche les réglements chargés
 	public static void testLoadedRegulation(
 			Map<Integer, List<Regulation>> mapReg) {
 		for (int key : mapReg.keySet()) {

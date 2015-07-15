@@ -26,6 +26,7 @@ public class StabilityEndTest<O extends SimpleObject> implements EndTest {
   int iterations;
   double lastEnergy;
   int iterationCount;
+  double delta;
 
   public StabilityEndTest(int n, double delta) {
     this.iterations = n;
@@ -38,7 +39,7 @@ public class StabilityEndTest<O extends SimpleObject> implements EndTest {
   		C config, Sampler<C, M> sampler, Temperature t) {
     double currentEnergy = config.getEnergy();
 
-    if (currentEnergy != 0 && Math.abs(currentEnergy - lastEnergy) > 40) {
+    if (currentEnergy != 0 && Math.abs(currentEnergy - lastEnergy) > delta) {
       lastEnergy = currentEnergy;
       iterationCount = 0;
       return false;
