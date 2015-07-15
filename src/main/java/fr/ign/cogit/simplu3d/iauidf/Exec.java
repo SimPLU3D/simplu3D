@@ -71,8 +71,8 @@ public class Exec {
 		init();
 		// On traite indépendamment chaque zone imu
 		for (int imu : mapReg.keySet()) {
-			 if (imu != 78020561)
-			 continue;
+			// if (imu != 78020561)
+			// continue;
 			// int imu = 78020432; 78020440; //(int)
 			// mapReg.keySet().toArray()[0];
 			System.out.println("Numéro imu : " + imu);
