@@ -236,14 +236,14 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 				continue;
 			}
 
-			double area = cubTemp.toGeometry().getArea();
+			double area = cubTemp.fastArea(); //.toGeometry().getArea();
 			int nbEtage = 1 + (int) (cubTemp.height / 3);
 
 			areaBuilt += area;
 			shonBuilt += area * nbEtage;
 		}
 
-		double areaBPU = this.currentBPU.generateGeom().area();
+		double areaBPU = this.currentBPU.getArea();
 
 		// ART_9 Pourcentage d'emprise au sol maximum autorisé Valeur comprise
 		// de 0 à 1, 88= non renseignable, 99= non réglementé
@@ -289,7 +289,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		
 		
 		if (r == null
-				|| !r.getJTSBand().buffer(0.5).contains(cuboid.toGeometry())) {
+				|| !r.getEpsilonBuffer().contains(cuboid.toGeometry())) {
 			return false;
 		}
 	

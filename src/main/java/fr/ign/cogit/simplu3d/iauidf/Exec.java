@@ -59,7 +59,7 @@ public class Exec {
 
   public static void main(String[] args) throws Exception {
     // Dossier contenant IMU_MANTES_TEST.csv et les sous dossier par code IMU
-    String folder = "/home/adminlocal/IAUIDF/";
+    String folder = "C:/Users/mbrasebin/Desktop/Ilots_test/COGIT78/";
     String csvFile = folder + "IMU_MANTES_TEST.csv";
     // Chargement des règlement par code IMU (on peut avoir plusieurs réglements pour un code IMU du fait des bandes)
     Map<Integer, List<Regulation>> mapReg = Regulation.loadRegulationSet(csvFile);

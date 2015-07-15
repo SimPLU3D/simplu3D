@@ -16,6 +16,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
+import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 
 public class Regulation {
@@ -342,6 +343,17 @@ public class Regulation {
 	public IMultiSurface<IOrientableSurface> getGeomBande() {
 		return geomBande;
 	}
+	
+	public Geometry getEpsilonBuffer(){
+		
+		if(epsilonBuffer == null){
+			epsilonBuffer = this.getJTSBand().buffer(0.5);
+		}
+		
+		return epsilonBuffer;
+	}
+	
+	Geometry epsilonBuffer = null;
 
 	/**
 	 * @param geomBande the geomBande to set
@@ -349,6 +361,7 @@ public class Regulation {
 	public void setGeomBande(IMultiSurface<IOrientableSurface> geomBande) {
 		this.geomBande = geomBande;
 		this.jtsGeometry = null;
+		this.epsilonBuffer = null;
 	}
 
 	
