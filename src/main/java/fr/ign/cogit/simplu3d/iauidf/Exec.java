@@ -109,8 +109,8 @@ public class Exec {
 		int nbBPU = env.getBpU().size();
 		for (int i = 0; i < nbBPU; i++) {
 
-			// if (i != 13)
-			// continue;
+			// if (i != 13)	 continue;
+			 
 			System.out.println("Parcelle numéro : " + i);
 			System.out.println(env.getBpU().get(i).getGeom());
 			IFeatureCollection<IFeature> featCTemp = simulRegulationByBasicPropertyUnit(
@@ -120,7 +120,7 @@ public class Exec {
 			if (featCTemp != null) {
 				featC.addAll(featCTemp);
 			}
-			// }
+			
 		}
 		System.out.println("-- Nombre de surface : " + debugSurface.size());
 		String fileName = folderImu + "simul_" + imu + ".shp";
