@@ -470,11 +470,16 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 				
 				
 
+			//	System.out.println("Distance JTS  : " + ab.getRectangle2D().toGeometry().distance(batTemp.getRectangle2D().toGeometry()) + "  distance Julien " +(new SquaredDistance(ab.getRectangle2D(), batTemp.getRectangle2D() )).getSquaredDistance() );
+				
 				// On regarde si la distance entre les boîtes qui restent et
 				// celles que
 				// l'on ajoute
 				// respecte la distance entre boîtes
-				if ((new SquaredDistance(ab.getRectangle2D(), batTemp.getRectangle2D() )).getSquaredDistance() < distanceInterBati) {
+			
+				if ( ab.getRectangle2D().toGeometry().distance(batTemp.getRectangle2D().toGeometry()) < distanceInterBati) {
+					
+				//if ((new SquaredDistance(ab.getRectangle2D(), batTemp.getRectangle2D() )).getSquaredDistance() < distanceInterBati) {
 					return false;
 				}
 

@@ -240,15 +240,48 @@ public class MultipleBuildingsCuboid {
 
     double minheight = p.getDouble("minheight");
     double maxheight = p.getDouble("maxheight");
-
+    double maxheight2 = p.getDouble("maxheight");
     IEnvelope env = bpU.getGeom().envelope();
     // in multi object situations, we need an object builder for each subtype and a sampler for the supertype (end of file)
     // TODO : bloquer fixer la hauteur max s'il n'y a pas de prospect
+    
+    
+    
+    
+    
+    
+    
+    
+    
     double[] v = new double[] { env.minX(), env.minY(), minlen, minwid, minheight, 0. };
+    
+    
+    if(r1 != null && r1.getArt_102() != 99){
+    	maxheight = Math.min(maxheight, r1.getArt_102());
+    }
+    
     double[] d = new double[] { env.maxX(), env.maxY(), maxlen, maxwid, maxheight, Math.PI };
+    
+    
+    if(r2 != null && r2.getArt_102() != 99){
+    	maxheight2= Math.min(maxheight2, r2.getArt_102());
+    }
+    
+    
+    double[] d2 = new double[] { env.maxX(), env.maxY(), maxlen, maxwid, maxheight2, Math.PI };
+    
+
+    
     for (int i = 0; i < d.length; i++) {
       d[i] = d[i] - v[i];
     }
+    
+    for (int i = 0; i < d.length; i++) {
+        d2[i] = d2[i] - v[i];
+      }
+      
+    
+    
     IGeometry geom = r1.getGeomBande().intersection(bP.getLineRoad().buffer(d[3] / 2 + v[3]));
     IGeometry geomBand = null;
     if (r2 != null) {
@@ -256,7 +289,7 @@ public class MultipleBuildingsCuboid {
     }
 
     Transform transformSimple = new TransformToSurface(d, v, geomBand);
-    Transform transformParallel = new ParallelPolygonTransform(d, v, geom, bP.getLineRoad().toArray());
+    Transform transformParallel = new ParallelPolygonTransform(d2, v, geom, bP.getLineRoad().toArray());
 
     Variate variate = new Variate(rng);
     // Probabilité de naissance-morts modifications
