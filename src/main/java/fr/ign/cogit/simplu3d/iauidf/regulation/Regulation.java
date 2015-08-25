@@ -16,7 +16,6 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 
 public class Regulation {
@@ -27,18 +26,19 @@ public class Regulation {
 
 	// Les intitulés des colonnes
 	private int code_imu, insee, date_approbation, fonctions, top_zac,
-			zonage_coherent, correction_zonage, typ_bande, bande, art_5, art_6,
-			art_71, art_72, art_73, art_74, art_8, art_10_top, art_101, art_13;
+			zonage_coherent, correction_zonage, typ_bande, bande, art_5,
+			art_71,  art_74, art_8, art_10_top, art_101;
 	private String libelle_zone, libelle_de_base, libelle_de_dul;
-	private double art_9, art_102, art_12, art_14;
+
+	private double art_72,art_73, art_6, art_9, art_102, art_12, art_14, art_13;
 
 	public Regulation(int code_imu, String libelle_zone, int insee,
 			int date_approbation, String libelle_de_base,
 			String libelle_de_dul, int fonctions, int top_zac,
 			int zonage_coherent, int correction_zonage, int typ_bande,
-			int bande, int art_5, int art_6, int art_71, int art_72,
-			int art_73, int art_74, int art_8, double art_9, int art_10_top,
-			int art_101, double art_102, double art_12, int art_13,
+			int bande, int art_5, double art_6, int art_71, double art_72,
+			double art_73, int art_74, int art_8, double art_9, int art_10_top,
+			int art_101, double art_102, double art_12, double art_13,
 			double art_14) {
 		super();
 		this.code_imu = code_imu;
@@ -81,13 +81,13 @@ public class Regulation {
 						.parseInt(split[6]), Integer.parseInt(split[7]),
 				Integer.parseInt(split[8]), Integer.parseInt(split[9]), Integer
 						.parseInt(split[10]), Integer.parseInt(split[11]),
-				Integer.parseInt(split[12]), Integer.parseInt(split[13]),
-				Integer.parseInt(split[14]), Integer.parseInt(split[15]),
-				Integer.parseInt(split[16]), Integer.parseInt(split[17]),
+				Integer.parseInt(split[12]), Double.parseDouble(split[13]),
+				Integer.parseInt(split[14]), Double.parseDouble(split[15]),
+				Double.parseDouble(split[16]),  Integer.parseInt(split[17]),
 				Integer.parseInt(split[18]), Double.parseDouble(split[19]),
 				Integer.parseInt(split[20]), Integer.parseInt(split[21]),
 				Double.parseDouble(split[22]), Double.parseDouble(split[23]),
-				Integer.parseInt(split[24]), Double.parseDouble(split[25]));
+				Double.parseDouble(split[24]), Double.parseDouble(split[25]));
 	}
 
 	/**
@@ -211,7 +211,7 @@ public class Regulation {
 
 	// ART_6 Distance minimale des constructions par rapport à la voirie imposée
 	// en mètre 88= non renseignable, 99= non réglementé
-	public int getArt_6() {
+	public double getArt_6() {
 		return art_6;
 	}
 
@@ -223,13 +223,13 @@ public class Regulation {
 
 	// ART_72 Distance minimale des constructions par rapport aux limites
 	// séparatives imposée en mètre 88= non renseignable, 99= non réglementé
-	public int getArt_72() {
+	public double getArt_72() {
 		return art_72;
 	}
 
 	// ART_73 Distance minimale des constructions par rapport à la limte
 	// séparative de fond de parcelle 88= non renseignable, 99= non réglementé
-	public int getArt_73() {
+	public double getArt_73() {
 		return art_73;
 	}
 
@@ -287,7 +287,7 @@ public class Regulation {
 	// ART_13 Part minimale d'espaces libre de toute construction exprimée par
 	// rapport à la surface totale de la parcelle Valeur comprise de 0 à 1, 88
 	// si non renseignable, 99 si non règlementé
-	public int getArt_13() {
+	public double getArt_13() {
 		return art_13;
 	}
 
@@ -318,24 +318,8 @@ public class Regulation {
 				+ ", art_9=" + art_9 + ", art_102=" + art_102 + ", art_12="
 				+ art_12 + ", art_14=" + art_14 + "]";
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	IMultiSurface<IOrientableSurface> geomBande = null;
 
+	IMultiSurface<IOrientableSurface> geomBande = null;
 
 	/**
 	 * @return the geomBande
@@ -343,20 +327,21 @@ public class Regulation {
 	public IMultiSurface<IOrientableSurface> getGeomBande() {
 		return geomBande;
 	}
-	
-	public Geometry getEpsilonBuffer(){
-		
-		if(epsilonBuffer == null){
+
+	public Geometry getEpsilonBuffer() {
+
+		if (epsilonBuffer == null) {
 			epsilonBuffer = this.getJTSBand().buffer(0.5);
 		}
-		
+
 		return epsilonBuffer;
 	}
-	
+
 	Geometry epsilonBuffer = null;
 
 	/**
-	 * @param geomBande the geomBande to set
+	 * @param geomBande
+	 *            the geomBande to set
 	 */
 	public void setGeomBande(IMultiSurface<IOrientableSurface> geomBande) {
 		this.geomBande = geomBande;
@@ -364,17 +349,16 @@ public class Regulation {
 		this.epsilonBuffer = null;
 	}
 
-	
 	Geometry jtsGeometry = null;
-	
+
 	private static GeometryFactory gf = new GeometryFactory();
-	
-	public Geometry getJTSBand(){
-		
-		
-		if(jtsGeometry == null){
+
+	public Geometry getJTSBand() {
+
+		if (jtsGeometry == null) {
 			try {
-				jtsGeometry = AdapterFactory.toGeometry(gf, this.getGeomBande());
+				jtsGeometry = AdapterFactory
+						.toGeometry(gf, this.getGeomBande());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -382,5 +366,5 @@ public class Regulation {
 		}
 		return jtsGeometry;
 	}
-	
+
 }

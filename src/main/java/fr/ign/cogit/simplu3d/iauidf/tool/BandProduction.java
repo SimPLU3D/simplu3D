@@ -43,38 +43,32 @@ public class BandProduction {
 		double profBande = r1.getBande();
 		// BANDE Profondeur de la bande principale x > 0 profondeur de la bande
 		// par rapport à la voirie
+		IMultiSurface<IOrientableSurface> iMSBande1;
+		if(profBande == 0){
+			iMSBande1 = FromGeomToSurface
+					.convertMSGeom(pol_BPU);
+		}else{
+			iMSBande1 = FromGeomToSurface
+					.convertMSGeom(pol_BPU.intersection(iMSRoad.buffer(profBande)));
+		}
 
-		IMultiSurface<IOrientableSurface> iMSBande1 = FromGeomToSurface
-				.convertMSGeom(pol_BPU.intersection(iMSRoad.buffer(profBande)));
+
 		IMultiSurface<IOrientableSurface> iMSBande2 = null;
 
-		if (r2 != null) {
-
-			iMSBande2 = FromGeomToSurface.convertMSGeom(pol_BPU
-					.difference(iMSRoad.buffer(profBande)));
-
-		}
 
 		// ART_6 Distance minimale des constructions par rapport à la voirie
 		// imposée en mètre 88= non renseignable, 99= non réglementé
 
 		// On enlève la bande de x m à partir de la voirie
-		int r1_art6 = r1.getArt_6();
-		if (r1_art6 != 88 && r1_art6 != 99 && r1_art6 != 0
+		double r1_art6 = r1.getArt_6();
+		if (r1_art6 != 88.0 && r1_art6 != 99.0 && r1_art6 != 0.0
 				&& !iMSBande1.isEmpty()) {
 
 			iMSBande1 = FromGeomToSurface.convertMSGeom(iMSBande1
 					.difference(iMSRoad.buffer(r1_art6)));
 		}
 
-		// idem pour r2
-		int r2_art6 = r2.getArt_6();
-		if (r2_art6 != 88 && r2_art6 != 99 && r2_art6 != 0 && iMSBande2 != null
-				&& !iMSBande2.isEmpty()) {
 
-			iMSBande2 = FromGeomToSurface.convertMSGeom(iMSBande2
-					.difference(iMSRoad.buffer(r2_art6)));
-		}
 
 		// ART_72 Distance minimale des constructions par rapport aux limites
 		// séparatives imposée en mètre 88= non renseignable, 99= non réglementé
@@ -104,22 +98,46 @@ public class BandProduction {
 		}
 
 		// On enlève la bande de x m à partir des limites séparatives
-		int r1_art72 = r1.getArt_72();
-		if (r1_art72 != 88 && r1_art72 != 99 && r1_art72 != 0
+		double r1_art72 = r1.getArt_72();
+		if (r1_art72 != 88.0 && r1_art72 != 99.0 && r1_art72 != 0.0
 				&& !iMSBande1.isEmpty()) {
 
 			iMSBande1 = FromGeomToSurface.convertMSGeom(iMSBande1
 					.difference(iMSLim.buffer(r1_art72)));
 		}
+		
+		
+		
+		
 
-		// idem pour r2
-		int r2_art72 = r2.getArt_72();
-		if (r2_art72 != 88 && r2_art72 != 99 && r2_art72 != 0
-				&& iMSBande2 != null && !iMSBande2.isEmpty()) {
+		if (r2 != null) {
 
-			iMSBande2 = FromGeomToSurface.convertMSGeom(iMSBande2
-					.difference(iMSLim.buffer(r2_art72)));
+			iMSBande2 = FromGeomToSurface.convertMSGeom(pol_BPU
+					.difference(iMSRoad.buffer(profBande)));
+			
+			
+			// idem pour r2
+			double r2_art6 = r2.getArt_6();
+			if (r2_art6 != 88.0 && r2_art6 != 99.0 && r2_art6 != 0.0 && iMSBande2 != null
+					&& !iMSBande2.isEmpty()) {
+
+				iMSBande2 = FromGeomToSurface.convertMSGeom(iMSBande2
+						.difference(iMSRoad.buffer(r2_art6)));
+			}
+
+			// idem pour r2
+			double r2_art72 = r2.getArt_72();
+			if (r2_art72 != 88.0 && r2_art72 != 99.0 && r2_art72 != 0.0
+					&& iMSBande2 != null && !iMSBande2.isEmpty()&& (r2.getArt_71() != 2)) {
+
+				iMSBande2 = FromGeomToSurface.convertMSGeom(iMSBande2
+						.difference(iMSLim.buffer(r2_art72)));
+			}
+			
+			r2.setGeomBande(iMSBande2);
+
 		}
+
 
 		/*
 		 * 
@@ -137,10 +155,10 @@ public class BandProduction {
 
 		r1.setGeomBande(iMSBande1);
 
-		r2.setGeomBande(iMSBande2);
+		
 
 		double rArt6 = r1.getArt_6();
-		if (rArt6 != 99 && rArt6 != 88) {
+		if (rArt6 != 99.0 && rArt6 != 88.0) {
 
 			if (rArt6 == 0) {
 				lineRoad = (IMultiCurve<IOrientableCurve>) (iMSRoad.clone());

@@ -24,10 +24,12 @@ import fr.ign.cogit.simplu3d.exec.BasicSimulator;
 import fr.ign.cogit.simplu3d.iauidf.predicate.PredicateIAUIDF;
 import fr.ign.cogit.simplu3d.iauidf.regulation.Regulation;
 import fr.ign.cogit.simplu3d.iauidf.tool.BandProduction;
+import fr.ign.cogit.simplu3d.importer.applicationClasses.CadastralParcelLoader;
 import fr.ign.cogit.simplu3d.importer.applicationClasses.RoadImporter;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
+import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.classconstrained.MultipleBuildingsCuboid;
@@ -53,12 +55,14 @@ public class Exec {
 		RoadImporter.ATT_LARGEUR = "LARGEUR";
 		RoadImporter.ATT_TYPE = "NATURE";
 
+		CadastralParcelLoader.TYPE_ANNOTATION = 2;
+		PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = SpecificCadastralBoundary.LEFT_SIDE;
 	}
 
 	public static void main(String[] args) throws Exception {
 		// Dossier contenant IMU_MANTES_TEST.csv et les sous dossier par code
 		// IMU
-		String folder = "C:/Users/mbrasebin/Desktop/Ilots_test/COGIT78/";
+		String folder = "C:/Users/mbrasebin/Desktop/ilotTest2/";
 		String csvFile = folder + "IMU_MANTES_TEST.csv";
 		// Chargement des règlement par code IMU (on peut avoir plusieurs
 		// réglements pour un code IMU du fait des bandes)
@@ -71,8 +75,8 @@ public class Exec {
 		init();
 		// On traite indépendamment chaque zone imu
 		for (int imu : mapReg.keySet()) {
-			// if (imu != 78020561)
-			// continue;
+			 if (imu != 75032350)
+			 continue;
 			// int imu = 78020432; 78020440; //(int)
 			// mapReg.keySet().toArray()[0];
 			System.out.println("Numéro imu : " + imu);
@@ -108,10 +112,14 @@ public class Exec {
 		// On parcourt chaque parcelle et on applique la simulation dessus
 		int nbBPU = env.getBpU().size();
 		for (int i = 0; i < nbBPU; i++) {
-
-			// if (i != 13)	 continue;
+			
+			if(i > 5)break;
+				
+			//	if(i !=0) continue;
+	  //	System.out.println(env.getBpU().get(i).getCadastralParcel().get(0).getId());
+			 //	if (env.getBpU().get(i).getId() != 47)	 continue;
 			 
-			System.out.println("Parcelle numéro : " + i);
+			System.out.println("Parcelle numéro : " + env.getBpU().get(i).getId());
 			System.out.println(env.getBpU().get(i).getGeom());
 			IFeatureCollection<IFeature> featCTemp = simulRegulationByBasicPropertyUnit(
 					env, env.getBpU().get(i), imu, lReg);
@@ -139,34 +147,59 @@ public class Exec {
 				.getResource("scenario/").getPath();
 		String fileName = "parameters_iauidf.xml";
 		p = Parameters.unmarshall(new File(folderName + fileName));
+		
 
 		if (r2 != null) {
 
-			p.set("maxheight", Math.max(r1.getArt_102(), r2.getArt_102()));
+			double newHeightMax = Math.max(r1.getArt_102(), r2.getArt_102());
+			
+			if(newHeightMax != 99.0){
+				p.set("maxheight",newHeightMax);
+			}
+			
+			
+			
+			
+			
 		} else {
-			p.set("maxheight", r1.getArt_102());
+			if(r1.getArt_102()  != 99){
+				p.set("maxheight", r1.getArt_102()  );
+			}
+			
+		
+		
 		}
 
 		if (p.getDouble("maxheight") < p.getDouble("minheight")) {
 			return false;
 		}
+		
+
 
 		System.out.println("Hauteur " + p.getDouble("minheight") + " "
 				+ p.getDouble("maxheight"));
 
 		if (r2 != null) {
-			if ((r1.getArt_74() == 0) && (r2.getArt_74() == 0)) {
+			if ((r1.getArt_74() == 0) && (r2.getArt_74() == 0) && (r2.getArt_14() !=  99) && (r1.getArt_14() !=  99) &&(p.getDouble("maxheight") != 99.0)) {
 				p.set("minheight", p.getDouble("maxheight") - 0.1);
 			}
 		} else {
-			if ((r1.getArt_74() == 0)) {
+			if ((r1.getArt_74() == 0) && (r1.getArt_14() !=  99) && (p.getDouble("maxheight") != 99.0) ) {
 				p.set("minheight", p.getDouble("maxheight") - 0.1);
 			}
 		}
+		
+		
+		
 
-		OrientedBoundingBox oBB1 = new OrientedBoundingBox(r1.getGeomBande());
+		double longueur1 =  Double.NEGATIVE_INFINITY;
+		
+		if(r1.getGeomBande() != null &&  ! r1.getGeomBande().isEmpty()){
+			OrientedBoundingBox oBB1 = new OrientedBoundingBox(r1.getGeomBande());
 
-		double longueur1 = oBB1.getLength();
+			 longueur1 = oBB1.getLength();
+		}
+
 
 		if (r2 != null) {
 			OrientedBoundingBox oBB2 = new OrientedBoundingBox(
@@ -227,6 +260,10 @@ public class Exec {
 		}
 		Regulation r1 = orderedRegulation.get(0);
 		Regulation r2 = orderedRegulation.get(1);
+		
+		System.out.println("R1 : " + r1);
+		System.out.println("R2 : " + r2);
+		
 		// ART_5 Superficie minimale 88= non renseignable, 99= non réglementé
 		int r_art5 = r1.getArt_5();
 		if (r_art5 != 99) {
@@ -235,15 +272,21 @@ public class Exec {
 			}
 		}
 		BandProduction bP = new BandProduction(bPU, r1, r2);
-		if (r1.getGeomBande() == null || r1.getGeomBande().isEmpty()) {
-			return featC;
-		}
-		if (r2.getGeomBande() == null || r2.getGeomBande().isEmpty()) {
+	
+		
+		
+		if (r2 == null || r2.getGeomBande() == null || r2.getGeomBande().isEmpty()) {
 			r2 = null;
 			System.out.println("Une seule bande");
 		}
+		
+		
 		if (DEBUG_MODE) {
-			debugSurface.add(r1.getGeomBande());
+			
+			if (r1 != null && r1.getGeomBande() != null) {
+					debugSurface.add(r1.getGeomBande());
+			}
+			
 			if (r2 != null && r2.getGeomBande() != null) {
 				debugSurface.add(r2.getGeomBande());
 			}
