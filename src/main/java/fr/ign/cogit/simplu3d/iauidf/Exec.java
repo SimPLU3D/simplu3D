@@ -112,12 +112,7 @@ public class Exec {
 		// On parcourt chaque parcelle et on applique la simulation dessus
 		int nbBPU = env.getBpU().size();
 		for (int i = 0; i < nbBPU; i++) {
-			
-			if(i > 5)break;
-				
-			//	if(i !=0) continue;
-	  //	System.out.println(env.getBpU().get(i).getCadastralParcel().get(0).getId());
-			 //	if (env.getBpU().get(i).getId() != 47)	 continue;
+
 			 
 			System.out.println("Parcelle numéro : " + env.getBpU().get(i).getId());
 			System.out.println(env.getBpU().get(i).getGeom());
