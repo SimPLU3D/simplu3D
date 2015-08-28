@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.geotools.referencing.CRS;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
@@ -113,7 +116,7 @@ public class Exec {
 		int nbBPU = env.getBpU().size();
 		for (int i = 0; i < nbBPU; i++) {
 
-			 
+			 if(i == 3) break;
 			System.out.println("Parcelle numéro : " + env.getBpU().get(i).getId());
 			System.out.println(env.getBpU().get(i).getGeom());
 			IFeatureCollection<IFeature> featCTemp = simulRegulationByBasicPropertyUnit(
@@ -128,7 +131,7 @@ public class Exec {
 		System.out.println("-- Nombre de surface : " + debugSurface.size());
 		String fileName = folderImu + "simul_" + imu + ".shp";
 		System.out.println(fileName);
-		ShapefileWriter.write(featC, fileName);
+		ShapefileWriter.write(featC, fileName, CRS.decode("EPSG:2154"));
 		if (DEBUG_MODE) {
 			saveShapeTest(folderImu);
 		}
@@ -374,7 +377,7 @@ public class Exec {
 		}
 	}
 
-	private static void saveShapeTest(String folderImu) {
+	private static void saveShapeTest(String folderImu) throws NoSuchAuthorityCodeException, FactoryException {
 		IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
 		// Petit script pour sauvegarder les bandes pour vérification
 		// Le fichier généré se trouve dans le dossier imu
@@ -383,7 +386,7 @@ public class Exec {
 				featC.add(new DefaultFeature(iS));
 			}
 		}
-		ShapefileWriter.write(featC, folderImu + "generatedBand.shp");
+		ShapefileWriter.write(featC, folderImu + "generatedBand.shp", CRS.decode("EPSG:2154"));
 		IFeatureCollection<IFeature> featC2 = new FT_FeatureCollection<>();
 		// Petit script pour sauvegarder les bandes pour vérification
 		// Le fichier généré se trouve dans le dossier imu
@@ -392,6 +395,6 @@ public class Exec {
 				featC2.add(new DefaultFeature(iS));
 			}
 		}
-		ShapefileWriter.write(featC2, folderImu + "generatedLine.shp");
+		ShapefileWriter.write(featC2, folderImu + "generatedLine.shp", CRS.decode("EPSG:2154"));
 	}
 }
