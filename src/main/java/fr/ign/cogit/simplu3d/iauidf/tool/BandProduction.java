@@ -100,7 +100,7 @@ public class BandProduction {
 		// On enlève la bande de x m à partir des limites séparatives
 		double r1_art72 = r1.getArt_72();
 		if (r1_art72 != 88.0 && r1_art72 != 99.0 && r1_art72 != 0.0
-				&& !iMSBande1.isEmpty()) {
+				&& !iMSBande1.isEmpty() && (r1.getArt_71() != 2)) {
 
 			iMSBande1 = FromGeomToSurface.convertMSGeom(iMSBande1
 					.difference(iMSLim.buffer(r1_art72)));

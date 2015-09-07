@@ -97,10 +97,13 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 					if (geom instanceof IOrientableCurve && !geom.isEmpty()) {
 						curveLimiteLatParcel.add((IOrientableCurve) geom);
 
-						if (r2 != null
+						if (r1 !=null	&& r1.getArt_71() == 2
+								&& (sCB.getSide() != PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71) || r2 != null
 								&& r2.getArt_71() == 2
 								&& (sCB.getSide() != PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71)) {
+							
 							curveLatRightLeftArt71.add((IOrientableCurve) geom);
+							
 						}
 
 					} else {
@@ -210,8 +213,19 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 			if (birth instanceof ParallelCuboid) {
 
-				if (!checkBandRegulation(r1, birth)) {
-					return false;
+				if ( r1.getArt_71() != 2){ 
+					
+					if(!checkBandRegulation(r1, birth)){
+						return false;
+					}
+					
+					
+				}else{
+					if(!checkBandRegulationSpecArt71(r1, birth)){
+					
+						return false;
+					}
+					
 				}
 
 			} else if (birth instanceof ParallelCuboid2) {
