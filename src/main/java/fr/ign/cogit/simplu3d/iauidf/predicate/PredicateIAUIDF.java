@@ -97,13 +97,15 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 					if (geom instanceof IOrientableCurve && !geom.isEmpty()) {
 						curveLimiteLatParcel.add((IOrientableCurve) geom);
 
-						if (r1 !=null	&& r1.getArt_71() == 2
-								&& (sCB.getSide() != PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71) || r2 != null
+						if (r1 != null
+								&& r1.getArt_71() == 2
+								&& (sCB.getSide() != PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71)
+								|| r2 != null
 								&& r2.getArt_71() == 2
 								&& (sCB.getSide() != PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71)) {
-							
+
 							curveLatRightLeftArt71.add((IOrientableCurve) geom);
-							
+
 						}
 
 					} else {
@@ -162,7 +164,6 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 	@Override
 	public boolean check(C c, M m) {
 
-
 		// Pour produire des boîtes séparées et vérifier que la distance inter
 		// bâtiment est respectée
 		// ART_8 Distance minimale des constructions par rapport aux autres sur
@@ -171,7 +172,6 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		if (!checkDistanceInterBuildings(c, m, r1.getArt_8())) {
 			return false;
 		}
-
 
 		O birth = null;
 
@@ -197,8 +197,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		if (!checkParcelRegulation(r1, c, m)) {
 			return false;
 		}
-		
-	
+
 		// Vérification des règles au niveau des bandes (localement)
 
 		// ART_6 Distance minimale des constructions par rapport à la voirie
@@ -213,33 +212,28 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 			if (birth instanceof ParallelCuboid) {
 
-				if ( r1.getArt_71() != 2){ 
-					
-					if(!checkBandRegulation(r1, birth)){
+				if (r1.getArt_71() != 2) {
+
+					if (!checkBandRegulation(r1, birth)) {
 						return false;
 					}
-					
-					
-				}else{
-					if(!checkBandRegulationSpecArt71(r1, birth)){
-					
+
+				} else {
+					if (!checkBandRegulationSpecArt71(r1, birth)) {
+
 						return false;
 					}
-					
+
 				}
 
 			} else if (birth instanceof ParallelCuboid2) {
 
-				
-	
-				
 				if (!checkBandRegulationSpecArt71(r2, birth)) {
 
 					return false;
 				}
-				
-				
-			//	 System.out.println("Je retourne true");
+
+				// System.out.println("Je retourne true");
 
 			} else if (birth instanceof SimpleCuboid) {
 
@@ -247,7 +241,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 					if (!checkBandRegulation(r2, birth))
 						return false;
 				}
-		
+
 			} else {
 				System.out
 						.println("Predicate IAUIDF - Unexpected class during object birth : "
@@ -256,7 +250,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 		}
 
-	// System.out.println("Je retourne true");
+		// System.out.println("Je retourne true");
 		return true;
 	}
 
@@ -265,8 +259,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		// On fait la liste de tous les objets après modification
 		List<O> lCuboid = new ArrayList<>();
 
-		// On ajoute tous les nouveaux objets
-		lCuboid.addAll(m.getBirth());
+
 
 		// On récupère la boîte (si elle existe) que l'on supprime lors de la
 		// modification
@@ -275,6 +268,23 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		if (!m.getDeath().isEmpty()) {
 			cuboidDead = m.getDeath().get(0);
 		}
+
+		Iterator<O> iTBat = c.iterator();
+
+		while (iTBat.hasNext()) {
+
+			O batTemp = iTBat.next();
+
+			if (batTemp == cuboidDead) {
+				continue;
+			}
+
+			lCuboid.add(batTemp);
+
+		}
+		
+		// On ajoute tous les nouveaux objets
+		lCuboid.addAll(m.getBirth());
 
 		double areaBuilt = 0;
 		double shonBuilt = 0;
@@ -330,13 +340,9 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 	private boolean checkBandRegulationSpecArt71(Regulation r, O cuboid) {
 
-		
-		
 		if (r == null || !r.getEpsilonBuffer().contains(cuboid.toGeometry())) {
 			return false;
 		}
-
-	
 
 		/*
 		 * if (r == null || !r.getEpsilonBuffer().contains(cuboid.toGeometry()))
@@ -359,16 +365,16 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 			}
 
 		}
-		
-		
-	//	if(true)return true;
+
+		// if(true)return true;
 
 		// ART_73 Distance minimale des constructions par rapport à la limte
 		// séparative de fond de parcelle 88= non renseignable, 99= non
 		// réglementé
 
 		double r_art73 = r.getArt_73();
-		if (jtsCurveLimiteFondParcel != null && r_art73 != 88.0 && r_art73 != 99.0) {
+		if (jtsCurveLimiteFondParcel != null && r_art73 != 88.0
+				&& r_art73 != 99.0) {
 			// On vérifie la distance (on récupère le foot
 			if (this.jtsCurveLimiteFondParcel.distance(cuboid.toGeometry()) < r_art73) {
 				// elle n'est pas respectée, on retourne faux
@@ -401,7 +407,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 				slope = 1;
 				break;
 			case 2:
-				slope =2;
+				slope = 2;
 				break;
 			case 3:
 				slope = 3;
@@ -421,7 +427,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 			case 7:
 				// 7 : Retrait égal à la hauteur moins trois mètres divisé par
 				// deux
-				hIni =  3;
+				hIni = 3;
 				slope = 2;
 				break;
 			case 8:
@@ -430,10 +436,10 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 				slope = 2;
 				break;
 			case 9:
-				slope = 3/2;
+				slope = 3 / 2;
 				break;
 			case 10:
-				slope = 4/3;
+				slope = 4 / 3;
 				break;
 
 			}
@@ -460,9 +466,6 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		if (r == null || !r.getEpsilonBuffer().contains(cuboid.toGeometry())) {
 			return false;
 		}
-		
-
-	
 
 		/*
 		 * 
@@ -517,7 +520,6 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		 * }
 		 */
 
-
 		// ART_74 Distance minimum des constructions par rapport aux limites
 		// séparatives, exprimée par rapport à la hauteur du bâtiment
 		// 0 : NON
@@ -541,7 +543,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 				slope = 1;
 				break;
 			case 2:
-				slope =2;
+				slope = 2;
 				break;
 			case 3:
 				slope = 3;
@@ -561,7 +563,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 			case 7:
 				// 7 : Retrait égal à la hauteur moins trois mètres divisé par
 				// deux
-				hIni =  3;
+				hIni = 3;
 				slope = 2;
 				break;
 			case 8:
@@ -570,10 +572,10 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 				slope = 2;
 				break;
 			case 9:
-				slope = 3/2;
+				slope = 3 / 2;
 				break;
 			case 10:
-				slope = 4/3;
+				slope = 4 / 3;
 				break;
 
 			}
