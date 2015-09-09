@@ -177,8 +177,13 @@ public class PredicateTunis<O extends Cuboid, C extends AbstractGraphConfigurati
 			
 		}
 		
+		//contrainte distance entre bâtiment
+		if(! checkDistanceInterBuildings(c,m, 6)){
+			return false;
+		}
+		
 
-	//	if(true) return true;
+
 		
 		
 		//On récupère l'objet mort s'il existe
@@ -212,14 +217,19 @@ public class PredicateTunis<O extends Cuboid, C extends AbstractGraphConfigurati
 			
 			lBatIni.add(birth);
 			//On vérifie le CES sur les bâtiments actuels
+			
+			
+			
 			if (!respectBuildArea(lBatIni)) {
 				return false;
 			}
 
-			
+			/*
 			////Contrainte C4 pour un groupe la distance doit être inférieure à 7,4 m
 			List<List<O>> listGroup = createGroupe(lBatIni);
 			
+			
+		
 			bouclegroupe : for(List<O> l : listGroup){
 				
 				for(O bat : l){
@@ -233,7 +243,7 @@ public class PredicateTunis<O extends Cuboid, C extends AbstractGraphConfigurati
 				
 				return false;
 				
-			}
+			}*/
 			
 			
 			
@@ -302,5 +312,65 @@ public class PredicateTunis<O extends Cuboid, C extends AbstractGraphConfigurati
 
 		return ((geom.getArea() / airePAr) <= this.maximalCES);
 	}
+	
+	private boolean checkDistanceInterBuildings(C c, M m,
+			double distanceInterBati) {
+
+		// On récupère les objets ajoutées lors de la proposition
+		List<O> lO = m.getBirth();
+
+		// On récupère la boîte (si elle existe) que l'on supprime lors de la
+		// modification
+		O batDeath = null;
+
+		if (!m.getDeath().isEmpty()) {
+			batDeath = m.getDeath().get(0);
+		}
+
+		// On parcourt les boîtes existantes dans la configuration courante
+		// (avant
+		// d'appliquer la modification)
+		Iterator<O> iTBat = c.iterator();
+		while (iTBat.hasNext()) {
+
+			O batTemp = iTBat.next();
+
+			// Si c'est une boîte qui est amenée à disparaître après
+			// modification,
+			// elle n'entre pas en jeu dans les vérifications
+			if (batTemp == batDeath) {
+				continue;
+			}
+
+			// On parcourt les boîtes que l'on ajoute
+			for (O ab : lO) {
+
+				// System.out.println("Distance JTS  : " +
+				// ab.getRectangle2D().toGeometry().distance(batTemp.getRectangle2D().toGeometry())
+				// + "  distance Julien " +(new
+				// SquaredDistance(ab.getRectangle2D(), batTemp.getRectangle2D()
+				// )).getSquaredDistance() );
+
+				// On regarde si la distance entre les boîtes qui restent et
+				// celles que
+				// l'on ajoute
+				// respecte la distance entre boîtes
+
+				if (ab.getRectangle2D().toGeometry()
+						.distance(batTemp.getRectangle2D().toGeometry()) < distanceInterBati) {
+
+					// if ((new SquaredDistance(ab.getRectangle2D(),
+					// batTemp.getRectangle2D() )).getSquaredDistance() <
+					// distanceInterBati) {
+					return false;
+				}
+
+			}
+
+		}
+		return true;
+
+	}
+
 
 }

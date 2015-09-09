@@ -43,11 +43,11 @@ public class Exec {
 		Environnement env = LoaderSHP.loadNoDTM(folderName);
 		
 		
-
+		//On trouve la parcelle qui a l'identifiant numéro 4
 		BasicPropertyUnit bPU = null;
 		for(BasicPropertyUnit bPUTemp : env.getBpU()){
-				
-			if(bPUTemp.getId() == 4){
+				//Identiant numéro 4
+			if(bPUTemp.getId() == 3){
 				bPU = bPUTemp;
 				break;
 			}
@@ -55,7 +55,7 @@ public class Exec {
 		}
 
 		// Création du Sampler (qui va générer les propositions de solutions)
-		OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();
+		OBCFDRConstraintOptimisation oCB = new OBCFDRConstraintOptimisation();
 
 		// Valeurs de règles à saisir
 		// C1
@@ -67,7 +67,8 @@ public class Exec {
 
 		// C3
 		double hMax = 17;
-
+		p.set("maxheight", hMax);
+		
 		// C4
 		double distReculLimi = 5.4;
 		double slopeProspectLimit = 2;
@@ -75,7 +76,6 @@ public class Exec {
 		// C7
 		double maximalCES = 0.5;
 
-		p.set("maxheight", hMax);
 
 		PredicateTunis<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new PredicateTunis<>(
 				distReculVoirie, slope, hIni, hMax, distReculLimi,
@@ -83,7 +83,8 @@ public class Exec {
 
 		// Lancement de l'optimisation avec unité foncière, paramètres,
 		// environnement, id et prédicat
-		GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred);
+		GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred,distReculVoirie, slope, hIni, hMax, distReculLimi,
+				slopeProspectLimit, maximalCES);
 
 		// On prépare la sortie pour récupérer la liste des entités
 		IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
