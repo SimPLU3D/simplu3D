@@ -159,8 +159,11 @@ public class OCLBuildingsCuboidFinalDirectRejection {
 			list.add(visitor);
 		}
 		if (p.getBoolean("shapefilewriter")) {
-			Visitor<ModelInstanceGraphConfiguration<Cuboid>, ModelInstanceModification<Cuboid>> shpVisitor = new ShapefileVisitorCuboid<>(
-					p.get("result").toString() + "result");
+			
+			ShapefileVisitorCuboid<Cuboid,ModelInstanceGraphConfiguration<Cuboid>, ModelInstanceModification<Cuboid>>  shpVisitor = new ShapefileVisitorCuboid<>(p.get("result").toString() + "result");
+
+			
+		
 			list.add(shpVisitor);
 		}
 		if (p.getBoolean("visitorviewer")) {

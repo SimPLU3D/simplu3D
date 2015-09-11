@@ -4,17 +4,13 @@ import java.io.File;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
-import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
-import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
-import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.exe.LoadDefaultEnvironment;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.classconstrained.OptimisedBuildingsCuboidFinalDirectRejection;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.predicate.SamplePredicate2;
@@ -96,11 +92,7 @@ public class BasicSimulator {
 
 		for (GraphVertex<Cuboid> v : cc.getGraph().vertexSet()) {
 
-			IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<>();
-			iMS.addAll(GenerateSolidFromCuboid.generate(v.getValue())
-					.getFacesList());
-
-			IFeature feat = new DefaultFeature(iMS);
+			IFeature feat = new DefaultFeature(v.getValue().generated3DGeom());
 			// On ajoute des attributs aux entités (dimension des objets)
 			AttributeManager
 					.addAttribute(feat, "Longueur",

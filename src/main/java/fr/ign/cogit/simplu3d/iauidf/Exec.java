@@ -20,7 +20,6 @@ import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.sig3d.calculation.OrientedBoundingBox;
-import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.exec.BasicSimulator;
@@ -33,7 +32,6 @@ import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.classconstrained.MultipleBuildingsCuboid;
 import fr.ign.mpp.configuration.BirthDeathModification;
@@ -82,10 +80,6 @@ public class Exec {
 			// int imu = 78020432; 78020440; //(int)
 			// mapReg.keySet().toArray()[0];
 
-			
-		
-			 
-
 			System.out.println("Numéro imu : " + imu);
 			boolean simul = simulRegulationByIMU(imu, mapReg.get(imu), folder
 					+ imu + "/");
@@ -94,7 +88,7 @@ public class Exec {
 			}
 		}
 	}
-	
+
 	public static IFeatureCollection<IFeature> simulSimpleRegulationByBasicPropertyUnit(
 			Environnement env, int imu, Regulation r1, Regulation r2)
 			throws Exception {
@@ -154,7 +148,8 @@ public class Exec {
 
 		boolean isOk = true;
 
-		if (r1 != null && r1.getArt_71() == 2||r2 != null && r2.getArt_71() == 2) {
+		if (r1 != null && r1.getArt_71() == 2 || r2 != null
+				&& r2.getArt_71() == 2) {
 
 			// Cas ou les bâtiments se collent d'un des 2 côtés, on simule les 2
 			// côtés et on regarde pour chaque parcelle quelle est la meilleure
@@ -167,14 +162,11 @@ public class Exec {
 			Environnement env = LoaderSHP.load(folderImu, new FileInputStream(
 					folderImu + nomDTM));
 
-	
 			featC1.addAll(simulSimpleRegulationByBasicPropertyUnit(env, imu,
 					r1, r2));
 
-			
 			PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = SpecificCadastralBoundary.LEFT_SIDE;
 
-			
 			IFeatureCollection<IFeature> featC2 = new FT_FeatureCollection<>();
 
 			env = LoaderSHP.load(folderImu, new FileInputStream(folderImu
@@ -223,9 +215,7 @@ public class Exec {
 
 			List<IFeature> lF1 = new ArrayList<>();
 			lF1.add(featTemp);
-			
-			
-			
+
 			int nbElem = featC1.size();
 
 			for (int i = 0; i < nbElem; i++) {
@@ -283,7 +273,6 @@ public class Exec {
 
 			} else {
 
-
 				featC.addAll(lF2);
 
 			}
@@ -299,8 +288,6 @@ public class Exec {
 
 		return featC;
 	}
-
-
 
 	private static boolean initiateSimulationParamters(Regulation r1,
 			Regulation r2) throws Exception {
@@ -454,10 +441,8 @@ public class Exec {
 		}
 
 		for (GraphVertex<Cuboid> v : cc.getGraph().vertexSet()) {
-			IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<>();
-			iMS.addAll(GenerateSolidFromCuboid.generate(v.getValue())
-					.getFacesList());
-			IFeature feat = new DefaultFeature(iMS);
+
+			IFeature feat = new DefaultFeature(v.getValue().generated3DGeom());
 			// On ajoute des attributs aux entités (dimension des objets)
 			AttributeManager
 					.addAttribute(feat, "Longueur",

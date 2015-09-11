@@ -475,8 +475,7 @@ public class Recal3D {
     List<AbstractBuilding> lAB = new ArrayList<>();
 
     for (Cuboid c : lC) {
-      Building bP = new Building(new GM_MultiSurface<>(GenerateSolidFromCuboid
-          .generate(c).getFacesList()));
+      Building bP = new Building(c.generated3DGeom());
 
       bP.isNew = true;
 

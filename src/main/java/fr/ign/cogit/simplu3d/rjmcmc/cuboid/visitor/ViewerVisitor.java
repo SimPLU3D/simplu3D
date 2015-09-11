@@ -24,8 +24,7 @@ import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement.Theme;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCuboid;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
 import fr.ign.mpp.configuration.GraphConfiguration;
@@ -38,11 +37,11 @@ import fr.ign.simulatedannealing.visitor.Visitor;
 
 /**
  * 
- *        This software is released under the licence CeCILL
+ * This software is released under the licence CeCILL
  * 
- *        see LICENSE.TXT
+ * see LICENSE.TXT
  * 
- *        see <http://www.cecill.info/ http://www.cecill.info/
+ * see <http://www.cecill.info/ http://www.cecill.info/
  * 
  * 
  * 
@@ -63,14 +62,14 @@ public class ViewerVisitor<O extends SimpleObject, C extends AbstractGraphConfig
 	private String prefix = "";
 	private static int MIN_LAYER = 3;
 
-	private GraphConfiguration<Cuboid> bestConfig = null;
+	private GraphConfiguration<AbstractSimpleBuilding> bestConfig = null;
 	private double bestValue = Double.POSITIVE_INFINITY;
 
 	public ViewerVisitor(String prefixe, Parameters p) {
 		prefix = prefixe;
 		if (mW == null) {
 			mW = new MainWindow();
-		//	mW.getMainMenuBar().add(new IOToolBar(mW));
+			// mW.getMainMenuBar().add(new IOToolBar(mW));
 			represent(Environnement.getInstance(), mW, p);
 			MIN_LAYER = mW.getInterfaceMap3D().getCurrent3DMap().getLayerList()
 					.size();
@@ -91,12 +90,12 @@ public class ViewerVisitor<O extends SimpleObject, C extends AbstractGraphConfig
 
 		if (config.getEnergy() < bestValue) {
 			bestValue = config.getEnergy();
-			bestConfig = (GraphConfiguration<Cuboid>) config;
+			bestConfig = (GraphConfiguration<AbstractSimpleBuilding>) config;
 
 		}
 
 		if ((save > 0) && (iter % save == 0)) {
-			this.addInformationToMainWindow((GraphConfiguration<Cuboid>) config);
+			this.addInformationToMainWindow((GraphConfiguration<AbstractSimpleBuilding>) config);
 		}
 	}
 
@@ -110,19 +109,17 @@ public class ViewerVisitor<O extends SimpleObject, C extends AbstractGraphConfig
 		this.addInformationToMainWindow(bestConfig);
 	}
 
-	private void addInformationToMainWindow(GraphConfiguration<Cuboid> config) {
+	private void addInformationToMainWindow(
+			GraphConfiguration<AbstractSimpleBuilding> config) {
 
 		IFeatureCollection<IFeature> feat = new FT_FeatureCollection<>();
 
-		for (GraphVertex<Cuboid> v : config.getGraph().vertexSet()) {
+		for (GraphVertex<AbstractSimpleBuilding> v : config.getGraph()
+				.vertexSet()) {
 
 			IGeometry geom = null;
 
-			Object o = v.getValue();
-
-			if (v.getValue() instanceof Cuboid) {
-				geom = GenerateSolidFromCuboid.generate((Cuboid) o);
-			}
+			geom = v.getValue().generated3DGeom();
 
 			if (geom == null) {
 				continue;

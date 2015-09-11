@@ -14,7 +14,7 @@ import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
@@ -35,7 +35,7 @@ import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
  * 
  * @version 1.0
  **/
-public class PredicateTunis<O extends Cuboid, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>>
+public class PredicateTunis<O extends AbstractSimpleBuilding, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>>
 		implements ConfigurationModificationPredicate<C, M> {
 
 	Geometry jtsCurveLimiteSepParcel = null;
@@ -102,7 +102,7 @@ public class PredicateTunis<O extends Cuboid, C extends AbstractGraphConfigurati
 								.println("Classe UB14PredicateFull : quelque chose n'est pas un ICurve");
 					}
 
-				} else if (sCB.getType() != SpecificCadastralBoundary.INTRA) {
+				} else if (sCB.getType() != SpecificCadastralBoundary.ROAD) {
 					IGeometry geom = sCB.getGeom();
 
 					if (geom instanceof IOrientableCurve) {
@@ -147,46 +147,55 @@ public class PredicateTunis<O extends Cuboid, C extends AbstractGraphConfigurati
 
 	@Override
 	public boolean check(C c, M m) {
+		
+	//
+		
 		O birth = null;
 
-		//On récupère le nouvel objet s'il existe
+		// On récupère le nouvel objet s'il existe
 		if (!m.getBirth().isEmpty()) {
 			birth = m.getBirth().get(0);
 		}
-		
 
 		if (birth != null) {
-			///////////// Contrainte C1
-			if(birth.toGeometry().distance(this.jtsCurveLimiteFrontParcel) < this.distReculVoirie){
+			
+			if (!birth.prospectJTS(this.jtsCurveLimiteSepParcel,
+					this.slopeProspect, 0)) {
 				return false;
 			}
+
 			
-			///////////// Contrainte C2
-			if(! birth.prospectJTS(this.jtsCurveLimiteFrontParcel,this.slope, this.hIni)){
+			
+		//	if(true){return true;}
+			// /////////// Contrainte C1
+			if (birth.toGeometry().distance(this.jtsCurveLimiteFrontParcel) < this.distReculVoirie) {
 				return false;
 			}
-			
-			/////// Contrainte C4
-			if(birth.toGeometry().distance(this.jtsCurveLimiteSepParcel) < this.distReculLimi){
+
+			// /////////// Contrainte C2
+			if (!birth.prospectJTS(this.jtsCurveLimiteFrontParcel, this.slope,
+					this.hIni)) {
 				return false;
 			}
-			
-			if(! birth.prospectJTS(this.jtsCurveLimiteSepParcel,this.slopeProspect, 0)){
+
+			// ///// Contrainte C4
+			if (birth.toGeometry().distance(this.jtsCurveLimiteSepParcel) < this.distReculLimi) {
 				return false;
 			}
-			
-		}
+
 		
-		//contrainte distance entre bâtiment
-		if(! checkDistanceInterBuildings(c,m, 6)){
+		}
+
+		// contrainte distance entre bâtiment
+	//	if(true){return true;}
+		
+		
+		/*
+		if (!checkDistanceInterBuildings(c, m, 6)) {
 			return false;
-		}
-		
+		}*/
 
-
-		
-		
-		//On récupère l'objet mort s'il existe
+		// On récupère l'objet mort s'il existe
 		O batDeath = null;
 
 		if (!m.getDeath().isEmpty()) {
@@ -195,7 +204,7 @@ public class PredicateTunis<O extends Cuboid, C extends AbstractGraphConfigurati
 
 		}
 
-		//On récupère la liste des bâtiments actuels
+		// On récupère la liste des bâtiments actuels
 		List<O> lBatIni = new ArrayList<>();
 		Iterator<O> iTBat = c.iterator();
 
@@ -211,86 +220,81 @@ public class PredicateTunis<O extends Cuboid, C extends AbstractGraphConfigurati
 
 		}
 
-		
 		if (birth != null) {
-			///////////// Contrainte C7
-			
+			// /////////// Contrainte C7
+
 			lBatIni.add(birth);
-			//On vérifie le CES sur les bâtiments actuels
-			
-			
-			
+			// On vérifie le CES sur les bâtiments actuels
+
 			if (!respectBuildArea(lBatIni)) {
 				return false;
 			}
 
 			/*
-			////Contrainte C4 pour un groupe la distance doit être inférieure à 7,4 m
-			List<List<O>> listGroup = createGroupe(lBatIni);
-			
-			
-		
-			bouclegroupe : for(List<O> l : listGroup){
-				
-				for(O bat : l){
-					
-					if(bat.toGeometry().distance(jtsCurveLimiteSepParcel) < 7.4){
-						continue bouclegroupe;
-					}
-					
-					
-				}
-				
-				return false;
-				
-			}*/
-			
-			
-			
+			 * ////Contrainte C4 pour un groupe la distance doit être inférieure
+			 * à 7,4 m List<List<O>> listGroup = createGroupe(lBatIni);
+			 * 
+			 * 
+			 * 
+			 * bouclegroupe : for(List<O> l : listGroup){
+			 * 
+			 * for(O bat : l){
+			 * 
+			 * if(bat.toGeometry().distance(jtsCurveLimiteSepParcel) < 7.4){
+			 * continue bouclegroupe; }
+			 * 
+			 * 
+			 * }
+			 * 
+			 * return false;
+			 * 
+			 * }
+			 */
+
 		}
 
 		return true;
 	}
-	
-	
-	  private List<List<O>> createGroupe(List<O> lBatParam) {
 
-		    List<O> lBatIn = new ArrayList<>();
-		    lBatIn.addAll(lBatParam);
+	private List<List<O>> createGroupe(List<O> lBatParam) {
 
-		    List<List<O>> listGroup = new ArrayList<>();
+		List<O> lBatIn = new ArrayList<>();
+		lBatIn.addAll(lBatParam);
 
-		    while (!lBatIn.isEmpty()) {
+		List<List<O>> listGroup = new ArrayList<>();
 
-		      O batIni = lBatIn.remove(0);
+		while (!lBatIn.isEmpty()) {
 
-		      List<O> currentGroup = new ArrayList<>();
-		      currentGroup.add(batIni);
+			O batIni = lBatIn.remove(0);
 
-		      int nbElem = lBatIn.size();
+			List<O> currentGroup = new ArrayList<>();
+			currentGroup.add(batIni);
 
-		      bouclei: for (int i = 0; i < nbElem; i++) {
+			int nbElem = lBatIn.size();
 
-		        for (O batTemp : currentGroup) {
+			bouclei: for (int i = 0; i < nbElem; i++) {
 
-		          if (lBatIn.get(i).getFootprint().distance(batTemp.getFootprint()) < 0.5) {
+				for (O batTemp : currentGroup) {
 
-		            currentGroup.add(lBatIn.get(i));
-		            lBatIn.remove(i);
-		            i = -1;
-		            nbElem--;
-		            continue bouclei;
+					if (lBatIn.get(i).getFootprint()
+							.distance(batTemp.getFootprint()) < 0.5) {
 
-		          }
-		        }
+						currentGroup.add(lBatIn.get(i));
+						lBatIn.remove(i);
+						i = -1;
+						nbElem--;
+						continue bouclei;
 
-		      }
+					}
+				}
 
-		      listGroup.add(currentGroup);
-		    }
+			}
 
-		    return listGroup;
-		  }
+			listGroup.add(currentGroup);
+		}
+
+		return listGroup;
+	}
 
 	private boolean respectBuildArea(List<O> lBatIni) {
 
@@ -312,7 +316,7 @@ public class PredicateTunis<O extends Cuboid, C extends AbstractGraphConfigurati
 
 		return ((geom.getArea() / airePAr) <= this.maximalCES);
 	}
-	
+
 	private boolean checkDistanceInterBuildings(C c, M m,
 			double distanceInterBati) {
 
@@ -371,6 +375,5 @@ public class PredicateTunis<O extends Cuboid, C extends AbstractGraphConfigurati
 		return true;
 
 	}
-
 
 }

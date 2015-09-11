@@ -33,8 +33,7 @@ import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement.Theme;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCuboid;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
 import fr.ign.mpp.configuration.GraphVertex;
@@ -42,13 +41,14 @@ import fr.ign.parameters.Parameters;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.Temperature;
 import fr.ign.simulatedannealing.visitor.Visitor;
+
 /**
  * 
- *        This software is released under the licence CeCILL
+ * This software is released under the licence CeCILL
  * 
- *        see LICENSE.TXT
+ * see LICENSE.TXT
  * 
- *        see <http://www.cecill.info/ http://www.cecill.info/
+ * see <http://www.cecill.info/ http://www.cecill.info/
  * 
  * 
  * 
@@ -58,7 +58,7 @@ import fr.ign.simulatedannealing.visitor.Visitor;
  * 
  * @version 1.0
  **/
-public class FilmVisitor<O extends Cuboid, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>>
+public class FilmVisitor<O extends AbstractSimpleBuilding, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>>
 		implements Visitor<C, M> {
 
 	private MainWindow mW = null;
@@ -98,7 +98,7 @@ public class FilmVisitor<O extends Cuboid, C extends AbstractGraphConfiguration<
 	}
 
 	@Override
-	public void visit(C config, Sampler<C,M> sampler, Temperature t) {
+	public void visit(C config, Sampler<C, M> sampler, Temperature t) {
 		++iter;
 
 		if (config.getEnergy() < bestValue) {
@@ -130,12 +130,7 @@ public class FilmVisitor<O extends Cuboid, C extends AbstractGraphConfiguration<
 
 			IGeometry geom = null;
 
-			Object o = v.getValue();
-
-			if (v.getValue() instanceof Cuboid) {
-				geom = GenerateSolidFromCuboid.generate((Cuboid) o);
-
-			}
+			geom = v.getValue().generated3DGeom();
 
 			if (geom == null) {
 				continue;

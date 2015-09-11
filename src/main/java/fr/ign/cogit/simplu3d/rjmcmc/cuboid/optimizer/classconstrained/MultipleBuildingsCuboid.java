@@ -148,7 +148,7 @@ public class MultipleBuildingsCuboid {
 			list.add(visitor);
 		}
 		if (p.getBoolean("shapefilewriter")) {
-			Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> shpVisitor = new ShapefileVisitorCuboid<>(
+			ShapefileVisitorCuboid<Cuboid,GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> shpVisitor = new ShapefileVisitorCuboid<>(
 					p.get("result").toString() + id + "/result");
 			list.add(shpVisitor);
 		}

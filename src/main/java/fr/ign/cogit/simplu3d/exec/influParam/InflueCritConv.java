@@ -119,11 +119,9 @@ public class InflueCritConv {
 
 				for (GraphVertex<Cuboid> v : cc.getGraph().vertexSet()) {
 
-					IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<>();
-					iMS.addAll(GenerateSolidFromCuboid.generate(v.getValue())
-							.getFacesList());
+			
 
-					IFeature feat = new DefaultFeature(iMS);
+					IFeature feat = new DefaultFeature(v.getValue().generated3DGeom());
 
 					AttributeManager.addAttribute(feat, "Longueur",
 							Math.max(v.getValue().length, v.getValue().width),

@@ -2,19 +2,19 @@ package fr.ign.cogit.simplu3d.enau;
 
 import java.io.File;
 
-import fr.ign.cogit.simplu3d.enau.optimizer.OBCFDRConstraintOptimisation;
+import fr.ign.cogit.simplu3d.enau.geometry.DeformedCuboid;
+import fr.ign.cogit.simplu3d.enau.optimizer.DeformedOptimizer;
 import fr.ign.cogit.simplu3d.importer.applicationClasses.CadastralParcelLoader;
 import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.io.save.SaveGeneratedObjects;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.util.AssignZ;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
 
-public class Exec {
+public class ExecDeformedCuboid {
 
 	public static void main(String[] args) throws Exception {
 
@@ -42,9 +42,6 @@ public class Exec {
 
 		}
 
-		// Création du Sampler (qui va générer les propositions de solutions)
-		OBCFDRConstraintOptimisation oCB = new OBCFDRConstraintOptimisation();
-
 		// Valeurs de règles à saisir
 		// C1
 		double distReculVoirie = 2;
@@ -64,15 +61,18 @@ public class Exec {
 		// C7
 		double maximalCES = 0.5;
 
-		PredicateTunis<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new PredicateTunis<>(
+		// Création du Sampler (qui va générer les propositions de solutions)
+		DeformedOptimizer oCB = new DeformedOptimizer();
+
+		PredicateTunis<DeformedCuboid, GraphConfiguration<DeformedCuboid>, BirthDeathModification<DeformedCuboid>> pred = new PredicateTunis<>(
 				distReculVoirie, slope, hIni, hMax, distReculLimi,
 				slopeProspectLimit, maximalCES, bPU);
 
 		// Lancement de l'optimisation avec unité foncière, paramètres,
 		// environnement, id et prédicat
-		GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred,
-				distReculVoirie, slope, hIni, hMax, distReculLimi,
-				slopeProspectLimit, maximalCES);
+		GraphConfiguration<DeformedCuboid> cc = oCB.process(bPU, p, env, 1,
+				pred, distReculVoirie, slope, hIni, hMax, distReculLimi,
+				slopeProspectLimit, maximalCES,DeformedOptimizer.DROITE);
 
 		SaveGeneratedObjects.saveShapefile(folderName + "out.shp", cc,
 				bPU.getId(), 0);

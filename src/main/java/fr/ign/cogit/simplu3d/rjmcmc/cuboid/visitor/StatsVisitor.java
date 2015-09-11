@@ -19,19 +19,20 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
 
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.Temperature;
 import fr.ign.simulatedannealing.visitor.Visitor;
+
 /**
  * 
- *        This software is released under the licence CeCILL
+ * This software is released under the licence CeCILL
  * 
- *        see LICENSE.TXT
+ * see LICENSE.TXT
  * 
- *        see <http://www.cecill.info/ http://www.cecill.info/
+ * see <http://www.cecill.info/ http://www.cecill.info/
  * 
  * 
  * 
@@ -40,173 +41,163 @@ import fr.ign.simulatedannealing.visitor.Visitor;
  * @author Brasebin Mickaël
  * 
  * @version 1.0
- **/ 
-public class StatsVisitor<O extends Cuboid, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>>
-implements Visitor<C, M> {
+ **/
+public class StatsVisitor<O extends AbstractSimpleBuilding, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>>
+		implements Visitor<C, M> {
 
-  private int dump;
-  private int iter;
-  public ApplicationFrame aF = null;
-  final XYSeries series;
+	private int dump;
+	private int iter;
+	public ApplicationFrame aF = null;
+	final XYSeries series;
 
-  final XYSeries seriesUnary;
-  final XYSeries seriesBinary;
+	final XYSeries seriesUnary;
+	final XYSeries seriesBinary;
 
-  final XYSeries seriesBest;
+	final XYSeries seriesBest;
 
-  private double bestEnergy = Double.POSITIVE_INFINITY;
-  
-  
+	private double bestEnergy = Double.POSITIVE_INFINITY;
 
-  
-  
-  public static ChartPanel CHARTSINGLETON = null; 
-  
+	public static ChartPanel CHARTSINGLETON = null;
 
-  public StatsVisitor(String title) {
+	public StatsVisitor(String title) {
 
-    aF = new ApplicationFrame(title);
+		aF = new ApplicationFrame(title);
 
-    this.series = new XYSeries("U Total");
-    this.seriesUnary = new XYSeries("U Unaire");
-    this.seriesBinary = new XYSeries("U Binaire");
-    this.seriesBest = new XYSeries("Meilleur candidat");
-    final XYSeriesCollection dataset = new XYSeriesCollection(this.series);
-    dataset.addSeries(seriesUnary);
-    dataset.addSeries(seriesBinary);
-    dataset.addSeries(seriesBest);
+		this.series = new XYSeries("U Total");
+		this.seriesUnary = new XYSeries("U Unaire");
+		this.seriesBinary = new XYSeries("U Binaire");
+		this.seriesBest = new XYSeries("Meilleur candidat");
+		final XYSeriesCollection dataset = new XYSeriesCollection(this.series);
+		dataset.addSeries(seriesUnary);
+		dataset.addSeries(seriesBinary);
+		dataset.addSeries(seriesBest);
 
-    final JFreeChart chart = createChart(dataset);
+		final JFreeChart chart = createChart(dataset);
 
-    final ChartPanel chartPanel = new ChartPanel(chart);
+		final ChartPanel chartPanel = new ChartPanel(chart);
 
-    final JPanel content = new JPanel(new BorderLayout());
-    content.add(chartPanel);
-    chartPanel.setPreferredSize(new java.awt.Dimension(800,  (int) (0.8* 540)));
-    aF.setContentPane(content);
-    aF.pack();
-    aF.setVisible(true);
-    
-    CHARTSINGLETON = chartPanel;
-  }
+		final JPanel content = new JPanel(new BorderLayout());
+		content.add(chartPanel);
+		chartPanel.setPreferredSize(new java.awt.Dimension(800,
+				(int) (0.8 * 540)));
+		aF.setContentPane(content);
+		aF.pack();
+		aF.setVisible(true);
 
-  /**
-   * Creates a sample chart.
-   * @param dataset
-   *        the dataset.
-   * @return A sample chart.
-   */
-  private JFreeChart createChart(final XYDataset dataset) {
-    final JFreeChart result = ChartFactory.createXYLineChart("Évolution de l'énergie", "Itération",
-        "Énergie", dataset, PlotOrientation.VERTICAL, true, true, true);
+		CHARTSINGLETON = chartPanel;
+	}
 
-    result.setBorderPaint(Color.white);
+	/**
+	 * Creates a sample chart.
+	 * 
+	 * @param dataset
+	 *            the dataset.
+	 * @return A sample chart.
+	 */
+	private JFreeChart createChart(final XYDataset dataset) {
+		final JFreeChart result = ChartFactory.createXYLineChart(
+				"Évolution de l'énergie", "Itération", "Énergie", dataset,
+				PlotOrientation.VERTICAL, true, true, true);
 
-    result.setBackgroundPaint(Color.white);
+		result.setBorderPaint(Color.white);
 
-    final XYPlot plot = result.getXYPlot();
-    
+		result.setBackgroundPaint(Color.white);
 
-    Font font = new Font("Verdana", Font.PLAIN, 32);
-    Font font2 = new Font("Verdana", Font.PLAIN, 28);
-    
-    
-    
-    //axe x
-    ValueAxis axis = plot.getDomainAxis();
-    
+		final XYPlot plot = result.getXYPlot();
 
-    axis.setLabelFont(font);
-    axis.setTickLabelFont(font2);
-    
-    axis.setAutoRange(true);
-    // axis.setFixedAutoRange(60000.0); // 60 seconds
-    axis = plot.getRangeAxis();
-    
-    
-    //axe y
-    ValueAxis axis2 = plot.getRangeAxis();
-    
-    axis2.setLabelFont(font);
-    axis2.setTickLabelFont(font2);
+		Font font = new Font("Verdana", Font.PLAIN, 32);
+		Font font2 = new Font("Verdana", Font.PLAIN, 28);
 
-    
-    axis2.setAutoRange(true);
-    // axis.setFixedAutoRange(60000.0); // 60 seconds
-    axis2 = plot.getRangeAxis();
+		// axe x
+		ValueAxis axis = plot.getDomainAxis();
 
+		axis.setLabelFont(font);
+		axis.setTickLabelFont(font2);
 
-    plot.setRangeGridlinePaint(Color.LIGHT_GRAY);
-    plot.setDomainGridlinePaint(Color.LIGHT_GRAY);
-    plot.setBackgroundPaint(Color.white);
+		axis.setAutoRange(true);
+		// axis.setFixedAutoRange(60000.0); // 60 seconds
+		axis = plot.getRangeAxis();
 
-    XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
-    
-    
-    renderer.setSeriesPaint(0, new Color(255, 0, 0));
-    renderer.setSeriesStroke(0, new BasicStroke(3.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
-        1.0f));
-    
-    renderer.setLegendTextFont(0, font2);
-    
+		// axe y
+		ValueAxis axis2 = plot.getRangeAxis();
 
-    renderer.setSeriesPaint(1, new Color(2, 157, 116));
-    renderer.setSeriesStroke(1, new BasicStroke(3.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
-        1.0f));
-    
-    renderer.setLegendTextFont(1, font2);
-    
-    
-    renderer.setSeriesPaint(2, new Color(112, 147, 219));
-    renderer.setSeriesStroke(2, new BasicStroke(3.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
-        1.0f));
-    
-    renderer.setLegendTextFont(2, font2);
-    
-    renderer.setSeriesPaint(3, new Color(140, 23, 23));
-    renderer.setSeriesStroke(3, new BasicStroke(3.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
-        1.0f, new float[] {6.0f, 6.0f}, 0.0f));
-    
-    renderer.setLegendTextFont(3, font2);
+		axis2.setLabelFont(font);
+		axis2.setTickLabelFont(font2);
 
-    // axis.setRange(0.0, 200.0);
-    return result;
-  }
+		axis2.setAutoRange(true);
+		// axis.setFixedAutoRange(60000.0); // 60 seconds
+		axis2 = plot.getRangeAxis();
 
-  @Override
-  public void init(int dump, int save) {
-    this.iter = 0;
-    this.dump = dump;
-  }
+		plot.setRangeGridlinePaint(Color.LIGHT_GRAY);
+		plot.setDomainGridlinePaint(Color.LIGHT_GRAY);
+		plot.setBackgroundPaint(Color.white);
 
-  @Override
-  public void visit(C config, Sampler<C,M> sampler, Temperature t) {
-    ++iter;
+		XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot
+				.getRenderer();
 
-    this.bestEnergy = Math.min(config.getEnergy(), bestEnergy);
+		renderer.setSeriesPaint(0, new Color(255, 0, 0));
+		renderer.setSeriesStroke(0, new BasicStroke(3.0f,
+				BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f));
 
-    if (iter % dump == 0) {
-      this.addInformationToMainWindow(config);
-    }
+		renderer.setLegendTextFont(0, font2);
 
-  }
+		renderer.setSeriesPaint(1, new Color(2, 157, 116));
+		renderer.setSeriesStroke(1, new BasicStroke(3.0f,
+				BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f));
 
-  private void addInformationToMainWindow(C config) {
+		renderer.setLegendTextFont(1, font2);
 
-    series.add(iter, config.getEnergy());
-    seriesUnary.add(iter, config.getUnaryEnergy());
-    seriesBinary.add(iter, config.getBinaryEnergy());
+		renderer.setSeriesPaint(2, new Color(112, 147, 219));
+		renderer.setSeriesStroke(2, new BasicStroke(3.0f,
+				BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f));
 
-    seriesBest.add(iter, this.bestEnergy);
+		renderer.setLegendTextFont(2, font2);
 
-  }
+		renderer.setSeriesPaint(3, new Color(140, 23, 23));
+		renderer.setSeriesStroke(3, new BasicStroke(3.0f,
+				BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
+				new float[] { 6.0f, 6.0f }, 0.0f));
 
-  @Override
-  public void begin(C config, Sampler<C,M> sampler, Temperature t) {
-  }
+		renderer.setLegendTextFont(3, font2);
 
-  @Override
-  public void end(C config, Sampler<C,M> sampler, Temperature t) {
-  }
+		// axis.setRange(0.0, 200.0);
+		return result;
+	}
+
+	@Override
+	public void init(int dump, int save) {
+		this.iter = 0;
+		this.dump = dump;
+	}
+
+	@Override
+	public void visit(C config, Sampler<C, M> sampler, Temperature t) {
+		++iter;
+
+		this.bestEnergy = Math.min(config.getEnergy(), bestEnergy);
+
+		if (iter % dump == 0) {
+			this.addInformationToMainWindow(config);
+		}
+
+	}
+
+	private void addInformationToMainWindow(C config) {
+
+		series.add(iter, config.getEnergy());
+		seriesUnary.add(iter, config.getUnaryEnergy());
+		seriesBinary.add(iter, config.getBinaryEnergy());
+
+		seriesBest.add(iter, this.bestEnergy);
+
+	}
+
+	@Override
+	public void begin(C config, Sampler<C, M> sampler, Temperature t) {
+	}
+
+	@Override
+	public void end(C config, Sampler<C, M> sampler, Temperature t) {
+	}
 
 }

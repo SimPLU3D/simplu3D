@@ -124,7 +124,10 @@ public class GreenSamplerBlockTemperature<O extends SimpleObject, C extends Abst
 		start = end;
 		this.kernelRatio = randomApplyResult.kernelRatio;
 		this.kernelId = randomApplyResult.kernelId;
+		
+	
 		this.refPdfRatio = this.density.pdfRatio(config, modif);
+
 
 		if (refPdfRatio == 0) {
 			blockedTemperature = true;

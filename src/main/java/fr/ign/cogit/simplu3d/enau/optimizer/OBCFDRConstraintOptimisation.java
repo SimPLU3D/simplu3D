@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.enau;
+package fr.ign.cogit.simplu3d.enau.optimizer;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -20,6 +20,7 @@ import fr.ign.cogit.simplu3d.enau.energy.HauteurEnergy;
 import fr.ign.cogit.simplu3d.enau.energy.ProspectEnergy;
 import fr.ign.cogit.simplu3d.enau.energy.ProspectEnergy2;
 import fr.ign.cogit.simplu3d.enau.energy.ServitudeVue;
+import fr.ign.cogit.simplu3d.enau.geometry.DeformedCuboid;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.endTest.StabilityEndTest;
@@ -189,14 +190,17 @@ public class OBCFDRConstraintOptimisation {
 		}
 
 		List<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> list = new ArrayList<>();
+
 		if (p.getBoolean("outputstreamvisitor")) {
 			Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> visitor = new OutputStreamVisitor<>(
 					System.out);
 			list.add(visitor);
 		}
 		if (p.getBoolean("shapefilewriter")) {
-			Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> shpVisitor = new ShapefileVisitorCuboid<>(
-					p.get("result").toString() + "result");
+			ShapefileVisitorCuboid<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> shpVisitor = new ShapefileVisitorCuboid<>(p.get("result").toString() + "result");
+
+			
+			
 			list.add(shpVisitor);
 		}
 		if (p.getBoolean("visitorviewer")) {

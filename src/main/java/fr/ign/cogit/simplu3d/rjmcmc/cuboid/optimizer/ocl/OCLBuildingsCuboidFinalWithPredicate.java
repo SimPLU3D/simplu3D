@@ -40,6 +40,8 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.ShapefileVisitorCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.StatsVisitor;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.ViewerVisitor;
 import fr.ign.mpp.DirectSampler;
+import fr.ign.mpp.configuration.BirthDeathModification;
+import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.mpp.kernel.KernelFactory;
 import fr.ign.mpp.kernel.ObjectBuilder;
 import fr.ign.mpp.kernel.UniformBirth;
@@ -152,8 +154,12 @@ public class OCLBuildingsCuboidFinalWithPredicate {
 			list.add(visitor);
 		}
 		if (p.getBoolean("shapefilewriter")) {
-			Visitor<ModelInstanceGraphConfiguration<Cuboid>, ModelInstanceModification<Cuboid>> shpVisitor = new ShapefileVisitorCuboid<>(
-					p.get("result").toString() + "result");
+
+			
+			ShapefileVisitorCuboid<Cuboid, ModelInstanceGraphConfiguration<Cuboid>, ModelInstanceModification<Cuboid>> shpVisitor = new ShapefileVisitorCuboid<>(p.get("result").toString() + "result");
+
+			
+			
 			list.add(shpVisitor);
 		}
 		if (p.getBoolean("visitorviewer")) {

@@ -191,7 +191,7 @@ public class OptimisedBuildingsCuboidFinalDirectRejectionParallelTempering {
 				}
 
 				if (p.getBoolean("shapefilewriter")) {
-					Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> shpVisitor = new ShapefileVisitorCuboid<>(
+					ShapefileVisitorCuboid<Cuboid,GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> shpVisitor = new ShapefileVisitorCuboid<>(
 							p.get("result").toString() + "result");
 					list.add(shpVisitor);
 				}

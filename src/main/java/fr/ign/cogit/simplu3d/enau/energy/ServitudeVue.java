@@ -13,7 +13,7 @@ import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.rjmcmc.energy.UnaryEnergy;
 
 public class ServitudeVue<T> implements UnaryEnergy<T> {
@@ -77,11 +77,12 @@ public class ServitudeVue<T> implements UnaryEnergy<T> {
 	@Override
 	public double getValue(T t) {
 
-		Cuboid c = (Cuboid) t;
+		AbstractSimpleBuilding c = (AbstractSimpleBuilding) t;
 		double dist = c.toGeometry().distance(jtsCurveLimiteFrontParcel);
 
 		return Math.min(this.valeurCible, dist)
 				/ Math.max(this.valeurCible, dist);
+
 	}
 
 }

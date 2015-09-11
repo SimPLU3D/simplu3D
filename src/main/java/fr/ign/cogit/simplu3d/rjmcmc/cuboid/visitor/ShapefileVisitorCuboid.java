@@ -19,23 +19,24 @@ import org.opengis.feature.simple.SimpleFeatureType;
 
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
+import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToSurface;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.geoxygene.util.conversion.JtsGeOxygene;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.convert.GenerateSolidFromCuboid;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
 import fr.ign.mpp.configuration.GraphVertex;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.Temperature;
 import fr.ign.simulatedannealing.visitor.Visitor;
+
 /**
  * 
- *        This software is released under the licence CeCILL
+ * This software is released under the licence CeCILL
  * 
- *        see LICENSE.TXT
+ * see LICENSE.TXT
  * 
- *        see <http://www.cecill.info/ http://www.cecill.info/
+ * see <http://www.cecill.info/ http://www.cecill.info/
  * 
  * 
  * 
@@ -44,8 +45,8 @@ import fr.ign.simulatedannealing.visitor.Visitor;
  * @author Brasebin Mickaël
  * 
  * @version 1.0
- **/ 
-public class ShapefileVisitorCuboid<O extends Cuboid, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>>
+ **/
+public class ShapefileVisitorCuboid<O extends AbstractSimpleBuilding, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>>
 		implements Visitor<C, M> {
 	private int save;
 	private int iter;
@@ -105,8 +106,8 @@ public class ShapefileVisitorCuboid<O extends Cuboid, C extends AbstractGraphCon
 				List<Object> liste = new ArrayList<>();
 
 				IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<>();
-				iMS.addAll(GenerateSolidFromCuboid.generate(v.getValue())
-						.getFacesList());
+				iMS.addAll(FromGeomToSurface.convertGeom(v.getValue()
+						.generated3DGeom()));
 
 				liste.add(JtsGeOxygene.makeJtsGeom(iMS));
 				liste.add(v.getEnergy());

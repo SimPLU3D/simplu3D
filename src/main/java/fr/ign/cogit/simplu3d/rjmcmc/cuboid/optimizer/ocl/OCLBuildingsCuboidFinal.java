@@ -158,7 +158,7 @@ public class OCLBuildingsCuboidFinal {
 			list.add(visitor);
 		}
 		if (p.getBoolean("shapefilewriter")) {
-			Visitor<ModelInstanceGraphConfiguration<Cuboid>, ModelInstanceModification<Cuboid>> shpVisitor = new ShapefileVisitorCuboid<>(
+			ShapefileVisitorCuboid<Cuboid,ModelInstanceGraphConfiguration<Cuboid>, ModelInstanceModification<Cuboid>> shpVisitor = new ShapefileVisitorCuboid<>(
 					p.get("result").toString() + "result");
 			list.add(shpVisitor);
 		}
@@ -169,7 +169,7 @@ public class OCLBuildingsCuboidFinal {
 		}
 
 		if (p.getBoolean("statsvisitor")) {
-			Visitor<ModelInstanceGraphConfiguration<Cuboid>, ModelInstanceModification<Cuboid>> statsViewer = new StatsVisitor<>(
+			StatsVisitor<Cuboid,ModelInstanceGraphConfiguration<Cuboid>, ModelInstanceModification<Cuboid>> statsViewer = new StatsVisitor<>(
 					"Énergie");
 			list.add(statsViewer);
 		}
@@ -184,7 +184,13 @@ public class OCLBuildingsCuboidFinal {
 
 			Color c = new Color(p.getInteger("filmvisitorr"),
 					p.getInteger("filmvisitorg"), p.getInteger("filmvisitorb"));
-			Visitor<ModelInstanceGraphConfiguration<Cuboid>, ModelInstanceModification<Cuboid>> visitorViewerFilmVisitor = new FilmVisitor<>(
+			
+			
+			
+			
+			
+			
+			FilmVisitor<Cuboid,ModelInstanceGraphConfiguration<Cuboid>, ModelInstanceModification<Cuboid>> visitorViewerFilmVisitor = new FilmVisitor<>(
 					dpCentre, viewTo, p.getString("result"), c, p);
 			list.add(visitorViewerFilmVisitor);
 		}
