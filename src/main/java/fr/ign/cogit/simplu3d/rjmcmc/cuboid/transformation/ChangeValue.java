@@ -32,6 +32,7 @@ public class ChangeValue implements Transform {
 
   @Override
   public double apply(boolean direct, double[] val0, double[] val1) {
+
     for (int i = 0; i < this.dimension - 1; i++) {
       val1[i] = val0[i];
     }

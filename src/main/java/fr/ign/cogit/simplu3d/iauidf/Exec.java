@@ -60,32 +60,48 @@ public class Exec {
 		PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = SpecificCadastralBoundary.LEFT_SIDE;
 	}
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		// Dossier contenant IMU_MANTES_TEST.csv et les sous dossier par code
 		// IMU
-		String folder = "C:/Users/mbrasebin/Desktop/ilot_3/ilots_75xxx_78xxxx/";
-		String csvFile = folder + "IMU_MANTES_TEST.csv";
+		String folder = "C:/Users/mbrasebin/Desktop/Zone5/";
+		String csvFile = folder + "regles.csv";
 		// Chargement des règlement par code IMU (on peut avoir plusieurs
 		// réglements pour un code IMU du fait des bandes)
-		Map<Integer, List<Regulation>> mapReg = Regulation
-				.loadRegulationSet(csvFile);
-		// Fonction de test : chargement de la réglementation :
-		testLoadedRegulation(mapReg);
-		// TODO : gérer les attributs indépendemment de la casse.
-		// Initialisation des noms d'attributs
-		init();
+		Map<Integer, List<Regulation>> mapReg = null;
+		try {
+			mapReg = Regulation.loadRegulationSet(csvFile);
+			// Fonction de test : chargement de la réglementation :
+			testLoadedRegulation(mapReg);
+			// TODO : gérer les attributs indépendemment de la casse.
+			// Initialisation des noms d'attributs
+			init();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		// On traite indépendamment chaque zone imu
 		for (int imu : mapReg.keySet()) {
 
-			// int imu = 78020432; 78020440; //(int)
-			// mapReg.keySet().toArray()[0];
-
-			System.out.println("Numéro imu : " + imu);
-			boolean simul = simulRegulationByIMU(imu, mapReg.get(imu), folder
-					+ imu + "/");
-			if (!simul) {
-				log.warn("--Probleme pour la simulation : " + imu);
+			if(imu != 78020280 && imu != 78021045  && imu != 78031977){
+				continue;
 			}
+
+			
+			
+			System.out.println("Numéro imu : " + imu);
+			
+	
+			try {
+				boolean simul = simulRegulationByIMU(imu, mapReg.get(imu),
+						folder + imu + "/");
+
+				if (!simul) {
+					log.warn("--Probleme pour la simulation : " + imu);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
 		}
 	}
 

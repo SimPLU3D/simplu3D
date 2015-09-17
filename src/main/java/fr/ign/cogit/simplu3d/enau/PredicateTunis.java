@@ -226,6 +226,10 @@ public class PredicateTunis<O extends AbstractSimpleBuilding, C extends Abstract
 			lBatIni.add(birth);
 			// On vérifie le CES sur les bâtiments actuels
 
+			/*
+			if(lBatIni.size() > 1)
+			{return false;}*/
+			
 			if (!respectBuildArea(lBatIni)) {
 				return false;
 			}
@@ -304,17 +308,20 @@ public class PredicateTunis<O extends AbstractSimpleBuilding, C extends Abstract
 
 		int nbElem = lBatIni.size();
 
-		Geometry geom = lBatIni.get(0).toGeometry();
+		double area = 0;
+		
+		//Geometry geom = lBatIni.get(0).toGeometry();
 
-		for (int i = 1; i < nbElem; i++) {
+		
+		for (int i = 0; i < nbElem; i++) {
 
-			geom = geom.union(lBatIni.get(i).toGeometry());
-
+			Geometry geom = lBatIni.get(i).toGeometry();
+	area = area + geom.getArea();
 		}
 
 		double airePAr = this.bPU.getCadastralParcel().get(0).getArea();
 
-		return ((geom.getArea() / airePAr) <= this.maximalCES);
+		return ((area / airePAr) <= this.maximalCES);
 	}
 
 	private boolean checkDistanceInterBuildings(C c, M m,

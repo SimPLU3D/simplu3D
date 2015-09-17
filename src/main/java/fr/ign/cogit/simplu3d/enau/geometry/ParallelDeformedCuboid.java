@@ -9,7 +9,6 @@ import fr.ign.geometry.Primitive;
 
 public class ParallelDeformedCuboid extends DeformedCuboid implements Primitive {
 
-	public double height1, height2, height3, height4;
 
 	public ParallelDeformedCuboid(double centerx, double centery,
 			double length, double width, double height1, double height2,
@@ -22,13 +21,13 @@ public class ParallelDeformedCuboid extends DeformedCuboid implements Primitive 
 	@Override
 	public Object[] getArray() {
 		return new Object[] { this.centerx, this.centery, this.length,
-		/* this.width, */this.height1, this.height2, this.height3,
-				this.height4, /* this.orientation */};
+		 this.width, this.height1, this.height2, this.height3,
+				this.height4,  this.orientation };
 	}
 
 	@Override
 	public int size() {
-		return 7;
+		return 9;
 	}
 
 	@Override

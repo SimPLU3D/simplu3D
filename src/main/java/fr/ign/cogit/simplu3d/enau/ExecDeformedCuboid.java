@@ -26,10 +26,10 @@ public class ExecDeformedCuboid {
 		CadastralParcelLoader.ATT_ID_PARC = "id_parcell";
 		AssignZ.DEFAULT_Z = 0;
 
-		Parameters p = Parameters.unmarshall(new File(folderName + fileName));
-
 		// Chargement de l'environnement
 		Environnement env = LoaderSHP.loadNoDTM(folderName);
+		Parameters p = Parameters.unmarshall(new File(folderName + fileName));
+
 
 		// On trouve la parcelle qui a l'identifiant numéro 4
 		BasicPropertyUnit bPU = null;
@@ -63,7 +63,7 @@ public class ExecDeformedCuboid {
 
 		// Création du Sampler (qui va générer les propositions de solutions)
 		DeformedOptimizer oCB = new DeformedOptimizer();
-
+ 
 		PredicateTunis<DeformedCuboid, GraphConfiguration<DeformedCuboid>, BirthDeathModification<DeformedCuboid>> pred = new PredicateTunis<>(
 				distReculVoirie, slope, hIni, hMax, distReculLimi,
 				slopeProspectLimit, maximalCES, bPU);

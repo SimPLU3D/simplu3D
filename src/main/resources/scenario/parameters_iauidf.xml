@@ -10,11 +10,11 @@
 
         <!--Distribution (équiprobable) des dimensions des boîtes-->
         <!-- Largeur et longueur !-->
-        <param key="minlen" value="2" />
-		<param key="maxlen" value="10" />
+        <param key="minlen" value="7" />
+		<param key="maxlen" value="50" />
 		
-		<param key="minwid" value="2" />
-		<param key="maxwid" value="10" />
+		<param key="minwid" value="4" />
+		<param key="maxwid" value="15" />
         <!-- Hauteur !-->
 		<param key="minheight" value ="0.5" />
 		<param key="maxheight" value="12" />
@@ -36,7 +36,7 @@
         
         <!-- Paramètres de température (on considère une fonction temp * deccoef^it) !-->
         <!-- Température initiale !-->
-		<param key="temp" value="1000" />
+		<param key="temp" value="5000" />
         <!-- Température initiale !-->
 		<param key="deccoef" value="0.99999" />
         
@@ -52,7 +52,7 @@
         <!-- Indique si il s'agit d'un nombre absolu d'itérations true ou un nombre relatif 
         à la non amélioration de la configuration-->
         <param key="isAbsoluteNumber" value="false" />
-		<param key="nbiter" value="10000" />
+		<param key="nbiter" value="50000" />
         <param key="delta" value="5" />
         
         <param key="poisson" value="20" />

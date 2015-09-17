@@ -38,6 +38,7 @@ import fr.ign.cogit.simplu3d.enau.transformation.ChangeHeight3Deformed;
 import fr.ign.cogit.simplu3d.enau.transformation.ChangeHeight4Deformed;
 import fr.ign.cogit.simplu3d.enau.transformation.ChangeValueDeformed;
 import fr.ign.cogit.simplu3d.enau.transformation.MoveCuboidDeformed;
+import fr.ign.cogit.simplu3d.enau.transformation.MoveParallelDeformedCuboid;
 import fr.ign.cogit.simplu3d.enau.transformation.RotateCuboid;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
@@ -51,6 +52,7 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.ParallelCuboid2;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.SimpleCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.sampler.GreenSamplerBlockTemperature;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.ChangeValue;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.MoveParallelCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth.TransformToSurface;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.CSVendStats;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.CSVvisitor;
@@ -433,7 +435,7 @@ public class DeformedOptimizer {
 
 		}
 
-		IMultiCurve<IOrientableCurve> iMSShifted =  shiftRoad(bpU,6,ims);
+		IMultiCurve<IOrientableCurve> iMSShifted =  shiftRoad(bpU, 7.3,ims);
 		
 		
 		
@@ -518,15 +520,15 @@ public class DeformedOptimizer {
 
 			ParallelDeformedCuboid result = new ParallelDeformedCuboid(
 					coordinates[0], coordinates[1],  coordinates[2], distance * 2, 
-					 coordinates[3], coordinates[4],
-					coordinates[5], coordinates[6], orientation + Math.PI / 2);
+					 coordinates[4], coordinates[5],
+					coordinates[6], coordinates[7], orientation + Math.PI / 2);
 
 			return result;
 		}
 
 		@Override
 		public int size() {
-			return 7;
+			return 9;
 		}
 
 		@Override
@@ -534,11 +536,12 @@ public class DeformedOptimizer {
 			val1[0] = t.centerx;
 			val1[1] = t.centery;
 			val1[2] = t.length;
-			val1[3] = t.height1;
-			val1[4] = t.height2;
-			val1[5] = t.height3;
-			val1[6] = t.height4;
-
+			val1[3] = t.width;
+			val1[4] = t.height1;
+			val1[5] = t.height2;
+			val1[6] = t.height3;
+			val1[7] = t.height4;
+			val1[8] = t.orientation;
 
 		}
 	};
@@ -632,7 +635,10 @@ public class DeformedOptimizer {
 				p.getDouble("pbirth"), p.getDouble("pdeath"), "Parallel");
 		
 		
-
+			Kernel<GraphConfiguration<DeformedCuboid>, BirthDeathModification<DeformedCuboid>> parallelMovekernel = new Kernel<>(
+					pView, pView, variate, variate, new MoveParallelDeformedCuboid(
+							p.getDouble("amplitudeMove")), 0.2, 1.0, "SimpleMoveP");
+			kernels.add(parallelMovekernel);
 		
 		
 		double amplitudeDim = p.getDouble("amplitudeMaxDim");
@@ -640,13 +646,14 @@ public class DeformedOptimizer {
 		
 		Kernel<GraphConfiguration<DeformedCuboid>, BirthDeathModification<DeformedCuboid>> parallelHeight = new Kernel<>(
 				pView, pView, variate, variate, new ChangeValue(
-						amplitudeDim, 10,2), 0.2, 1.0, "ChangeLength");
+						amplitudeDim, 10,3), 0.2, 1.0, "ChangeLength");
 		kernels.add(parallelHeight);
 		
 		
 		
 	
 		
+
 
 
 		double amplitudeHeight = p.getDouble("amplitudeHeight");

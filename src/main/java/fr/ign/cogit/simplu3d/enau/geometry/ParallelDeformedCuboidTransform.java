@@ -86,18 +86,18 @@ public class ParallelDeformedCuboidTransform implements Transform {
 			// double orientation = Angle.angle(p, projected);
 			val1[2] = val0[2] * rangeLength + deltaLength;
 			// val1.set(3, distance * 2);
-			val1[3] = val0[3] * rangeHeight1 + deltaHeight1;
-			val1[4] = val0[4] * rangeHeight2 + deltaHeight2;
-			val1[5] = val0[5] * rangeHeight3 + deltaHeight3;
-			val1[6] = val0[6] * rangeHeight4 + deltaHeight4;
+			val1[4] = val0[4] * rangeHeight1 + deltaHeight1;
+			val1[5] = val0[5] * rangeHeight2 + deltaHeight2;
+			val1[6] = val0[6] * rangeHeight3 + deltaHeight3;
+			val1[7] = val0[7] * rangeHeight4 + deltaHeight4;
 			// val1.set(5, orientation + Math.PI / 2);
 			return pt * this.absJacobian[0];
 		} else {
 			val1[2] = (val0[2] - deltaLength) / rangeLength;
-			val1[3] = (val0[3] - deltaHeight1) / rangeHeight1;
-			val1[4] = (val0[4] - deltaHeight2) / rangeHeight2;
-			val1[5] = (val0[5] - deltaHeight3) / rangeHeight3;
-			val1[6] = (val0[6] - deltaHeight4) / rangeHeight4;
+			val1[4] = (val0[4] - deltaHeight1) / rangeHeight1;
+			val1[5] = (val0[5] - deltaHeight2) / rangeHeight2;
+			val1[6] = (val0[6] - deltaHeight3) / rangeHeight3;
+			val1[7] = (val0[7] - deltaHeight4) / rangeHeight4;
 			// var1.set(4, 0.0);
 			// var1.set(5, 0.0);
 			return pt * this.absJacobian[1];
