@@ -62,7 +62,7 @@ public class Exec {
 		double slopeProspectLimit = 2;
 
 		// C7
-		double maximalCES = 0.5;
+		double maximalCES = 0.3; // 0.5;
 
 		PredicateTunis<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new PredicateTunis<>(
 				distReculVoirie, slope, hIni, hMax, distReculLimi,

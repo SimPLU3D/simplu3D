@@ -658,23 +658,23 @@ public class DeformedOptimizer {
 
 		double amplitudeHeight = p.getDouble("amplitudeHeight");
 		Kernel<GraphConfiguration<DeformedCuboid>, BirthDeathModification<DeformedCuboid>> parallelHeight1 = new Kernel<>(
-				pView, pView, variate, variate, new ChangeValue(
-						amplitudeHeight, 10, 4), 0.2, 1.0, "ChangeHeight1");
+				pView, pView, variate, variate, new ChangeHeight1Deformed(
+						amplitudeHeight), 0.2, 1.0, "ChangeHeight1");
 		kernels.add(parallelHeight1);
 		
 		Kernel<GraphConfiguration<DeformedCuboid>, BirthDeathModification<DeformedCuboid>> parallelHeight2 = new Kernel<>(
-				pView, pView, variate, variate, new ChangeValue(
-						amplitudeHeight, 10, 5), 0.2, 1.0, "ChangeHeight2");
+				pView, pView, variate, variate, new ChangeHeight2Deformed(
+						amplitudeHeight), 0.2, 1.0, "ChangeHeight2");
 		kernels.add(parallelHeight2);
 		
 		Kernel<GraphConfiguration<DeformedCuboid>, BirthDeathModification<DeformedCuboid>> parallelHeight3 = new Kernel<>(
-				pView, pView, variate, variate, new ChangeValue(
-						amplitudeHeight, 10, 6), 0.2, 1.0, "ChangeHeight3");
+				pView, pView, variate, variate, new ChangeHeight3Deformed(
+						amplitudeHeight), 0.2, 1.0, "ChangeHeight3");
 		kernels.add(parallelHeight3);
 		
 		Kernel<GraphConfiguration<DeformedCuboid>, BirthDeathModification<DeformedCuboid>> parallelHeight4 = new Kernel<>(
-				pView, pView, variate, variate, new ChangeValue(
-						amplitudeHeight, 10, 7), 0.2, 1.0, "ChangeHeight4");
+				pView, pView, variate, variate, new ChangeHeight4Deformed(
+						amplitudeHeight), 0.2, 1.0, "ChangeHeight4");
 		kernels.add(parallelHeight4);
 		
 		

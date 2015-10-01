@@ -11,6 +11,8 @@ import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
+import fr.ign.cogit.simplu3d.enau.calculation.ENAUMorphoIndicators;
+import fr.ign.cogit.simplu3d.enau.geometry.ParallelDeformedCuboid;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
@@ -40,6 +42,7 @@ public class PredicateTunis<O extends AbstractSimpleBuilding, C extends Abstract
 
 	Geometry jtsCurveLimiteSepParcel = null;
 	Geometry jtsCurveLimiteFrontParcel = null;
+	Geometry jtsLimSepDroite = null;
 
 	// C1
 	private double distReculVoirie = 2;
@@ -82,6 +85,8 @@ public class PredicateTunis<O extends AbstractSimpleBuilding, C extends Abstract
 		List<IOrientableCurve> lCurveVoirie = new ArrayList<>();
 
 		List<IOrientableCurve> lCurveLatBot = new ArrayList<>();
+		
+		List<IOrientableCurve> lCurveLatRight = new ArrayList<>();
 
 		for (CadastralParcel cP : bPU.getCadastralParcel()) {
 			// for (SubParcel sB : cP.getSubParcel()) {
@@ -115,6 +120,10 @@ public class PredicateTunis<O extends AbstractSimpleBuilding, C extends Abstract
 					}
 
 				}
+				
+				if(sCB.getSide() == SpecificCadastralBoundary.RIGHT_SIDE){
+					lCurveLatRight.add((IOrientableCurve) sCB.getGeom());
+				}
 
 				// }
 
@@ -122,6 +131,7 @@ public class PredicateTunis<O extends AbstractSimpleBuilding, C extends Abstract
 
 		}
 
+	
 		// System.out.println("NB voirie : " + lCurveVoirie.size());
 
 		// System.out.println("NB other : " + lCurveLatBot.size());
@@ -129,6 +139,12 @@ public class PredicateTunis<O extends AbstractSimpleBuilding, C extends Abstract
 		System.out.println(lCurveVoirie.size());
 
 		try {
+			
+			
+			jtsLimSepDroite= AdapterFactory.toGeometry(gf,
+					new GM_MultiCurve<>(lCurveLatRight));
+			
+			
 			if (!lCurveVoirie.isEmpty()) {
 				this.jtsCurveLimiteFrontParcel = AdapterFactory.toGeometry(gf,
 						new GM_MultiCurve<>(lCurveVoirie));
@@ -150,6 +166,8 @@ public class PredicateTunis<O extends AbstractSimpleBuilding, C extends Abstract
 		
 	//
 		
+	//	if(true) return true;
+		
 		O birth = null;
 
 		// On récupère le nouvel objet s'il existe
@@ -164,6 +182,11 @@ public class PredicateTunis<O extends AbstractSimpleBuilding, C extends Abstract
 				return false;
 			}
 
+			
+			if(birth.toGeometry().distance(jtsLimSepDroite) > 7.4){
+				return false;
+			}
+			
 			
 			
 		//	if(true){return true;}
@@ -183,6 +206,16 @@ public class PredicateTunis<O extends AbstractSimpleBuilding, C extends Abstract
 				return false;
 			}
 
+			
+			
+			
+			
+			/*
+			
+			if (birth.height * birth.toGeometry().getArea()/3      > 0.3 * this.bPU.getpol2D().area()) {
+				return false;
+			}*/
+			
 		
 		}
 

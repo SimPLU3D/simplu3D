@@ -2,6 +2,12 @@ package fr.ign.cogit.simplu3d.enau;
 
 import java.io.File;
 
+import fr.ign.cogit.geoxygene.api.feature.IFeature;
+import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
+import fr.ign.cogit.geoxygene.feature.DefaultFeature;
+import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
+import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
+import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.enau.geometry.DeformedCuboid;
 import fr.ign.cogit.simplu3d.enau.optimizer.DeformedOptimizer;
 import fr.ign.cogit.simplu3d.importer.applicationClasses.CadastralParcelLoader;
@@ -9,9 +15,11 @@ import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.io.save.SaveGeneratedObjects;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.cogit.simplu3d.util.AssignZ;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
+import fr.ign.mpp.configuration.GraphVertex;
 import fr.ign.parameters.Parameters;
 
 public class ExecDeformedCuboid {
@@ -59,7 +67,7 @@ public class ExecDeformedCuboid {
 		double slopeProspectLimit = 2;
 
 		// C7
-		double maximalCES = 0.5;
+		double maximalCES = 0.3;// 0.5;
 
 		// Création du Sampler (qui va générer les propositions de solutions)
 		DeformedOptimizer oCB = new DeformedOptimizer();
@@ -74,8 +82,38 @@ public class ExecDeformedCuboid {
 				pred, distReculVoirie, slope, hIni, hMax, distReculLimi,
 				slopeProspectLimit, maximalCES,DeformedOptimizer.DROITE);
 
-		SaveGeneratedObjects.saveShapefile(folderName + "out.shp", cc,
-				bPU.getId(), 0);
+		IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
+		
+		for (GraphVertex<? extends AbstractSimpleBuilding> v : cc.getGraph().vertexSet()) {
+			double longueur = Math.max(v.getValue().length, v.getValue().width);
+			double largeur = Math.min(v.getValue().length, v.getValue().width);
+			double hauteur = v.getValue().height(0, 0);
+			double orientation = v.getValue().orientation;
+
+			IFeature feat = new DefaultFeature(v.getValue().generated3DGeom());
+			AttributeManager
+					.addAttribute(feat, "idparc", 3, "Integer");
+			AttributeManager.addAttribute(feat, "largeur", largeur, "Double");
+			AttributeManager.addAttribute(feat, "longueur", longueur, "Double");
+			AttributeManager.addAttribute(feat, "hauteur", hauteur, "Double");
+			AttributeManager
+					.addAttribute(feat, "orient", orientation, "Double");
+			AttributeManager.addAttribute(feat, "idRun", 0, "Integer");
+
+			
+			/*
+			AttributeManager.addAttribute(feat, "idRun", 0, "Integer");
+			AttributeManager.addAttribute(feat, "idRun", 0, "Integer");
+			AttributeManager.addAttribute(feat, "idRun", 0, "Integer");
+			AttributeManager.addAttribute(feat, "idRun", 0, "Integer");
+			AttributeManager.addAttribute(feat, "idRun", 0, "Integer");*/
+			
+			
+			featC.add(feat);
+
+		}
+
+		ShapefileWriter.write(featC, folderName + "out.shp");
 
 		System.out.println("That's all folks");
 

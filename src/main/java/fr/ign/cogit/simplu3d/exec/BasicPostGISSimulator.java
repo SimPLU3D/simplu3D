@@ -77,7 +77,7 @@ public class BasicPostGISSimulator {
 
           // Chargement des règles à appliquer
           UB16PredicateWithParameters<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new UB16PredicateWithParameters<>(
-              bPU, exp.getDouble("hini"), exp.getDouble("slope"));
+              bPU, exp.getDouble("hIni"), exp.getDouble("slope"));
 
           // Exécution de l'optimisation
           GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred);

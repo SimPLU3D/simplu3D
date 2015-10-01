@@ -127,9 +127,9 @@
 				<version>2.5.1</version>
 				<executions>
 					<execution>
+					<!-- 
 						<id>copy-dependencies</id>
 						<phase>package</phase>
-
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>
@@ -137,6 +137,7 @@
 							<prependGroupId>true</prependGroupId>
 							<outputDirectory>${project.build.directory}/lib</outputDirectory>
 						</configuration>
+					 -->
 					</execution>
 				</executions>
 			</plugin>

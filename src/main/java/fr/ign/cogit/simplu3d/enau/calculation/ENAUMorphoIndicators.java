@@ -75,7 +75,7 @@ public class ENAUMorphoIndicators {
 		}
 
 
-		System.out.println(lCurveVoirie.size());
+//		System.out.println(lCurveVoirie.size());
 
 		GeometryFactory gf = new GeometryFactory();
 
@@ -122,6 +122,8 @@ public class ENAUMorphoIndicators {
 
 		double dist = this.dC.toGeometry().distance(jtsCurveLimiteFrontParcel);
 
+		System.out.println("Distance : " + dist);
+		
 		return Math.min(valeurCible, dist)
 				/ Math.max(valeurCible, dist);
 	}

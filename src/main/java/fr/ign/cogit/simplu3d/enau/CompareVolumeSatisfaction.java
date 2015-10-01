@@ -28,7 +28,7 @@ public class CompareVolumeSatisfaction {
 	public static void main(String[] args) throws Exception {
 		String shapeFile = "C:/Users/mbrasebin/Desktop/Alia/couche_formeAlia_trans.shp";
 
-		String shapeFileM = "C:/Users/mbrasebin/Desktop/Alia/simulM.shp";
+		String shapeFileM = "C:/Users/mbrasebin/Desktop/Alia/simul5.shp";
 
 		
 
@@ -54,7 +54,7 @@ public class CompareVolumeSatisfaction {
 		// imsM.addAll(FromGeomToSurface.convertMSGeom(featCM.get(1).getGeom()));
 		
 
-			DeformedCuboid dcM = retrieveCuboid(imsM,Math.PI +  Math.PI * 216 / 180, true);
+			DeformedCuboid dcM = retrieveCuboid(imsM,Math.PI +  Math.PI * 216 / 180, false);
 			
 			IFeature featM = new DefaultFeature(dcM.generated3DGeom());
 			
