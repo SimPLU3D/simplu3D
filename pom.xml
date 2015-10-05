@@ -10,8 +10,8 @@
 	<name>simplu3d</name>
 
 	<scm>
-		<connection>scm:svn:https://forge-cogit/cogit-depot/geoxygene-cogit/trunk/modules/library/simplu3d/</connection>
-		<url>https://forge-cogit/cogit-depot/geoxygene-cogit/trunk/modules/library/simplu3d/</url>
+		<connection>scm:git:https://github.com/IGNF/simplu3d.git</connection>
+		<url>https://github.com/IGNF/simplu3d/</url>
 	</scm>
 
 	<description>Implémentation d'un module de gestion des règles d'urbanisme </description>
@@ -315,11 +315,6 @@
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
-		</repository>
-		<repository>
-			<id>Atlassian</id>
-			<name>Atlassian</name>
-			<url>https://maven.atlassian.com/maven1/maven2</url>
 		</repository>
 		<repository>
 			<snapshots>
