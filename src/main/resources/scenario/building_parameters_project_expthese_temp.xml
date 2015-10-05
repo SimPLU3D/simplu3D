@@ -4,13 +4,13 @@
 		<param key="folder" value=""/>
         <!-- Paramètres relatifs à l'énergie -->
         <!-- Énergie de création d'un cube dans une configuration m^3-->
-		<param key="energy" value="5" />
+		<param key="energy" value="20" />
         <!-- Pondération du critère de volume-->
     	<param key="ponderation_volume" value="1" />
         <!-- Pondération négative du volume dépassant de la parcelle-->
         <param key="ponderation_difference_ext" value="5" />         
         <!-- Pondération négative d'une boîte en intersectant une autre-->
-		<param key="ponderation_volume_inter" value="1" />         
+		<param key="ponderation_volume_inter" value="2" />         
         
         
         <!--Distribution (équiprobable) des dimensions des boîtes-->
