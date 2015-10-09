@@ -115,6 +115,10 @@ Contact for feedbacks
 [Cogit Laboratory](http://recherche.ign.fr/labos/cogit/accueilCOGIT.php)
 
 
+Users
+--------------------
+[IAUIDF for land price assessment : Note de conjecture ORF](http://www.orf.asso.fr/uploads/attachements/orf_nc7_ok_lg.pdf)
+
 Acknowledgments
 ---------------------
 
