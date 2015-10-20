@@ -80,7 +80,7 @@ public class BasicPostGISSimulator {
               bPU, exp.getDouble("hIni"), exp.getDouble("slope"));
 
           // Exécution de l'optimisation
-          GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred);
+          GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, pred);
 
           // Identifiant de la parcelle
 

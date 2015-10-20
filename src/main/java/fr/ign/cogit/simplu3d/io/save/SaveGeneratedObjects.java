@@ -45,7 +45,7 @@ public class SaveGeneratedObjects {
 	public static final String TABLE_GENERATED_BUILDING = "generatedbuildings";
 
 	public static boolean saveShapefile(String path,
-			GraphConfiguration<? extends AbstractSimpleBuilding> cc, int idParcelle, int idRun) {
+			GraphConfiguration<? extends AbstractSimpleBuilding> cc, int idParcelle, long seed) {
 
 		IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
 
@@ -63,7 +63,7 @@ public class SaveGeneratedObjects {
 			AttributeManager.addAttribute(feat, "hauteur", hauteur, "Double");
 			AttributeManager
 					.addAttribute(feat, "orient", orientation, "Double");
-			AttributeManager.addAttribute(feat, "idRun", idRun, "Integer");
+			AttributeManager.addAttribute(feat, "seed", seed, "Long");
 
 			featC.add(feat);
 
@@ -77,7 +77,7 @@ public class SaveGeneratedObjects {
 
 	public static boolean save(String host, String port, String database,
 			String user, String pw, GraphConfiguration<Cuboid> cc,
-			int idExperiment, int idParcelle, int idRun) {
+			int idExperiment, int idParcelle, long seed) {
 
 		try {
 
@@ -107,10 +107,10 @@ public class SaveGeneratedObjects {
 
 				String sql = "Insert into "
 						+ TABLE_GENERATED_BUILDING
-						+ "(idparcelle,largeur,longueur,hauteur,orientation,idexperiment, the_geom, run) values ("
+						+ "(idparcelle,largeur,longueur,hauteur,orientation,idexperiment, the_geom, seed) values ("
 						+ idParcelle + "," + largeur + "," + longueur + ","
 						+ hauteur + "," + orientation + "," + idExperiment
-						+ "," + geomWKT + "," + idRun + ")";
+						+ "," + geomWKT + "," + seed + ")";
 
 				System.out.println(sql);
 

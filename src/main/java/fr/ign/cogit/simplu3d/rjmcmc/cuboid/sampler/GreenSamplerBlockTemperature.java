@@ -69,13 +69,12 @@ public class GreenSamplerBlockTemperature<O extends SimpleObject, C extends Abst
 
 	boolean blockedTemperature = false;
 
-	public GreenSamplerBlockTemperature(DirectSampler<O, C, M> d,
+	public GreenSamplerBlockTemperature(RandomGenerator rng, DirectSampler<O, C, M> d,
 			Acceptance<? extends Temperature> a, List<Kernel<C, M>> k) {
 		this.density = d;
 		this.acceptance = a;
 		this.kernels = k;
-		this.die = new UniformRealDistribution(0, 1);
-		this.die.reseedRandomGenerator(System.currentTimeMillis());
+		this.die = new UniformRealDistribution(rng, 0, 1);
 	}
 
 	long timeRandomApply;

@@ -34,7 +34,6 @@ import fr.ign.mpp.kernel.KernelFactory;
 import fr.ign.mpp.kernel.ObjectBuilder;
 import fr.ign.mpp.kernel.UniformBirth;
 import fr.ign.parameters.Parameters;
-import fr.ign.random.Random;
 import fr.ign.rjmcmc.acceptance.MetropolisAcceptance;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
 import fr.ign.rjmcmc.distribution.PoissonDistribution;
@@ -125,10 +124,10 @@ public class OptimisedBuildingsCuboidDirectRejectionNoVisitor {
   }
 
   public GraphConfiguration<Cuboid> process(
+      RandomGenerator rng,
       BasicPropertyUnit bpu,
       Parameters p,
       Environnement env,
-      int id,
       ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred) {
     // Géométrie de l'unité foncière sur laquelle porte la génération
     IGeometry geom = bpu.generateGeom().buffer(1);
@@ -137,14 +136,13 @@ public class OptimisedBuildingsCuboidDirectRejectionNoVisitor {
     // relative au volume
     GraphConfiguration<Cuboid> conf = null;
     try {
-      conf = create_configuration(p,
-          AdapterFactory.toGeometry(new GeometryFactory(), geom), bpu);
+      conf = create_configuration(p, AdapterFactory.toGeometry(new GeometryFactory(), geom), bpu);
     } catch (Exception e) {
       e.printStackTrace();
     }
     // Création de l'échantilloneur
     Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> samp = create_sampler(
-        Random.random(), p, bpu, pred);
+        rng, p, bpu, pred);
     // Température
     Schedule<SimpleTemperature> sch = create_schedule(p);
 
@@ -156,14 +154,12 @@ public class OptimisedBuildingsCuboidDirectRejectionNoVisitor {
     }
 
     List<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> list = new ArrayList<>();
-    CompositeVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> mVisitor = new CompositeVisitor<>(
-        list);
+    CompositeVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> mVisitor = new CompositeVisitor<>(list);
     init_visitor(p, mVisitor);
     /*
      * < This is the way to launch the optimization process. Here, the magic happen... >
      */
-    SimulatedAnnealing.optimize(Random.random(), conf, samp, sch, end,
-        mVisitor);
+    SimulatedAnnealing.optimize(rng, conf, samp, sch, end, mVisitor);
     return conf;
   }
 
@@ -177,84 +173,68 @@ public class OptimisedBuildingsCuboidDirectRejectionNoVisitor {
   }
 
   CountVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> countV = null;
-
   public int getCount() {
     return countV.getCount();
   }
 
-  // Création de la configuration
   /**
+   * Création de la configuration.
    * @param p
    *          paramètres importés depuis le fichier XML
    * @param bpu
    *          l'unité foncière considérée
    * @return la configuration chargée, c'est à dire la formulation énergétique prise en compte
    */
-  public GraphConfiguration<Cuboid> create_configuration(Parameters p,
-      Geometry geom, BasicPropertyUnit bpu) {
+  public GraphConfiguration<Cuboid> create_configuration(Parameters p, Geometry geom, BasicPropertyUnit bpu) {
     // Énergie constante : à la création d'un nouvel objet
-
-    double energyCrea = Double.isNaN(this.energyCreation) ? p
-        .getDouble("energy") : this.energyCreation;
-
-    ConstantEnergy<Cuboid, Cuboid> energyCreation = new ConstantEnergy<Cuboid, Cuboid>(
-        energyCrea);
+    double energyCrea = Double.isNaN(this.energyCreation) ? p.getDouble("energy") : this.energyCreation;
+    ConstantEnergy<Cuboid, Cuboid> energyCreation = new ConstantEnergy<Cuboid, Cuboid>(energyCrea);
 
     // Énergie constante : pondération de l'intersection
-    ConstantEnergy<Cuboid, Cuboid> ponderationVolume = new ConstantEnergy<Cuboid, Cuboid>(
-        p.getDouble("ponderation_volume"));
+    ConstantEnergy<Cuboid, Cuboid> ponderationVolume = new ConstantEnergy<Cuboid, Cuboid>(p.getDouble("ponderation_volume"));
     // Énergie unaire : aire dans la parcelle
     UnaryEnergy<Cuboid> energyVolume = new VolumeUnaryEnergy<Cuboid>();
     // Multiplication de l'énergie d'intersection et de l'aire
-    UnaryEnergy<Cuboid> energyVolumePondere = new MultipliesUnaryEnergy<Cuboid>(
-        ponderationVolume, energyVolume);
+    UnaryEnergy<Cuboid> energyVolumePondere = new MultipliesUnaryEnergy<Cuboid>(ponderationVolume, energyVolume);
 
     // On retire de l'énergie de création, l'énergie de l'aire
-    UnaryEnergy<Cuboid> u3 = new MinusUnaryEnergy<Cuboid>(energyCreation,
-        energyVolumePondere);
+    UnaryEnergy<Cuboid> u3 = new MinusUnaryEnergy<Cuboid>(energyCreation, energyVolumePondere);
 
     // Énergie constante : pondération de la différence
-    ConstantEnergy<Cuboid, Cuboid> ponderationDifference = new ConstantEnergy<Cuboid, Cuboid>(
-        p.getDouble("ponderation_difference_ext"));
+    ConstantEnergy<Cuboid, Cuboid> ponderationDifference = new ConstantEnergy<Cuboid, Cuboid>(p.getDouble("ponderation_difference_ext"));
     // On ajoute l'énergie de différence : la zone en dehors de la parcelle
     UnaryEnergy<Cuboid> u4 = new DifferenceVolumeUnaryEnergy<Cuboid>(geom);
-    UnaryEnergy<Cuboid> u5 = new MultipliesUnaryEnergy<Cuboid>(
-        ponderationDifference, u4);
+    UnaryEnergy<Cuboid> u5 = new MultipliesUnaryEnergy<Cuboid>(ponderationDifference, u4);
     UnaryEnergy<Cuboid> unaryEnergy = new PlusUnaryEnergy<Cuboid>(u3, u5);
-
     // Énergie binaire : intersection entre deux rectangles
-    ConstantEnergy<Cuboid, Cuboid> c3 = new ConstantEnergy<Cuboid, Cuboid>(
-        p.getDouble("ponderation_volume_inter"));
+    ConstantEnergy<Cuboid, Cuboid> c3 = new ConstantEnergy<Cuboid, Cuboid>(p.getDouble("ponderation_volume_inter"));
     BinaryEnergy<Cuboid, Cuboid> b1 = new IntersectionVolumeBinaryEnergy<Cuboid>();
-    BinaryEnergy<Cuboid, Cuboid> binaryEnergy = new MultipliesBinaryEnergy<Cuboid, Cuboid>(
-        c3, b1);
+    BinaryEnergy<Cuboid, Cuboid> binaryEnergy = new MultipliesBinaryEnergy<Cuboid, Cuboid>(c3, b1);
     // empty initial configuration*/
-    GraphConfiguration<Cuboid> conf = new GraphConfiguration<>(unaryEnergy,
-        binaryEnergy);
+    GraphConfiguration<Cuboid> conf = new GraphConfiguration<>(unaryEnergy, binaryEnergy);
     return conf;
   }
 
   /**
-   * Sampler
-   * 
+   * Sampler.
+   * @param rng
+   *          random generator
    * @param p
    *          les paramètres chargés depuis le fichier xml
-   * @param r
+   * @param bpU
    *          l'enveloppe dans laquelle on génère les positions
-   * @return
+   * @param pred
+   *          a predicate
+   * @return the sampler
    */
   Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> create_sampler(
-      RandomGenerator rng,
-      Parameters p,
-      BasicPropertyUnit bpU,
+      RandomGenerator rng, Parameters p, BasicPropertyUnit bpU,
       ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred) {
     // Un vecteur ?????
     double minlen = Double.isNaN(this.minLengthBox) ? p.getDouble("minlen") : this.minLengthBox;
     double maxlen = Double.isNaN(this.maxLengthBox) ? p.getDouble("maxlen") : this.maxLengthBox;
-
     double minwid = Double.isNaN(this.minWidthBox) ? p.getDouble("minwid") : this.minWidthBox;
     double maxwid = Double.isNaN(this.maxWidthBox) ? p.getDouble("maxwid") : this.maxWidthBox;
-
     double minheight = p.getDouble("minheight");
     double maxheight = p.getDouble("maxheight");
     // A priori on redéfini le constructeur de l'objet
@@ -264,13 +244,11 @@ public class OptimisedBuildingsCuboidDirectRejectionNoVisitor {
       public int size() {
         return 6;
       }
-
       @Override
       public Cuboid build(double[] val1) {
         return new Cuboid(val1[0], val1[1], val1[2],
             val1[3], val1[4], val1[5]);
       }
-
       @Override
       public void setCoordinates(Cuboid t, double[] val1) {
         val1[0] = t.centerx;
@@ -321,7 +299,7 @@ public class OptimisedBuildingsCuboidDirectRejectionNoVisitor {
     double amplitudeHeight = p.getDouble("amplitudeHeight");
     kernels.add(factory.make_uniform_modification_kernel(rng, builder, new ChangeHeight(amplitudeHeight), 0.2, "ChgHeight"));
 
-    Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> s = new GreenSamplerBlockTemperature<>(ds,
+    Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> s = new GreenSamplerBlockTemperature<>(rng, ds,
         new MetropolisAcceptance<SimpleTemperature>(), kernels);
     return s;
   }
