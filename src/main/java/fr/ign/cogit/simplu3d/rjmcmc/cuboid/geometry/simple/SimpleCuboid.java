@@ -1,6 +1,6 @@
 package fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple;
 
-import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math3.util.MathUtils;
 
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 

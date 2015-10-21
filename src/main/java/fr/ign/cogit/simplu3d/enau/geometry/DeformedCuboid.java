@@ -3,7 +3,7 @@ package fr.ign.cogit.simplu3d.enau.geometry;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math3.util.MathUtils;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
