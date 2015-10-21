@@ -12,7 +12,6 @@ import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.contrib.cartetopo.Face;
 import fr.ign.cogit.geoxygene.contrib.delaunay.TriangulationJTS;
 import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToSurface;
-import fr.ign.cogit.geoxygene.sig3d.distribution.EquiSurfaceDistribution;
 import fr.ign.cogit.geoxygene.sig3d.distribution.EquiSurfaceDistributionJTS;
 import fr.ign.cogit.geoxygene.sig3d.topology.TriangulationLoader;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;

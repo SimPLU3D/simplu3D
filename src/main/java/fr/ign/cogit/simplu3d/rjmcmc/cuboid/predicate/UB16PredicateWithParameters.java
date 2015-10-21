@@ -125,7 +125,7 @@ public class UB16PredicateWithParameters<O extends Cuboid, C extends AbstractGra
 
   }
 
-  private List<List<O>> createGroupe(List<O> lBatIn) {
+  protected List<List<O>> createGroupe(List<O> lBatIn) {
 
     List<List<O>> listGroup = new ArrayList<>();
 
@@ -266,7 +266,7 @@ public class UB16PredicateWithParameters<O extends Cuboid, C extends AbstractGra
 
   }
 
-  private boolean checkIsInParcel(List<O> lO) {
+  protected boolean checkIsInParcel(List<O> lO) {
 
     for (O ab : lO) {
 
@@ -359,7 +359,7 @@ public class UB16PredicateWithParameters<O extends Cuboid, C extends AbstractGra
 
   }
 
-  private boolean checkHeight(List<O> lO, double threshold) {
+  protected boolean checkHeight(List<O> lO, double threshold) {
 
     bouclebat: for (O ab : lO) {
 
@@ -429,7 +429,7 @@ public class UB16PredicateWithParameters<O extends Cuboid, C extends AbstractGra
     return ls;
   }
 
-  private double compareGroup(List<O> l1, List<O> l2) {
+  protected double compareGroup(List<O> l1, List<O> l2) {
 
     double min = Double.POSITIVE_INFINITY;
 

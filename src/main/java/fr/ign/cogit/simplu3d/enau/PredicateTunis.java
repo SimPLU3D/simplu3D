@@ -11,8 +11,6 @@ import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
-import fr.ign.cogit.simplu3d.enau.calculation.ENAUMorphoIndicators;
-import fr.ign.cogit.simplu3d.enau.geometry.ParallelDeformedCuboid;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
@@ -52,7 +50,7 @@ public class PredicateTunis<O extends AbstractSimpleBuilding, C extends Abstract
 	private double hIni = 45;
 
 	// C3
-	private double hMax = 17;
+//	private double hMax = 17;
 
 	// C4
 	private double distReculLimi = 5.4;
@@ -72,7 +70,7 @@ public class PredicateTunis<O extends AbstractSimpleBuilding, C extends Abstract
 		this.distReculVoirie = distReculVoirie;
 		this.slope = slope;
 		this.hIni = hIni;
-		this.hMax = hMax;
+//		this.hMax = hMax;
 		this.distReculLimi = distReculLimi;
 		this.slopeProspect = slopeProspect;
 		this.maximalCES = maximalCES;
@@ -293,7 +291,7 @@ public class PredicateTunis<O extends AbstractSimpleBuilding, C extends Abstract
 		return true;
 	}
 
-	private List<List<O>> createGroupe(List<O> lBatParam) {
+	protected List<List<O>> createGroupe(List<O> lBatParam) {
 
 		List<O> lBatIn = new ArrayList<>();
 		lBatIn.addAll(lBatParam);
@@ -357,8 +355,7 @@ public class PredicateTunis<O extends AbstractSimpleBuilding, C extends Abstract
 		return ((area / airePAr) <= this.maximalCES);
 	}
 
-	private boolean checkDistanceInterBuildings(C c, M m,
-			double distanceInterBati) {
+	protected boolean checkDistanceInterBuildings(C c, M m, double distanceInterBati) {
 
 		// On récupère les objets ajoutées lors de la proposition
 		List<O> lO = m.getBirth();

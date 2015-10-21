@@ -1,6 +1,7 @@
 package fr.ign.cogit.simplu3d.enau;
 
 import java.awt.Color;
+import java.io.File;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
@@ -80,13 +81,13 @@ public class CompareVolumeSatisfaction {
 		// Chargement du fichier de configuration
 		String folderName = "C:/Users/mbrasebin/Desktop/Alia/";
 
-		String fileName = "building_parameters_project_expthese_3.xml";
+//		String fileName = "building_parameters_project_expthese_3.xml";
 
 		CadastralParcelLoader.ATT_ID_PARC = "id_parcell";
 		AssignZ.DEFAULT_Z = 0;
 
 		// Chargement de l'environnement
-		Environnement env = LoaderSHP.loadNoDTM(folderName);
+		Environnement env = LoaderSHP.loadNoDTM(new File(folderName));
 		
 		// On trouve la parcelle qui a l'identifiant numéro 4
 		BasicPropertyUnit bPU = null;

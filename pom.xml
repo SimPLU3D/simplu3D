@@ -354,11 +354,6 @@
 			<artifactId>librjmcmc4j-geometry</artifactId>
 			<version>${librjmcmc4j.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>fr.ign.cogit</groupId>
-			<artifactId>geoxygene-geopensim</artifactId>
-			<version>1.7-SNAPSHOT</version>
-		</dependency>
 	</dependencies>
 	<distributionManagement>
 		<repository>

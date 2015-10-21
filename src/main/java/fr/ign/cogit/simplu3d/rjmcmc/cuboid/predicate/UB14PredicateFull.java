@@ -520,7 +520,7 @@ public class UB14PredicateFull<O extends Cuboid, C extends AbstractGraphConfigur
     return ls;
   }
 
-  private double compareGroup(List<O> l1, List<O> l2) {
+  protected double compareGroup(List<O> l1, List<O> l2) {
 
     double min = Double.POSITIVE_INFINITY;
 

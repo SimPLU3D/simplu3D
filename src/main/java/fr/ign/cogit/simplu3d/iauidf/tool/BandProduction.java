@@ -25,7 +25,8 @@ public class BandProduction {
 	IMultiCurve<IOrientableCurve> iMSRoad = new GM_MultiCurve<>();
 	private IMultiCurve<IOrientableCurve> lineRoad = null;
 
-	public BandProduction(BasicPropertyUnit bPU, Regulation r1, Regulation r2) {
+	@SuppressWarnings("unchecked")
+  public BandProduction(BasicPropertyUnit bPU, Regulation r1, Regulation r2) {
 
 		// On récupère le polygone surlequel on va faire la découpe
 		IPolygon pol_BPU = bPU.getpol2D();
@@ -164,11 +165,8 @@ public class BandProduction {
 				lineRoad = (IMultiCurve<IOrientableCurve>) (iMSRoad.clone());
 			} else {
 				lineRoad = shiftRoad(bPU, rArt6);
-
 			}
-
 		}
-
 	}
 
 	private IMultiCurve<IOrientableCurve> shiftRoad(BasicPropertyUnit bPU,

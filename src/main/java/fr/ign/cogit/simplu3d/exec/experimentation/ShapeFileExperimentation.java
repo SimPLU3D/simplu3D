@@ -2,6 +2,9 @@ package fr.ign.cogit.simplu3d.exec.experimentation;
 
 import java.io.File;
 
+import org.apache.commons.math3.random.MersenneTwister;
+import org.apache.commons.math3.random.RandomGenerator;
+
 import fr.ign.cogit.simplu3d.exe.LoadDefaultEnvironment;
 import fr.ign.cogit.simplu3d.exec.BasicSimulator;
 import fr.ign.cogit.simplu3d.io.save.SaveGeneratedObjects;
@@ -130,7 +133,7 @@ public class ShapeFileExperimentation {
   public static void run(Parameters p, String folderSave,
       BasicPropertyUnit bPU, Environnement env, double distReculVoirie,
       double distReculFond, double distReculLat, double maximalCES,
-      double hIniRoad, double slopeRoad, double hauteurMax, int run) {
+      double hIniRoad, double slopeRoad, double hauteurMax, long seed) {
 
     // id du run
 
@@ -145,9 +148,10 @@ public class ShapeFileExperimentation {
         hIniRoad, slopeRoad);
 
     p.set("maxheight", hauteurMax);
+    RandomGenerator rng = new MersenneTwister(seed);
 
     // Exécution de l'optimisation
-    GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, pred);
+    GraphConfiguration<Cuboid> cc = oCB.process(rng, bPU, p, env, pred);
 
     // Identifiant de la parcelle
 
@@ -158,9 +162,9 @@ public class ShapeFileExperimentation {
     String pathShapeFile = folderSave + "_"+ idParcelle + "_drv_" + distReculVoirie + "_drf_"
         + distReculFond + "_drl_" + distReculLat + "_ces_" + maximalCES
         + "_hini_" + hIniRoad + "_sro_" + slopeRoad + "_hmax_" + hauteurMax
-        + "_run_" + run + "_en_" + energy + ".shp";
+        + "_seed_" + seed + "_en_" + energy + ".shp";
 
-    SaveGeneratedObjects.saveShapefile(pathShapeFile, cc, idParcelle, run);
+    SaveGeneratedObjects.saveShapefile(pathShapeFile, cc, idParcelle, seed);
 
   }
 

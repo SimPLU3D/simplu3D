@@ -1,5 +1,8 @@
 package fr.ign.cogit.simplu3d.exec;
 
+import org.apache.commons.math3.random.MersenneTwister;
+import org.apache.commons.math3.random.RandomGenerator;
+
 import fr.ign.cogit.simplu3d.io.load.application.ExperimentationPostGIS;
 import fr.ign.cogit.simplu3d.io.load.application.LoadPostGIS;
 import fr.ign.cogit.simplu3d.io.load.application.ParametersPostgis;
@@ -51,25 +54,25 @@ public class BasicPostGISSimulator {
     String pw = "postgres";
 
     int lastExpID = 2;
-    int nbRun = 2;
+    long nbRun = 2;
 
     // id de l'expérimentation considérée
     for (int idExperiment = 1; idExperiment <= lastExpID; idExperiment++) {
 
       // id du run
-      for (int run = 0; run < nbRun; run++) {
+      for (long run = 0; run < nbRun; run++) {
+        // TODO use something better that the run ID as a seed
 
         // Chargement de l'expérimentation
-        ExperimentationPostGIS exp = new ExperimentationPostGIS(host, port,
-            database, user, pw, idExperiment);
+        ExperimentationPostGIS exp = new ExperimentationPostGIS(host, port, database, user, pw, idExperiment);
 
         // Chargement de l'environnement depuis PostGIS
         LoadPostGIS lP = new LoadPostGIS(host, port, database, user, pw);
         Environnement env = lP.loadNoOCLRules();
 
         // Chargement des paramètres de simulation
-        ParametersPostgis p = new ParametersPostgis(host, port, database, user,
-            pw, exp.getInteger(ExperimentationPostGIS.EXPERIMENTATION_ID_PARAM));
+        ParametersPostgis p = new ParametersPostgis(host, port, database, user, pw,
+            exp.getInteger(ExperimentationPostGIS.EXPERIMENTATION_ID_PARAM));
 
         for (BasicPropertyUnit bPU : env.getBpU()) {
           // Chargement de l'optimiseur
@@ -79,30 +82,24 @@ public class BasicPostGISSimulator {
           UB16PredicateWithParameters<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new UB16PredicateWithParameters<>(
               bPU, exp.getDouble("hIni"), exp.getDouble("slope"));
 
+          RandomGenerator rng = new MersenneTwister(run);
           // Exécution de l'optimisation
-          GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, pred);
+          GraphConfiguration<Cuboid> cc = oCB.process(rng, bPU, p, env, pred);
 
           // Identifiant de la parcelle
 
           int idParcelle = bPU.getCadastralParcel().get(0).getId();
 
           // On sauve les objets
-          SaveGeneratedObjects.save(host, port, database, user, pw, cc,
-              idExperiment, idParcelle, run);
+          SaveGeneratedObjects.save(host, port, database, user, pw, cc, idExperiment, idParcelle, run);
 
           // On sauve la valeur de l'optimisation
-          SaveEnergyPostGIS.save(host, port, database, user, pw, idExperiment,
-              idParcelle, run, cc.getEnergy());
-
+          SaveEnergyPostGIS.save(host, port, database, user, pw, idExperiment, idParcelle, (int) run, cc.getEnergy());
         }
-
         // On a bien effectué l'expérimentation
         exp.setProcessed();
-
       }
     }
     System.out.println("That's all folks");
-
   }
-
 }

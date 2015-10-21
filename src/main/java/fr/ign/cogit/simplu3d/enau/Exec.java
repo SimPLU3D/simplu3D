@@ -29,7 +29,7 @@ public class Exec {
 		Parameters p = Parameters.unmarshall(new File(folderName + fileName));
 
 		// Chargement de l'environnement
-		Environnement env = LoaderSHP.loadNoDTM(folderName);
+		Environnement env = LoaderSHP.loadNoDTM(new File(folderName));
 
 		// On trouve la parcelle qui a l'identifiant numéro 4
 		BasicPropertyUnit bPU = null;

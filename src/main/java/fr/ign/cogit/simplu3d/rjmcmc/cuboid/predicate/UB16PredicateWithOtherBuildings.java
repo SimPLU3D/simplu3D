@@ -20,9 +20,7 @@ import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
-import fr.ign.rjmcmc.configuration.Configuration;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
-import fr.ign.rjmcmc.configuration.Modification;
 /**
  * 
  *        This software is released under the licence CeCILL
@@ -122,7 +120,7 @@ public class UB16PredicateWithOtherBuildings<O extends Cuboid, C extends Abstrac
 
     }
 
-    private List<List<O>> createGroupe(List<O> lBatIn) {
+    protected List<List<O>> createGroupe(List<O> lBatIn) {
 
         List<List<O>> listGroup = new ArrayList<>();
 
@@ -270,7 +268,7 @@ public class UB16PredicateWithOtherBuildings<O extends Cuboid, C extends Abstrac
 
 
 
-    private boolean respectBuildArea(List<O> lBatIni) {
+    protected boolean respectBuildArea(List<O> lBatIni) {
 
         if (lBatIni.isEmpty()) {
             return true;
@@ -375,7 +373,7 @@ public class UB16PredicateWithOtherBuildings<O extends Cuboid, C extends Abstrac
 
     }
 
-    private boolean checkHeight(List<O> lO, double threshold) {
+    protected boolean checkHeight(List<O> lO, double threshold) {
 
         bouclebat: for (O ab : lO) {
 
@@ -445,7 +443,7 @@ public class UB16PredicateWithOtherBuildings<O extends Cuboid, C extends Abstrac
         return ls;
     }
 
-    private double compareGroup(List<O> l1, List<O> l2) {
+    protected double compareGroup(List<O> l1, List<O> l2) {
 
         double min = Double.POSITIVE_INFINITY;
 

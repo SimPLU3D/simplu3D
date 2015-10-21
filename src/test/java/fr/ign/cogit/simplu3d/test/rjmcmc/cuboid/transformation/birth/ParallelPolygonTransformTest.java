@@ -1,7 +1,5 @@
 package fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.birth;
 
-import java.util.Vector;
-
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,7 +7,6 @@ import org.junit.Test;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.ILineString;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.util.conversion.WktGeOxygene;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth.ParallelPolygonTransform;
 import fr.ign.random.Random;
 
@@ -45,7 +42,7 @@ public class ParallelPolygonTransformTest {
       }
       double[] lvalOut = new double[4];
 
-      Vector<Double> lvarOut = new Vector<>();
+//      Vector<Double> lvarOut = new Vector<>();
       t.apply(true, lvalIn, lvalOut);
 
       // String outString = "";
