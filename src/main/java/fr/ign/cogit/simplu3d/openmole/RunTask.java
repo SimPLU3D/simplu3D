@@ -29,10 +29,10 @@ import fr.ign.parameters.Parameters;
 
 public class RunTask {
   public static void main(String[] args) throws Exception {
-    File folder = new File("/home/julien/data/Project");
+    File folder = new File("/home/julien/data/data");
     File folderOut = new File("/home/julien/tmp");
     File parameterFile = new File("/home/julien/data/building_parameters_project_expthese_temp.xml");
-    int idBPU = 256;
+    int idBPU = 255;
     double distReculVoirie = 0.5;
     double distReculFond = 0.5;
     double distReculLat = 0.5;
@@ -69,18 +69,21 @@ public class RunTask {
     System.out.println("test");
     // On charge l'environnement
     Environnement env = LoaderSHP.loadNoDTM(folder);
+    System.out.println("Env " + env.getCadastralParcels().size());
     // On charge le fichier de parametre
+    if (!parameterFile.canRead()) System.out.println("can't read the parameter file"); 
     Parameters p = Parameters.unmarshall(parameterFile);
     // On récupère la parcelle sur laquelle on effectue la simulation
     BasicPropertyUnit bPU = null;
     for (BasicPropertyUnit bPUTemp : env.getBpU()) {
+      System.out.println("id = " + bPUTemp.getId());
       if (bPUTemp.getId() == idBPU) {
         bPU = bPUTemp;
         break;
       }
     }
     if (bPU == null) {
-      System.out.println("C'est null" + idBPU);
+      System.out.println("C'est null " + idBPU);
       throw new Exception("Null Property Unit");
     }
     // Chargement de l'optimiseur
