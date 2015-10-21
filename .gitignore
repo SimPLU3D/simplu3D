@@ -7,3 +7,7 @@ release.properties
 *.classpath
 *.project
 *.settings
+/.idea/
+/log/
+/log4j.log
+/simplu3d.iml
