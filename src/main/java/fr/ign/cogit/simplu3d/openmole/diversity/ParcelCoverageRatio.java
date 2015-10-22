@@ -5,6 +5,7 @@ import java.util.List;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
+import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.geoxygene.util.algo.JtsAlgorithms;
@@ -31,7 +32,10 @@ public class ParcelCoverageRatio {
     for (IFeature f : collection) {
       list.add((GM_MultiSurface<IPolygon>) f.getGeom());
     }
-    double buildingArea = JtsAlgorithms.union(list).area();
+    if (list.isEmpty()) return 0.0;
+    IGeometry union = JtsAlgorithms.union(list);
+    if (union == null || union.isEmpty()) return 0.0;
+    double buildingArea = union.area();
     return buildingArea / area;
   }
 }
