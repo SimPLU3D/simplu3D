@@ -146,7 +146,7 @@ public class Cuboid extends AbstractSimpleBuilding implements Primitive {
 		return height;
 	}
 
-	public double fastArea() {
+	public double getArea() {
 		return this.length * this.width;
 	}
 

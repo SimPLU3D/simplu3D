@@ -294,7 +294,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 				continue;
 			}
 
-			double area = cubTemp.fastArea(); // .toGeometry().getArea();
+			double area = cubTemp.getArea(); // .toGeometry().getArea();
 			int nbEtage = 1 + (int) (cubTemp.height / 3);
 
 			areaBuilt += area;

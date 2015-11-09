@@ -33,14 +33,14 @@ public class RunTask {
     File folderOut = new File("/home/julien/tmp");
     File parameterFile = new File("/home/julien/data/building_parameters_project_expthese_temp.xml");
     int idBPU = 255;
-    double distReculVoirie = 1.;
-    double distReculFond = 1.;
-    double distReculLat = 1.;
-    double maximalCES = 0.5;
-    double hIniRoad = 5;
-    double slopeRoad = 1.5;
-    double hauteurMax = 20;
-    long seed = 8792926807833038395l;
+    double distReculVoirie = 4.53125;
+    double distReculFond = 2.65625;
+    double distReculLat = 2.65625;
+    double maximalCES = 0.40937499999999993;
+    double hIniRoad = 3.59375;
+    double slopeRoad = 0.09375;
+    double hauteurMax = 14.6875;
+    long seed = -3637137549655303736L;
     TaskResult result = run(folder, folderOut, parameterFile, idBPU, distReculVoirie, distReculFond, distReculLat, maximalCES, hIniRoad, slopeRoad, hauteurMax, seed);
     System.out.println("energy = " + result.energy + " with coverage = " + result.coverageRatio + " and signature " + result.signature);
   }

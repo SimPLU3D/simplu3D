@@ -744,5 +744,4 @@ public class DeformedOptimizer {
       return this.object;
     }
   }
-
 }

@@ -137,7 +137,7 @@ public class DeformedCuboid extends AbstractSimpleBuilding implements Primitive 
 		return Math.max(Math.max(height1, height2), Math.max(height3, height4));
 	}
 
-	public double fastArea() {
+	public double getArea() {
 		return this.length * this.width;
 	}
 
