@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/IGNF/simplu3D.svg?branch=master)](https://travis-ci.org/IGNF/simplu3D)
+
 Simplu3D
 ============
 
@@ -23,7 +25,7 @@ Library installation
 ---------------------
 The project is build with Maven and is coded in Java (JDK 1.7 is required), it has been tested in most common OS. If you are not familiar with Maven, we suggest installing developer tools and versions as described in [GeOxygene install guide](http://oxygene-project.sourceforge.net/documentation/developer/install.html).
 
-Vidéo and illustration
+VidÃ©o and illustration
 ---------------------
 [Generating a building with n boxes](https://www.youtube.com/watch?v=dH9woKexsVw)
 
@@ -111,7 +113,7 @@ fr.ign.cogit.simplu3d.exec.BasicSimulator class using predefined resource  files
 
 Contact for feedbacks
 ---------------------
-[Mickaël Brasebin](http://recherche.ign.fr/labos/cogit/cv.php?nom=Brasebin) & [Julien Perret](http://recherche.ign.fr/labos/cogit/cv.php?prenom=Julien&nom=Perret)
+[MickaÃ«l Brasebin](http://recherche.ign.fr/labos/cogit/cv.php?nom=Brasebin) & [Julien Perret](http://recherche.ign.fr/labos/cogit/cv.php?prenom=Julien&nom=Perret)
 [Cogit Laboratory](http://recherche.ign.fr/labos/cogit/accueilCOGIT.php)
 
 
@@ -123,6 +125,6 @@ Acknowledgments
 ---------------------
 
 + This research is supported by the French National Mapping Agency ([IGN](http://www.ign.fr))
-+ It is partially funded by the FUI TerraMagna project and by Île-de-France
-Région in the context of [e-PLU projet](www.e-PLU.fr)
++ It is partially funded by the FUI TerraMagna project and by ÃŽle-de-France
+RÃ©gion in the context of [e-PLU projet](www.e-PLU.fr)
 
