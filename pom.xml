@@ -60,6 +60,9 @@
 					<environmentVariables>
 						<PATH>${basedir}\lib\native_libraries\windows-amd64\</PATH>
 					</environmentVariables>
+          <excludes>
+            <exclude>**/SimulatorTest.java</exclude>
+          </excludes>
 				</configuration>
 			</plugin>
 			<plugin>
