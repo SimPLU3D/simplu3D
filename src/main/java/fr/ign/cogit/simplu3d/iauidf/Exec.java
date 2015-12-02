@@ -175,7 +175,7 @@ public class Exec {
 
 			IFeatureCollection<IFeature> featC1 = new FT_FeatureCollection<>();
 
-			Environnement env = LoaderSHP.load(folderImu, new FileInputStream(
+			Environnement env = LoaderSHP.load(new File(folderImu), new FileInputStream(
 					folderImu + nomDTM));
 
 			featC1.addAll(simulSimpleRegulationByBasicPropertyUnit(env, imu,
@@ -185,7 +185,7 @@ public class Exec {
 
 			IFeatureCollection<IFeature> featC2 = new FT_FeatureCollection<>();
 
-			env = LoaderSHP.load(folderImu, new FileInputStream(folderImu
+			env = LoaderSHP.load(new File(folderImu), new FileInputStream(folderImu
 					+ nomDTM));
 
 			featC2.addAll(simulSimpleRegulationByBasicPropertyUnit(env, imu,
@@ -196,7 +196,7 @@ public class Exec {
 		} else {
 
 			// On instancie l'environnement associé à l'IMU
-			Environnement env = LoaderSHP.load(folderImu, new FileInputStream(
+			Environnement env = LoaderSHP.load(new File(folderImu), new FileInputStream(
 					folderImu + nomDTM));
 
 			featC.addAll(simulSimpleRegulationByBasicPropertyUnit(env, imu, r1,

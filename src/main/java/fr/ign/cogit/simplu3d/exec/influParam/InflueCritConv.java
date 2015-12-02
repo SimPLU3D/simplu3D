@@ -98,7 +98,7 @@ public class InflueCritConv {
 
 			for (int j = 0; j < nbIt; j++) {
 
-				Environnement env = LoaderSHP.load(p.getString("folder"));
+				Environnement env = LoaderSHP.load(new File(p.getString("folder")));
 
 				OptimisedBuildingsCuboidFinalDirectRejection ocb = new OptimisedBuildingsCuboidFinalDirectRejection();
 				UXL3Predicate<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new UXL3Predicate<>(

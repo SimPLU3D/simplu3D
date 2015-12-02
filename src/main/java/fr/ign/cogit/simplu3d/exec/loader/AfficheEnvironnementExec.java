@@ -60,7 +60,7 @@ public class AfficheEnvironnementExec {
 
     String folder = p.getString("folder");
 
-    Environnement env = LoaderSHP.load(folder);
+    Environnement env = LoaderSHP.load(new File(folder));
 
     List<Theme> lTheme = new ArrayList<RepEnvironnement.Theme>();
     // lTheme.add(Theme.TOIT_BATIMENT);

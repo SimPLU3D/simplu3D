@@ -88,7 +88,7 @@ public class InfluDimCuboid {
 				// writer.append(valCoeff[i] + ";");
 
 				for (int j = 10; j < 20; j++) {
-					Environnement env = LoaderSHP.load(p.getString("folder"));
+					Environnement env = LoaderSHP.load(new File(p.getString("folder")));
 
 					OptimisedBuildingsCuboidFinalDirectRejection ocb = new OptimisedBuildingsCuboidFinalDirectRejection();
 					UXL3Predicate<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new UXL3Predicate<>(
