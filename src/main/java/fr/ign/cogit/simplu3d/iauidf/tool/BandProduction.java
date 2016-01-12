@@ -166,6 +166,9 @@ public class BandProduction {
 			} else {
 				lineRoad = shiftRoad(bPU, rArt6);
 			}
+		}else{
+		    
+                  //  lineRoad = (IMultiCurve<IOrientableCurve>) (iMSRoad.clone());
 		}
 	}
 

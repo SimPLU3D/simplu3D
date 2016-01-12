@@ -163,6 +163,8 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 	@Override
 	public boolean check(C c, M m) {
+	    
+
 
 		// Pour produire des boîtes séparées et vérifier que la distance inter
 		// bâtiment est respectée
@@ -186,7 +188,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		}
 
 		// Vérification des règles au niveau de la parcelle
-
+	           
 		// ART_9 Pourcentage d'emprise au sol maximum autorisé Valeur comprise
 		// de 0 à 1, 88= non renseignable, 99= non réglementé
 		// ART_13 Part minimale d'espaces libre de toute construction exprimée
@@ -207,7 +209,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 		// @TODO : il faudrait déterminer dans quel bande est le nouvel objet
 		// pour pointer sur la bonne réglementation
-
+	 
 		if (birth != null) {
 
 			if (birth instanceof ParallelCuboid) {
@@ -297,7 +299,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 			double area = cubTemp.getArea(); // .toGeometry().getArea();
 			int nbEtage = 1 + (int) (cubTemp.height / 3);
 
-			areaBuilt += area;
+			areaBuilt  += area;
 			shonBuilt += area * nbEtage;
 		}
 
@@ -328,7 +330,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		// par rapport à la surface totale de la parcelle Valeur comprise de 0 à
 		// 1, 88 si non renseignable, 99 si non règlementé
 		double reg14 = r.getArt_14();
-		if (reg14 != 99 & reg14 != 88) {
+		if (reg14 != 0.0 &  reg14 != 99 & reg14 != 88) {
 			if (shonBuilt / areaBPU > reg14) {
 				return false;
 			}

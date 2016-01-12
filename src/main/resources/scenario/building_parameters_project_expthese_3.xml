@@ -106,7 +106,7 @@
        <param key="csvfilenamend" value="exportEndStats.csv" />  
         
         <!-- Dossier des sorties des visiteur -->
-        <param key="result" value="E:/temp2/" />           
+        <param key="result" value="/media/mickael/Data/" />           
 </parameters>
 
 

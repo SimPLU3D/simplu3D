@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
+import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
@@ -68,6 +69,45 @@ public class Regulation {
 		this.art_13 = art_13;
 		this.art_14 = art_14;
 	}
+	
+	public Regulation(IFeature feat){
+	   this(returnObjTab(feat));
+	
+	}
+	
+	public static Object[] returnObjTab(IFeature feat){
+	   Object[] caract =  {
+	           0, 
+	           feat.getAttribute("INSEE_1"), 
+	           feat.getAttribute("TARGET_FID"), 
+	           feat.getAttribute("Annee_muta"), 
+                feat.getAttribute("INSEE_1"),
+                feat.getAttribute("INSEE_1"), 
+                feat.getAttribute("FONCTION_1"), 
+                feat.getAttribute("TOP_ZAC_1"),  feat.getAttribute("ZONAGE_C_1"), feat.getAttribute("CORRECTI_1"), 
+                feat.getAttribute("CORRECTI_1"), feat.getAttribute("BANDE_1"), 
+                feat.getAttribute("ART_56"),  feat.getAttribute("ART_67"), feat.getAttribute("ART_71_72"), 
+                feat.getAttribute("ART_72_73"), feat.getAttribute("ART_73_74"), feat.getAttribute("ART_74_75"), 
+                feat.getAttribute("ART_89"), feat.getAttribute("ART_9_10"), feat.getAttribute("ART_10_T_1"), 
+                feat.getAttribute("ART_10_11"), feat.getAttribute("ART_102"), feat.getAttribute("ART_12_13"), 
+                feat.getAttribute("ART_13_14"), feat.getAttribute("ART_14_15")};
+	   return caract;
+	}
+	
+	
+	
+	public static Object[] returnObjTab2(IFeature feat){
+	           Object[] caract =  {0, feat.getAttribute("INSEE_1"), feat.getAttribute("TARGET_FID"), feat.getAttribute("Annee_muta"), 
+	                feat.getAttribute("INSEE_1"), feat.getAttribute("INSEE_1"), feat.getAttribute("FONCTION_1"), 
+	                feat.getAttribute("TOP_ZAC_1"),  feat.getAttribute("ZONAGE_C_1"), feat.getAttribute("CORRECTI_1"), 
+	                feat.getAttribute("CORRECTI_1"), feat.getAttribute("2_BANDE"), 
+	                feat.getAttribute("2_ART_5"),  feat.getAttribute("2_ART_6"), feat.getAttribute("2_ART_71"), 
+	                feat.getAttribute("2_ART_72"), feat.getAttribute("2_ART_73"), feat.getAttribute("2_ART_74"), 
+	                feat.getAttribute("2_ART_8"), feat.getAttribute("2_ART_9"), feat.getAttribute("2_ART_10_T"), 
+	                feat.getAttribute("2_ART_10"), feat.getAttribute("2_ART_102"), feat.getAttribute("2_ART_12"), 
+	                feat.getAttribute("2_ART_13"), feat.getAttribute("2_ART_14")};
+	           return caract;
+	        }
 
 	public Regulation(String line) {
 
@@ -76,21 +116,72 @@ public class Regulation {
 	}
 
 	public Regulation(String[] split) {
-		this(Integer.parseInt(split[0]), split[1], Integer.parseInt(split[2]),
-				Integer.parseInt(split[3]), split[4], split[5], Integer
-						.parseInt(split[6]), Integer.parseInt(split[7]),
-				Integer.parseInt(split[8]), Integer.parseInt(split[9]), Integer
-						.parseInt(split[10]), Integer.parseInt(split[11]),
-				Integer.parseInt(split[12]), Double.parseDouble(split[13]),
-				Integer.parseInt(split[14]), Double.parseDouble(split[15]),
-				Double.parseDouble(split[16]),  Integer.parseInt(split[17]),
-				Integer.parseInt(split[18]), Double.parseDouble(split[19]),
-				Integer.parseInt(split[20]), Integer.parseInt(split[21]),
-				Double.parseDouble(split[22]), Double.parseDouble(split[23]),
-				Double.parseDouble(split[24]), Double.parseDouble(split[25]));
+		this(Integer.parseInt(split[0]), 
+		        split[1], 
+		        Integer.parseInt(split[2]),
+				Integer.parseInt(split[3]), 
+				split[4], 
+				split[5], 
+				Integer
+						.parseInt(split[6]),
+						Integer.parseInt(split[7]),
+				Integer.parseInt(split[8]), 
+				Integer.parseInt(split[9]), 
+				Integer
+						.parseInt(split[10]), 
+						Integer.parseInt(split[11]),
+				Integer.parseInt(split[12]), 
+				Double.parseDouble(split[13]),
+				Integer.parseInt(split[14]), 
+				Double.parseDouble(split[15]),
+				Double.parseDouble(split[16]),  
+				Integer.parseInt(split[17]),
+				Integer.parseInt(split[18]), 
+				Double.parseDouble(split[19]),
+				Integer.parseInt(split[20]), 
+				Integer.parseInt(split[21]),
+				Double.parseDouble(split[22]),
+				Double.parseDouble(split[23]),
+				Double.parseDouble(split[24]), 
+				Double.parseDouble(split[25]));
 	}
+	
+	
+	       public Regulation(Object[] split) {
+	                this(Integer.parseInt(split[0].toString()), 
+	                        split[1].toString(), 
+	                        Integer.parseInt(split[2].toString()),
+	                        (int) Double.parseDouble(split[3].toString()),
+split[4].toString(), 
+split[5].toString(), 
+(int) Double.parseDouble(split[6].toString()), 
+(int) Double.parseDouble(split[7].toString()),	                                              
+(int)  Double.parseDouble(split[8].toString()), 
+(int) Double.parseDouble(split[9].toString()), 
+(int)     Double.parseDouble(split[10].toString()),
+(int) Double.parseDouble(split[11].toString()),
+(int)   Double.parseDouble(split[12].toString()), 
+Double.parseDouble(split[13].toString()),
+(int)  Double.parseDouble(split[14].toString()), 
+Double.parseDouble(split[15].toString()),
+	                                
+Double.parseDouble(split[16].toString()),  
+(int)Double.parseDouble(split[17].toString()),
+	                                
+(int)Double.parseDouble(split[18].toString()), 
+Double.parseDouble(split[19].toString()),
+ (int)     Double.parseDouble(split[20].toString()), 
+ (int)Double.parseDouble(split[21].toString()),
+Double.parseDouble(split[22].toString()), 
+Double.parseDouble(split[23].toString()),
+ Double.parseDouble(split[24].toString()), 
+ Double.parseDouble(split[25].toString()));
+	        }
 
-	/**
+
+	           
+
+    /**
 	 * Charge les règlements et les stockes dans une Map avec Integer = Code_Imu
 	 * et List<Regulation> = la liste des règlements (= lignes du tableau) pour
 	 * un code IMU donné

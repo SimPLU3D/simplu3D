@@ -36,7 +36,7 @@
         
         <!-- Paramètres de température (on considère une fonction temp * deccoef^it) !-->
         <!-- Température initiale !-->
-		<param key="temp" value="5000" />
+		<param key="temp" value="15000" />
         <!-- Température initiale !-->
 		<param key="deccoef" value="0.99999" />
         

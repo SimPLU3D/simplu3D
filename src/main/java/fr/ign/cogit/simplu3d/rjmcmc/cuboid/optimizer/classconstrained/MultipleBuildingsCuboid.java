@@ -281,13 +281,25 @@ public class MultipleBuildingsCuboid {
       d2[i] = d2[i] - v[i];
     }
 
-    IGeometry geomBand1 = r1.getGeomBande().intersection(bP.getLineRoad().buffer(d[3] / 2 + v[3]));
+    IGeometry geomBand1 = r1.getGeomBande();
+    if(bP.getLineRoad() != null){
+        geomBand1 =  geomBand1.intersection(bP.getLineRoad().buffer(d[3] / 2 + v[3]));
+    }
+ 
     IGeometry geomBand2 = null;
     if (r2 != null) {
       geomBand2 = r2.getGeomBande();
     }
 
-    Transform transformBand1 = new ParallelPolygonTransform(d2, v, geomBand1, bP.getLineRoad().toArray());
+    Transform transformBand1 = null;
+    
+    if(bP.getLineRoad() == null){
+        transformBand1  = new TransformToSurface(d2, v, geomBand1);
+    }else{
+        transformBand1   =   new ParallelPolygonTransform(d2, v, geomBand1, bP.getLineRoad().toArray());
+    }
+    
+  
     Transform transformBand2;
 
     Variate variate = new Variate(rng);
@@ -296,7 +308,38 @@ public class MultipleBuildingsCuboid {
     NullView<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> nullView = new NullView<>();
 
     double p_simple = 0.5;
-    ObjectBuilder<Cuboid> builderBand1 = new ParallelBuilder(bP.getLineRoad().toArray(), 1);
+    ObjectBuilder<Cuboid> builderBand1 = null;
+    
+    if(bP.getLineRoad() == null){
+        builderBand1 = new ObjectBuilder<Cuboid>() {
+            @Override
+            public Cuboid build(double[] coordinates) {
+              return new SimpleCuboid(coordinates[0], coordinates[1], coordinates[2], coordinates[3], coordinates[4], coordinates[5]);
+            }
+
+            @Override
+            public int size() {
+              return 6;
+            }
+
+            @Override
+            public void setCoordinates(Cuboid t, double[] val1) {
+              val1[0] = t.centerx;
+              val1[1] = t.centery;
+              val1[2] = t.length;
+              val1[3] = t.width;
+              val1[4] = t.height;
+              val1[5] = t.orientation;
+            }
+          };
+
+         
+       
+    }else{
+        builderBand1 =  new ParallelBuilder(bP.getLineRoad().toArray(), 1);
+    }
+    
+   
 
     ObjectBuilder<Cuboid> builderBand2;
 
