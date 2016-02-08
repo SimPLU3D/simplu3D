@@ -31,7 +31,7 @@
 			<organizationUrl>http://recherche.ign.fr</organizationUrl>
 			<roles>
 				<role>Administrator</role>
-				<role>Doctorant</role>
+				<role>Researcher</role>
 				<role>Java Developer</role>
 			</roles>
 		</developer>
