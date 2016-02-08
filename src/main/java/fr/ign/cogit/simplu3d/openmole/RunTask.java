@@ -19,7 +19,7 @@ import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.openmole.diversity.ParcelCoverageRatio;
 import fr.ign.cogit.simplu3d.openmole.diversity.ParcelSignature;
-import fr.ign.cogit.simplu3d.openmole.misc.TestDatumFactory;
+
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.classconstrained.OptimisedBuildingsCuboidDirectRejectionNoVisitor;
 import fr.ign.cogit.simplu3d.util.AssignZ;
@@ -52,7 +52,7 @@ public class RunTask {
     hints.put(Hints.CRS_AUTHORITY_FACTORY, FactoryUsingWKT.class);
     hints.put(Hints.CRS_FACTORY, ReferencingObjectFactory.class);
     hints.put(Hints.MATH_TRANSFORM_FACTORY, DefaultMathTransformFactory.class);
-    hints.put(Hints.DATUM_FACTORY, TestDatumFactory.class);
+//    hints.put(Hints.DATUM_FACTORY, TestDatumFactory.class);
     hints.put(Hints.FEATURE_COLLECTIONS, DefaultFeatureCollections.class);
     hints.put(Hints.FILTER_FACTORY, FilterFactoryImpl.class);
   }
