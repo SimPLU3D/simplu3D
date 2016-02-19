@@ -111,6 +111,12 @@ fr.ign.cogit.simplu3d.exec.BasicSimulator class using predefined resource  files
   }
 ```
 
+Documentation and publications
+---------------------
+For more information about this code, the generation process and the underlying models are described in the PhD of Mickael Brasebin (French document) :
+
+[Brasebin, M. (2014) Les données géographiques 3D pour simuler l'impact de la réglementation urbaine sur la morphologie du bâti, Thèse de doctorat, spécialité Sciences et Technologies de l'Information Géographique, Université Paris-Est, apr 2014](http://recherche.ign.fr/labos/cogit/publiCOGITDetail.php?idpubli=5016)
+
 Contact for feedbacks
 ---------------------
 [Mickaël Brasebin](http://recherche.ign.fr/labos/cogit/cv.php?nom=Brasebin) & [Julien Perret](http://recherche.ign.fr/labos/cogit/cv.php?prenom=Julien&nom=Perret)
