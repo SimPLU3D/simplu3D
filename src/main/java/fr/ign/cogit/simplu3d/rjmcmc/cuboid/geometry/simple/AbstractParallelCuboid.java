@@ -2,8 +2,6 @@ package fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple;
 
 import java.util.List;
 
-import org.apache.commons.math3.util.MathUtils;
-
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 
 public abstract class AbstractParallelCuboid extends Cuboid {
@@ -36,9 +34,9 @@ public abstract class AbstractParallelCuboid extends Cuboid {
 	      return false;
 	    }
 	    ParallelCuboid r = (ParallelCuboid) o;
-	    return MathUtils.equals(this.centerx, r.centerx) && MathUtils.equals(this.centery, r.centery)
-	        && MathUtils.equals(this.width, r.width) && MathUtils.equals(this.length, r.length)
-	        && MathUtils.equals(this.orientation, r.orientation) && MathUtils.equals(this.height, r.height);
+	    return (this.centerx== r.centerx) && (this.centery== r.centery)
+	        && (this.width== r.width) && (this.length== r.length)
+	        && (this.orientation== r.orientation) && (this.height== r.height);
 	  }
 
 	  public String toString() {

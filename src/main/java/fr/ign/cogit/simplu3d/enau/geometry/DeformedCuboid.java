@@ -3,8 +3,6 @@ package fr.ign.cogit.simplu3d.enau.geometry;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.math3.util.MathUtils;
-
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -147,15 +145,15 @@ public class DeformedCuboid extends AbstractSimpleBuilding implements Primitive 
 			return false;
 		}
 		DeformedCuboid r = (DeformedCuboid) o;
-		return MathUtils.equals(this.centerx, r.centerx)
-				&& MathUtils.equals(this.centery, r.centery)
-				&& MathUtils.equals(this.width, r.width)
-				&& MathUtils.equals(this.length, r.length)
-				&& MathUtils.equals(this.orientation, r.orientation)
-				&& MathUtils.equals(this.height1, r.height1)
-				&& MathUtils.equals(this.height2, r.height2)
-				&& MathUtils.equals(this.height3, r.height3)
-				&& MathUtils.equals(this.height4, r.height4);
+		return  (this.centerx == r.centerx)
+				&& (this.centery== r.centery)
+				&& (this.width== r.width)
+				&& (this.length== r.length)
+				&& (this.orientation== r.orientation)
+				&& (this.height1== r.height1)
+				&& (this.height2== r.height2)
+				&& (this.height3== r.height3)
+				&& (this.height4== r.height4);
 	}
 
 	public String toString() {

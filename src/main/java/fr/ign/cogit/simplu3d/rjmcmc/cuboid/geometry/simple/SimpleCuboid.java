@@ -1,7 +1,5 @@
 package fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple;
 
-import org.apache.commons.math3.util.MathUtils;
-
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 
 /**
@@ -28,9 +26,9 @@ public class SimpleCuboid extends Cuboid {
       return false;
     }
     SimpleCuboid r = (SimpleCuboid) o;
-    return MathUtils.equals(this.centerx, r.centerx) && MathUtils.equals(this.centery, r.centery)
-        && MathUtils.equals(this.width, r.width) && MathUtils.equals(this.length, r.length)
-        && MathUtils.equals(this.orientation, r.orientation) && MathUtils.equals(this.height, r.height);
+    return (this.centerx== r.centerx) && (this.centery== r.centery)
+        && (this.width== r.width) && (this.length== r.length)
+        && (this.orientation== r.orientation) && (this.height== r.height);
   }
 
   public String toString() {

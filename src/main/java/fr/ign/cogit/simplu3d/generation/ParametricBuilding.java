@@ -214,15 +214,15 @@ public class ParametricBuilding extends Building {
         .getFootprint(), angleToit);
 
     
-    if(this.getToit() == null){
+    if(this.getRoof() == null){
       this.setToit(t);
     }else{
-      this.getToit().setGeom(t.getGeom());
-      this.getToit().setGable(t.gable);
-      this.getToit().setGutter(t.gutter);
-      this.getToit().setRoofing(t.roofing);
-      this.getToit().setInteriorEdge(t.getInteriorEdge());
-      this.getToit().setLod2MultiSurface(t.getLod2MultiSurface());
+      this.getRoof().setGeom(t.getGeom());
+      this.getRoof().setGable(t.gable);
+      this.getRoof().setGutter(t.gutter);
+      this.getRoof().setRoofing(t.roofing);
+      this.getRoof().setInteriorEdge(t.getInteriorEdge());
+      this.getRoof().setLod2MultiSurface(t.getLod2MultiSurface());
     }
 
 
@@ -231,11 +231,11 @@ public class ParametricBuilding extends Building {
 
   public boolean generationFacade() {
 
-    List<FacadeProcedural> lF = GenerationFacade.generate(this.getToit(),
+    List<FacadeProcedural> lF = GenerationFacade.generate(this.getRoof(),
         materiauFacades, this.centre.getZ(), facadesNonAveugles);
 
     IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<IOrientableSurface>();
-    iMS.addAll(this.getToit().getLod2MultiSurface());
+    iMS.addAll(this.getRoof().getLod2MultiSurface());
 
     for (SpecificWallSurface f : lF) {
       iMS.addAll(f.getLod2MultiSurface());
@@ -302,8 +302,8 @@ public class ParametricBuilding extends Building {
   public Set<IDirectPosition> coord() {
     Set<IDirectPosition> set = new HashSet<IDirectPosition>();
     set.addAll(this.getGeom().coord());
-    set.addAll(this.getToit().getRoofing().coord());
-    set.addAll(this.getToit().getGutter().coord());
+    set.addAll(this.getRoof().getRoofing().coord());
+    set.addAll(this.getRoof().getGutter().coord());
     set.addAll(this.getFootprint().coord());
 
     return set;
@@ -463,7 +463,7 @@ public class ParametricBuilding extends Building {
   }
 
   public void changeTextureToit(Materiau materiau) {
-    this.getToit().setMat(materiau);
+    this.getRoof().setMat(materiau);
     this.materiauToit = materiau;
   }
 
