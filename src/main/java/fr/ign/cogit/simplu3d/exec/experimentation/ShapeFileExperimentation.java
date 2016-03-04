@@ -5,7 +5,7 @@ import java.io.File;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 
-import fr.ign.cogit.simplu3d.exe.LoadDefaultEnvironment;
+import fr.ign.cogit.simplu3d.demo.LoadDefaultEnvironment;
 import fr.ign.cogit.simplu3d.exec.BasicSimulator;
 import fr.ign.cogit.simplu3d.io.save.SaveGeneratedObjects;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;

@@ -20,6 +20,7 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.ParallelCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.ParallelCuboid2;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.SimpleCuboid;
+import fr.ign.geometry.SquaredDistance;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
@@ -643,12 +644,11 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 				// l'on ajoute
 				// respecte la distance entre boîtes
 
-				if (ab.getRectangle2D().toGeometry()
-						.distance(batTemp.getRectangle2D().toGeometry()) < distanceInterBati) {
+		
 
-					// if ((new SquaredDistance(ab.getRectangle2D(),
-					// batTemp.getRectangle2D() )).getSquaredDistance() <
-					// distanceInterBati) {
+					if ((new SquaredDistance(ab.getRectangle2D(),
+					 batTemp.getRectangle2D() )).getSquaredDistance() <
+					distanceInterBati * distanceInterBati) {
 					return false;
 				}
 

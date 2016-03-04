@@ -402,7 +402,7 @@ Double.parseDouble(split[23].toString()),
 				+ ", typ_bande=" + typ_bande + ", bande=" + bande + ", art_5="
 				+ art_5 + ", art_6=" + art_6 + ", art_71=" + art_71
 				+ ", art_72=" + art_72 + ", art_73=" + art_73 + ", art_74="
-				+ art_74 + ", art_8=" + art_8 + ", art_10_top=" + art_10_top
+				+ art_74 + ", art_8=" + art_8 + ", art_9=" + art_9 + ", art_10_top=" + art_10_top
 				+ ", art_101=" + art_101 + ", art_13=" + art_13
 				+ ", libelle_zone=" + libelle_zone + ", libelle_de_base="
 				+ libelle_de_base + ", libelle_de_dul=" + libelle_de_dul

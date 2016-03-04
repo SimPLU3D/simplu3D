@@ -4,7 +4,7 @@ import java.io.File;
 
 import org.junit.Test;
 
-import fr.ign.cogit.simplu3d.exe.LoadDefaultEnvironment;
+import fr.ign.cogit.simplu3d.demo.LoadDefaultEnvironment;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
