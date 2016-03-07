@@ -14,7 +14,7 @@
 		<url>https://github.com/IGNF/simplu3d/</url>
 	</scm>
 
-	<description>Implémentation d'un module de gestion des règles d'urbanisme </description>
+	<description>Implémentation d'un module de simulation des droits à bâtir.</description>
 	<url>http://maven.apache.org</url>
 
 	<properties>
