@@ -53,8 +53,8 @@ public class Exec_EPFIF {
 	public static List<IMultiSurface<IOrientableSurface>> debugSurface = new ArrayList<>();
 	public static List<IMultiCurve<IOrientableCurve>> debugLine = new ArrayList<>();
 
-	public final static String folder = "/home/mickael/data/mbrasebin/donnees/IAUIDF/DonneesIAU/Eval_EPF/";
-	public final static String file_rules = folder + "rules.csv";
+	public final static String folder = "/home/mickael/data/mbrasebin/donnees/IAUIDF/DonneesIAU/Test_EPF/";
+	public final static String file_rules = folder + "EPF_Evaluation.csv";
 	public final static String out_folder = folder + "out/";
 
 	// Initialisation des attributs différents du schéma de base
@@ -67,7 +67,7 @@ public class Exec_EPFIF {
 		LoaderSHP.NOM_FICHIER_PARCELLE = "parcelle.shp";
 
 		CadastralParcelLoader.TYPE_ANNOTATION = 2;
-		CadastralParcelLoader.ATT_HAS_TO_BE_SIMULATED = "SIMPLU";
+		CadastralParcelLoader.ATT_HAS_TO_BE_SIMULATED = "simul";
 
 		PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = SpecificCadastralBoundary.LEFT_SIDE;
 	}
@@ -197,8 +197,6 @@ public class Exec_EPFIF {
 		// On traite indépendamment chaque zone imu
 		for (int currentImu : regulation.keySet()) {
 
-
-
 			System.out.println("Numéro imu : " + currentImu);
 
 			try {
@@ -241,6 +239,13 @@ public class Exec_EPFIF {
 		for (BasicPropertyUnit bPU : env.getBpU()) {
 
 			if (!bPU.getCadastralParcel().get(0).hasToBeSimulated()) {
+				continue;
+			}
+			
+
+			
+			if(bPU.getCadastralParcel().get(0).getArea() < 5){
+				System.out.println("Probablement une erreur de carte topologique.");
 				continue;
 			}
 		

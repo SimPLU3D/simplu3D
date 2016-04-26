@@ -335,7 +335,7 @@ public class OptimisedBuildingsCuboidFinalDirectRejection {
 
     IEnvelope env = bpU.getGeom().envelope();
     // Sampler de naissance
-    // UniformBirthInGeom<Cuboid2> birth = new
+    // UniformBirthInGeom<Cuboidpred2> birth = new
     // UniformBirthInGeom<Cuboid2>(new
     // Cuboid2(env.minX(),
     // env.minY(), mindim, mindim, minheight, 0), new Cuboid2(env.maxX(),

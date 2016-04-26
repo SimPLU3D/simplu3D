@@ -252,6 +252,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 			}
 
 		}
+	
 
 		// System.out.println("Je retourne true");
 		return true;
@@ -633,22 +634,13 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 			// On parcourt les boîtes que l'on ajoute
 			for (O ab : lO) {
 
-				// System.out.println("Distance JTS  : " +
-				// ab.getRectangle2D().toGeometry().distance(batTemp.getRectangle2D().toGeometry())
-				// + "  distance Julien " +(new
-				// SquaredDistance(ab.getRectangle2D(), batTemp.getRectangle2D()
-				// )).getSquaredDistance() );
-
-				// On regarde si la distance entre les boîtes qui restent et
-				// celles que
-				// l'on ajoute
-				// respecte la distance entre boîtes
-
+				//On prend en compte la hauteur max si elle est supérieure à la contrainte de distance
+						double distComp = Math.max(distanceInterBati, Math.max(ab.height(), batTemp.height()));
 		
 
 					if ((new SquaredDistance(ab.getRectangle2D(),
 					 batTemp.getRectangle2D() )).getSquaredDistance() <
-					distanceInterBati * distanceInterBati) {
+							distComp * distComp) {
 					return false;
 				}
 

@@ -47,7 +47,5 @@ public abstract class AbstractSimpleBuilding extends Building implements SimpleO
   public abstract boolean prospectJTS(Geometry geom, double slope, double hIni);
   
   public abstract IGeometry generated3DGeom();
-  
-  public abstract 	Rectangle2D getRectangle2D();
-  
+
 }

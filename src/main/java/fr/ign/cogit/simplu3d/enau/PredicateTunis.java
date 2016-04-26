@@ -11,6 +11,7 @@ import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
+import fr.ign.cogit.simplu3d.enau.geometry.DeformedCuboid;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
@@ -397,8 +398,8 @@ public class PredicateTunis<O extends AbstractSimpleBuilding, C extends Abstract
 				// l'on ajoute
 				// respecte la distance entre boîtes
 
-				if (ab.getRectangle2D().toGeometry()
-						.distance(batTemp.getRectangle2D().toGeometry()) < distanceInterBati) {
+				if (((DeformedCuboid)ab).getRectangle2D().toGeometry()
+						.distance(((DeformedCuboid)batTemp).getRectangle2D().toGeometry()) < distanceInterBati) {
 
 					// if ((new SquaredDistance(ab.getRectangle2D(),
 					// batTemp.getRectangle2D() )).getSquaredDistance() <

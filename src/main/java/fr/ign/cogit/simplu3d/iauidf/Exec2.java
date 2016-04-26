@@ -128,6 +128,12 @@ public class Exec2 {
 			}
 			
 
+			
+			if(bPU.getCadastralParcel().get(0).getArea() < 5){
+				System.out.println("Probablement une erreur de carte topologique.");
+				continue;
+			}
+			
 
 			IFeature feat = retrieveFeat(featParcel, bPU);
 			
