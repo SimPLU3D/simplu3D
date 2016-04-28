@@ -37,8 +37,8 @@ import fr.ign.simulatedannealing.temperature.SimpleTemperature;
 
 public class TestParallelRightTrapezoidSampler {
 	
-	public static List<IGeometry> trapezoidAfter = new ArrayList<>();
-	public static  List<IGeometry> orientationLine = new ArrayList<>();
+	//public static List<IGeometry> trapezoidAfter = new ArrayList<>();
+	//public static  List<IGeometry> orientationLine = new ArrayList<>();
 
 	public static void main(String[] args) throws ParseException {
 		RandomGenerator rng = Random.random();

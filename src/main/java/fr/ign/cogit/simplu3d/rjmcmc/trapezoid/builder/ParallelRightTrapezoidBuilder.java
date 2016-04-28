@@ -9,10 +9,7 @@ import com.vividsolutions.jts.operation.distance.DistanceOp;
 
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
-import fr.ign.cogit.geoxygene.util.conversion.JtsGeOxygene;
 import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.geometry.ParallelTrapezoid;
-import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.geometry.RightTrapezoid;
-import fr.ign.cogit.simplu3d.test.rjmcmc.trapezoid.TestParallelRightTrapezoidSampler;
 import fr.ign.mpp.kernel.ObjectBuilder;
 
 public class ParallelRightTrapezoidBuilder implements ObjectBuilder<ParallelTrapezoid> {
@@ -37,24 +34,25 @@ public class ParallelRightTrapezoidBuilder implements ObjectBuilder<ParallelTrap
 		Geometry geom = this.limits.getEnvelope();
 		Coordinate coMin = geom.getCoordinates()[0];
 		Coordinate coMax = geom.getCoordinates()[3];
-		
+
 		factMult = DistanceOp.distance(factory.createPoint(coMin), factory.createPoint(coMax));
-		
-}
+
+	}
 
 	@Override
 	public ParallelTrapezoid build(double[] val1) {
 		double a = Math.cos(val1[5]) * val1[3];
 		double b = Math.sin(val1[5]) * val1[3];
+		/*
+		 * 
+		 * RightTrapezoid rt = new RightTrapezoid(val1[0], val1[1], val1[2], 0,
+		 * 0, val1[3], val1[4], val1[5]);
+		 * 
+		 * TestParallelRightTrapezoidSampler.trapezoidAfter.add(rt.getGeom());
+		 */
 
-	
-		RightTrapezoid rt = new RightTrapezoid(val1[0], val1[1], val1[2], 0, 0, val1[3], val1[4], val1[5]);
-		
-		TestParallelRightTrapezoidSampler.trapezoidAfter.add(rt.getGeom());
-		
-		Coordinate p1 = new Coordinate(val1[0] + b , val1[1] - a  );
-		Coordinate p2 = new Coordinate(val1[0] - b  , val1[1] + a);
-
+		Coordinate p1 = new Coordinate(val1[0] + b, val1[1] - a);
+		Coordinate p2 = new Coordinate(val1[0] - b, val1[1] + a);
 
 		Coordinate p3 = new Coordinate(p1.x - a * factMult, p1.y - b * factMult);
 		Coordinate p4 = new Coordinate(p2.x - a * factMult, p2.y - b * factMult);
@@ -73,17 +71,15 @@ public class ParallelRightTrapezoidBuilder implements ObjectBuilder<ParallelTrap
 
 		Geometry geom1 = g1.intersection(limits);
 		Geometry geom2 = g2.intersection(limits);
-		
-		
-		
-		
-		try {
-			TestParallelRightTrapezoidSampler.orientationLine.add(JtsGeOxygene.makeGeOxygeneGeom(g1));
-			TestParallelRightTrapezoidSampler.orientationLine.add(JtsGeOxygene.makeGeOxygeneGeom(g2));
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+		/*
+		 * try {
+		 * TestParallelRightTrapezoidSampler.orientationLine.add(JtsGeOxygene.
+		 * makeGeOxygeneGeom(g1));
+		 * TestParallelRightTrapezoidSampler.orientationLine.add(JtsGeOxygene.
+		 * makeGeOxygeneGeom(g2)); } catch (Exception e) { // TODO
+		 * Auto-generated catch block e.printStackTrace(); }
+		 */
 
 		double length2 = Double.POSITIVE_INFINITY;
 
@@ -110,7 +106,7 @@ public class ParallelRightTrapezoidBuilder implements ObjectBuilder<ParallelTrap
 
 		}
 
-		return new ParallelTrapezoid(val1[0], val1[1], val1[2],  length3  , length2 , val1[3], val1[4], val1[5]);
+		return new ParallelTrapezoid(val1[0], val1[1], val1[2], length3, length2, val1[3], val1[4], val1[5]);
 	}
 
 	@Override
