@@ -5,7 +5,6 @@ import com.vividsolutions.jts.geom.Polygon;
 
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.simplu3d.model.application.Building;
-import fr.ign.geometry.Rectangle2D;
 import fr.ign.rjmcmc.kernel.SimpleObject;
 
 /**
