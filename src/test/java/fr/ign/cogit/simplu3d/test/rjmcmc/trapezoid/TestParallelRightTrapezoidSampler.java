@@ -8,7 +8,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IEnvelope;
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.ILineString;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
@@ -36,9 +35,9 @@ import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.SimpleTemperature;
 
 public class TestParallelRightTrapezoidSampler {
-	
-	//public static List<IGeometry> trapezoidAfter = new ArrayList<>();
-	//public static  List<IGeometry> orientationLine = new ArrayList<>();
+
+	// public static List<IGeometry> trapezoidAfter = new ArrayList<>();
+	// public static List<IGeometry> orientationLine = new ArrayList<>();
 
 	public static void main(String[] args) throws ParseException {
 		RandomGenerator rng = Random.random();
@@ -48,8 +47,7 @@ public class TestParallelRightTrapezoidSampler {
 				"POLYGON (( 24.46264278127928 -13.32945321889124, 16.83388492956696 -2.4038452403082764, 21.54914732032382 4.036513147066944, 30.596317435922344 9.7484976692033, 35.119902493721604 1.4680368854351595, 23.657597982857375 1.1996886192945253, 32.66643263186438 -8.729197227908939, 41.17690621518163 -1.7138068416609316, 39.98850675084454 -16.47296147939581, 20.092399589846092 -22.60663613403888, 13.307022003147196 -13.942820684355546, 24.46264278127928 -13.32945321889124 ))");
 		IGeometry[] limits = new IGeometry[1];
 		limits[0] = polygon.exteriorLineString();
-		
-		
+
 		IEnvelope env = polygon.envelope();
 
 		double xmin = env.getLowerCorner().getX();
@@ -83,7 +81,7 @@ public class TestParallelRightTrapezoidSampler {
 						orientationMin),
 				new ParallelTrapezoid(xmax, ymax, length1max, length2max, length3max, widhtmax, heightMax,
 						orientationMax),
-				new ParallelRightTrapezoidBuilder(limits), ParallelTrapezoidTransform.class,polygon.buffer(-widhtmax));
+				new ParallelRightTrapezoidBuilder(limits), ParallelTrapezoidTransform.class, polygon.buffer(-widhtmax));
 
 		List<Kernel<GraphConfiguration<ParallelTrapezoid>, BirthDeathModification<ParallelTrapezoid>>> kernels = new ArrayList<>(
 				3);
@@ -111,25 +109,12 @@ public class TestParallelRightTrapezoidSampler {
 
 		System.out.println(featColl.size());
 		ShapefileWriter.write(featColl, "test_tra.shp");
-		
+
 		featColl.clear();
 		featColl.add(new DefaultFeature(limits[0]));
 
 		ShapefileWriter.write(featColl, "test_tra_line.shp");
-		
-		featColl.clear();
-		for(IGeometry geom : trapezoidAfter){
-			featColl.add(new DefaultFeature(geom));
-		}
-		
-		ShapefileWriter.write(featColl, "test_tra_bef.shp");
-		
-		featColl.clear();
-		for(IGeometry geom : orientationLine){
-			featColl.add(new DefaultFeature(geom));
-		}
-		ShapefileWriter.write(featColl, "test_tra_orientation.shp");
-		
+
 	}
 
 	public static IFeatureCollection<IFeature> exportColl(GraphConfiguration<ParallelTrapezoid> gC) {
