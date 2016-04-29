@@ -60,6 +60,7 @@ public class Recal3D {
 
 	private static Logger logger = Logger.getLogger(Recal3D.class);
 
+	public static double ZMIN = 139;
 	// public static IFeatureCollection<IFeature> DEBUG = new
 	// FT_FeatureCollection<>();
 
@@ -68,12 +69,13 @@ public class Recal3D {
 	 * @throws CloneNotSupportedException
 	 */
 	public static void main(String[] args) throws CloneNotSupportedException {
-
+System.out.println("Debout");
 		// Paramters : Currently the DTM is not managed so it is necessary to
 		// set a Zmin
-		double zMin = 139.;
+ZMIN = 139.;
 		double topologicalMapThreshold = 0.5;
 		double connexionDistance = 0.5;
+		double heightThreshold  = 0.5;
 		// Folder in
 		String strShpOut = "/home/mickael/temp/";
 		String shpeIn = strShpOut + "shp_9.0_ 0.25_0_ene-47524.50287299342.shp";
@@ -91,7 +93,7 @@ public class Recal3D {
 		IFeatureCollection<IFeature> featColl = new FT_FeatureCollection<>();
 
 		// Fusionne geom fonction allow the fusion
-		featColl.addAll(fusionneGeom(lCuboid, zMin, connexionDistance, topologicalMapThreshold));
+		featColl.addAll(fusionneGeom(lCuboid, ZMIN, connexionDistance, topologicalMapThreshold, heightThreshold));
 
 		featColl = seperateRoof(featColl);
 
@@ -139,7 +141,7 @@ public class Recal3D {
 	 * @return
 	 */
 	private static IFeatureCollection<IFeature> fusionneGeom(List<Cuboid> lAB, double zMini, double connexionDistance,
-			double topologicalMapThreshold) {
+			double topologicalMapThreshold, double heightThreshold) {
 
 		IFeatureCollection<IFeature> featFus = new FT_FeatureCollection<>();
 
@@ -152,7 +154,7 @@ public class Recal3D {
 
 			System.out.println("groupe " + (++count));
 			// The fusion is processed on each group
-			IFeatureCollection<IFeature> featCTemp = fusionneGeomByGroup(groupe, zMini, topologicalMapThreshold);
+			IFeatureCollection<IFeature> featCTemp = fusionneGeomByGroup(groupe, zMini, topologicalMapThreshold, heightThreshold);
 
 			if (featCTemp != null) {
 				featFus.addAll(featCTemp);
@@ -163,7 +165,7 @@ public class Recal3D {
 		return featFus;
 
 	}
-
+	private final static String ATT_TEMP = "TEMP";
 	/**
 	 * This class is used to cut the cuboid into a set of non-intersected
 	 * polygons
@@ -172,7 +174,7 @@ public class Recal3D {
 	 * @param threshold
 	 * @return
 	 */
-	public static List<IOrientableSurface> cutGeometry(List<? extends Cuboid> lAB, double threshold) {
+	public static IFeatureCollection<IFeature> cutGeometry(List<? extends Cuboid> lAB, double threshold) {
 		// We initialize the height and the footprints of this cuboid
 		List<IOrientableSurface> lOS = new ArrayList<>();
 		List<Double> lHeight = new ArrayList<>();
@@ -288,12 +290,18 @@ public class Recal3D {
 			}
 
 		}
-		/*
-		 * for (IOrientableSurface os : lOS) { DEBUG.add(new
-		 * DefaultFeature(os)); }
-		 */
-
-		return lOS;
+	
+		
+		 IFeatureCollection<IFeature> ifeatCollection = new FT_FeatureCollection<>();
+		 int nbElem = lOS.size();
+		 for(int i=0;i<nbElem;i++){
+			 IFeature feat = new DefaultFeature(lOS.get(i));
+			 AttributeManager.addAttribute(feat, ATT_TEMP, lHeight.get(i) + ZMIN, "Double");
+			 ifeatCollection.add(feat);
+		 }
+		
+		
+		return ifeatCollection;
 
 	}
 
@@ -306,44 +314,29 @@ public class Recal3D {
 	 *            : Topologic map threshold
 	 * @return
 	 */
-	private static IFeatureCollection<IFeature> fusionneGeomByGroup(List<? extends Cuboid> lAB, double zMini, double threshold) {
+	private static IFeatureCollection<IFeature> fusionneGeomByGroup(List<? extends Cuboid> lAB, double zMini, double thresholdTopoMap, double heightThreshold) {
 
-		String attrzmax = "Temp";
+	
 
-		List<IOrientableSurface> lOSIni = cutGeometry(lAB, threshold);
+		IFeatureCollection<IFeature> lOSIni = cutGeometry(lAB, heightThreshold);
 
 		// Preparation of topologic map faces
 		IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
 
-		for (IOrientableSurface osTemp : lOSIni) {
+		for (IFeature osTemp : lOSIni) {
 
 			Face f = new Face();
-			f.setGeometrie((IPolygon) osTemp.clone());
+			f.setGeometrie((IPolygon)  (FromGeomToSurface.convertGeom(osTemp.getGeom()).get(0).clone()));
 
 			featC.add(f);
 
 		}
 
 		// Creation of the topologic map
-		CarteTopo carteTopo = newCarteTopo("-aex90", featC, threshold);
+		CarteTopo carteTopo = newCarteTopo("-aex90", featC, thresholdTopoMap);
 
-		IFeatureCollection<IFeature> featC2 = new FT_FeatureCollection<>();
 
-		// The z is retrived for all faces of the topological map
-		for (AbstractBuilding aB : lAB) {
-
-			IFeature feature = new DefaultFeature((IPolygon) aB.getFootprint());
-
-			Box3D b = new Box3D(aB.getGeom());
-
-			System.out.println(zMini + b.getURDP().getZ());
-
-			AttributeManager.addAttribute(feature, attrzmax, zMini + b.getURDP().getZ(), "Double");
-
-			featC2.add(feature);
-		}
-
-		featC2.initSpatialIndex(Tiling.class, false);
+		lOSIni.initSpatialIndex(Tiling.class, false);
 
 		Groupe gr = carteTopo.getPopGroupes().nouvelElement();
 		gr.setListeArcs(carteTopo.getListeArcs());
@@ -400,7 +393,7 @@ public class Recal3D {
 					logger.warn("Point not in polygon");
 				}
 
-				Collection<IFeature> featSelect = featC2.select(p);
+				Collection<IFeature> featSelect = lOSIni.select(p);
 
 				double zMax = Double.NEGATIVE_INFINITY;
 
@@ -413,7 +406,8 @@ public class Recal3D {
 				}
 
 				for (IFeature feat : featSelect) {
-					zMax = Math.max(zMax, Double.parseDouble(feat.getAttribute(attrzmax).toString()));
+					System.out.println(feat.getAttribute(ATT_TEMP).toString());
+					zMax = Math.max(zMax, Double.parseDouble(feat.getAttribute(ATT_TEMP).toString()));
 				}
 
 				IPolygon poly = (IPolygon) f.getGeometrie().clone();
