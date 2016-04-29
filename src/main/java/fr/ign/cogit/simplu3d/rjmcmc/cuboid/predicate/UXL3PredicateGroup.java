@@ -11,18 +11,19 @@ import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
+import fr.ign.cogit.simplu3d.util.CuboidGroupCreation;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
 
 /**
  * 
- *        This software is released under the licence CeCILL
+ * This software is released under the licence CeCILL
  * 
- *        see LICENSE.TXT
+ * see LICENSE.TXT
  * 
- *        see <http://www.cecill.info/ http://www.cecill.info/
+ * see <http://www.cecill.info/ http://www.cecill.info/
  * 
  * 
  * 
@@ -31,178 +32,136 @@ import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
  * @author Brasebin Mickaël
  * 
  * @version 1.7
- **/ 
-public class UXL3PredicateGroup<O extends AbstractSimpleBuilding, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>> implements
-    ConfigurationModificationPredicate<C,M> {
+ **/
+public class UXL3PredicateGroup<O extends Cuboid, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>>
+		implements ConfigurationModificationPredicate<C, M> {
 
-  IMultiCurve<IOrientableCurve> curveS;
-  int numberMaxOfBoxesInGroup;
-  public UXL3PredicateGroup(BasicPropertyUnit bPU, int numberMaxOfBoxesInGroup) {
-    
-    
-    this.numberMaxOfBoxesInGroup =  numberMaxOfBoxesInGroup;
+	IMultiCurve<IOrientableCurve> curveS;
+	int numberMaxOfBoxesInGroup;
 
-    List<IOrientableCurve> lCurve = new ArrayList<>();
+	public UXL3PredicateGroup(BasicPropertyUnit bPU, int numberMaxOfBoxesInGroup) {
 
-    for (CadastralParcel cP : bPU.getCadastralParcel()) {
-      // for (SubParcel sB : cP.getSubParcel()) {
-      for (SpecificCadastralBoundary sCB : cP.getSpecificCadastralBoundary()) {
+		this.numberMaxOfBoxesInGroup = numberMaxOfBoxesInGroup;
 
-        if (sCB.getType() != SpecificCadastralBoundary.INTRA) {
-          IGeometry geom = sCB.getGeom();
+		List<IOrientableCurve> lCurve = new ArrayList<>();
 
-          if (geom instanceof IOrientableCurve) {
-            lCurve.add((IOrientableCurve) geom);
+		for (CadastralParcel cP : bPU.getCadastralParcel()) {
+			// for (SubParcel sB : cP.getSubParcel()) {
+			for (SpecificCadastralBoundary sCB : cP.getSpecificCadastralBoundary()) {
 
-          } else {
-            System.out
-                .println("Classe UXL3 : quelque chose n'est pas un ICurve");
-          }
+				if (sCB.getType() != SpecificCadastralBoundary.INTRA) {
+					IGeometry geom = sCB.getGeom();
 
-          // }
+					if (geom instanceof IOrientableCurve) {
+						lCurve.add((IOrientableCurve) geom);
 
-        }
+					} else {
+						System.out.println("Classe UXL3 : quelque chose n'est pas un ICurve");
+					}
 
-      }
+					// }
 
-    }
+				}
 
-    curveS = new GM_MultiCurve<>(lCurve);
+			}
 
-  }
+		}
 
-  private List<List<O>> createGroupe(List<O> lBatIn) {
+		curveS = new GM_MultiCurve<>(lCurve);
 
-    List<List<O>> listGroup = new ArrayList<>();
+	}
 
-    while (!lBatIn.isEmpty()) {
+	@Override
+	public boolean check(C c, M m) {
 
-      O batIni = lBatIn.remove(0);
+		List<O> lO = m.getBirth();
 
-      List<O> currentGroup = new ArrayList<>();
-      currentGroup.add(batIni);
+		O batDeath = null;
 
-      int nbElem = lBatIn.size();
+		if (!m.getDeath().isEmpty()) {
 
-      bouclei: for (int i = 0; i < nbElem; i++) {
+			batDeath = m.getDeath().get(0);
 
-        for (O batTemp : currentGroup) {
+		}
 
-          if (lBatIn.get(i).getFootprint().distance(batTemp.getFootprint()) < 0.5) {
+		for (O ab : lO) {
+			// System.out.println("Oh une naissance");
 
-            currentGroup.add(lBatIn.get(i));
-            lBatIn.remove(i);
-            i = -1;
-            nbElem--;
-            continue bouclei;
+			// Pas vérifié ?
 
-          }
-        }
+			boolean checked = true;
 
-      }
+			checked = ab.prospect(curveS, 0.5, 0);
+			if (!checked) {
+				return false;
+			}
 
-      listGroup.add(currentGroup);
-    }
+			checked = (ab.getFootprint().distance(curveS) > 5);
+			if (!checked) {
+				return false;
+			}
 
-    return listGroup;
-  }
+		}
 
-  @Override
-  public boolean check(C c, M m) {
+		List<O> lBatIni = new ArrayList<>();
 
-    List<O> lO = m.getBirth();
+		Iterator<O> iTBat = c.iterator();
 
-    O batDeath = null;
+		while (iTBat.hasNext()) {
 
-    if (!m.getDeath().isEmpty()) {
+			O batTemp = iTBat.next();
 
-      batDeath = m.getDeath().get(0);
+			if (batTemp == batDeath) {
+				continue;
+			}
 
-    }
+			lBatIni.add(batTemp);
 
-    for (O ab : lO) {
-      // System.out.println("Oh une naissance");
+		}
 
-      // Pas vérifié ?
+		for (O ab : lO) {
 
-      boolean checked = true;
+			lBatIni.add(ab);
 
-      checked = ab.prospect(curveS, 0.5, 0);
-      if (!checked) {
-        return false;
-      }
+		}
 
-      checked = (ab.getFootprint().distance(curveS) > 5);
-      if (!checked) {
-        return false;
-      }
+		List<List<? extends Cuboid>> groupes = CuboidGroupCreation.createGroup(lBatIni, 0.5);
 
-    }
+		int nbElem = groupes.size();
 
-    List<O> lBatIni = new ArrayList<>();
+		for (int i = 0; i < nbElem; i++) {
 
-    Iterator<O> iTBat = c.iterator();
+			if (groupes.get(i).size() > numberMaxOfBoxesInGroup) {
+				return false;
+			}
 
-    while (iTBat.hasNext()) {
+			for (int j = i + 1; j < nbElem; j++) {
 
-      O batTemp = iTBat.next();
+				if (compareGroup(groupes.get(i), groupes.get(j)) < 5) {
+					return false;
+				}
 
-      if (batTemp == batDeath) {
-        continue;
-      }
+			}
+		}
 
-      lBatIni.add(batTemp);
+		return true;
 
-    }
+	}
 
-    for (O ab : lO) {
+	private double compareGroup(List<? extends Cuboid> l1, List<? extends Cuboid> l2) {
 
-      lBatIni.add(ab);
+		double min = Double.POSITIVE_INFINITY;
 
-    }
+		for (Cuboid o1 : l1) {
+			for (Cuboid o2 : l2) {
 
-    
+				min = Math.min(o1.getFootprint().distance(o2.getFootprint()), min);
 
-    List<List<O>> groupes = createGroupe(lBatIni);
+			}
+		}
+		// System.out.println(min);
+		return min;
 
-    int nbElem = groupes.size();
-    
-    for (int i = 0; i < nbElem; i++) {
-      
-      
-      if(groupes.get(i).size() > numberMaxOfBoxesInGroup ){
-        return false;
-      }
-      
-      
-      
-      for (int j = i+1; j < nbElem; j++) {
-
-        if (compareGroup(groupes.get(i), groupes.get(j)) < 5) {
-          return false;
-        }
-
-      }
-    }
-
-    return true;
-
-  }
-
-  private double compareGroup(List<O> l1, List<O> l2) {
-
-    double min = Double.POSITIVE_INFINITY;
-
-    for (O o1 : l1) {
-      for (O o2 : l2) {
-
-        min = Math.min(o1.getFootprint().distance(o2.getFootprint()), min);
-
-      }
-    }
-//    System.out.println(min);
-    return min;
-
-  }
+	}
 
 }

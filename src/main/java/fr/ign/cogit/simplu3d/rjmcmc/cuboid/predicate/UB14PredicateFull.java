@@ -19,6 +19,7 @@ import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
+import fr.ign.cogit.simplu3d.util.CuboidGroupCreation;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
@@ -143,44 +144,7 @@ public class UB14PredicateFull<O extends Cuboid, C extends AbstractGraphConfigur
 
   }
 
-  private List<List<O>> createGroupe(List<O> lBatParam) {
 
-    List<O> lBatIn = new ArrayList<>();
-    lBatIn.addAll(lBatParam);
-
-    List<List<O>> listGroup = new ArrayList<>();
-
-    while (!lBatIn.isEmpty()) {
-
-      O batIni = lBatIn.remove(0);
-
-      List<O> currentGroup = new ArrayList<>();
-      currentGroup.add(batIni);
-
-      int nbElem = lBatIn.size();
-
-      bouclei: for (int i = 0; i < nbElem; i++) {
-
-        for (O batTemp : currentGroup) {
-
-          if (lBatIn.get(i).getFootprint().distance(batTemp.getFootprint()) < 0.5) {
-
-            currentGroup.add(lBatIn.get(i));
-            lBatIn.remove(i);
-            i = -1;
-            nbElem--;
-            continue bouclei;
-
-          }
-        }
-
-      }
-
-      listGroup.add(currentGroup);
-    }
-
-    return listGroup;
-  }
 
   @Override
   public boolean check(C c, M m) {
@@ -235,7 +199,7 @@ public class UB14PredicateFull<O extends Cuboid, C extends AbstractGraphConfigur
     //    return false;
     //}
 
-    List<List<O>> groupes = createGroupe(lBatIni);
+    List<List<? extends Cuboid>> groupes = CuboidGroupCreation.createGroup(lBatIni, 0.5);
 
     if (groupes.size() > 1) {
       return false;

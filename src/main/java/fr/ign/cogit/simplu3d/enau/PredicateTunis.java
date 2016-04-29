@@ -292,45 +292,7 @@ public class PredicateTunis<O extends AbstractSimpleBuilding, C extends Abstract
 		return true;
 	}
 
-	protected List<List<O>> createGroupe(List<O> lBatParam) {
-
-		List<O> lBatIn = new ArrayList<>();
-		lBatIn.addAll(lBatParam);
-
-		List<List<O>> listGroup = new ArrayList<>();
-
-		while (!lBatIn.isEmpty()) {
-
-			O batIni = lBatIn.remove(0);
-
-			List<O> currentGroup = new ArrayList<>();
-			currentGroup.add(batIni);
-
-			int nbElem = lBatIn.size();
-
-			bouclei: for (int i = 0; i < nbElem; i++) {
-
-				for (O batTemp : currentGroup) {
-
-					if (lBatIn.get(i).getFootprint()
-							.distance(batTemp.getFootprint()) < 0.5) {
-
-						currentGroup.add(lBatIn.get(i));
-						lBatIn.remove(i);
-						i = -1;
-						nbElem--;
-						continue bouclei;
-
-					}
-				}
-
-			}
-
-			listGroup.add(currentGroup);
-		}
-
-		return listGroup;
-	}
+	
 
 	private boolean respectBuildArea(List<O> lBatIni) {
 
