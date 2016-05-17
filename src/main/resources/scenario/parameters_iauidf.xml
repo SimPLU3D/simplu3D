@@ -11,10 +11,10 @@
         <!--Distribution (équiprobable) des dimensions des boîtes-->
         <!-- Largeur et longueur !-->
         <param key="minlen" value="7" />
-		<param key="maxlen" value="50" />
+		<param key="maxlen" value="100" />
 		
 		<param key="minwid" value="4" />
-		<param key="maxwid" value="15" />
+		<param key="maxwid" value="30" />
         <!-- Hauteur !-->
 		<param key="minheight" value ="0.5" />
 		<param key="maxheight" value="12" />
@@ -36,9 +36,9 @@
         
         <!-- Paramètres de température (on considère une fonction temp * deccoef^it) !-->
         <!-- Température initiale !-->
-		<param key="temp" value="30000" />
+		<param key="temp" value="18000" />
         <!-- Température initiale !-->
-		<param key="deccoef" value="0.9999999" />
+		<param key="deccoef" value="0.99999" />
         
         <!-- Reprise d'une configuration existante !-->
         <!-- 0 = non 1 = oui !-->

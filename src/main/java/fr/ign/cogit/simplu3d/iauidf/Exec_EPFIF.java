@@ -446,6 +446,7 @@ public class Exec_EPFIF {
 			}
 		}
 
+		/*
 		double longueur1 = Double.NEGATIVE_INFINITY;
 
 		if (r1.getGeomBande() != null && !r1.getGeomBande().isEmpty()) {
@@ -454,6 +455,7 @@ public class Exec_EPFIF {
 			longueur1 = oBB1.getLength();
 		}
 
+	
 		if (r2 != null) {
 			OrientedBoundingBox oBB2 = new OrientedBoundingBox(r2.getGeomBande());
 
@@ -467,7 +469,7 @@ public class Exec_EPFIF {
 			p.set("maxlen", Math.min(p.getDouble("maxlen"), longueur1));
 			p.set("maxwid", Math.min(p.getDouble("maxwid"), longueur1));
 
-		}
+		}*/
 
 		if (p.getDouble("maxlen") < p.getDouble("minlen")) {
 			return false;

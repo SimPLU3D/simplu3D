@@ -26,7 +26,6 @@ import fr.ign.cogit.geoxygene.util.conversion.JtsGeOxygene;
 import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
-import fr.ign.cogit.simplu3d.model.application.FastBuildingPart;
 import fr.ign.geometry.IntersectionArea;
 import fr.ign.geometry.Primitive;
 import fr.ign.geometry.Rectangle2D;
