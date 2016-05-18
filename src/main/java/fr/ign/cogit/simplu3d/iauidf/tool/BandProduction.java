@@ -18,6 +18,7 @@ import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.simplu3d.iauidf.regulation.Regulation;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
+import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
 
 public class BandProduction {
 
@@ -34,7 +35,7 @@ public class BandProduction {
 		// On créé la géométrie des limites donnant sur la voirie
 
 		IFeatureCollection<SpecificCadastralBoundary> lBordureVoirie = bPU
-				.getCadastralParcel().get(0).getBorduresFront();
+				.getCadastralParcel().get(0).getSpecificCadastralBoundaryByType(SpecificCadastralBoundaryType.ROAD);
 		for (SpecificCadastralBoundary sc : lBordureVoirie) {
 			iMSRoad.add((IOrientableCurve) sc.getGeom());
 		}
@@ -86,14 +87,14 @@ public class BandProduction {
 
 		for (SpecificCadastralBoundary sc : lBordureLat) {
 
-			if (sc.getType() == SpecificCadastralBoundary.LAT) {
+			if (sc.getType() == SpecificCadastralBoundaryType.LAT) {
 				iMSLim.add((IOrientableCurve) sc.getGeom());
 			}
 		}
 		IFeatureCollection<SpecificCadastralBoundary> lBordureFond = bPU
 				.getCadastralParcel().get(0).getSpecificCadastralBoundary();
 		for (SpecificCadastralBoundary sc : lBordureFond) {
-			if (sc.getType() == SpecificCadastralBoundary.BOT) {
+			if (sc.getType() == SpecificCadastralBoundaryType.BOT) {
 				iMSLim.add((IOrientableCurve) sc.getGeom());
 			}
 		}

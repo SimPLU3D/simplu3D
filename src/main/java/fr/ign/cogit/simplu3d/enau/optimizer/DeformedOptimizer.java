@@ -43,6 +43,8 @@ import fr.ign.cogit.simplu3d.enau.transformation.RotateCuboid;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
+import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary.SpecificCadastralBoundarySide;
+import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.endTest.StabilityEndTest;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.energy.cuboid2.DifferenceVolumeUnaryEnergy;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.energy.cuboid2.IntersectionVolumeBinaryEnergy;
@@ -353,7 +355,7 @@ public class DeformedOptimizer {
 
       case DROITE:
 
-        if (scb.getSide() == SpecificCadastralBoundary.RIGHT_SIDE) {
+        if (scb.getSide() == SpecificCadastralBoundarySide.RIGHT) {
           ims.addAll(FromGeomToLineString.convert(scb.getGeom()));
         }
 
@@ -361,19 +363,19 @@ public class DeformedOptimizer {
 
       case GAUCHE:
 
-        if (scb.getSide() == SpecificCadastralBoundary.LEFT_SIDE) {
+        if (scb.getSide() == SpecificCadastralBoundarySide.LEFT) {
           ims.addAll(FromGeomToLineString.convert(scb.getGeom()));
         }
         break;
       case FOND:
 
-        if (scb.getType() == SpecificCadastralBoundary.BOT) {
+        if (scb.getType() == SpecificCadastralBoundaryType.BOT) {
           ims.addAll(FromGeomToLineString.convert(scb.getGeom()));
         }
         break;
 
       case DEVANT:
-        if (scb.getType() == SpecificCadastralBoundary.ROAD) {
+        if (scb.getType() == SpecificCadastralBoundaryType.ROAD) {
           ims.addAll(FromGeomToLineString.convert(scb.getGeom()));
         }
         break;

@@ -15,6 +15,7 @@ import fr.ign.cogit.simplu3d.enau.geometry.DeformedCuboid;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
+import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.rjmcmc.energy.UnaryEnergy;
 
@@ -37,7 +38,7 @@ public class ProspectEnergy2<T> implements UnaryEnergy<T> {
 			for (SpecificCadastralBoundary sCB : cP
 					.getSpecificCadastralBoundary()) {
 
-				if (sCB.getType() != SpecificCadastralBoundary.ROAD) {
+				if (sCB.getType() != SpecificCadastralBoundaryType.ROAD) {
 
 					IGeometry geom = sCB.getGeom();
 

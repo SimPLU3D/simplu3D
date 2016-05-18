@@ -34,6 +34,7 @@ import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.Environnement;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
+import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary.SpecificCadastralBoundarySide;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.classconstrained.MultipleBuildingsCuboid;
 import fr.ign.mpp.configuration.BirthDeathModification;
@@ -64,7 +65,7 @@ public class Exec2 {
 
 		CadastralParcelLoader.TYPE_ANNOTATION = 2;
 
-		PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = SpecificCadastralBoundary.LEFT_SIDE;
+		PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = SpecificCadastralBoundarySide.LEFT;
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -122,31 +123,22 @@ public class Exec2 {
 		System.out.println("Number of parcels : " + featParcel.size());
 
 		for (BasicPropertyUnit bPU : env.getBpU()) {
-			
-			if(! bPU.getCadastralParcel().get(0).hasToBeSimulated()){
+
+			if (!bPU.getCadastralParcel().get(0).hasToBeSimulated()) {
 				continue;
 			}
-			
 
-			
-			if(bPU.getCadastralParcel().get(0).getArea() < 5){
+			if (bPU.getCadastralParcel().get(0).getArea() < 5) {
 				System.out.println("Probablement une erreur de carte topologique.");
 				continue;
 			}
-			
 
 			IFeature feat = retrieveFeat(featParcel, bPU);
-			
-			
-
-
 
 			if (feat == null) {
 
 				continue;
 			}
-			
-			
 
 			Regulation r1 = new Regulation(feat);
 			Regulation r2 = null;
@@ -171,13 +163,13 @@ public class Exec2 {
 				// meilleure
 				// :
 
-				PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = SpecificCadastralBoundary.RIGHT_SIDE;
+				PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = SpecificCadastralBoundarySide.RIGHT;
 
 				IFeatureCollection<IFeature> featC1 = new FT_FeatureCollection<>();
 
 				featC1.addAll(simulRegulationByBasicPropertyUnit(env, bPU, imu, r1, r2));
 
-				PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = SpecificCadastralBoundary.LEFT_SIDE;
+				PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = SpecificCadastralBoundarySide.LEFT;
 
 				IFeatureCollection<IFeature> featC2 = new FT_FeatureCollection<>();
 

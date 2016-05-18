@@ -15,6 +15,7 @@ import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
+import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
@@ -96,7 +97,7 @@ public class SamplePredicate2<O extends Cuboid, C extends AbstractGraphConfigura
         // En fonction du type on ajoute à telle ou telle géométrie
 
         // Fond de parcel
-        if (sCB.getType() == SpecificCadastralBoundary.BOT) {
+        if (sCB.getType() == SpecificCadastralBoundaryType.BOT) {
 
           IGeometry geom = sCB.getGeom();
 
@@ -112,7 +113,7 @@ public class SamplePredicate2<O extends Cuboid, C extends AbstractGraphConfigura
         }
 
         // Limite latérale
-        if (sCB.getType() == SpecificCadastralBoundary.LAT) {
+        if (sCB.getType() == SpecificCadastralBoundaryType.LAT) {
 
           IGeometry geom = sCB.getGeom();
 
@@ -128,7 +129,7 @@ public class SamplePredicate2<O extends Cuboid, C extends AbstractGraphConfigura
         }
 
         // Limite front
-        if (sCB.getType() == SpecificCadastralBoundary.ROAD) {
+        if (sCB.getType() == SpecificCadastralBoundaryType.ROAD) {
 
           IGeometry geom = sCB.getGeom();
 

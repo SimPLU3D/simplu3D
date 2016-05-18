@@ -197,7 +197,7 @@ public class GTRUToolBar extends JMenu implements ActionListener {
           if (feat instanceof SpecificCadastralBoundary) {
 
             for (CadastralParcel cP : Environnement.getInstance()
-                .getParcelles()) {
+                .getCadastralParcels()) {
 
               if (cP.getSpecificCadastralBoundary().contains(feat)) {
                 IGeometry geom = ProspectCalculation.calculate(cP.getGeom(),

@@ -16,6 +16,8 @@ import fr.ign.cogit.simplu3d.iauidf.regulation.Regulation;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
+import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary.SpecificCadastralBoundarySide;
+import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.ParallelCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.ParallelCuboid2;
@@ -37,10 +39,9 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 	Geometry jtsCurveLatRightArt71 = null;
 
-	public static int RIGHT_OF_LEFT_FOR_ART_71 = SpecificCadastralBoundary.RIGHT_SIDE;
+	public static SpecificCadastralBoundarySide RIGHT_OF_LEFT_FOR_ART_71 = SpecificCadastralBoundarySide.RIGHT;
 
-	public PredicateIAUIDF(BasicPropertyUnit bPU, Regulation r1, Regulation r2)
-			throws Exception {
+	public PredicateIAUIDF(BasicPropertyUnit bPU, Regulation r1, Regulation r2) throws Exception {
 		super();
 		this.currentBPU = bPU;
 		this.r1 = r1;
@@ -69,13 +70,12 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		for (CadastralParcel cP : currentBPU.getCadastralParcel()) {
 
 			// On parcourt les limites séparaticves
-			for (SpecificCadastralBoundary sCB : cP
-					.getSpecificCadastralBoundary()) {
+			for (SpecificCadastralBoundary sCB : cP.getSpecificCadastralBoundary()) {
 
 				// En fonction du type on ajoute à telle ou telle géométrie
 
 				// Fond de parcel
-				if (sCB.getType() == SpecificCadastralBoundary.BOT) {
+				if (sCB.getType() == SpecificCadastralBoundaryType.BOT) {
 
 					IGeometry geom = sCB.getGeom();
 
@@ -83,42 +83,38 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 						curveLimiteFondParcel.add((IOrientableCurve) geom);
 
 					} else {
-						System.out
-								.println("Classe SamplePredicate : quelque chose n'est pas un ICurve : "
-										+ geom.getClass());
+						System.out.println(
+								"Classe SamplePredicate : quelque chose n'est pas un ICurve : " + geom.getClass());
 					}
 
 				}
 
 				// Limite latérale
-				if (sCB.getType() == SpecificCadastralBoundary.LAT) {
+				if (sCB.getType() == SpecificCadastralBoundaryType.LAT) {
 
 					IGeometry geom = sCB.getGeom();
 
 					if (geom instanceof IOrientableCurve && !geom.isEmpty()) {
 						curveLimiteLatParcel.add((IOrientableCurve) geom);
 
-						if (r1 != null
-								&& r1.getArt_71() == 2
+						if (r1 != null && r1.getArt_71() == 2
 								&& (sCB.getSide() != PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71)
-								|| r2 != null
-								&& r2.getArt_71() == 2
-								&& (sCB.getSide() != PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71)) {
+								|| r2 != null && r2.getArt_71() == 2
+										&& (sCB.getSide() != PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71)) {
 
 							curveLatRightLeftArt71.add((IOrientableCurve) geom);
 
 						}
 
 					} else {
-						System.out
-								.println("Classe SamplePredicate : quelque chose n'est pas un ICurve : "
-										+ geom.getClass());
+						System.out.println(
+								"Classe SamplePredicate : quelque chose n'est pas un ICurve : " + geom.getClass());
 					}
 
 				}
 
 				// Limite front
-				if (sCB.getType() == SpecificCadastralBoundary.ROAD) {
+				if (sCB.getType() == SpecificCadastralBoundaryType.ROAD) {
 
 					IGeometry geom = sCB.getGeom();
 
@@ -126,9 +122,8 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 						curveLimiteFrontParcel.add((IOrientableCurve) geom);
 
 					} else {
-						System.out
-								.println("Classe SamplePredicate : quelque chose n'est pas un ICurve : "
-										+ geom.getClass());
+						System.out.println(
+								"Classe SamplePredicate : quelque chose n'est pas un ICurve : " + geom.getClass());
 					}
 
 				}
@@ -140,32 +135,26 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		GeometryFactory gf = new GeometryFactory();
 
 		if (!curveLimiteFondParcel.isEmpty()) {
-			this.jtsCurveLimiteFondParcel = AdapterFactory.toGeometry(gf,
-					curveLimiteFondParcel);
+			this.jtsCurveLimiteFondParcel = AdapterFactory.toGeometry(gf, curveLimiteFondParcel);
 		}
 
 		if (!curveLimiteFrontParcel.isEmpty()) {
-			this.jtsCurveLimiteFrontParcel = AdapterFactory.toGeometry(gf,
-					curveLimiteFrontParcel);
+			this.jtsCurveLimiteFrontParcel = AdapterFactory.toGeometry(gf, curveLimiteFrontParcel);
 		}
 
 		if (!curveLimiteLatParcel.isEmpty()) {
-			this.jtsCurveLimiteLatParcel = AdapterFactory.toGeometry(gf,
-					curveLimiteLatParcel);
+			this.jtsCurveLimiteLatParcel = AdapterFactory.toGeometry(gf, curveLimiteLatParcel);
 		}
 
 		if (!curveLatRightLeftArt71.isEmpty()) {
 
-			this.jtsCurveLatRightArt71 = AdapterFactory.toGeometry(gf,
-					curveLatRightLeftArt71);
+			this.jtsCurveLatRightArt71 = AdapterFactory.toGeometry(gf, curveLatRightLeftArt71);
 		}
 
 	}
 
 	@Override
 	public boolean check(C c, M m) {
-	    
-
 
 		// Pour produire des boîtes séparées et vérifier que la distance inter
 		// bâtiment est respectée
@@ -189,7 +178,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		}
 
 		// Vérification des règles au niveau de la parcelle
-	           
+
 		// ART_9 Pourcentage d'emprise au sol maximum autorisé Valeur comprise
 		// de 0 à 1, 88= non renseignable, 99= non réglementé
 		// ART_13 Part minimale d'espaces libre de toute construction exprimée
@@ -210,7 +199,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 		// @TODO : il faudrait déterminer dans quel bande est le nouvel objet
 		// pour pointer sur la bonne réglementation
-	 
+
 		if (birth != null) {
 
 			if (birth instanceof ParallelCuboid) {
@@ -246,13 +235,11 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 				}
 
 			} else {
-				System.out
-						.println("Predicate IAUIDF - Unexpected class during object birth : "
-								+ birth.getClass().getCanonicalName());
+				System.out.println("Predicate IAUIDF - Unexpected class during object birth : "
+						+ birth.getClass().getCanonicalName());
 			}
 
 		}
-	
 
 		// System.out.println("Je retourne true");
 		return true;
@@ -262,8 +249,6 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 		// On fait la liste de tous les objets après modification
 		List<O> lCuboid = new ArrayList<>();
-
-
 
 		// On récupère la boîte (si elle existe) que l'on supprime lors de la
 		// modification
@@ -286,7 +271,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 			lCuboid.add(batTemp);
 
 		}
-		
+
 		// On ajoute tous les nouveaux objets
 		lCuboid.addAll(m.getBirth());
 
@@ -301,7 +286,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 			double area = cubTemp.getArea(); // .toGeometry().getArea();
 			int nbEtage = 1 + (int) (cubTemp.height / 3);
 
-			areaBuilt  += area;
+			areaBuilt += area;
 			shonBuilt += area * nbEtage;
 		}
 
@@ -332,7 +317,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		// par rapport à la surface totale de la parcelle Valeur comprise de 0 à
 		// 1, 88 si non renseignable, 99 si non règlementé
 		double reg14 = r.getArt_14();
-		if (reg14 != 0.0 &  reg14 != 99 & reg14 != 88) {
+		if (reg14 != 0.0 & reg14 != 99 & reg14 != 88) {
 			if (shonBuilt / areaBPU > reg14) {
 				return false;
 			}
@@ -377,8 +362,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		// réglementé
 
 		double r_art73 = r.getArt_73();
-		if (jtsCurveLimiteFondParcel != null && r_art73 != 88.0
-				&& r_art73 != 99.0) {
+		if (jtsCurveLimiteFondParcel != null && r_art73 != 88.0 && r_art73 != 99.0) {
 			// On vérifie la distance (on récupère le foot
 			if (this.jtsCurveLimiteFondParcel.distance(cuboid.toGeometry()) < r_art73) {
 				// elle n'est pas respectée, on retourne faux
@@ -449,14 +433,11 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 			}
 
 			if (this.jtsCurveLimiteFondParcel != null
-					&& !cuboid.prospectJTS(this.jtsCurveLimiteFondParcel,
-							slope, hIni)) {
+					&& !cuboid.prospectJTS(this.jtsCurveLimiteFondParcel, slope, hIni)) {
 				return false;
 			}
 
-			if (this.jtsCurveLatRightArt71 != null
-					&& !cuboid.prospectJTS(this.jtsCurveLatRightArt71, slope,
-							hIni)) {
+			if (this.jtsCurveLatRightArt71 != null && !cuboid.prospectJTS(this.jtsCurveLatRightArt71, slope, hIni)) {
 				return false;
 			}
 		}
@@ -585,14 +566,12 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 			}
 
 			if (this.jtsCurveLimiteFondParcel != null
-					&& !cuboid.prospectJTS(this.jtsCurveLimiteFondParcel,
-							slope, hIni)) {
+					&& !cuboid.prospectJTS(this.jtsCurveLimiteFondParcel, slope, hIni)) {
 				return false;
 			}
 
 			if (this.jtsCurveLimiteLatParcel != null
-					&& !cuboid.prospectJTS(this.jtsCurveLimiteLatParcel, slope,
-							hIni)) {
+					&& !cuboid.prospectJTS(this.jtsCurveLimiteLatParcel, slope, hIni)) {
 				return false;
 			}
 		}
@@ -602,8 +581,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 	}
 
-	private boolean checkDistanceInterBuildings(C c, M m,
-			double distanceInterBati) {
+	private boolean checkDistanceInterBuildings(C c, M m, double distanceInterBati) {
 
 		// On récupère les objets ajoutées lors de la proposition
 		List<O> lO = m.getBirth();
@@ -634,13 +612,12 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 			// On parcourt les boîtes que l'on ajoute
 			for (O ab : lO) {
 
-				//On prend en compte la hauteur max si elle est supérieure à la contrainte de distance
-						double distComp = Math.max(distanceInterBati, Math.max(ab.height(), batTemp.height()));
-		
+				// On prend en compte la hauteur max si elle est supérieure à la
+				// contrainte de distance
+				double distComp = Math.max(distanceInterBati, Math.max(ab.height(), batTemp.height()));
 
-					if ((new SquaredDistance(ab.getRectangle2D(),
-					 batTemp.getRectangle2D() )).getSquaredDistance() <
-							distComp * distComp) {
+				if ((new SquaredDistance(ab.getRectangle2D(), batTemp.getRectangle2D())).getSquaredDistance() < distComp
+						* distComp) {
 					return false;
 				}
 

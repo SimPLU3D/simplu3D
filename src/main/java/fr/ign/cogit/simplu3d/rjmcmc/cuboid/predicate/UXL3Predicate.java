@@ -10,6 +10,7 @@ import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
+import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
@@ -45,7 +46,7 @@ public class UXL3Predicate<O extends AbstractSimpleBuilding, C extends AbstractG
       // for (SubParcel sB : cP.getSubParcel()) {
       for (SpecificCadastralBoundary sCB : cP.getSpecificCadastralBoundary()) {
 
-        if (sCB.getType() != SpecificCadastralBoundary.INTRA) {
+        if (sCB.getType() != SpecificCadastralBoundaryType.INTRA) {
           IGeometry geom = sCB.getGeom();
 
           if (geom instanceof IOrientableCurve) {

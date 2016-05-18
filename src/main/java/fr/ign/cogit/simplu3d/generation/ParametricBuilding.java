@@ -215,7 +215,7 @@ public class ParametricBuilding extends Building {
 
     
     if(this.getRoof() == null){
-      this.setToit(t);
+      this.setRoofSurface(t);
     }else{
       this.getRoof().setGeom(t.getGeom());
       this.getRoof().setGable(t.gable);
@@ -468,9 +468,9 @@ public class ParametricBuilding extends Building {
   }
 
   public void changeTextureFacade(Materiau materiau, int ind) {
-    int nbFacade = this.getFacade().size();
+    int nbFacade = this.getWallSurfaces().size();
     if (nbFacade > ind) {
-      this.getFacade().get(ind).setMat(materiau);
+      this.getWallSurfaces().get(ind).setMat(materiau);
 
       int nbText = this.materiauFacades.size();
 

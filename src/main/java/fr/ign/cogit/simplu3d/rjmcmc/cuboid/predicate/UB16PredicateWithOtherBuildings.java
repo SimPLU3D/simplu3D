@@ -17,6 +17,7 @@ import fr.ign.cogit.simplu3d.model.application.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
+import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
@@ -70,7 +71,7 @@ public class UB16PredicateWithOtherBuildings<O extends Cuboid, C extends Abstrac
 
             for (SpecificCadastralBoundary sCB : cP.getSpecificCadastralBoundary()) {
 
-                if (sCB.getType() == SpecificCadastralBoundary.ROAD) {
+                if (sCB.getType() == SpecificCadastralBoundaryType.ROAD) {
 
                     IGeometry geom = sCB.getGeom();
 
@@ -83,7 +84,7 @@ public class UB16PredicateWithOtherBuildings<O extends Cuboid, C extends Abstrac
                                 .println("Classe UB14PredicateFull : quelque chose n'est pas un ICurve");
                     }
 
-                } else if (sCB.getType() != SpecificCadastralBoundary.INTRA) {
+                } else if (sCB.getType() != SpecificCadastralBoundaryType.INTRA) {
                     IGeometry geom = sCB.getGeom();
 
                     if (geom instanceof IOrientableCurve) {

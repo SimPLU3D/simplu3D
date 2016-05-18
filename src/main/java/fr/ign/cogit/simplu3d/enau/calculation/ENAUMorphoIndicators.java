@@ -16,6 +16,7 @@ import fr.ign.cogit.simplu3d.enau.geometry.DeformedCuboid;
 import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.application.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
+import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
 
 public class ENAUMorphoIndicators {
 	
@@ -46,7 +47,7 @@ public class ENAUMorphoIndicators {
 
 				IGeometry geom = sCB.getGeom();
 				
-				if (sCB.getType() == SpecificCadastralBoundary.ROAD) {
+				if (sCB.getType() == SpecificCadastralBoundaryType.ROAD) {
 
 				
 
