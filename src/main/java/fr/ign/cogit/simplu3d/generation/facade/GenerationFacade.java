@@ -86,9 +86,9 @@ public class GenerationFacade {
       if (facadesNonAveugles != null) {
 
         if (count < facadesNonAveugles.length) {
-          f.setAveugle(facadesNonAveugles[count]);
+          f.setWindowLess(facadesNonAveugles[count]);
         } else {
-          f.setAveugle(false);
+          f.setWindowLess(false);
         }
       }
 
