@@ -23,7 +23,7 @@ Furthermore, we are interested in every feedbacks about this library if you find
 
 Library installation
 ---------------------
-The project is build with Maven and is coded in Java (JDK 1.7 is required), it has been tested in most common OS. If you are not familiar with Maven, we suggest installing developer tools and versions as described in [GeOxygene install guide](http://oxygene-project.sourceforge.net/documentation/developer/install.html).
+The project is build with Maven and is coded in Java (JDK 1.7 or higher is required), it has been tested in most common OS. If you are not familiar with Maven, we suggest installing developer tools and versions as described in [GeOxygene install guide](http://oxygene-project.sourceforge.net/documentation/developer/install.html).
 
 Vidéo and illustration
 ---------------------
@@ -99,7 +99,6 @@ fr.ign.cogit.simplu3d.exec.BasicSimulator class using predefined resource  files
       iFeatC.add(feat);
 
     }
-
     
     //A shapefile is written as output
     //WARNING : 'out' parameter from configuration file have to be change
