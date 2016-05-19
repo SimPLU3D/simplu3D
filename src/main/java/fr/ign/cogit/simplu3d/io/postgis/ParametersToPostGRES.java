@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.util;
+package fr.ign.cogit.simplu3d.io.postgis;
 
 import java.io.File;
 import java.sql.Connection;

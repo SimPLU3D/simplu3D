@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.io;
+package fr.ign.cogit.simplu3d.util.convert;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;

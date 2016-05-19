@@ -3,13 +3,13 @@ package fr.ign.cogit.simplu3d.exec;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 
-import fr.ign.cogit.simplu3d.io.load.application.ExperimentationPostGIS;
-import fr.ign.cogit.simplu3d.io.load.application.LoadPostGIS;
-import fr.ign.cogit.simplu3d.io.load.application.ParametersPostgis;
-import fr.ign.cogit.simplu3d.io.load.application.SaveEnergyPostGIS;
-import fr.ign.cogit.simplu3d.io.save.SaveGeneratedObjects;
-import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
-import fr.ign.cogit.simplu3d.model.application.Environnement;
+import fr.ign.cogit.simplu3d.io.SaveGeneratedObjects;
+import fr.ign.cogit.simplu3d.io.nonStructDatabase.postgis.LoadPostGIS;
+import fr.ign.cogit.simplu3d.io.postgis.ExperimentationPostGIS;
+import fr.ign.cogit.simplu3d.io.postgis.ParametersPostgis;
+import fr.ign.cogit.simplu3d.io.postgis.SaveEnergyPostGIS;
+import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
+import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.classconstrained.OptimisedBuildingsCuboidDirectRejectionNoVisitor;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.predicate.UB16PredicateWithParameters;
@@ -64,7 +64,7 @@ public class BasicPostGISSimulator {
         // TODO use something better that the run ID as a seed
 
         // Chargement de l'expérimentation
-        ExperimentationPostGIS exp = new ExperimentationPostGIS(host, port, database, user, pw, idExperiment);
+				ExperimentationPostGIS exp = new ExperimentationPostGIS(host, port, database, user, pw, idExperiment);
 
         // Chargement de l'environnement depuis PostGIS
         LoadPostGIS lP = new LoadPostGIS(host, port, database, user, pw);

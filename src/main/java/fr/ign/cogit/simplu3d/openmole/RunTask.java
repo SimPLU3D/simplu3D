@@ -13,10 +13,10 @@ import org.geotools.referencing.factory.epsg.FactoryUsingWKT;
 import org.geotools.referencing.operation.DefaultMathTransformFactory;
 
 import fr.ign.cogit.simplu3d.exec.experimentation.SamplePredicate;
-import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
-import fr.ign.cogit.simplu3d.io.save.SaveGeneratedObjects;
-import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
-import fr.ign.cogit.simplu3d.model.application.Environnement;
+import fr.ign.cogit.simplu3d.io.SaveGeneratedObjects;
+import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
+import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
+import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.openmole.diversity.ParcelCoverageRatio;
 import fr.ign.cogit.simplu3d.openmole.diversity.ParcelSignature;
 import fr.ign.cogit.simplu3d.openmole.msc.TestDatumFactory;
@@ -105,7 +105,7 @@ public class RunTask {
     String pathShapeFile = folderOut + File.separator + "sim_" + idBPU + "_drv_" + distReculVoirie + "_drf_" + distReculFond + "_drl_"
         + distReculLat + "_ces_" + maximalCES + "_hini_" + hIniRoad + "_sro_" + slopeRoad + "_hmax_" + hauteurMax + "_seed_" + seed + "_en_"
         + energy + "_sig_" + signature + "_cov_" + coverageRatio + ".shp";
-    SaveGeneratedObjects.saveShapefile(pathShapeFile, cc, idBPU, seed);
+		SaveGeneratedObjects.saveShapefile(pathShapeFile, cc, idBPU, seed);
     return new TaskResult(energy, coverageRatio, signature);
   }
 }

@@ -15,9 +15,9 @@ import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.geoxygene.util.algo.JtsAlgorithms;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
-import fr.ign.cogit.simplu3d.io.ExportAsFeatureCollection;
-import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
+import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
+import fr.ign.cogit.simplu3d.util.convert.ExportAsFeatureCollection;
 import fr.ign.mpp.configuration.GraphConfiguration;
 
 public class ParcelCoverageRatio {

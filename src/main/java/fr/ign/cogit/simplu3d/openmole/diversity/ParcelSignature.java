@@ -4,9 +4,9 @@ import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IEnvelope;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Envelope;
-import fr.ign.cogit.simplu3d.io.ExportAsFeatureCollection;
-import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
+import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
+import fr.ign.cogit.simplu3d.util.convert.ExportAsFeatureCollection;
 import fr.ign.mpp.configuration.GraphConfiguration;
 
 public class ParcelSignature {

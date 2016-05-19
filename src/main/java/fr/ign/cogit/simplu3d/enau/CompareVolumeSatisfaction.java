@@ -18,10 +18,10 @@ import fr.ign.cogit.geoxygene.sig3d.semantic.VectorLayer;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
 import fr.ign.cogit.simplu3d.enau.calculation.ENAUMorphoIndicators;
 import fr.ign.cogit.simplu3d.enau.geometry.DeformedCuboid;
-import fr.ign.cogit.simplu3d.importer.applicationClasses.CadastralParcelLoader;
-import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
-import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
-import fr.ign.cogit.simplu3d.model.application.Environnement;
+import fr.ign.cogit.simplu3d.importer.CadastralParcelLoader;
+import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
+import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
+import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.util.AssignZ;
 
 public class CompareVolumeSatisfaction {

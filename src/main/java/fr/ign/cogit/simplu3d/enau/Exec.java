@@ -3,11 +3,11 @@ package fr.ign.cogit.simplu3d.enau;
 import java.io.File;
 
 import fr.ign.cogit.simplu3d.enau.optimizer.OBCFDRConstraintOptimisation;
-import fr.ign.cogit.simplu3d.importer.applicationClasses.CadastralParcelLoader;
-import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
-import fr.ign.cogit.simplu3d.io.save.SaveGeneratedObjects;
-import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
-import fr.ign.cogit.simplu3d.model.application.Environnement;
+import fr.ign.cogit.simplu3d.importer.CadastralParcelLoader;
+import fr.ign.cogit.simplu3d.io.SaveGeneratedObjects;
+import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
+import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
+import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.util.AssignZ;
 import fr.ign.mpp.configuration.BirthDeathModification;

@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.io.save;
+package fr.ign.cogit.simplu3d.io;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,9 +9,9 @@ import org.apache.log4j.Logger;
 import fr.ign.cogit.geoxygene.sig3d.Messages;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.geoxygene.util.conversion.WktGeOxygene;
-import fr.ign.cogit.simplu3d.io.ExportAsFeatureCollection;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
+import fr.ign.cogit.simplu3d.util.convert.ExportAsFeatureCollection;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.mpp.configuration.GraphVertex;
 

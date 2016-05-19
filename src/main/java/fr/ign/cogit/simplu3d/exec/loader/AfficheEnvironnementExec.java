@@ -9,13 +9,9 @@ import fr.ign.cogit.geoxygene.sig3d.gui.MainWindow;
 import fr.ign.cogit.geoxygene.sig3d.representation.ConstantRepresentation;
 import fr.ign.cogit.geoxygene.sig3d.representation.basic.Object1d;
 import fr.ign.cogit.geoxygene.sig3d.semantic.VectorLayer;
-import fr.ign.cogit.simplu3d.gui.button.GTRUToolBar;
-import fr.ign.cogit.simplu3d.iauidf.predicate.PredicateIAUIDF;
-import fr.ign.cogit.simplu3d.importer.applicationClasses.CadastralParcelLoader;
-import fr.ign.cogit.simplu3d.importer.applicationClasses.RoadImporter;
-import fr.ign.cogit.simplu3d.io.load.application.LoaderSHP;
-import fr.ign.cogit.simplu3d.model.application.Environnement;
-import fr.ign.cogit.simplu3d.model.application.SpecificCadastralBoundary;
+import fr.ign.cogit.simplu3d.importer.CadastralParcelLoader;
+import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
+import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement.Theme;
 
@@ -41,19 +37,20 @@ public class AfficheEnvironnementExec {
 
 		Object1d.width = 4.0f;
 		/*
-		RoadImporter.ATT_NOM_RUE = "NOM_VOIE_G";
-		RoadImporter.ATT_LARGEUR = "LARGEUR";
-		RoadImporter.ATT_TYPE = "NATURE";
-
-		LoaderSHP.NOM_FICHIER_PARCELLE = "parcelle.shp";
-
-		
-		CadastralParcelLoader.ATT_HAS_TO_BE_SIMULATED = "simul";
-
-		PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = SpecificCadastralBoundary.LEFT_SIDE;*/
+		 * RoadImporter.ATT_NOM_RUE = "NOM_VOIE_G"; RoadImporter.ATT_LARGEUR =
+		 * "LARGEUR"; RoadImporter.ATT_TYPE = "NATURE";
+		 * 
+		 * LoaderSHP.NOM_FICHIER_PARCELLE = "parcelle.shp";
+		 * 
+		 * 
+		 * CadastralParcelLoader.ATT_HAS_TO_BE_SIMULATED = "simul";
+		 * 
+		 * PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 =
+		 * SpecificCadastralBoundary.LEFT_SIDE;
+		 */
 
 		CadastralParcelLoader.TYPE_ANNOTATION = 2;
-		
+
 		ConstantRepresentation.backGroundColor = new Color(156, 180, 193);
 
 		String folderName = "/home/mickael/data/mbrasebin/donnees/Strasbourg/GTRU/ProjectT3/";
@@ -63,11 +60,11 @@ public class AfficheEnvironnementExec {
 		System.out.println("Nombre de BPU " + env.getBpU().size());
 
 		List<Theme> lTheme = new ArrayList<RepEnvironnement.Theme>();
-		 lTheme.add(Theme.TOIT_BATIMENT);
-		 lTheme.add(Theme.FACADE_BATIMENT);
-		 lTheme.add(Theme.FAITAGE);
-		 lTheme.add(Theme.PIGNON);
-		 lTheme.add(Theme.GOUTTIERE);
+		lTheme.add(Theme.TOIT_BATIMENT);
+		lTheme.add(Theme.FACADE_BATIMENT);
+		lTheme.add(Theme.FAITAGE);
+		lTheme.add(Theme.PIGNON);
+		lTheme.add(Theme.GOUTTIERE);
 		lTheme.add(Theme.VOIRIE);
 		lTheme.add(Theme.PARCELLE);
 		lTheme.add(Theme.SOUS_PARCELLE);
@@ -86,8 +83,6 @@ public class AfficheEnvironnementExec {
 
 			mW.getInterfaceMap3D().getCurrent3DMap().addLayer(l);
 		}
-
-		mW.getMainMenuBar().add(new GTRUToolBar(mW));
 
 	}
 

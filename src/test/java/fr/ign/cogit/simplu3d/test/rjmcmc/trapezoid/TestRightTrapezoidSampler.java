@@ -12,13 +12,10 @@ import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Envelope;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
-import fr.ign.cogit.simplu3d.io.ExportAsFeatureCollection;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.sampler.GreenSamplerBlockTemperature;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth.TransformToSurface;
 import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.builder.SimpleRightTrapezoidBuilder;
 import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.geometry.RightTrapezoid;
-import fr.ign.mpp.DirectRejectionSampler;
 import fr.ign.mpp.DirectSampler;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
@@ -32,7 +29,6 @@ import fr.ign.rjmcmc.energy.ConstantEnergy;
 import fr.ign.rjmcmc.kernel.Kernel;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.SimpleTemperature;
-import fr.ign.simulatedannealing.temperature.Temperature;
 
 public class TestRightTrapezoidSampler {
 

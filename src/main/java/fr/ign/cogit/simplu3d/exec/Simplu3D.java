@@ -20,9 +20,8 @@ import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_LineString;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Polygon;
-import fr.ign.cogit.simplu3d.demo.LoadDefaultEnvironment;
-import fr.ign.cogit.simplu3d.gui.button.GTRUToolBar;
-import fr.ign.cogit.simplu3d.model.application.Environnement;
+import fr.ign.cogit.simplu3d.demo.nonStructDatabase.shp.LoadDefaultEnvironment;
+import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement.Theme;
 import fr.ign.parameters.Parameters;
@@ -68,8 +67,7 @@ public class Simplu3D {
 
     MainWindow mW = new MainWindow();
 
-    new GTRUToolBar(mW);
-    // new IOToolBar(mW);
+
 
     represent(folder, env, mW, p);
 

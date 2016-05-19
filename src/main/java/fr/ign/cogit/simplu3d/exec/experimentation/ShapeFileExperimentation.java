@@ -5,11 +5,11 @@ import java.io.File;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 
-import fr.ign.cogit.simplu3d.demo.LoadDefaultEnvironment;
+import fr.ign.cogit.simplu3d.demo.nonStructDatabase.shp.LoadDefaultEnvironment;
 import fr.ign.cogit.simplu3d.exec.BasicSimulator;
-import fr.ign.cogit.simplu3d.io.save.SaveGeneratedObjects;
-import fr.ign.cogit.simplu3d.model.application.BasicPropertyUnit;
-import fr.ign.cogit.simplu3d.model.application.Environnement;
+import fr.ign.cogit.simplu3d.io.SaveGeneratedObjects;
+import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
+import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.classconstrained.OptimisedBuildingsCuboidDirectRejectionNoVisitor;
 import fr.ign.mpp.configuration.BirthDeathModification;
