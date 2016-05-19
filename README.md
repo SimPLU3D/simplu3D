@@ -11,7 +11,7 @@ Introduction
 
 This research library is developed as part of [COGIT laboratory](http://recherche.ign.fr/labos/cogit/accueilCOGIT.php) researches concerning processing of urban regulation. 
 
-It provides an implementation of multi-dimensionnal simulated annealing algorithm to produce built configuration from a set of boxes constrained by urban regulation that optimizes a utility fonction. 
+It provides an implementation of multi-dimensionnal simulated annealing algorithm to produce built configuration from a set of boxes constrained by urban regulation that optimizes a utility function. 
 
 The project is developed over 3D GIS Open-Source library [GeOxygene](http://oxygene-project.sourceforge.net) concerning geometric operators and 3D visualization, [librjmcmc4j](https://github.com/IGNF/librjmcmc4j) for simulated annealing implementation and [simplu3d-rules](https://github.com/IGNF/simplu3d-rules) for geographical model and regulation management.
 
