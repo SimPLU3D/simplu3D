@@ -13,7 +13,7 @@ import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.classconstrained.OptimisedBuildingsCuboidFinalDirectRejection;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.predicate.SamplePredicate2;
+import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.predicate.SamplePredicate;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.mpp.configuration.GraphVertex;
@@ -79,9 +79,12 @@ public class BasicSimulator {
 
 		// Instanciation du sampler avec l'unité foncière et les valeurs
 		// ci-dessus
-		SamplePredicate2<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new SamplePredicate2<>(
+		SamplePredicate<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new SamplePredicate<>(
 				bPU, distReculVoirie, distReculFond, distReculLat,
 				distanceInterBati, maximalCES);
+		
+		
+	
 
 		// Lancement de l'optimisation avec unité foncière, paramètres,
 		// environnement, id et prédicat

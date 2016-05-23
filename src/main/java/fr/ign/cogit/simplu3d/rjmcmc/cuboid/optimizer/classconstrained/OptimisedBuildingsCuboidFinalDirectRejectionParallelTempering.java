@@ -17,25 +17,26 @@ import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.energy.cuboid2.DifferenceVolumeUnaryEnergy;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.energy.cuboid2.IntersectionVolumeBinaryEnergy;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.energy.cuboid2.VolumeUnaryEnergy;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid2;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.sampler.GreenSamplerBlockTemperature;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.ChangeHeight;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.ChangeLength;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.ChangeWidth;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.MoveCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.RotateCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth.TransformToSurface;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.CSVendStats;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.CSVvisitor;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.CountVisitor;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.FilmVisitor;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.ShapefileVisitorCuboid;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.StatsVisitor;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.visitor.ViewerVisitor;
+import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.DifferenceVolumeUnaryEnergy;
+import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.IntersectionVolumeBinaryEnergy;
+import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.VolumeUnaryEnergy;
+import fr.ign.cogit.simplu3d.rjmcmc.generic.optimizer.DefaultSimPLU3DOptimizer;
+import fr.ign.cogit.simplu3d.rjmcmc.generic.sampler.GreenSamplerBlockTemperature;
+import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.CSVendStats;
+import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.CSVvisitor;
+import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.CountVisitor;
+import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.FilmVisitor;
+import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.ShapefileVisitor;
+import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.StatsVisitor;
+import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.ViewerVisitor;
 import fr.ign.mpp.DirectRejectionSampler;
 import fr.ign.mpp.DirectSampler;
 import fr.ign.mpp.configuration.BirthDeathModification;
@@ -83,43 +84,21 @@ import fr.ign.simulatedannealing.visitor.Visitor;
  * 
  * @version 1.0
  **/
-public class OptimisedBuildingsCuboidFinalDirectRejectionParallelTempering {
+public class OptimisedBuildingsCuboidFinalDirectRejectionParallelTempering  extends DefaultSimPLU3DOptimizer<Cuboid> {
 
-  private double minLengthBox = Double.NaN;
-  private double maxLengthBox = Double.NaN;
-  private double minWidthBox = Double.NaN;
-  private double maxWidthBox = Double.NaN;
 
   private int numberOfReplicas = 1;
 
   private double tempMax = 1;
 
-  public void setMinLengthBox(double minLengthBox) {
-    this.minLengthBox = minLengthBox;
-  }
 
-  public void setMaxLengthBox(double maxLengthBox) {
-    this.maxLengthBox = maxLengthBox;
-  }
-
-  public void setMinWidthBox(double minWidthBox) {
-    this.minWidthBox = minWidthBox;
-  }
-
-  public void setMaxWidthBox(double maxWidthBox) {
-    this.maxWidthBox = maxWidthBox;
-  }
 
   public OptimisedBuildingsCuboidFinalDirectRejectionParallelTempering(int nbReplicas, double tempMax) {
     numberOfReplicas = nbReplicas;
     this.tempMax = tempMax;
   }
 
-  private IGeometry samplingSurface = null;
 
-  public void setSamplingSurface(IGeometry geom) {
-    samplingSurface = geom;
-  }
 
   public void process(BasicPropertyUnit bpu, Parameters p, Environnement env, int id,
       ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred) {
@@ -180,7 +159,7 @@ public class OptimisedBuildingsCuboidFinalDirectRejectionParallelTempering {
         }
 
         if (p.getBoolean("shapefilewriter")) {
-          ShapefileVisitorCuboid<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> shpVisitor = new ShapefileVisitorCuboid<>(
+          ShapefileVisitor<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> shpVisitor = new ShapefileVisitor<>(
               p.get("result").toString() + "result");
           list.add(shpVisitor);
         }

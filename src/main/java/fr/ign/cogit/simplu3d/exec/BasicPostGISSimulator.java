@@ -3,6 +3,7 @@ package fr.ign.cogit.simplu3d.exec;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 
+import fr.ign.cogit.simplu3d.experiments.thesis.predicate.UB16PredicateWithParameters;
 import fr.ign.cogit.simplu3d.io.SaveGeneratedObjects;
 import fr.ign.cogit.simplu3d.io.nonStructDatabase.postgis.LoadPostGIS;
 import fr.ign.cogit.simplu3d.io.postgis.ExperimentationPostGIS;
@@ -12,7 +13,6 @@ import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.classconstrained.OptimisedBuildingsCuboidDirectRejectionNoVisitor;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.predicate.UB16PredicateWithParameters;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 
