@@ -1,0 +1,30 @@
+package  fr::ign::cogit::simplu3d::model::application
+
+
+context Building
+inv: self.height(1,2) < 12
+
+
+context SubParcel
+inv: self.getces() <= 0.5
+
+
+
+--context Building
+--inv: self.isNew implies self.getbPU().getCadastralParcel().getSpecificCadastralBoundary()->select(s | s.type=4).geom.distance(self.getFootprint())->min()<4.5
+
+
+
+--context Building
+--inv: self.isNew implies self.getbPU().getCadastralParcel().getSpecificCadastralBoundary()->select(s | s.type=4).geom.distance(self.getFootprint())->min()>4
+
+
+context Building
+inv: self.isNew implies self.getbPU().getCadastralParcel().getSpecificCadastralBoundary()->select(s | s.type=0).geom.distance(self.getFootprint())->min()> 27
+
+
+--context Building
+--inv: self.isNew implies self.getbPU().getCadastralParcel().getSubParcel().forAll(sb | sb.getGeom().contains(self.getFootprint()))
+
+
+endpackage

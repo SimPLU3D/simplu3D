@@ -4,11 +4,15 @@ import java.io.File;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
+import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
+import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
+import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.demo.nonStructDatabase.shp.LoadDefaultEnvironment;
+import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
@@ -48,74 +52,63 @@ public class BasicSimulator {
 	// [building_footprint_rectangle_cli_main
 	public static void main(String[] args) throws Exception {
 
-		// Chargement du fichier de configuration
-		String folderName = BasicSimulator.class.getClassLoader()
-				.getResource("scenario/").getPath();
+		// Loading of configuration file that contains sampling space
+		// information and simulated annealing configuration
+		String folderName = BasicSimulator.class.getClassLoader().getResource("scenario/").getPath();
 		String fileName = "building_parameters_project_expthese_3.xml";
 		Parameters p = Parameters.unmarshall(new File(folderName + fileName));
 
-		// Chargement de l'environnement
-		Environnement env = LoadDefaultEnvironment.getENVDEF();
+		// Load default environment (data are in resource directory)
+		Environnement env = LoaderSHP.load(new File(
+				LoadDefaultEnvironment.class.getClassLoader().getResource("fr/ign/cogit/simplu3d/data/").getPath()));
 
-		// Récupération de l'unité foncière surlaquelle bâtir
-		// J'ai mis 8 car c'est la plus grosse et on sera sur d'avoir des
-		// bâtiments
+		// Select a parcel on which generation is proceeded
 		BasicPropertyUnit bPU = env.getBpU().get(8);
 
-		// Création du Sampler (qui va générer les propositions de solutions)
+		// Instantiation of the sampler
 		OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();
 
-		// Valeurs de règles à saisir
-		// Recul par rapport à la voirie
+		// Rules parameters
+		// Distance to road
 		double distReculVoirie = 0.0;
-		// Recul par rapport au fond de la parcelle
+		// Distance to bottom of the parcel
 		double distReculFond = 2;
-		// Recul par rapport aux bordures latérales
+		// Distance to lateral parcel limits
 		double distReculLat = 4;
-		// Distance entre 2 boîtes d'une même parcelle
+		// Distance between two buildings of a parcel
 		double distanceInterBati = 5;
-		// CES maximal (2 ça ne sert à rien)
+		// Maximal ratio built area
 		double maximalCES = 2;
 
-		// Instanciation du sampler avec l'unité foncière et les valeurs
-		// ci-dessus
+		// Instantiation of the rule checker
 		SamplePredicate<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new SamplePredicate<>(
-				bPU, distReculVoirie, distReculFond, distReculLat,
-				distanceInterBati, maximalCES);
-		
-		
-	
+				bPU, distReculVoirie, distReculFond, distReculLat, distanceInterBati, maximalCES);
 
-		// Lancement de l'optimisation avec unité foncière, paramètres,
-		// environnement, id et prédicat
+		// Run of the optimisation on a parcel with the predicate
 		GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred);
 
-		// On prépare la sortie pour récupérer la liste des entités
+		// Witting the output
 		IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
-
+		// For all generated boxes
 		for (GraphVertex<Cuboid> v : cc.getGraph().vertexSet()) {
 
+
+			//Output feature with generated geometry
 			IFeature feat = new DefaultFeature(v.getValue().generated3DGeom());
-			// On ajoute des attributs aux entités (dimension des objets)
-			AttributeManager
-					.addAttribute(feat, "Longueur",
-							Math.max(v.getValue().length, v.getValue().width),
-							"Double");
-			AttributeManager
-					.addAttribute(feat, "Largeur",
-							Math.min(v.getValue().length, v.getValue().width),
-							"Double");
-			AttributeManager.addAttribute(feat, "Hauteur", v.getValue().height,
+
+			// We write some attributes
+			AttributeManager.addAttribute(feat, "Longueur", Math.max(v.getValue().length, v.getValue().width),
 					"Double");
-			AttributeManager.addAttribute(feat, "Rotation",
-					v.getValue().orientation, "Double");
+			AttributeManager.addAttribute(feat, "Largeur", Math.min(v.getValue().length, v.getValue().width), "Double");
+			AttributeManager.addAttribute(feat, "Hauteur", v.getValue().height, "Double");
+			AttributeManager.addAttribute(feat, "Rotation", v.getValue().orientation, "Double");
 
 			iFeatC.add(feat);
 
 		}
 
-		// On écrit en sortie le shapefile
-		// ATTENTIONT : il faut mettre à jour le nom de fichier en sorie
+		// A shapefile is written as output
+		// WARNING : 'out' parameter from configuration file have to be change
 		ShapefileWriter.write(iFeatC, p.get("result").toString() + "out.shp");
 
 		System.out.println("That's all folks");

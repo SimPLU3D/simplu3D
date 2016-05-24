@@ -38,76 +38,71 @@ Test class
 fr.ign.cogit.simplu3d.exec.BasicSimulator class using predefined resource  files is runnable. It generates a built composed by a set of intersecting boxes.
 
 ```Java
-  public static void main(String[] args) throws Exception {
-    //Loading of configuration file that contains sampling space information and simulated annealing configuration 
-    String folderName = BasicSimulator.class.getClassLoader()
-        .getResource("scenario/").getPath();
-    String fileName = "building_parameters_project_expthese_3.xml";
-    Parameters p = Parameters.unmarshall(new File(folderName + fileName));
+public static void main(String[] args) throws Exception {
 
-    //Load default environment (from simplu3d-rules)
-    Environnement env = LoadDefaultEnvironment.getENVDEF();
+	// Loading of configuration file that contains sampling space
+	// information and simulated annealing configuration
+	String folderName = BasicSimulator.class.getClassLoader().getResource("scenario/").getPath();
+	String fileName = "building_parameters_project_expthese_3.xml";
+	Parameters p = Parameters.unmarshall(new File(folderName + fileName));
 
-    //Select a parcel on which generation is proceeded
-    BasicPropertyUnit bPU = env.getBpU().get(8);
+	// Load default environment (data are in resource directory)
+	Environnement env = LoaderSHP.load(new File(
+			LoadDefaultEnvironment.class.getClassLoader().getResource("fr/ign/cogit/simplu3d/data/").getPath()));
 
-    //Instantiation  of the sampler
-    OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();
+	// Select a parcel on which generation is proceeded
+	BasicPropertyUnit bPU = env.getBpU().get(8);
 
-    
-    //Rules parameters
-    //Distance to road
-    double distReculVoirie = 0.0;
-    //Distance to bottom of the parcel
-    double distReculFond = 2;
-    //Distance to lateral parcel limits
-    double distReculLat = 4;
-    //Distance between two buildings of a parcel
-    double distanceInterBati = 5;
-    //Maximal ratio built area
-    double maximalCES = 2;
+	// Instantiation of the sampler
+	OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();
 
-    //Instantiation  of the rule checker 
-    SamplePredicate<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new SamplePredicate<>(
-        bPU, distReculVoirie, distReculFond, distReculLat, distanceInterBati,
-        maximalCES);
+	// Rules parameters
+	// Distance to road
+	double distReculVoirie = 0.0;
+	// Distance to bottom of the parcel
+	double distReculFond = 2;
+	// Distance to lateral parcel limits
+	double distReculLat = 4;
+	// Distance between two buildings of a parcel
+	double distanceInterBati = 5;
+	// Maximal ratio built area
+	double maximalCES = 2;
 
-  
-    //Run of the optimisation on a parcel with the predicate
-    GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred);
+	// Instantiation of the rule checker
+	SamplePredicate<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new SamplePredicate<>(
+			bPU, distReculVoirie, distReculFond, distReculLat, distanceInterBati, maximalCES);
 
-    
-    //Witting the output
-    IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
-    //For all generated boxes
-    for (GraphVertex<Cuboid> v : cc.getGraph().vertexSet()) {
+	// Run of the optimisation on a parcel with the predicate
+	GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred);
 
-      IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<>();
-      iMS.addAll(GenerateSolidFromCuboid.generate(v.getValue()).getFacesList());
-
-      IFeature feat = new DefaultFeature(iMS);
-      //We write some attributes
-      AttributeManager.addAttribute(feat, "Longueur",
-          Math.max(v.getValue().length, v.getValue().width), "Double");
-      AttributeManager.addAttribute(feat, "Largeur",
-          Math.min(v.getValue().length, v.getValue().width), "Double");
-      AttributeManager.addAttribute(feat, "Hauteur", v.getValue().height,
-          "Double");
-      AttributeManager.addAttribute(feat, "Rotation", v.getValue().orientation,
-          "Double");
-
-      iFeatC.add(feat);
-
-    }
-    
-    //A shapefile is written as output
-    //WARNING : 'out' parameter from configuration file have to be change
-    ShapefileWriter.write(iFeatC, p.get("result").toString() + "out.shp");
-
-    System.out.println("That's all folks");
+	// Witting the output
+	IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
+	// For all generated boxes
+	for (GraphVertex<Cuboid> v : cc.getGraph().vertexSet()) {
 
 
-  }
+		//Output feature with generated geometry
+		IFeature feat = new DefaultFeature(v.getValue().generated3DGeom());
+
+		// We write some attributes
+		AttributeManager.addAttribute(feat, "Longueur", Math.max(v.getValue().length, v.getValue().width),
+				"Double");
+		AttributeManager.addAttribute(feat, "Largeur", Math.min(v.getValue().length, v.getValue().width), "Double");
+		AttributeManager.addAttribute(feat, "Hauteur", v.getValue().height, "Double");
+		AttributeManager.addAttribute(feat, "Rotation", v.getValue().orientation, "Double");
+
+		iFeatC.add(feat);
+
+	}
+
+	// A shapefile is written as output
+	// WARNING : 'out' parameter from configuration file have to be change
+	ShapefileWriter.write(iFeatC, p.get("result").toString() + "out.shp");
+
+	System.out.println("That's all folks");
+
+}
+
 ```
 
 Documentation and publications

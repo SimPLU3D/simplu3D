@@ -120,6 +120,13 @@ public class BasicSimulator {
 			count++;
 		}
 
+		
+		if(count == 0){
+			continue;
+		}
+		
+		
+		
 		// Lancement de l'optimisation avec unité foncière, paramètres,
 		// environnement, id et prédicat
 		GraphConfiguration<ParallelTrapezoid2> cc = oCB.process(bPU, p, env, bPU.getId(), pred, limits,
