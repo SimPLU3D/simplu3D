@@ -38,7 +38,7 @@ public class ParallelPolygonTransform implements Transform {
   private double rangeLength;
   private double rangeHeight;
 
-  public ParallelPolygonTransform(double[] d, double[] v, IGeometry polygon, IGeometry[] limits)
+  public ParallelPolygonTransform(double[] d, double[] v, IGeometry polygon)
       throws Exception {
     this.rangeLength = d[2];
     this.rangeHeight = d[4];

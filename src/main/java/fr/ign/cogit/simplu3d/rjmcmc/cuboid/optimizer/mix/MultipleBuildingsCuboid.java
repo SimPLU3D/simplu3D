@@ -1,28 +1,19 @@
-package fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.classconstrained;
+package fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.mix;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import com.vividsolutions.jts.algorithm.Angle;
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.operation.distance.DistanceOp;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IEnvelope;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
 import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToLineString;
-import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.experiments.iauidf.predicate.PredicateIAUIDF;
@@ -31,11 +22,14 @@ import fr.ign.cogit.simplu3d.experiments.iauidf.tool.BandProduction;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.builder.CuboidBuilder;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.builder.ParallelCuboidBuilder;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.AbstractParallelCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.ParallelCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.ParallelCuboid2;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.SimpleCuboid;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid.BasicCuboidOptimizer;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.sampler.MixCuboidSampler;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.ChangeHeight;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.ChangeLength;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.ChangeWidth;
@@ -44,23 +38,15 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.RotateCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth.ParallelPolygonTransform;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth.TransformToSurface;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.parallelCuboid.MoveParallelCuboid;
-import fr.ign.cogit.simplu3d.rjmcmc.generic.endTest.StabilityEndTest;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.VolumeUnaryEnergy;
-import fr.ign.cogit.simplu3d.rjmcmc.generic.optimizer.DefaultSimPLU3DOptimizer;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.sampler.GreenSamplerBlockTemperature;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.transformation.ChangeValue;
-import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.CSVendStats;
-import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.CountVisitor;
-import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.FilmVisitor;
-import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.ShapefileVisitor;
-import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.StatsVisitor;
-import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.ViewerVisitor;
+import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.PrepareVisitors;
 import fr.ign.mpp.DirectRejectionSampler;
 import fr.ign.mpp.DirectSampler;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.mpp.kernel.ObjectBuilder;
-import fr.ign.mpp.kernel.ObjectSampler;
 import fr.ign.mpp.kernel.UniformTypeView;
 import fr.ign.parameters.Parameters;
 import fr.ign.random.Random;
@@ -79,14 +65,9 @@ import fr.ign.rjmcmc.kernel.Variate;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.SimulatedAnnealing;
 import fr.ign.simulatedannealing.endtest.EndTest;
-import fr.ign.simulatedannealing.endtest.MaxIterationEndTest;
-import fr.ign.simulatedannealing.schedule.GeometricSchedule;
 import fr.ign.simulatedannealing.schedule.Schedule;
 import fr.ign.simulatedannealing.temperature.SimpleTemperature;
-import fr.ign.simulatedannealing.visitor.CSVVisitor;
 import fr.ign.simulatedannealing.visitor.CompositeVisitor;
-import fr.ign.simulatedannealing.visitor.OutputStreamVisitor;
-import fr.ign.simulatedannealing.visitor.Visitor;
 
 /**
  * 
@@ -104,7 +85,7 @@ import fr.ign.simulatedannealing.visitor.Visitor;
  * 
  * @version 1.0
  **/
-public class MultipleBuildingsCuboid extends DefaultSimPLU3DOptimizer<Cuboid> {
+public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 
 	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, Parameters p, Environnement env,
 			PredicateIAUIDF<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred, Regulation r1,
@@ -132,87 +113,17 @@ public class MultipleBuildingsCuboid extends DefaultSimPLU3DOptimizer<Cuboid> {
 		// Température
 		Schedule<SimpleTemperature> sch = create_schedule(p);
 
-		EndTest end = null;
-		if (p.getBoolean(("isAbsoluteNumber"))) {
-			end = create_end_test(p);
-		} else {
-			end = create_end_test_stability(p);
-		}
+		EndTest end = create_end_test(p);
 
-		List<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> list = new ArrayList<>();
-		if (p.getBoolean("outputstreamvisitor")) {
-			Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> visitor = new OutputStreamVisitor<>(
-					System.out);
-			list.add(visitor);
-		}
-		if (p.getBoolean("shapefilewriter")) {
-			ShapefileVisitor<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> shpVisitor = new ShapefileVisitor<>(
-					p.get("result").toString() + bpu.getId() + "/result");
-			list.add(shpVisitor);
-		}
-		if (p.getBoolean("visitorviewer")) {
-			ViewerVisitor<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> visitorViewer = new ViewerVisitor<>(
-					"" + bpu.getId(), p);
-			list.add(visitorViewer);
-		}
-
-		if (p.getBoolean("statsvisitor")) {
-			StatsVisitor<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> statsViewer = new StatsVisitor<>(
-					"Energie");
-			list.add(statsViewer);
-		}
-
-		if (p.getBoolean("filmvisitor")) {
-			IDirectPosition dpCentre = new DirectPosition(p.getDouble("filmvisitorx"), p.getDouble("filmvisitory"),
-					p.getDouble("filmvisitorz"));
-			Vecteur viewTo = new Vecteur(p.getDouble("filmvisitorvectx"), p.getDouble("filmvisitorvecty"),
-					p.getDouble("filmvisitorvectz"));
-			Color c = new Color(p.getInteger("filmvisitorr"), p.getInteger("filmvisitorg"),
-					p.getInteger("filmvisitorb"));
-			FilmVisitor<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> visitorViewerFilmVisitor = new FilmVisitor<>(
-					dpCentre, viewTo, p.getString("result"), c, p);
-			list.add(visitorViewerFilmVisitor);
-		}
-
-		if (p.getBoolean("csvvisitorend")) {
-			String fileName = p.get("result").toString() + p.get("csvfilenamend");
-			CSVendStats<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> statsViewer = new CSVendStats<>(
-					fileName);
-			list.add(statsViewer);
-		}
-		if (p.getBoolean("csvvisitor")) {
-			String fileName = p.get("result").toString() + p.get("csvfilename");
-			// CSVvisitor<Cuboid, GraphConfiguration<Cuboid>,
-			// BirthDeathModification<Cuboid>> statsViewer = new
-			// CSVvisitor<>(fileName);
-			CSVVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> statsViewer = new CSVVisitor<>(
-					fileName);
-			list.add(statsViewer);
-		}
-		countV = new CountVisitor<>();
-		list.add(countV);
-		CompositeVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> mVisitor = new CompositeVisitor<>(
-				list);
-		init_visitor(p, mVisitor);
+		PrepareVisitors<Cuboid> pv = new PrepareVisitors<>();
+		CompositeVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> mVisitor = pv.prepare(p,
+				bpu.getId());
 		/*
 		 * < This is the way to launch the optimization process. Here, the magic
 		 * happen... >
 		 */
 		SimulatedAnnealing.optimize(Random.random(), conf, samp, sch, end, mVisitor);
 		return conf;
-	}
-
-	// Initialisation des visiteurs
-	// nbdump => affichage dans la console
-	// nbsave => sauvegarde en shapefile
-	static void init_visitor(Parameters p, Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> v) {
-		v.init(p.getInteger("nbdump"), p.getInteger("nbsave"));
-	}
-
-	CountVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> countV = null;
-
-	public int getCount() {
-		return countV.getCount();
 	}
 
 	public GraphConfiguration<Cuboid> create_configuration(Parameters p, IGeometry geom, BasicPropertyUnit bpu)
@@ -229,6 +140,7 @@ public class MultipleBuildingsCuboid extends DefaultSimPLU3DOptimizer<Cuboid> {
 	 * @return la configuration chargée, c'est à dire la formulation énergétique
 	 *         prise en compte
 	 */
+	@Override
 	public GraphConfiguration<Cuboid> create_configuration(Parameters p, Geometry geom, BasicPropertyUnit bpu) {
 		// Énergie constante : à la création d'un nouvel objet
 		double energyCrea = p.getDouble("energy");
@@ -311,7 +223,7 @@ public class MultipleBuildingsCuboid extends DefaultSimPLU3DOptimizer<Cuboid> {
 		if (bP.getLineRoad() == null) {
 			transformBand1 = new TransformToSurface(d2, v, geomBand1);
 		} else {
-			transformBand1 = new ParallelPolygonTransform(d2, v, geomBand1, bP.getLineRoad().toArray());
+			transformBand1 = new ParallelPolygonTransform(d2, v, geomBand1);
 		}
 
 		Transform transformBand2;
@@ -325,31 +237,10 @@ public class MultipleBuildingsCuboid extends DefaultSimPLU3DOptimizer<Cuboid> {
 		ObjectBuilder<Cuboid> builderBand1 = null;
 
 		if (bP.getLineRoad() == null) {
-			builderBand1 = new ObjectBuilder<Cuboid>() {
-				@Override
-				public Cuboid build(double[] coordinates) {
-					return new SimpleCuboid(coordinates[0], coordinates[1], coordinates[2], coordinates[3],
-							coordinates[4], coordinates[5]);
-				}
-
-				@Override
-				public int size() {
-					return 6;
-				}
-
-				@Override
-				public void setCoordinates(Cuboid t, double[] val1) {
-					val1[0] = t.centerx;
-					val1[1] = t.centery;
-					val1[2] = t.length;
-					val1[3] = t.width;
-					val1[4] = t.height;
-					val1[5] = t.orientation;
-				}
-			};
+			builderBand1= new CuboidBuilder();
 
 		} else {
-			builderBand1 = new ParallelBuilder(bP.getLineRoad().toArray(), 1);
+			builderBand1 = new ParallelCuboidBuilder(bP.getLineRoad().toArray(), 1);
 		}
 
 		ObjectBuilder<Cuboid> builderBand2;
@@ -367,34 +258,12 @@ public class MultipleBuildingsCuboid extends DefaultSimPLU3DOptimizer<Cuboid> {
 				ims.addAll(FromGeomToLineString.convert(s.getGeom()));
 			}
 
-			builderBand2 = new ParallelBuilder(ims.toArray(), 2);
-			transformBand2 = new ParallelPolygonTransform(d, v, geomBand2, ims.toArray());
+			builderBand2 = new ParallelCuboidBuilder(ims.toArray(), 2);
+			transformBand2 = new ParallelPolygonTransform(d, v, geomBand2);
 
 		} else {
 
-			builderBand2 = new ObjectBuilder<Cuboid>() {
-				@Override
-				public Cuboid build(double[] coordinates) {
-					return new SimpleCuboid(coordinates[0], coordinates[1], coordinates[2], coordinates[3],
-							coordinates[4], coordinates[5]);
-				}
-
-				@Override
-				public int size() {
-					return 6;
-				}
-
-				@Override
-				public void setCoordinates(Cuboid t, double[] val1) {
-					val1[0] = t.centerx;
-					val1[1] = t.centery;
-					val1[2] = t.length;
-					val1[3] = t.width;
-					val1[4] = t.height;
-					val1[5] = t.orientation;
-				}
-			};
-
+			builderBand2 = new CuboidBuilder();
 			transformBand2 = new TransformToSurface(d, v, geomBand2);
 		}
 
@@ -425,8 +294,8 @@ public class MultipleBuildingsCuboid extends DefaultSimPLU3DOptimizer<Cuboid> {
 
 		// CuboidSampler objectSampler = new CuboidSampler(rng, p_simple,
 		// transformSimple, transformParallel);
-		CuboidSampler2 objectSampler = new CuboidSampler2(rng, p_simple, transformBand1, transformBand2, builderBand1,
-				builderBand2);
+		MixCuboidSampler objectSampler = new MixCuboidSampler(rng, p_simple, transformBand1, transformBand2,
+				builderBand1, builderBand2);
 
 		// poisson distribution
 		PoissonDistribution distribution = new PoissonDistribution(rng, p.getDouble("poisson"));
@@ -540,140 +409,6 @@ public class MultipleBuildingsCuboid extends DefaultSimPLU3DOptimizer<Cuboid> {
 		}
 
 		return kernels;
-	}
-
-	private static EndTest create_end_test(Parameters p) {
-		return new MaxIterationEndTest(p.getInteger("nbiter"));
-	}
-
-	private EndTest create_end_test_stability(Parameters p) {
-		double loc_deltaconf = p.getDouble("delta");
-		return new StabilityEndTest<Cuboid>(p.getInteger("nbiter"), loc_deltaconf);
-	}
-
-	private Schedule<SimpleTemperature> create_schedule(Parameters p) {
-		double coefDef = p.getDouble("deccoef");
-		return new GeometricSchedule<SimpleTemperature>(new SimpleTemperature(p.getDouble("temp")), coefDef);
-	}
-
-	public static class ParallelBuilder implements ObjectBuilder<Cuboid> {
-		GeometryFactory factory;
-		MultiLineString limits;
-		int bandType;
-
-		public ParallelBuilder(IGeometry[] limits, int bandType) throws Exception {
-			factory = new GeometryFactory();
-			LineString[] lineStrings = new LineString[limits.length];
-			for (int i = 0; i < limits.length; i++) {
-				lineStrings[i] = (LineString) AdapterFactory.toGeometry(factory, limits[i]);
-			}
-			this.limits = factory.createMultiLineString(lineStrings);
-			this.bandType = bandType;
-		}
-
-		@Override
-		public Cuboid build(double[] coordinates) {
-			Coordinate p = new Coordinate(coordinates[0], coordinates[1]);
-			DistanceOp op = new DistanceOp(this.limits, factory.createPoint(p));
-			Coordinate projected = op.nearestPoints()[0];
-			double distance = op.distance();
-			double orientation = Angle.angle(p, projected);
-			AbstractParallelCuboid result;
-			if (bandType == 1) {
-
-				result = new ParallelCuboid(coordinates[0], coordinates[1], coordinates[2], distance * 2,
-						coordinates[3], orientation + Math.PI / 2);
-
-			} else {
-				result = new ParallelCuboid2(coordinates[0], coordinates[1], coordinates[2], distance * 2,
-						coordinates[3], orientation + Math.PI / 2);
-
-			}
-
-			return result;
-		}
-
-		@Override
-		public int size() {
-			return 4;
-		}
-
-		@Override
-		public void setCoordinates(Cuboid t, double[] coordinates) {
-			AbstractParallelCuboid pc = (AbstractParallelCuboid) t;
-			coordinates[0] = pc.centerx;
-			coordinates[1] = pc.centery;
-			coordinates[2] = pc.length;
-			coordinates[3] = pc.height;
-		}
-	};
-
-	public static class CuboidSampler2 implements ObjectSampler<Cuboid> {
-		RandomGenerator engine;
-		double p_simple;
-		Cuboid object;
-		Variate variate;
-		Transform transformBand2;
-		Transform transformBand1;
-		ObjectBuilder<Cuboid> builder1;
-		ObjectBuilder<Cuboid> builder2;
-
-		public CuboidSampler2(RandomGenerator e, double p_simple, Transform transformBand1, Transform transformBand2,
-				ObjectBuilder<Cuboid> builder1, ObjectBuilder<Cuboid> builder2) {
-			this.engine = e;
-			this.p_simple = p_simple;
-			this.transformBand2 = transformBand2;
-			this.transformBand1 = transformBand1;
-			this.variate = new Variate(e);
-			this.builder1 = builder1;
-			this.builder2 = builder2;
-		}
-
-		@Override
-		public double sample(RandomGenerator e) {
-			double[] val0;
-			double[] val1;
-			if (engine.nextDouble() < p_simple) {
-				val0 = new double[builder2.size()];
-				val1 = new double[builder2.size()];
-				double phi = this.variate.compute(val0, 0);
-				double jacob = this.transformBand2.apply(true, val0, val1);
-				this.object = builder2.build(val1);
-				return phi / jacob;
-			}
-			val0 = new double[builder1.size()];
-			val1 = new double[builder1.size()];
-			double phi = this.variate.compute(val0, 0);
-			double jacob = this.transformBand1.apply(true, val0, val1);
-			this.object = builder1.build(val1);
-			return phi / jacob;
-		}
-
-		@Override
-		public double pdf(Cuboid t) {
-			if (SimpleCuboid.class.isInstance(t) || ParallelCuboid2.class.isInstance(t)) {
-				double[] val1 = new double[builder2.size()];
-				builder2.setCoordinates(t, val1);
-				double[] val0 = new double[builder2.size()];
-				double J10 = this.transformBand2.apply(false, val1, val0);
-				double pdf = this.variate.pdf(val0, 0);
-				return pdf * J10;
-			}
-			double[] val1 = new double[builder1.size()];
-			builder1.setCoordinates(t, val1);
-			double[] val0 = new double[builder1.size()];
-			double J10 = this.transformBand1.apply(false, val1, val0);
-			if (J10 == 0) {
-				return 0;
-			}
-			double pdf = this.variate.pdf(val0, 0);
-			return pdf * J10;
-		}
-
-		@Override
-		public Cuboid getObject() {
-			return this.object;
-		}
 	}
 
 }

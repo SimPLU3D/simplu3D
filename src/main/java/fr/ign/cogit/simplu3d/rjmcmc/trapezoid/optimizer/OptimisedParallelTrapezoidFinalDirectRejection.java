@@ -1,6 +1,5 @@
 package fr.ign.cogit.simplu3d.rjmcmc.trapezoid.optimizer;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,29 +8,19 @@ import org.apache.commons.math3.random.RandomGenerator;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IEnvelope;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
-import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
-import fr.ign.cogit.simplu3d.rjmcmc.generic.endTest.StabilityEndTest;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.DifferenceVolumeUnaryEnergy;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.IntersectionVolumeBinaryEnergy;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.VolumeUnaryEnergy;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.optimizer.DefaultSimPLU3DOptimizer;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.sampler.GreenSamplerBlockTemperature;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.transformation.ChangeValue;
-import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.CSVendStats;
-import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.CSVvisitor;
-import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.CountVisitor;
-import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.FilmVisitor;
-import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.ShapefileVisitor;
-import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.StatsVisitor;
-import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.ViewerVisitor;
+import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.PrepareVisitors;
 import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.builder.ParallelRightTrapezoidBuilder2;
 import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.geometry.ParallelTrapezoid2;
 import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.transform.ParallelTrapezoidTransform;
@@ -59,13 +48,8 @@ import fr.ign.rjmcmc.kernel.Kernel;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.SimulatedAnnealing;
 import fr.ign.simulatedannealing.endtest.EndTest;
-import fr.ign.simulatedannealing.endtest.MaxIterationEndTest;
-import fr.ign.simulatedannealing.schedule.GeometricSchedule;
 import fr.ign.simulatedannealing.schedule.Schedule;
 import fr.ign.simulatedannealing.temperature.SimpleTemperature;
-import fr.ign.simulatedannealing.visitor.CompositeVisitor;
-import fr.ign.simulatedannealing.visitor.OutputStreamVisitor;
-import fr.ign.simulatedannealing.visitor.Visitor;
 
 /**
  * 
@@ -88,7 +72,7 @@ public class OptimisedParallelTrapezoidFinalDirectRejection extends DefaultSimPL
 	public OptimisedParallelTrapezoidFinalDirectRejection() {
 	}
 
-	public GraphConfiguration<ParallelTrapezoid2> process(BasicPropertyUnit bpu, Parameters p, Environnement env,
+	public GraphConfiguration<ParallelTrapezoid2> process(RandomGenerator rG, BasicPropertyUnit bpu, Parameters p, Environnement env,
 			int id,
 			ConfigurationModificationPredicate<GraphConfiguration<ParallelTrapezoid2>, BirthDeathModification<ParallelTrapezoid2>> pred,
 			IGeometry[] limits, IGeometry polygon) {
@@ -106,85 +90,16 @@ public class OptimisedParallelTrapezoidFinalDirectRejection extends DefaultSimPL
 		}
 		// Création de l'échantilloneur
 		Sampler<GraphConfiguration<ParallelTrapezoid2>, BirthDeathModification<ParallelTrapezoid2>> samp = create_sampler(
-				Random.random(), p, bpu, pred, limits, polygon);
+				rG, p, bpu, pred, limits, polygon);
 		// Température
 		Schedule<SimpleTemperature> sch = create_schedule(p);
 
-		EndTest end = null;
-		if (p.getBoolean(("isAbsoluteNumber"))) {
-			end = create_end_test(p);
-		} else {
-			end = create_end_test_stability(p);
-		}
+		EndTest end = create_end_test(p);
+		PrepareVisitors<ParallelTrapezoid2> pv = new PrepareVisitors<>();
 
-		List<Visitor<GraphConfiguration<ParallelTrapezoid2>, BirthDeathModification<ParallelTrapezoid2>>> list = new ArrayList<>();
-		if (p.getBoolean("outputstreamvisitor")) {
-			Visitor<GraphConfiguration<ParallelTrapezoid2>, BirthDeathModification<ParallelTrapezoid2>> visitor = new OutputStreamVisitor<>(
-					System.out);
-			list.add(visitor);
-		}
-		if (p.getBoolean("shapefilewriter")) {
-			ShapefileVisitor<ParallelTrapezoid2, GraphConfiguration<ParallelTrapezoid2>, BirthDeathModification<ParallelTrapezoid2>> shpVisitor = new ShapefileVisitor<>(
-					p.get("result").toString() + "result");
-			list.add(shpVisitor);
-		}
-		if (p.getBoolean("visitorviewer")) {
-			ViewerVisitor<ParallelTrapezoid2, GraphConfiguration<ParallelTrapezoid2>, BirthDeathModification<ParallelTrapezoid2>> visitorViewer = new ViewerVisitor<>(
-					"" + id, p);
-			list.add(visitorViewer);
-		}
-
-		if (p.getBoolean("statsvisitor")) {
-			StatsVisitor<ParallelTrapezoid2, GraphConfiguration<ParallelTrapezoid2>, BirthDeathModification<ParallelTrapezoid2>> statsViewer = new StatsVisitor<>(
-					"Énergie");
-			list.add(statsViewer);
-		}
-
-		if (p.getBoolean("filmvisitor")) {
-			IDirectPosition dpCentre = new DirectPosition(p.getDouble("filmvisitorx"), p.getDouble("filmvisitory"),
-					p.getDouble("filmvisitorz"));
-			Vecteur viewTo = new Vecteur(p.getDouble("filmvisitorvectx"), p.getDouble("filmvisitorvecty"),
-					p.getDouble("filmvisitorvectz"));
-			Color c = new Color(p.getInteger("filmvisitorr"), p.getInteger("filmvisitorg"),
-					p.getInteger("filmvisitorb"));
-			FilmVisitor<ParallelTrapezoid2, GraphConfiguration<ParallelTrapezoid2>, BirthDeathModification<ParallelTrapezoid2>> visitorViewerFilmVisitor = new FilmVisitor<>(
-					dpCentre, viewTo, p.getString("result"), c, p);
-			list.add(visitorViewerFilmVisitor);
-		}
-
-		if (p.getBoolean("csvvisitorend")) {
-			String fileName = p.get("result").toString() + p.get("csvfilenamend");
-			CSVendStats<ParallelTrapezoid2, GraphConfiguration<ParallelTrapezoid2>, BirthDeathModification<ParallelTrapezoid2>> statsViewer = new CSVendStats<>(
-					fileName);
-			list.add(statsViewer);
-		}
-		if (p.getBoolean("csvvisitor")) {
-			String fileName = p.get("result").toString() + p.get("csvfilename");
-			CSVvisitor<ParallelTrapezoid2, GraphConfiguration<ParallelTrapezoid2>, BirthDeathModification<ParallelTrapezoid2>> statsViewer = new CSVvisitor<>(
-					fileName);
-			list.add(statsViewer);
-		}
-
-		CompositeVisitor<GraphConfiguration<ParallelTrapezoid2>, BirthDeathModification<ParallelTrapezoid2>> mVisitor = new CompositeVisitor<>(
-				list);
-		init_visitor(p, mVisitor);
-		/*
-		 * < This is the way to launch the optimization process. Here, the magic
-		 * happen... >
-		 */
-		SimulatedAnnealing.optimize(Random.random(), conf, samp, sch, end, mVisitor);
+		SimulatedAnnealing.optimize(rG, conf, samp, sch, end, pv.prepare(p, bpu.getId()));
 		return conf;
 	}
-
-	// Initialisation des visiteurs
-	// nbdump => affichage dans la console
-	// nbsave => sauvegarde en shapefile
-	static void init_visitor(Parameters p,
-			Visitor<GraphConfiguration<ParallelTrapezoid2>, BirthDeathModification<ParallelTrapezoid2>> v) {
-		v.init(p.getInteger("nbdump"), p.getInteger("nbsave"));
-	}
-
-	CountVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> countV = null;
 
 	public GraphConfiguration<ParallelTrapezoid2> create_configuration(Parameters p, IGeometry geom,
 			BasicPropertyUnit bpu) throws Exception {
@@ -320,27 +235,4 @@ public class OptimisedParallelTrapezoidFinalDirectRejection extends DefaultSimPL
 		return s;
 	}
 
-	private static EndTest create_end_test(Parameters p) {
-		return new MaxIterationEndTest(p.getInteger("nbiter"));
-	}
-
-	private EndTest create_end_test_stability(Parameters p) {
-		double loc_deltaconf;
-		if (Double.isNaN(this.deltaConf)) {
-			loc_deltaconf = p.getDouble("delta");
-		} else {
-			loc_deltaconf = this.deltaConf;
-		}
-		return new StabilityEndTest<ParallelTrapezoid2>(p.getInteger("nbiter"), loc_deltaconf);
-	}
-
-	private Schedule<SimpleTemperature> create_schedule(Parameters p) {
-		double coefDef = 0;
-		if (Double.isNaN(this.coeffDec)) {
-			coefDef = p.getDouble("deccoef");
-		} else {
-			coefDef = this.coeffDec;
-		}
-		return new GeometricSchedule<SimpleTemperature>(new SimpleTemperature(p.getDouble("temp")), coefDef);
-	}
 }

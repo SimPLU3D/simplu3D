@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.rjmcmc.trapezoid.predicate;
+package fr.ign.cogit.simplu3d.rjmcmc.generic.predicate;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -178,8 +178,7 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 	@Override
 	public boolean check(C c, M m) {
 		
-		return true;/*
-
+		
 		// Il s'agit des objets de la classe Cuboid
 		List<O> lO = m.getBirth();
 
@@ -255,7 +254,7 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 		}
 
 		// On a réussi tous les tests, on renvoie vrai
-		return true;*/
+		return true;
 
 	}
 

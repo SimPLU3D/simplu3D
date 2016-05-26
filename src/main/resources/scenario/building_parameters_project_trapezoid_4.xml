@@ -15,15 +15,15 @@
         
         <!--Distribution (équiprobable) des dimensions des boîtes-->
         <!-- Largeur et longueur !-->
-        <param key="minlen" value="10" />
-		<param key="maxlen" value="20" />
+        <param key="minlen" value="2" />
+		<param key="maxlen" value="10" />
 		
-		<param key="minlen1" value="10" />
-		<param key="maxlen1" value="20" />
+		<param key="minlen1" value="2" />
+		<param key="maxlen1" value="10" />
 		
 		
-		<param key="minlen2" value="10" />
-		<param key="maxlen2" value="20" />
+		<param key="minlen2" value="2" />
+		<param key="maxlen2" value="10" />
 		
 		<param key="minwid" value="1" />
 		<param key="maxwid" value="5" />

@@ -14,4 +14,4 @@
  * 
  * @version 1.0
  **/
-package fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.classconstrained;
+package fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid;
