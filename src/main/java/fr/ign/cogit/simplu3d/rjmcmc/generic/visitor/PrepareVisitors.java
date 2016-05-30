@@ -82,6 +82,8 @@ public class PrepareVisitors<C extends ISimPLU3DPrimitive> {
 		list.add(countV);
 		CompositeVisitor<GraphConfiguration<C>, BirthDeathModification<C>> mVisitor = new CompositeVisitor<>(
 				list);
+		
+		init_visitor(p, mVisitor);
 
 		return mVisitor;
 	}

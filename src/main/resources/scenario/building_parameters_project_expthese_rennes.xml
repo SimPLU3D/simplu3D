@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <parameters>
-        <!-- Dossier contenant l'environnement géon il contient bati.shp, parcelle.shp, route.shp, zonage.shp, PRESRIPTION_SURF.shp-->
+
 		<param key="folder" value=""/>
+
         <!-- Paramètres relatifs à l'énergie -->
         <!-- Énergie de création d'un cube dans une configuration m^3-->
 		<param key="energy" value="5" />
@@ -18,8 +19,8 @@
         <param key="minlen" value="10" />
 		<param key="maxlen" value="20" />
 		
-		<param key="minwid" value="1" />
-		<param key="maxwid" value="5" />
+		<param key="minwid" value="4" />
+		<param key="maxwid" value="10" />
         <!-- Hauteur !-->
 		<param key="minheight" value ="2" />
 		<param key="maxheight" value="12" />
@@ -44,13 +45,7 @@
 		<param key="temp" value="10800" />
         <!-- Température initiale !-->
 		<param key="deccoef" value="0.99999" />
-        
-        <!-- Reprise d'une configuration existante !-->
-        <!-- 0 = non 1 = oui !-->
-        <param key="load_existing_config" value="0" />
-        
-        <!-- Chemin de la configuration, cette configuraiton ne doit pas avoir subi de post tratement!-->
-        <param key="config_shape_file" value="" />
+ 
         
         
         <!-- Nombre d'itération!-->
@@ -64,9 +59,9 @@
         
         <!-- Paramètres relatifs aux visiteur!-->
          <!-- Nombre d'itérations de dump!-->
-		<param key="nbdump" value="1" />
+		<param key="nbdump" value="5000" />
          <!-- Nombre d'itérations de save!-->
-		<param key="nbsave" value="1" />
+		<param key="nbsave" value="10000" />
         <!-- Visiteurs utilisés-->
         <!-- Sortie console -->
         <param key="outputstreamvisitor" value="true" />
@@ -78,7 +73,7 @@
 		<param key="xmaxbg" value="1051264.80" />
 		<param key="yminbg" value="6840539.08" />
 		<param key="ymaxbg" value="6840679.27" />
-        <param key="z" value="138" />
+        <param key="z" value="70" />
 
         
         <!-- Sortie ShapeFileWriter -->
@@ -105,8 +100,6 @@
        <param key="csvvisitorend" value="false" />  
        <param key="csvfilenamend" value="exportEndStats.csv" />  
         
-        <!-- Dossier des sorties des visiteur -->
-        <param key="result" value="/media/mickael/Data/" />           
 </parameters>
 
 

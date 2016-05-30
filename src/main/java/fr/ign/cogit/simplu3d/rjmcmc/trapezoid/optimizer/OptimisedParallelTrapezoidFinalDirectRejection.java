@@ -33,7 +33,6 @@ import fr.ign.mpp.kernel.KernelFactory;
 import fr.ign.mpp.kernel.ObjectBuilder;
 import fr.ign.mpp.kernel.UniformBirth;
 import fr.ign.parameters.Parameters;
-import fr.ign.random.Random;
 import fr.ign.rjmcmc.acceptance.MetropolisAcceptance;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
 import fr.ign.rjmcmc.distribution.PoissonDistribution;
@@ -72,8 +71,8 @@ public class OptimisedParallelTrapezoidFinalDirectRejection extends DefaultSimPL
 	public OptimisedParallelTrapezoidFinalDirectRejection() {
 	}
 
-	public GraphConfiguration<ParallelTrapezoid2> process(RandomGenerator rG, BasicPropertyUnit bpu, Parameters p, Environnement env,
-			int id,
+	public GraphConfiguration<ParallelTrapezoid2> process(RandomGenerator rG, BasicPropertyUnit bpu, Parameters p,
+			Environnement env, int id,
 			ConfigurationModificationPredicate<GraphConfiguration<ParallelTrapezoid2>, BirthDeathModification<ParallelTrapezoid2>> pred,
 			IGeometry[] limits, IGeometry polygon) {
 		// Géométrie de l'unité foncière sur laquelle porte la génération
