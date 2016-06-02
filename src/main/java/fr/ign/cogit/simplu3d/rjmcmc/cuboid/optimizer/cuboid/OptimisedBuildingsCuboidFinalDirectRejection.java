@@ -1,5 +1,6 @@
 package fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -22,6 +23,7 @@ import fr.ign.simulatedannealing.endtest.EndTest;
 import fr.ign.simulatedannealing.schedule.Schedule;
 import fr.ign.simulatedannealing.temperature.SimpleTemperature;
 import fr.ign.simulatedannealing.visitor.CompositeVisitor;
+import fr.ign.simulatedannealing.visitor.Visitor;
 
 /**
  * 
@@ -40,9 +42,18 @@ import fr.ign.simulatedannealing.visitor.CompositeVisitor;
  * @version 1.0
  **/
 public class OptimisedBuildingsCuboidFinalDirectRejection extends BasicCuboidOptimizer<Cuboid> {
+	
+	
 
 	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, Parameters p, Environnement env, int id,
 			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred) {
+	return this.process(bpu, p, env, id, pred, new ArrayList<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>>());
+}
+	
+	
+
+	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, Parameters p, Environnement env, int id,
+			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred, List<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> lSupplementaryVisitors) {
 		// Géométrie de l'unité foncière sur laquelle porte la génération
 		IGeometry geom = bpu.generateGeom().buffer(1);
 

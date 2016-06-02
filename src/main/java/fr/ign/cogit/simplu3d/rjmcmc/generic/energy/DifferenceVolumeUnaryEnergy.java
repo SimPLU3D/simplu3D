@@ -33,7 +33,6 @@ public class DifferenceVolumeUnaryEnergy<T extends ISimPLU3DPrimitive> implement
 
 		Geometry difference = t.toGeometry().buffer(0.01).difference(this.bpu.buffer(2));
 		double height = t.getHeight();
-
 		return difference.getArea() * height;
 
 	}

@@ -16,16 +16,26 @@ import fr.ign.simulatedannealing.visitor.OutputStreamVisitor;
 import fr.ign.simulatedannealing.visitor.Visitor;
 
 public class PrepareVisitors<C extends ISimPLU3DPrimitive> {
-	
-	
 
-	public  CompositeVisitor<GraphConfiguration<C>, BirthDeathModification<C>> prepare(
-			Parameters p, int id) {
+	private List<Visitor<GraphConfiguration<C>, BirthDeathModification<C>>> lSupplementaryVisitors = new ArrayList<>();
+	
+	
+	public PrepareVisitors(){
+		
+	}
+
+	public PrepareVisitors(List<Visitor<GraphConfiguration<C>, BirthDeathModification<C>>> lSupplementaryVisitors) {
+		super();
+		this.lSupplementaryVisitors = lSupplementaryVisitors;
+	}
+
+	public CompositeVisitor<GraphConfiguration<C>, BirthDeathModification<C>> prepare(Parameters p, int id) {
 		List<Visitor<GraphConfiguration<C>, BirthDeathModification<C>>> list = new ArrayList<>();
-
+		
+			list.addAll(lSupplementaryVisitors);
+		
 		if (p.getBoolean("outputstreamvisitor")) {
-			Visitor<GraphConfiguration<C>, BirthDeathModification<C>> visitor = new OutputStreamVisitor<>(
-					System.out);
+			Visitor<GraphConfiguration<C>, BirthDeathModification<C>> visitor = new OutputStreamVisitor<>(System.out);
 			list.add(visitor);
 		}
 
@@ -67,22 +77,19 @@ public class PrepareVisitors<C extends ISimPLU3DPrimitive> {
 
 		if (p.getBoolean("csvvisitorend")) {
 			String fileName = p.get("result").toString() + p.get("csvfilenamend");
-			CSVendStats<C, GraphConfiguration<C>, BirthDeathModification<C>> statsViewer = new CSVendStats<>(
-					fileName);
+			CSVendStats<C, GraphConfiguration<C>, BirthDeathModification<C>> statsViewer = new CSVendStats<>(fileName);
 			list.add(statsViewer);
 		}
 		if (p.getBoolean("csvvisitor")) {
 			String fileName = p.get("result").toString() + p.get("csvfilename");
-			CSVvisitor<C, GraphConfiguration<C>, BirthDeathModification<C>> statsViewer = new CSVvisitor<>(
-					fileName);
+			CSVvisitor<C, GraphConfiguration<C>, BirthDeathModification<C>> statsViewer = new CSVvisitor<>(fileName);
 			list.add(statsViewer);
 		}
 
 		CountVisitor<GraphConfiguration<C>, BirthDeathModification<C>> countV = new CountVisitor<>();
 		list.add(countV);
-		CompositeVisitor<GraphConfiguration<C>, BirthDeathModification<C>> mVisitor = new CompositeVisitor<>(
-				list);
-		
+		CompositeVisitor<GraphConfiguration<C>, BirthDeathModification<C>> mVisitor = new CompositeVisitor<>(list);
+
 		init_visitor(p, mVisitor);
 
 		return mVisitor;
@@ -91,8 +98,7 @@ public class PrepareVisitors<C extends ISimPLU3DPrimitive> {
 	// Initialisation des visiteurs
 	// nbdump => affichage dans la console
 	// nbsave => sauvegarde en shapefile
-	 void init_visitor(Parameters p,
-			Visitor<GraphConfiguration<C>, BirthDeathModification<C>> v) {
+	void init_visitor(Parameters p, Visitor<GraphConfiguration<C>, BirthDeathModification<C>> v) {
 		v.init(p.getInteger("nbdump"), p.getInteger("nbsave"));
 	}
 }
