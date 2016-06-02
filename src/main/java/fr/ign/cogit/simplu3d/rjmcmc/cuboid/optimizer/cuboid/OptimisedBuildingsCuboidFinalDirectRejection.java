@@ -91,7 +91,7 @@ public class OptimisedBuildingsCuboidFinalDirectRejection extends BasicCuboidOpt
 
 		EndTest end = create_end_test(p);
 
-		PrepareVisitors<Cuboid> pv = new PrepareVisitors<>();
+		PrepareVisitors<Cuboid> pv = new PrepareVisitors<>(lSupplementaryVisitors);
 		CompositeVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> mVisitor = pv.prepare(p, id);
 
 		/*
