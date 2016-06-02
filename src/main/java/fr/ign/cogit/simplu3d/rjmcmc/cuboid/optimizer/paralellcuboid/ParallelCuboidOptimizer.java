@@ -229,7 +229,7 @@ public class ParallelCuboidOptimizer extends DefaultSimPLU3DOptimizer<ISimPLU3DP
 		kernels.add(parallelLength);
 
 		DirectSampler<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> ds = new DirectRejectionSampler<>(
-				distribution, birth, pred);
+				distribution, null, pred);
 
 		Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> s = new GreenSamplerBlockTemperature<>(rng,
 				ds, new MetropolisAcceptance<SimpleTemperature>(), kernels);
