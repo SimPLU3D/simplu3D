@@ -103,7 +103,7 @@ public class BasicSimulatorTrapezoid {
 
 		// Chargement de l'environnement
 		Environnement env = LoaderSHP
-				.loadNoDTM(new File("/home/mickael/data/mbrasebin/donnees/simPLU3D/testTrapezoid"));
+				.load(new File("/home/mickael/data/mbrasebin/donnees/simPLU3D/testTrapezoid"));
 
 		for (BasicPropertyUnit bPU : env.getBpU().getElements()) {
 
@@ -176,6 +176,8 @@ public class BasicSimulatorTrapezoid {
 				iFeatC.add(feat);
 
 			}
+			
+			break;
 
 		}
 

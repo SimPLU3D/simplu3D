@@ -64,9 +64,9 @@
         
         <!-- Paramètres relatifs aux visiteur!-->
          <!-- Nombre d'itérations de dump!-->
-		<param key="nbdump" value="1" />
+		<param key="nbdump" value="5000" />
          <!-- Nombre d'itérations de save!-->
-		<param key="nbsave" value="1" />
+		<param key="nbsave" value="10000" />
         <!-- Visiteurs utilisés-->
         <!-- Sortie console -->
         <param key="outputstreamvisitor" value="true" />
