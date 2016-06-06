@@ -61,7 +61,7 @@ public class RennesSamplePredicate<O extends Cuboid, C extends AbstractGraphConf
 		}
 
 		// On vérifie que la liste des contraintes non respsectées est vide
-		boolean checked = Checker.check(currentBPU, currentRules).isEmpty();
+		boolean checked = Checker.check(currentBPU, currentRules,true).isEmpty();
 
 		// On vire les
 		for (Cuboid b : lBuildings) {
