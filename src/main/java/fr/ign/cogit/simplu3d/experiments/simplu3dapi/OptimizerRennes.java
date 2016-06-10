@@ -11,10 +11,10 @@ import fr.ign.cogit.simplu3d.experiments.simplu3dapi.predicate.RennesSamplePredi
 import fr.ign.cogit.simplu3d.importer.AssignBuildingPartToSubParcel;
 import fr.ign.cogit.simplu3d.importer.CadastralParcelLoader;
 import fr.ign.cogit.simplu3d.importer.RoadImporter;
-import fr.ign.cogit.simplu3d.importer.ZonesImporter;
 import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
+import fr.ign.cogit.simplu3d.reader.UrbaZoneReader;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid.OptimisedBuildingsCuboidFinalDirectRejection;
 import fr.ign.cogit.simplu3d.util.AssignZ;
@@ -73,7 +73,7 @@ public class OptimizerRennes {
 		CadastralParcelLoader.ATT_ID_PARC = "NUMERO";
 		CadastralParcelLoader.TYPE_ANNOTATION = 1;
 
-		ZonesImporter.NOM_ATT_TYPE_ZONE = "TYPE";
+		UrbaZoneReader.ATT_TYPE_ZONE = "TYPE";
 
 		AssignBuildingPartToSubParcel.RATIO_MIN = 0.8;
 		AssignBuildingPartToSubParcel.ASSIGN_METHOD = 0;
