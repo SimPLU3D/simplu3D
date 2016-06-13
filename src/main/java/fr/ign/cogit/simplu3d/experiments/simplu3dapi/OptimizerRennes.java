@@ -10,10 +10,10 @@ import fr.ign.cogit.simplu3d.experiments.simplu3dapi.object.ParametricCuboid;
 import fr.ign.cogit.simplu3d.experiments.simplu3dapi.predicate.RennesSamplePredicate;
 import fr.ign.cogit.simplu3d.importer.AssignBuildingPartToSubParcel;
 import fr.ign.cogit.simplu3d.importer.CadastralParcelLoader;
-import fr.ign.cogit.simplu3d.importer.RoadImporter;
 import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
+import fr.ign.cogit.simplu3d.reader.RoadReader;
 import fr.ign.cogit.simplu3d.reader.UrbaZoneReader;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid.OptimisedBuildingsCuboidFinalDirectRejection;
@@ -66,9 +66,9 @@ public class OptimizerRennes {
 		LoaderSHP.NOM_FICHIER_PRESC_LINEAIRE = "no_file.shp";
 
 		// Corrections on attributes
-		RoadImporter.ATT_LARGEUR = "LARGEUR";
-		RoadImporter.ATT_NOM_RUE = "NOM_VOIE_G";
-		RoadImporter.ATT_TYPE = "NATURE";
+		RoadReader.ATT_LARGEUR = "LARGEUR";
+		RoadReader.ATT_NOM_RUE = "NOM_VOIE_G";
+		RoadReader.ATT_TYPE = "NATURE";
 
 		CadastralParcelLoader.ATT_ID_PARC = "NUMERO";
 		CadastralParcelLoader.TYPE_ANNOTATION = 1;

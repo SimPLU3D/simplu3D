@@ -31,11 +31,11 @@ import fr.ign.cogit.simplu3d.experiments.iauidf.predicate.PredicateIAUIDF;
 import fr.ign.cogit.simplu3d.experiments.iauidf.regulation.Regulation;
 import fr.ign.cogit.simplu3d.experiments.iauidf.tool.BandProduction;
 import fr.ign.cogit.simplu3d.importer.CadastralParcelLoader;
-import fr.ign.cogit.simplu3d.importer.RoadImporter;
 import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundarySide;
+import fr.ign.cogit.simplu3d.reader.RoadReader;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.mix.MultipleBuildingsCuboid;
 import fr.ign.mpp.configuration.BirthDeathModification;
@@ -59,9 +59,9 @@ public class Exec_EPFIF {
 	// Initialisation des attributs différents du schéma de base
 	// et le fichier de paramètre commun à toutes les simulations
 	public static void init() throws Exception {
-		RoadImporter.ATT_NOM_RUE = "NOM_VOIE_G";
-		RoadImporter.ATT_LARGEUR = "LARGEUR";
-		RoadImporter.ATT_TYPE = "NATURE";
+		RoadReader.ATT_NOM_RUE = "NOM_VOIE_G";
+		RoadReader.ATT_LARGEUR = "LARGEUR";
+		RoadReader.ATT_TYPE = "NATURE";
 
 		LoaderSHP.NOM_FICHIER_PARCELLE = "parcelle.shp";
 

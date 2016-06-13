@@ -14,13 +14,13 @@ import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.experiments.iauidf.predicate.PredicateIAUIDF;
 import fr.ign.cogit.simplu3d.importer.CadastralParcelLoader;
-import fr.ign.cogit.simplu3d.importer.RoadImporter;
 import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
 import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundarySide;
 import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
+import fr.ign.cogit.simplu3d.reader.RoadReader;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.paralellcuboid.ParallelCuboidOptimizer;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
@@ -59,9 +59,9 @@ public class BasicSimulatorTrapezoid {
 	// Initialisation des attributs différents du schéma de base
 	// et le fichier de paramètre commun à toutes les simulations
 	public static void init() throws Exception {
-		RoadImporter.ATT_NOM_RUE = "NOM_VOIE_G";
-		RoadImporter.ATT_LARGEUR = "LARGEUR";
-		RoadImporter.ATT_TYPE = "NATURE";
+		RoadReader.ATT_NOM_RUE = "NOM_VOIE_G";
+		RoadReader.ATT_LARGEUR = "LARGEUR";
+		RoadReader.ATT_TYPE = "NATURE";
 
 		LoaderSHP.NOM_FICHIER_PARCELLE = "parcelle.shp";
 
