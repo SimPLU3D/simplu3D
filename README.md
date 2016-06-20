@@ -127,4 +127,5 @@ Acknowledgments
 + This research is supported by the French National Mapping Agency ([IGN](http://www.ign.fr))
 + It is partially funded by the FUI TerraMagna project and by Île-de-France
 Région in the context of [e-PLU projet](www.e-PLU.fr)
++ Mickaël Borne for improvements in the code and for refactoring
 
