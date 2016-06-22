@@ -120,6 +120,7 @@ Contact for feedbacks
 Users
 --------------------
 [IAUIDF for land price assessment : Note de conjecture ORF](http://www.orf.asso.fr/uploads/attachements/orf_nc7_ok_lg.pdf)
+[PLU++ : for the simplification of public participation during PLU elaboration](http://ignf.github.io/PLU2PLUS/)
 
 Acknowledgments
 ---------------------
