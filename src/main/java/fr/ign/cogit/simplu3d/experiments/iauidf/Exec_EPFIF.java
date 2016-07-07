@@ -63,7 +63,7 @@ public class Exec_EPFIF {
 		RoadReader.ATT_LARGEUR = "LARGEUR";
 		RoadReader.ATT_TYPE = "NATURE";
 
-		LoaderSHP.NOM_FICHIER_PARCELLE = "parcelle.shp";
+		//LoaderSHP.NOM_FICHIER_PARCELLE = "parcelle.shp";
 
 		CadastralParcelLoader.TYPE_ANNOTATION = 2;
 		CadastralParcelLoader.ATT_HAS_TO_BE_SIMULATED = "simul";

@@ -55,15 +55,15 @@ public class OptimizerRennes {
 		
 		
 		// Rerouting towards the new files
-		LoaderSHP.NOM_FICHIER_PLU = "DOC_URBA.shp";
-		LoaderSHP.NOM_FICHIER_ZONAGE = "zones_UB2.shp";
-		LoaderSHP.NOM_FICHIER_PARCELLE = "parcelles_UB2.shp";
-		LoaderSHP.NOM_FICHIER_TERRAIN = "MNT_UB2_L93.asc";
-		LoaderSHP.NOM_FICHIER_VOIRIE = "Voirie_UB2.shp";
-		// LoaderSHP.NOM_FICHIER_BATIMENTS = "Bati_UB2_3D.shp";
-		LoaderSHP.NOM_FICHIER_BATIMENTS = "Bati_UB2_3D_V2.shp";
-
-		LoaderSHP.NOM_FICHIER_PRESC_LINEAIRE = "no_file.shp";
+//		LoaderSHP.NOM_FICHIER_PLU = "DOC_URBA.shp";
+//		LoaderSHP.NOM_FICHIER_ZONAGE = "zones_UB2.shp";
+//		LoaderSHP.NOM_FICHIER_PARCELLE = "parcelles_UB2.shp";
+//		LoaderSHP.NOM_FICHIER_TERRAIN = "MNT_UB2_L93.asc";
+//		LoaderSHP.NOM_FICHIER_VOIRIE = "Voirie_UB2.shp";
+//		// LoaderSHP.NOM_FICHIER_BATIMENTS = "Bati_UB2_3D.shp";
+//		LoaderSHP.NOM_FICHIER_BATIMENTS = "Bati_UB2_3D_V2.shp";
+//
+//		LoaderSHP.NOM_FICHIER_PRESC_LINEAIRE = "no_file.shp";
 
 		// Corrections on attributes
 		RoadReader.ATT_LARGEUR = "LARGEUR";

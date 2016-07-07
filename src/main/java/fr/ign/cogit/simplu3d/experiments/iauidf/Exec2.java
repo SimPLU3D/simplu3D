@@ -60,7 +60,7 @@ public class Exec2 {
 		RoadReader.ATT_LARGEUR = "LARGEUR";
 		RoadReader.ATT_TYPE = "NATURE";
 
-		LoaderSHP.NOM_FICHIER_PARCELLE = "parcelle.shp";
+		//LoaderSHP.NOM_FICHIER_PARCELLE = "parcelle.shp";
 
 		CadastralParcelLoader.TYPE_ANNOTATION = 2;
 
