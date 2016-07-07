@@ -119,7 +119,8 @@ Contact for feedbacks
 
 Users
 --------------------
-[IAUIDF for land price assessment : Note de conjecture ORF](http://www.orf.asso.fr/uploads/attachements/orf_nc7_ok_lg.pdf)
++ [IAUIDF for land price assessment : Note de conjecture ORF](http://www.orf.asso.fr/uploads/attachements/orf_nc7_ok_lg.pdf)
++ [PLU++ : for the simplification of public participation during PLU elaboration](http://ignf.github.io/PLU2PLUS/)
 
 Acknowledgments
 ---------------------
@@ -127,4 +128,5 @@ Acknowledgments
 + This research is supported by the French National Mapping Agency ([IGN](http://www.ign.fr))
 + It is partially funded by the FUI TerraMagna project and by Île-de-France
 Région in the context of [e-PLU projet](www.e-PLU.fr)
++ Mickaël Borne for improvements in the code and for refactoring
 
