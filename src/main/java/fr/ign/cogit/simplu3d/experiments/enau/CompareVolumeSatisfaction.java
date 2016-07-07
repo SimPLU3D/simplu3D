@@ -83,7 +83,7 @@ public class CompareVolumeSatisfaction {
 
 //		String fileName = "building_parameters_project_expthese_3.xml";
 
-		CadastralParcelLoader.ATT_ID_PARC = "id_parcell";
+		//CadastralParcelLoader.ATT_ID_PARC = "id_parcell";
 		AssignZ.DEFAULT_Z = 0;
 
 		// Chargement de l'environnement
