@@ -66,14 +66,14 @@ public class OptimizerRennes {
 //		LoaderSHP.NOM_FICHIER_PRESC_LINEAIRE = "no_file.shp";
 
 		// Corrections on attributes
-		RoadReader.ATT_LARGEUR = "LARGEUR";
-		RoadReader.ATT_NOM_RUE = "NOM_VOIE_G";
-		RoadReader.ATT_TYPE = "NATURE";
+//		RoadReader.ATT_LARGEUR = "LARGEUR";
+//		RoadReader.ATT_NOM_RUE = "NOM_VOIE_G";
+//		RoadReader.ATT_TYPE = "NATURE";
 
 		CadastralParcelLoader.ATT_ID_PARC = "NUMERO";
 		CadastralParcelLoader.TYPE_ANNOTATION = 1;
 
-		UrbaZoneReader.ATT_TYPE_ZONE = "TYPE";
+//		UrbaZoneReader.ATT_TYPE_ZONE = "TYPE";
 
 		AssignBuildingPartToSubParcel.RATIO_MIN = 0.8;
 		AssignBuildingPartToSubParcel.ASSIGN_METHOD = 0;

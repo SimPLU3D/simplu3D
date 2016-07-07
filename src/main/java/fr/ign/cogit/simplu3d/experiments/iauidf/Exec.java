@@ -52,9 +52,9 @@ public class Exec {
 	// Initialisation des attributs différents du schéma de base
 	// et le fichier de paramètre commun à toutes les simulations
 	public static void init() throws Exception {
-		RoadReader.ATT_NOM_RUE = "NOM_VOIE_G";
-		RoadReader.ATT_LARGEUR = "LARGEUR";
-		RoadReader.ATT_TYPE = "NATURE";
+//		RoadReader.ATT_NOM_RUE = "NOM_VOIE_G";
+//		RoadReader.ATT_LARGEUR = "LARGEUR";
+//		RoadReader.ATT_TYPE = "NATURE";
 
 		CadastralParcelLoader.TYPE_ANNOTATION = 2;
 		PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = SpecificCadastralBoundarySide.LEFT;

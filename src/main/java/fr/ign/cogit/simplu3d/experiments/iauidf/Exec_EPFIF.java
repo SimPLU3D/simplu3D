@@ -59,9 +59,9 @@ public class Exec_EPFIF {
 	// Initialisation des attributs différents du schéma de base
 	// et le fichier de paramètre commun à toutes les simulations
 	public static void init() throws Exception {
-		RoadReader.ATT_NOM_RUE = "NOM_VOIE_G";
-		RoadReader.ATT_LARGEUR = "LARGEUR";
-		RoadReader.ATT_TYPE = "NATURE";
+//		RoadReader.ATT_NOM_RUE = "NOM_VOIE_G";
+//		RoadReader.ATT_LARGEUR = "LARGEUR";
+//		RoadReader.ATT_TYPE = "NATURE";
 
 		//LoaderSHP.NOM_FICHIER_PARCELLE = "parcelle.shp";
 
