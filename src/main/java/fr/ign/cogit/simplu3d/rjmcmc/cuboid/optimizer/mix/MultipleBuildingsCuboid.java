@@ -22,12 +22,14 @@ import fr.ign.cogit.simplu3d.experiments.iauidf.tool.BandProduction;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.builder.CuboidBuilder;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.builder.ParallelCuboidBuilder;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.builder.SimpleCuboidBuilder;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.builder.SimpleCuboidBuilder2;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.ParallelCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.ParallelCuboid2;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.SimpleCuboid;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.SimpleCuboid2;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid.BasicCuboidOptimizer;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.sampler.MixCuboidSampler;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.ChangeHeight;
@@ -186,6 +188,8 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 		// in multi object situations, we need an object builder for each
 		// subtype and a sampler for the supertype (end of file)
 
+		boolean band1Parallel = !(bP.getLineRoad() == null || bP.getLineRoad().isEmpty());
+
 		double[] v = new double[] { env.minX(), env.minY(), minlen, minwid, minheight, 0. };
 
 		if (r1 != null && r1.getArt_102() != 99) {
@@ -209,7 +213,7 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 		}
 
 		IGeometry geomBand1 = r1.getGeomBande();
-		if (bP.getLineRoad() != null) {
+		if (bP.getLineRoad() != null && !bP.getLineRoad().isEmpty()) {
 			geomBand1 = geomBand1.intersection(bP.getLineRoad().buffer(d[3] / 2 + v[3]));
 		}
 
@@ -220,10 +224,11 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 
 		Transform transformBand1 = null;
 
-		if (bP.getLineRoad() == null) {
-			transformBand1 = new TransformToSurface(d2, v, geomBand1);
-		} else {
+		if (band1Parallel) {
+
 			transformBand1 = new ParallelPolygonTransform(d2, v, geomBand1);
+		} else {
+			transformBand1 = new TransformToSurface(d2, v, geomBand1);
 		}
 
 		Transform transformBand2;
@@ -236,11 +241,12 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 		double p_simple = 0.5;
 		ObjectBuilder<Cuboid> builderBand1 = null;
 
-		if (bP.getLineRoad() == null) {
-			builderBand1= new CuboidBuilder();
+		if (band1Parallel) {
+			builderBand1 = new ParallelCuboidBuilder(bP.getLineRoad().toArray(), 1);
 
 		} else {
-			builderBand1 = new ParallelCuboidBuilder(bP.getLineRoad().toArray(), 1);
+
+			builderBand1 = new SimpleCuboidBuilder();
 		}
 
 		ObjectBuilder<Cuboid> builderBand2;
@@ -263,13 +269,13 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 
 		} else {
 
-			builderBand2 = new CuboidBuilder();
+			builderBand2 = new SimpleCuboidBuilder2();
 			transformBand2 = new TransformToSurface(d, v, geomBand2);
 		}
 
 		if (geomBand1 != null && !geomBand1.isEmpty()) {
 			List<Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> lKernelsBand1 = new ArrayList<>();
-			lKernelsBand1 = getBande1Kernels(variate, nullView, p, transformBand1, builderBand1);
+			lKernelsBand1 = getBande1Kernels(variate, nullView, p, transformBand1, builderBand1, band1Parallel);
 			kernels.addAll(lKernelsBand1);
 		} else {
 			p_simple = 1;
@@ -310,30 +316,68 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 
 	private static List<Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> getBande1Kernels(
 			Variate variate, NullView<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> nullView,
-			Parameters p, Transform transformParallel, ObjectBuilder<Cuboid> pbuilder) {
+			Parameters p, Transform transform, ObjectBuilder<Cuboid> pbuilder, boolean parallel) {
 		List<Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> kernels = new ArrayList<>();
 		// Kernel de naissance
 		// TODO Use a KernelProposalRatio to propose only birth when size is 0
-		UniformTypeView<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pView = new UniformTypeView<>(
-				ParallelCuboid.class, pbuilder);
-		Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> kernel2 = new Kernel<>(nullView, pView,
-				variate, variate, transformParallel, p.getDouble("pbirthdeath"), p.getDouble("pbirth"), "Parallel");
-		kernels.add(kernel2);
+		UniformTypeView<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pView = null;
 
-		if ((p.getDouble("maxheight") - p.getDouble("minheight")) > 0.2) {
-			double amplitudeHeight = p.getDouble("amplitudeHeight");
-			Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> parallelHeight = new Kernel<>(pView,
-					pView, variate, variate, new ChangeValue(amplitudeHeight, 5, 3), 0.2, 1.0, "ChgHeightP");
-			kernels.add(parallelHeight);
+		if (parallel) {
+			pView = new UniformTypeView<>(ParallelCuboid.class, pbuilder);
+
+			Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> kernel2 = new Kernel<>(nullView, pView,
+					variate, variate, transform, p.getDouble("pbirthdeath"), p.getDouble("pbirth"), "Parallel");
+			kernels.add(kernel2);
+
+			if ((p.getDouble("maxheight") - p.getDouble("minheight")) > 0.2) {
+				double amplitudeHeight = p.getDouble("amplitudeHeight");
+				Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> parallelHeight = new Kernel<>(pView,
+						pView, variate, variate, new ChangeValue(amplitudeHeight, 5, 3), 0.2, 1.0, "ChgHeightP");
+				kernels.add(parallelHeight);
+			}
+
+			Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> parallelMovekernel = new Kernel<>(pView,
+					pView, variate, variate, new MoveParallelCuboid(p.getDouble("amplitudeMove")), 0.2, 1.0,
+					"SimpleMoveP");
+			kernels.add(parallelMovekernel);
+
+			Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> parallelLength = new Kernel<>(pView,
+					pView, variate, variate, new ChangeValue(p.getDouble("amplitudeMaxDim"), 5, 2), 0.2, 1.0,
+					"ChgLengthP");
+			kernels.add(parallelLength);
+
+		} else {
+			pView = new UniformTypeView<>(SimpleCuboid.class, pbuilder);
+
+			Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> kernel1 = new Kernel<>(nullView, pView,
+					variate, variate, transform, p.getDouble("pbirthdeath"), p.getDouble("pbirth"), "Simple");
+			kernels.add(kernel1);
+
+			Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> simpleMovekernel = new Kernel<>(pView,
+					pView, variate, variate, new MoveCuboid(p.getDouble("amplitudeMove")), 0.2, 1.0, "SimpleMove");
+			kernels.add(simpleMovekernel);
+
+			Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> simpleRotatekernel = new Kernel<>(pView,
+					pView, variate, variate, new RotateCuboid(p.getDouble("amplitudeRotate") * Math.PI / 180), 0.2, 1.0,
+					"RotateS");
+			kernels.add(simpleRotatekernel);
+
+			Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> simpleWidthkernel = new Kernel<>(pView,
+					pView, variate, variate, new ChangeWidth(p.getDouble("amplitudeMaxDim")), 0.2, 1.0, "ChgWidthS");
+			kernels.add(simpleWidthkernel);
+
+			Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> simpleLength = new Kernel<>(pView, pView,
+					variate, variate, new ChangeLength(p.getDouble("amplitudeMaxDim")), 0.2, 1.0, "ChgLengthS");
+			kernels.add(simpleLength);
+
+			if ((p.getDouble("maxheight") - p.getDouble("minheight")) > 0.2) {
+
+				double amplitudeHeight = p.getDouble("amplitudeHeight");
+				Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> simpleHeight = new Kernel<>(pView,
+						pView, variate, variate, new ChangeHeight(amplitudeHeight), 0.2, 1.0, "ChgHeightS");
+				kernels.add(simpleHeight);
+			}
 		}
-
-		Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> parallelMovekernel = new Kernel<>(pView,
-				pView, variate, variate, new MoveParallelCuboid(p.getDouble("amplitudeMove")), 0.2, 1.0, "SimpleMoveP");
-		kernels.add(parallelMovekernel);
-
-		Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> parallelLength = new Kernel<>(pView, pView,
-				variate, variate, new ChangeValue(p.getDouble("amplitudeMaxDim"), 5, 2), 0.2, 1.0, "ChgLengthP");
-		kernels.add(parallelLength);
 
 		return kernels;
 
@@ -372,7 +416,7 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 
 		} else {
 			UniformTypeView<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> sView = new UniformTypeView<>(
-					SimpleCuboid.class, sbuilder);
+					SimpleCuboid2.class, sbuilder);
 
 			// we also need one birthdeath kernel per object subtype
 			// TODO Use a KernelProposalRatio to propose only birth when size is

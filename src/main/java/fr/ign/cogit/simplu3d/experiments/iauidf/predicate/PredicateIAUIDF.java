@@ -22,6 +22,7 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.ParallelCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.ParallelCuboid2;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.SimpleCuboid;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.SimpleCuboid2;
 import fr.ign.geometry.SquaredDistance;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
@@ -155,15 +156,17 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 	@Override
 	public boolean check(C c, M m) {
+		
 
 		// Pour produire des boîtes séparées et vérifier que la distance inter
 		// bâtiment est respectée
 		// ART_8 Distance minimale des constructions par rapport aux autres sur
 		// une même propriété imposée en mètre 88= non renseignable, 99= non
 		// réglementé
-		if (!checkDistanceInterBuildings(c, m, r1.getArt_8())) {
+		if (!checkDistanceInterBuildings(c, m, r1.getArt_8())) { //r1.getArt_8()
 			return false;
 		}
+
 
 		O birth = null;
 
@@ -227,13 +230,23 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 				// System.out.println("Je retourne true");
 
-			} else if (birth instanceof SimpleCuboid) {
+			} else if (birth instanceof SimpleCuboid2) {
 
 				if (r2.getArt_71() != 2) {
 					if (!checkBandRegulation(r2, birth))
 						return false;
 				}
 
+			} else if (birth instanceof SimpleCuboid) {
+				
+				if (r1.getArt_71() != 2) {
+
+					if (!checkBandRegulation(r1, birth)) {
+						return false;
+					}
+
+				}
+				
 			} else {
 				System.out.println("Predicate IAUIDF - Unexpected class during object birth : "
 						+ birth.getClass().getCanonicalName());

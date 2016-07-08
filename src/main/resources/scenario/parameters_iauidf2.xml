@@ -11,10 +11,10 @@
         <!--Distribution (équiprobable) des dimensions des boîtes-->
         <!-- Largeur et longueur !-->
         <param key="minlen" value="7" />
-		<param key="maxlen" value="50" />
+		<param key="maxlen" value="100" />
 		
 		<param key="minwid" value="4" />
-		<param key="maxwid" value="15" />
+		<param key="maxwid" value="30" />
         <!-- Hauteur !-->
 		<param key="minheight" value ="0.5" />
 		<param key="maxheight" value="12" />
