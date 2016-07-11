@@ -20,7 +20,6 @@ import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
 import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundarySide;
 import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
-import fr.ign.cogit.simplu3d.reader.RoadReader;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.paralellcuboid.ParallelCuboidOptimizer;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
@@ -66,7 +65,7 @@ public class BasicSimulatorTrapezoid {
 		//LoaderSHP.NOM_FICHIER_PARCELLE = "parcelle.shp";
 
 		CadastralParcelLoader.TYPE_ANNOTATION = 2;
-		CadastralParcelLoader.ATT_HAS_TO_BE_SIMULATED = "simul";
+//		CadastralParcelLoader.ATT_HAS_TO_BE_SIMULATED = "simul";
 
 		PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = SpecificCadastralBoundarySide.LEFT;
 	}
