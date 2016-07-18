@@ -5,7 +5,7 @@ import java.io.File;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 
-import fr.ign.cogit.simplu3d.demo.nonStructDatabase.shp.LoadDefaultEnvironment;
+import fr.ign.cogit.simplu3d.demo.DemoEnvironmentProvider;
 import fr.ign.cogit.simplu3d.exec.BasicSimulator;
 import fr.ign.cogit.simplu3d.io.SaveGeneratedObjects;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
@@ -107,7 +107,7 @@ public class ShapeFileExperimentation {
                       + hauteurMaxStep) {
 
                     // Chargement de l'environnement
-                    Environnement env = LoadDefaultEnvironment.getENVDEF();
+                    Environnement env = DemoEnvironmentProvider.getDefaultEnvironment();
 
                     for (BasicPropertyUnit bPU : env.getBpU()) {
                       ShapeFileExperimentation.run(p, folderSave, bPU, env,

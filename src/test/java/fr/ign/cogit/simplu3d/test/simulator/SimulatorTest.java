@@ -4,7 +4,7 @@ import java.io.File;
 
 import org.junit.Test;
 
-import fr.ign.cogit.simplu3d.demo.nonStructDatabase.shp.LoadDefaultEnvironment;
+import fr.ign.cogit.simplu3d.demo.DemoEnvironmentProvider;
 import fr.ign.cogit.simplu3d.experiments.thesis.predicate.UXL3Predicate;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
@@ -41,7 +41,7 @@ public class SimulatorTest {
 
     Parameters p = Parameters.unmarshall(new File(folderName + fileName));
 
-    Environnement env = LoadDefaultEnvironment.getENVDEF();
+    Environnement env = DemoEnvironmentProvider.getDefaultEnvironment();
 
     if (env.getBpU().isEmpty()) return;
     BasicPropertyUnit bPU = env.getBpU().get(1);
