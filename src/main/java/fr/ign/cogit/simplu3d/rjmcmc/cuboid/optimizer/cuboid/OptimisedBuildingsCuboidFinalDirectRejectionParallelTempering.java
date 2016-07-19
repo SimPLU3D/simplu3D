@@ -103,7 +103,7 @@ public class OptimisedBuildingsCuboidFinalDirectRejectionParallelTempering exten
 			samp[i] = new GeometricSchedule<SimpleTemperature>(
 					new SimpleTemperature(i * Math.log(this.tempMax) / (this.numberOfReplicas - 1)), 1);
 
-			PrepareVisitors<Cuboid> pv = new PrepareVisitors<>();
+			PrepareVisitors<Cuboid> pv = new PrepareVisitors<>(env);
 			CompositeVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> mVisitor = pv.prepare(p, id);
 
 			tabVisitor[i] = mVisitor;

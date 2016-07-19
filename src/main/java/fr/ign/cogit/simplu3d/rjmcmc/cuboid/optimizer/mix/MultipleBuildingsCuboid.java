@@ -115,7 +115,7 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 
 		EndTest end = create_end_test(p);
 
-		PrepareVisitors<Cuboid> pv = new PrepareVisitors<>();
+		PrepareVisitors<Cuboid> pv = new PrepareVisitors<>(env);
 		CompositeVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> mVisitor = pv.prepare(p,
 				bpu.getId());
 		/*

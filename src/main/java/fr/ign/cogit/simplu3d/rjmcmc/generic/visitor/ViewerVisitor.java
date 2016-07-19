@@ -64,12 +64,12 @@ public class ViewerVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraph
 	private GraphConfiguration<ISimPLU3DPrimitive> bestConfig = null;
 	private double bestValue = Double.POSITIVE_INFINITY;
 
-	public ViewerVisitor(String prefixe, Parameters p) {
+	public ViewerVisitor(Environnement env,String prefixe, Parameters p) {
 		prefix = prefixe;
 		if (mW == null) {
 			mW = new MainWindow();
 			// mW.getMainMenuBar().add(new IOToolBar(mW));
-			represent(Environnement.getInstance(), mW, p);
+			represent(env, mW, p);
 			MIN_LAYER = mW.getInterfaceMap3D().getCurrent3DMap().getLayerList()
 					.size();
 		}

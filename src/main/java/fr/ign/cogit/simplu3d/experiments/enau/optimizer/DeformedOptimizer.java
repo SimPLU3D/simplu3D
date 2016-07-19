@@ -106,7 +106,7 @@ public class DeformedOptimizer extends DefaultSimPLU3DOptimizer<Cuboid> {
 
 		EndTest end = this.create_end_test(p);
 
-		PrepareVisitors<DeformedCuboid> pv = new PrepareVisitors<>();
+		PrepareVisitors<DeformedCuboid> pv = new PrepareVisitors<>(env);
 
 		/*
 		 * < This is the way to launch the optimization process. Here, the magic

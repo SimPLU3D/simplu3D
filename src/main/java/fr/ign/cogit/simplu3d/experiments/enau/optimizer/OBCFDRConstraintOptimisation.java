@@ -99,7 +99,7 @@ public class OBCFDRConstraintOptimisation extends BasicCuboidOptimizer<Cuboid> {
 
 		EndTest end = create_end_test(p);
 
-		PrepareVisitors<Cuboid> pv = new PrepareVisitors<>();
+		PrepareVisitors<Cuboid> pv = new PrepareVisitors<>(env);
 
 		/*
 		 * < This is the way to launch the optimization process. Here, the magic

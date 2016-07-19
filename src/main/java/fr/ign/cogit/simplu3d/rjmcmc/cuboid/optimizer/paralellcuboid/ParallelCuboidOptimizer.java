@@ -79,7 +79,7 @@ public class ParallelCuboidOptimizer extends DefaultSimPLU3DOptimizer<ISimPLU3DP
 
 		EndTest end = create_end_test(p);
 
-		PrepareVisitors<Cuboid> prep = new PrepareVisitors<>();
+		PrepareVisitors<Cuboid> prep = new PrepareVisitors<>(env);
 		SimulatedAnnealing.optimize(rng, conf, samp, sch, end, prep.prepare(p, id));
 		return conf;
 	}
