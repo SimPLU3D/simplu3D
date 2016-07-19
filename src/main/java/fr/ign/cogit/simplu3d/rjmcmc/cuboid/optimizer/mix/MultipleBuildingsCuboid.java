@@ -224,12 +224,13 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 
 		Transform transformBand1 = null;
 
+		if(geomBand1 != null && ! geomBand1.isEmpty()){
 		if (band1Parallel) {
 
 			transformBand1 = new ParallelPolygonTransform(d2, v, geomBand1);
 		} else {
 			transformBand1 = new TransformToSurface(d2, v, geomBand1);
-		}
+		}}
 
 		Transform transformBand2;
 

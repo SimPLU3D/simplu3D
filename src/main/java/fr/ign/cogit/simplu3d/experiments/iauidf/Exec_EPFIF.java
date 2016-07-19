@@ -84,6 +84,7 @@ public class Exec_EPFIF {
 				String folderName = BasicSimulator.class.getClassLoader().getResource("scenario/").getPath();
 				String fileName = "parameters_iauidf.xml";
 				File f = new File(folderName + fileName);
+		
 				
 				boolean simul = simulRegulationByIMU(currentImu, folder + currentImu + "/", lR,f);
 
@@ -252,8 +253,12 @@ public class Exec_EPFIF {
 		boolean isOk = true;
 
 		for (BasicPropertyUnit bPU : env.getBpU()) {
+			
+			if(bPU.getCadastralParcel().get(0).hasToBeSimulated()){
+				featC.addAll(simulationForEachBPU(env, bPU, lRegulation, imu, fParam));
+			}
 
-			featC.addAll(simulationForEachBPU(env, bPU, lRegulation, imu, fParam));
+			
 
 		}
 		System.out.println("-- Nombre de surface : " + debugSurface.size());
@@ -577,6 +582,15 @@ public class Exec_EPFIF {
 			AttributeManager.addAttribute(feat, "Hauteur", v.getValue().height, "Double");
 			AttributeManager.addAttribute(feat, "Rotation", v.getValue().orientation, "Double");
 			AttributeManager.addAttribute(feat, "ID_PARC", bPU.getId(), "Integer");
+			double area = 0;
+			
+			if(feat.getGeom() != null && (! feat.getGeom().isEmpty())){
+				area = feat.getGeom().area();
+			}
+			
+			AttributeManager.addAttribute(feat, "Aire", area, "Double");
+			
+			
 			featC.add(feat);
 		}
 		return featC;

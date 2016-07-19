@@ -72,7 +72,7 @@ public class Recal3D {
 System.out.println("Debout");
 		// Paramters : Currently the DTM is not managed so it is necessary to
 		// set a Zmin
-ZMIN = 139.;
+		ZMIN = 139.;
 		double topologicalMapThreshold = 0.5;
 		double connexionDistance = 0.5;
 		double heightThreshold  = 0.5;
@@ -123,6 +123,10 @@ ZMIN = 139.;
 
 			AttributeManager.addAttribute(feat1, "ID", id, "Integer");
 			AttributeManager.addAttribute(feat2, "ID", id, "Integer");
+			
+			
+			AttributeManager.addAttribute(feat1, "Type", "Wall", "String");
+			AttributeManager.addAttribute(feat2, "Type", "Roof", "String");
 
 			featCOut.add(feat1);
 			featCOut.add(feat2);
@@ -140,7 +144,7 @@ ZMIN = 139.;
 	 * @param zMini
 	 * @return
 	 */
-	private static IFeatureCollection<IFeature> fusionneGeom(List<Cuboid> lAB, double zMini, double connexionDistance,
+	public static IFeatureCollection<IFeature> fusionneGeom(List<Cuboid> lAB, double zMini, double connexionDistance,
 			double topologicalMapThreshold, double heightThreshold) {
 
 		IFeatureCollection<IFeature> featFus = new FT_FeatureCollection<>();
@@ -201,7 +205,9 @@ ZMIN = 139.;
 					IOrientableSurface osj = lOS.get(j);
 
 					// If the geometries are not intersected we go on
-					if (!osi.intersects(osj) || (osi.intersection(osj).area() < 0.2)) {
+					if (!osi.intersects(osj) || (osi.intersection(osj) == null)
+							|| (osi.intersection(osj).isEmpty()) || 
+							(osi.intersection(osj).area() < 0.2)) {
 						continue;
 					}
 
@@ -314,7 +320,7 @@ ZMIN = 139.;
 	 *            : Topologic map threshold
 	 * @return
 	 */
-	private static IFeatureCollection<IFeature> fusionneGeomByGroup(List<? extends Cuboid> lAB, double zMini, double thresholdTopoMap, double heightThreshold) {
+	public static IFeatureCollection<IFeature> fusionneGeomByGroup(List<? extends Cuboid> lAB, double zMini, double thresholdTopoMap, double heightThreshold) {
 
 	
 
@@ -326,6 +332,11 @@ ZMIN = 139.;
 		for (IFeature osTemp : lOSIni) {
 
 			Face f = new Face();
+			
+			if(osTemp.getGeom() == null || osTemp.getGeom().isEmpty()){
+				continue;
+			}
+			
 			f.setGeometrie((IPolygon)  (FromGeomToSurface.convertGeom(osTemp.getGeom()).get(0).clone()));
 
 			featC.add(f);

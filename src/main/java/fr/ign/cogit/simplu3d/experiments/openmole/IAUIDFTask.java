@@ -101,9 +101,9 @@ public class IAUIDFTask {
 
 		}
 
-		String fileName = folderOut + "simul_" + imu + ".shp";
+		String fileName = folderOut + "/simul_" + imu + ".shp";
 		System.out.println(fileName);
-		ShapefileWriter.write(featC, fileName, CRS.decode("EPSG:2154"));
+		ShapefileWriter.write(featC, fileName); //, CRS.decode("EPSG:2154")
 
 		return true;
 	}
