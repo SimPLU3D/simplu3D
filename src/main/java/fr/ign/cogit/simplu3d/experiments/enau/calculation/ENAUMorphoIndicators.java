@@ -16,7 +16,7 @@ import fr.ign.cogit.simplu3d.experiments.enau.geometry.DeformedCuboid;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
+import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundaryType;
 
 public class ENAUMorphoIndicators {
 	
@@ -39,7 +39,7 @@ public class ENAUMorphoIndicators {
 		
 		List<IOrientableCurve> lCurveVoirie = new ArrayList<>();
 		List<IOrientableCurve> lCurveSep= new ArrayList<>();
-		for (CadastralParcel cP : bpu.getCadastralParcel()) {
+		for (CadastralParcel cP : bpu.getCadastralParcels()) {
 			// for (SubParcel sB : cP.getSubParcel()) {
 
 			for (SpecificCadastralBoundary sCB : cP

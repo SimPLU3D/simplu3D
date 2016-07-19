@@ -251,7 +251,7 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 
 			band2parallel = true;
 
-			IFeatureCollection<SpecificCadastralBoundary> featC = bpU.getCadastralParcel().get(0)
+			IFeatureCollection<SpecificCadastralBoundary> featC = bpU.getCadastralParcels().get(0)
 					.getSpecificSideBoundary(PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71);
 			IMultiCurve<IOrientableCurve> ims = new GM_MultiCurve<>();
 			for (SpecificCadastralBoundary s : featC) {

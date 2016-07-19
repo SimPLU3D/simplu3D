@@ -38,8 +38,8 @@ import fr.ign.cogit.simplu3d.experiments.enau.transformation.RotateCuboid;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundarySide;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
+import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundarySide;
+import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth.TransformToSurface;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.DifferenceVolumeUnaryEnergy;
@@ -232,7 +232,7 @@ public class DeformedOptimizer extends DefaultSimPLU3DOptimizer<Cuboid> {
 
 		IMultiCurve<IOrientableCurve> ims = new GM_MultiCurve<>();
 
-		for (SpecificCadastralBoundary scb : bpU.getCadastralParcel().get(0).getSpecificCadastralBoundary()) {
+		for (SpecificCadastralBoundary scb : bpU.getCadastralParcels().get(0).getSpecificCadastralBoundary()) {
 			switch (pos) {
 
 			case DROITE:

@@ -88,7 +88,7 @@ public class BasicPostGISSimulator {
 
           // Identifiant de la parcelle
 
-          int idParcelle = bPU.getCadastralParcel().get(0).getId();
+          int idParcelle = bPU.getCadastralParcels().get(0).getId();
 
           // On sauve les objets
           SaveGeneratedObjects.save(host, port, database, user, pw, cc, idExperiment, idParcelle, run);

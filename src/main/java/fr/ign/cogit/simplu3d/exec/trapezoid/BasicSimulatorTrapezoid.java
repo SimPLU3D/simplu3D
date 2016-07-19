@@ -18,8 +18,8 @@ import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundarySide;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
+import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundarySide;
+import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.paralellcuboid.ParallelCuboidOptimizer;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
@@ -113,7 +113,7 @@ public class BasicSimulatorTrapezoid {
 			// Instanciation du sampler avec l'unité foncière et les valeurs
 			// ci-dessus
 
-			IFeatureCollection<SpecificCadastralBoundary> lSB = bPU.getCadastralParcel().get(0)
+			IFeatureCollection<SpecificCadastralBoundary> lSB = bPU.getCadastralParcels().get(0)
 					.getSpecificCadastralBoundaryByType(SpecificCadastralBoundaryType.ROAD);
 
 			IGeometry[] limits = new IGeometry[lSB.size()];

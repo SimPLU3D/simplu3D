@@ -16,8 +16,8 @@ import fr.ign.cogit.simplu3d.experiments.iauidf.regulation.Regulation;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundarySide;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
+import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundarySide;
+import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.ParallelCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.ParallelCuboid2;
@@ -67,7 +67,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 		// On parcourt les parcelles du BasicPropertyUnit (un propriétaire peut
 		// avoir plusieurs parcelles)
-		for (CadastralParcel cP : currentBPU.getCadastralParcel()) {
+		for (CadastralParcel cP : currentBPU.getCadastralParcels()) {
 
 			// On parcourt les limites séparaticves
 			for (SpecificCadastralBoundary sCB : cP.getSpecificCadastralBoundary()) {

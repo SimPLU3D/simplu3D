@@ -32,7 +32,7 @@ import fr.ign.cogit.simplu3d.importer.CadastralParcelLoader;
 import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundarySide;
+import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundarySide;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.mix.MultipleBuildingsCuboid;
 import fr.ign.mpp.configuration.BirthDeathModification;
@@ -122,11 +122,11 @@ public class Exec2 {
 
 		for (BasicPropertyUnit bPU : env.getBpU()) {
 
-			if (!bPU.getCadastralParcel().get(0).hasToBeSimulated()) {
+			if (!bPU.getCadastralParcels().get(0).hasToBeSimulated()) {
 				continue;
 			}
 
-			if (bPU.getCadastralParcel().get(0).getArea() < 5) {
+			if (bPU.getCadastralParcels().get(0).getArea() < 5) {
 				System.out.println("Probablement une erreur de carte topologique.");
 				continue;
 			}

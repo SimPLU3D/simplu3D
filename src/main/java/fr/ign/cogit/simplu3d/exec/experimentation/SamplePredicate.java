@@ -15,7 +15,7 @@ import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
+import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
@@ -113,7 +113,7 @@ public class SamplePredicate<O extends AbstractSimpleBuilding, C extends Abstrac
 
 		// On parcourt les parcelles du BasicPropertyUnit (un propriétaire peut
 		// avoir plusieurs parcelles)
-		for (CadastralParcel cP : currentBPU.getCadastralParcel()) {
+		for (CadastralParcel cP : currentBPU.getCadastralParcels()) {
 
 			// On parcourt les limites séparaticves
 			for (SpecificCadastralBoundary sCB : cP
@@ -296,7 +296,7 @@ public class SamplePredicate<O extends AbstractSimpleBuilding, C extends Abstrac
 
 		}
 
-		double airePAr = this.currentBPU.getCadastralParcel().get(0).getArea();
+		double airePAr = this.currentBPU.getCadastralParcels().get(0).getArea();
 
 		return ((geom.getArea() / airePAr) <= this.maximalCES);
 	}

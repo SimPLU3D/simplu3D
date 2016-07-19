@@ -17,7 +17,7 @@ import fr.ign.cogit.simplu3d.model.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
+import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
@@ -66,7 +66,7 @@ public class UB16PredicateWithOtherBuildings<O extends Cuboid, C extends Abstrac
 
         List<IOrientableCurve> lCurveLatBot = new ArrayList<>();
 
-        for (CadastralParcel cP : bPU.getCadastralParcel()) {
+        for (CadastralParcel cP : bPU.getCadastralParcels()) {
             // for (SubParcel sB : cP.getSubParcel()) {
 
             for (SpecificCadastralBoundary sCB : cP.getSpecificCadastralBoundary()) {
@@ -257,7 +257,7 @@ public class UB16PredicateWithOtherBuildings<O extends Cuboid, C extends Abstrac
 
         }
 
-        double airePAr = this.bPU.getCadastralParcel().get(0).getArea();
+        double airePAr = this.bPU.getCadastralParcels().get(0).getArea();
 
         return ((aireBuilt / airePAr) <= 0.5);
     }

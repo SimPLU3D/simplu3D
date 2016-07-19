@@ -155,7 +155,7 @@ public class ShapeFileExperimentation {
 
     // Identifiant de la parcelle
 
-    int idParcelle = bPU.getCadastralParcel().get(0).getId();
+    int idParcelle = bPU.getCadastralParcels().get(0).getId();
 
     double energy = cc.getEnergy();
 

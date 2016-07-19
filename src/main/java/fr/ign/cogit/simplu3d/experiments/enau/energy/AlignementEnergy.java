@@ -13,7 +13,7 @@ import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
+import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.rjmcmc.energy.UnaryEnergy;
 
@@ -29,7 +29,7 @@ public class AlignementEnergy<T extends AbstractSimpleBuilding> implements
 
 		List<IOrientableCurve> lCurveVoirie = new ArrayList<>();
 
-		for (CadastralParcel cP : bPU.getCadastralParcel()) {
+		for (CadastralParcel cP : bPU.getCadastralParcels()) {
 			// for (SubParcel sB : cP.getSubParcel()) {
 
 			for (SpecificCadastralBoundary sCB : cP

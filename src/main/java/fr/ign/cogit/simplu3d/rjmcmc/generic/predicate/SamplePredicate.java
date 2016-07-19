@@ -15,7 +15,7 @@ import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
+import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
@@ -96,7 +96,7 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 
 		// On parcourt les parcelles du BasicPropertyUnit (un propriétaire peut
 		// avoir plusieurs parcelles)
-		for (CadastralParcel cP : bPU.getCadastralParcel()) {
+		for (CadastralParcel cP : bPU.getCadastralParcels()) {
 
 			// On parcourt les limites séparaticves
 			for (SpecificCadastralBoundary sCB : cP.getSpecificCadastralBoundary()) {
@@ -368,7 +368,7 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 
 		// On récupère la superficie de la basic propertyUnit
 		double airePAr = 0;
-		for (CadastralParcel cP : currentBPU.getCadastralParcel()) {
+		for (CadastralParcel cP : currentBPU.getCadastralParcels()) {
 			airePAr = airePAr + cP.getArea();
 		}
 
