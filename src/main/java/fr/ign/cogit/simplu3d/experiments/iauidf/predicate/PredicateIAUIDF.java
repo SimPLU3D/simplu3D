@@ -158,6 +158,8 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 	public boolean check(C c, M m) {
 		
 
+		
+
 		// Pour produire des boîtes séparées et vérifier que la distance inter
 		// bâtiment est respectée
 		// ART_8 Distance minimale des constructions par rapport aux autres sur
@@ -166,6 +168,8 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		if (!checkDistanceInterBuildings(c, m, r1.getArt_8())) { //r1.getArt_8()
 			return false;
 		}
+		
+
 
 
 		O birth = null;
@@ -192,6 +196,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		if (!checkParcelRegulation(r1, c, m)) {
 			return false;
 		}
+	
 
 		// Vérification des règles au niveau des bandes (localement)
 

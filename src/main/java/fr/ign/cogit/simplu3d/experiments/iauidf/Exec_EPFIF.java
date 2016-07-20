@@ -253,12 +253,11 @@ public class Exec_EPFIF {
 		boolean isOk = true;
 
 		for (BasicPropertyUnit bPU : env.getBpU()) {
+		
 			
-			if(bPU.getCadastralParcel().get(0).hasToBeSimulated()){
+			if(bPU.getCadastralParcel().get(0).hasToBeSimulated() ){
 				featC.addAll(simulationForEachBPU(env, bPU, lRegulation, imu, fParam));
 			}
-
-			
 
 		}
 		System.out.println("-- Nombre de surface : " + debugSurface.size());
@@ -274,16 +273,17 @@ public class Exec_EPFIF {
 	
 	public static IFeatureCollection<IFeature> simulationForEachBPU(Environnement env, BasicPropertyUnit bPU, List<Regulation> lRegulation, int imu, File fParam ) throws Exception{
 		
+		//Stocke les résultats
 		IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
 	
-		
+		//On ne simule pas sur les très petites parcelles qui peuvent être des erreurs dus à la carte topo
 		if(bPU.getCadastralParcel().get(0).getArea() < 5){
 			System.out.println("Probablement une erreur de carte topologique.");
 			return featC;
 		}
 	
-		System.out.println("JE PASSE LA");
 
+		//Il y a 1 ou 2 réglementaiton par parcelle
 		Regulation r1 = lRegulation.get(0);
 		Regulation r2 = null;
 
@@ -298,6 +298,9 @@ public class Exec_EPFIF {
 			System.out.println("R2 : " + r2);
 
 		}
+		
+		
+		//Somme nous dans le cas où les bâtiments doivent être accolé aux limites latérales ?
 		if (r1 != null && r1.getArt_71() == 2 || r2 != null && r2.getArt_71() == 2) {
 
 			// Cas ou les bâtiments se collent d'un des 2 côtés, on simule
@@ -316,7 +319,6 @@ public class Exec_EPFIF {
 
 			IFeatureCollection<IFeature> featC2 = new FT_FeatureCollection<>();
 
-		//	env = LoaderSHP.loadNoDTM(new File(folderImu));
 
 			featC2.addAll(simulRegulationByBasicPropertyUnit(env, bPU, imu, r1, r2, fParam));
 
@@ -527,12 +529,14 @@ public class Exec_EPFIF {
 		// //////On découpe la parcelle en bande en fonction des règlements
 
 		// ART_5 Superficie minimale 88= non renseignable, 99= non réglementé
+		//Si ce n'est pas respecté on ne fait même pas de simulation
 		double r_art5 = r1.getArt_5();
 		if (r_art5 != 99) {
 			if (bPU.getpol2D().area() < r_art5) {
 				return featC;
 			}
 		}
+		//Processus découpant la zone dans laquelle on met les bâtiments à partir des règles
 		BandProduction bP = new BandProduction(bPU, r1, r2);
 
 		if (r2 == null || r2.getGeomBande() == null || r2.getGeomBande().isEmpty()) {
@@ -553,7 +557,7 @@ public class Exec_EPFIF {
 		}
 
 		Parameters p = initiateSimulationParamters(r1, r2,fParam);
-		// initialisation des paramètres de simulations
+		// initialisation des paramètres de simulation
 		if (p == null) {
 			return featC;
 		}
@@ -571,7 +575,9 @@ public class Exec_EPFIF {
 		if (cc == null) {
 			return featC;
 		}
-
+		
+		
+		//On liste les boîtes simulées et on ajoute les attributs nécessaires
 		for (GraphVertex<Cuboid> v : cc.getGraph().vertexSet()) {
 
 			IFeature feat = new DefaultFeature(v.getValue().generated3DGeom());

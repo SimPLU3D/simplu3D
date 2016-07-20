@@ -10,7 +10,6 @@ import org.geotools.factory.GeoTools;
 import org.geotools.factory.Hints;
 import org.geotools.feature.DefaultFeatureCollections;
 import org.geotools.filter.FilterFactoryImpl;
-import org.geotools.referencing.CRS;
 import org.geotools.referencing.factory.ReferencingObjectFactory;
 import org.geotools.referencing.factory.epsg.FactoryUsingWKT;
 import org.geotools.referencing.operation.DefaultMathTransformFactory;
@@ -32,8 +31,8 @@ import fr.ign.cogit.simplu3d.util.AssignZ;
 public class IAUIDFTask {
 
 	public static void main(String[] args) throws Exception {
-		File folder = new File("/home/mickael/data/mbrasebin/donnees/IAUIDF/Est_Ensemble/EstEnsemble/75017387/");
-		File folderOut = new File("/home/mickael/tmp/");
+		File folder = new File("/home/mickael/data/mbrasebin/donnees/IAUIDF/Est_Ensemble/EstEnsemble/75025410/");
+		File folderOut = new File("/home/mickael/temp/");
 		File parameterFile = new File(
 				"/home/mickael/data/mbrasebin/workspace/simPLU3D/simplu3D/src/main/resources/scenario/parameters_iauidf.xml");
 		long seed = 42L;
@@ -80,19 +79,26 @@ public class IAUIDFTask {
 		Environnement env = LoaderSHP.loadNoDTM(folder);
 
 		String[] folderSplit = folder.getAbsolutePath().split(File.separator);
+		//Identifiant de l'imu courant
 		String imu = folderSplit[folderSplit.length - 1];
 		// Stocke les résultats en sorties
 		IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
-
+		
+		//On charge dans la map les règlements pour chaque parcelle (1 ou 2)
 		Map<String, List<Regulation>> map = loadRules(new File(folder + "/parcelle.shp"));
 
 		for (BasicPropertyUnit bPU : env.getBpU()) {
 
 			String id = bPU.getCadastralParcel().get(0).getParcelle_id();
 
+			/*
+			 * if(! id.equals("930100000V0139")){ continue; }
+			 */
+
 			List<Regulation> lR = map.get(id);
 
 			if (lR != null && !lR.isEmpty()) {
+				//On simule indépendemment chaque unité foncière
 				featC.addAll(Exec_EPFIF.simulationForEachBPU(env, bPU, lR,
 						Integer.parseInt(folderSplit[folderSplit.length - 1]), parameterFile));
 			} else {
@@ -100,10 +106,10 @@ public class IAUIDFTask {
 			}
 
 		}
-
+		//On écrit le fichier en sortie dans le folderout
 		String fileName = folderOut + "/simul_" + imu + ".shp";
 		System.out.println(fileName);
-		ShapefileWriter.write(featC, fileName); //, CRS.decode("EPSG:2154")
+		ShapefileWriter.write(featC, fileName); // , CRS.decode("EPSG:2154") => supprimé à cause de la compatibilité OSIG/Geotools
 
 		return true;
 	}
