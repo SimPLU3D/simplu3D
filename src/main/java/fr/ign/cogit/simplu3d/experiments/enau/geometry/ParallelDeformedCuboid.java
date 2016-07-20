@@ -91,7 +91,7 @@ public class ParallelDeformedCuboid extends DeformedCuboid implements Primitive 
 		this.height2 = list.get(4);
 		this.height3 = list.get(5);
 		this.height4 = list.get(6);
-		this.isNew = true;
+		this.setGenerated(true);
 	}
 
 }

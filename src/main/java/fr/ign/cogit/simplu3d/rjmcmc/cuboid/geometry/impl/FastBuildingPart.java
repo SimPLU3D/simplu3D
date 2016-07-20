@@ -36,7 +36,7 @@ public class FastBuildingPart extends BuildingPart {
 	public FastBuildingPart(IPolygon poly, double z) {
 		super();
 		this.setFootprint(poly);
-		this.isNew = true;
+		this.generated = true;
 
 		IPolygon polyClone = (IPolygon) poly.clone();
 

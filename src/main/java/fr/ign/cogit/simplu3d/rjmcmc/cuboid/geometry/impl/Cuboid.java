@@ -51,7 +51,7 @@ public class Cuboid extends AbstractSimpleBuilding implements ISimPLU3DPrimitive
 
 	public Cuboid(double centerx, double centery, double length, double width, double height, double orientation) {
 		super();
-		this.isNew = true;
+		this.generated = true;
 		this.centerx = centerx;
 		this.centery = centery;
 		this.length = length;
@@ -316,7 +316,7 @@ public class Cuboid extends AbstractSimpleBuilding implements ISimPLU3DPrimitive
 		this.width = list.get(3);
 		this.height = list.get(4);
 		this.orientation = list.get(5);
-		this.isNew = true;
+		this.generated = true;
 	}
 
 	public IGeometry generated3DGeom() {
