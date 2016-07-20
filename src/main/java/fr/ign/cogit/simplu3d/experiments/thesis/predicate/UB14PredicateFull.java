@@ -91,7 +91,7 @@ public class UB14PredicateFull<O extends Cuboid, C extends AbstractGraphConfigur
     for (CadastralParcel cP : bPU.getCadastralParcels()) {
       // for (SubParcel sB : cP.getSubParcel()) {
 
-      for (SpecificCadastralBoundary sCB : cP.getSpecificCadastralBoundary()) {
+      for (SpecificCadastralBoundary sCB : cP.getBoundaries()) {
 
         if (sCB.getType() == SpecificCadastralBoundaryType.ROAD) {
 

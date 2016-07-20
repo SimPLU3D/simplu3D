@@ -32,7 +32,7 @@ public class ServitudeVue<T> implements UnaryEnergy<T> {
 			// for (SubParcel sB : cP.getSubParcel()) {
 
 			for (SpecificCadastralBoundary sCB : cP
-					.getSpecificCadastralBoundary()) {
+					.getBoundaries()) {
 
 				if (sCB.getType() != SpecificCadastralBoundaryType.ROAD) {
 

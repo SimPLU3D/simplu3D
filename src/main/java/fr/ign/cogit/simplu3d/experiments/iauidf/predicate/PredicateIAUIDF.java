@@ -70,7 +70,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		for (CadastralParcel cP : currentBPU.getCadastralParcels()) {
 
 			// On parcourt les limites séparaticves
-			for (SpecificCadastralBoundary sCB : cP.getSpecificCadastralBoundary()) {
+			for (SpecificCadastralBoundary sCB : cP.getBoundaries()) {
 
 				// En fonction du type on ajoute à telle ou telle géométrie
 

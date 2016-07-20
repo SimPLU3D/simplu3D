@@ -8,7 +8,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
-import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IEnvelope;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
@@ -251,8 +250,8 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 
 			band2parallel = true;
 
-			IFeatureCollection<SpecificCadastralBoundary> featC = bpU.getCadastralParcels().get(0)
-					.getSpecificSideBoundary(PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71);
+			List<SpecificCadastralBoundary> featC = bpU.getCadastralParcels().get(0)
+					.getBoundariesBySide(PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71);
 			IMultiCurve<IOrientableCurve> ims = new GM_MultiCurve<>();
 			for (SpecificCadastralBoundary s : featC) {
 				ims.addAll(FromGeomToLineString.convert(s.getGeom()));

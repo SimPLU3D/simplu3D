@@ -53,7 +53,7 @@ public class RennesSamplePredicate<O extends Cuboid, C extends AbstractGraphConf
 		// a plusieurs sous parcelles faudrait faire une intégration plus
 		// propre)
 		for (Cuboid b : lBuildings) {
-			this.currentBPU.getCadastralParcels().get(0).getSubParcel().get(0).getBuildingsParts().add(b);
+			this.currentBPU.getCadastralParcels().get(0).getSubParcels().get(0).getBuildingsParts().add(b);
 		}
 		
 		if(lBuildings.isEmpty()){
@@ -65,7 +65,7 @@ public class RennesSamplePredicate<O extends Cuboid, C extends AbstractGraphConf
 
 		// On vire les
 		for (Cuboid b : lBuildings) {
-			this.currentBPU.getCadastralParcels().get(0).getSubParcel().get(0).getBuildingsParts().remove(b);
+			this.currentBPU.getCadastralParcels().get(0).getSubParcels().get(0).getBuildingsParts().remove(b);
 		}
 
 		return checked;

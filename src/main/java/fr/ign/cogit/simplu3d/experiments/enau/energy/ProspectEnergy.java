@@ -37,7 +37,7 @@ public class ProspectEnergy<T extends AbstractSimpleBuilding>  implements UnaryE
 			// for (SubParcel sB : cP.getSubParcel()) {
 
 			for (SpecificCadastralBoundary sCB : cP
-					.getSpecificCadastralBoundary()) {
+					.getBoundaries()) {
 
 				if (sCB.getType() == SpecificCadastralBoundaryType.ROAD) {
 

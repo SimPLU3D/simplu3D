@@ -48,7 +48,7 @@ public class UXL3PredicateGroup<O extends Cuboid, C extends AbstractGraphConfigu
 
 		for (CadastralParcel cP : bPU.getCadastralParcels()) {
 			// for (SubParcel sB : cP.getSubParcel()) {
-			for (SpecificCadastralBoundary sCB : cP.getSpecificCadastralBoundary()) {
+			for (SpecificCadastralBoundary sCB : cP.getBoundaries()) {
 
 				if (sCB.getType() != SpecificCadastralBoundaryType.INTRA) {
 					IGeometry geom = sCB.getGeom();

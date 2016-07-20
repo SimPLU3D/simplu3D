@@ -93,7 +93,7 @@ public class PredicateTunis<O extends AbstractSimpleBuilding, C extends Abstract
 			// for (SubParcel sB : cP.getSubParcel()) {
 
 			for (SpecificCadastralBoundary sCB : cP
-					.getSpecificCadastralBoundary()) {
+					.getBoundaries()) {
 
 				if (sCB.getType() == SpecificCadastralBoundaryType.ROAD) {
 

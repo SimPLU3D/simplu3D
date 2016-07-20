@@ -69,7 +69,7 @@ public class UB16PredicateWithOtherBuildings<O extends Cuboid, C extends Abstrac
         for (CadastralParcel cP : bPU.getCadastralParcels()) {
             // for (SubParcel sB : cP.getSubParcel()) {
 
-            for (SpecificCadastralBoundary sCB : cP.getSpecificCadastralBoundary()) {
+            for (SpecificCadastralBoundary sCB : cP.getBoundaries()) {
 
                 if (sCB.getType() == SpecificCadastralBoundaryType.ROAD) {
 

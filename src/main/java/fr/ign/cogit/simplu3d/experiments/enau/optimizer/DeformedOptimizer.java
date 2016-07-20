@@ -232,7 +232,7 @@ public class DeformedOptimizer extends DefaultSimPLU3DOptimizer<Cuboid> {
 
 		IMultiCurve<IOrientableCurve> ims = new GM_MultiCurve<>();
 
-		for (SpecificCadastralBoundary scb : bpU.getCadastralParcels().get(0).getSpecificCadastralBoundary()) {
+		for (SpecificCadastralBoundary scb : bpU.getCadastralParcels().get(0).getBoundaries()) {
 			switch (pos) {
 
 			case DROITE:

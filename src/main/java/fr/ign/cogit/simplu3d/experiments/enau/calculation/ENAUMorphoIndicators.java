@@ -43,7 +43,7 @@ public class ENAUMorphoIndicators {
 			// for (SubParcel sB : cP.getSubParcel()) {
 
 			for (SpecificCadastralBoundary sCB : cP
-					.getSpecificCadastralBoundary()) {
+					.getBoundaries()) {
 
 				IGeometry geom = sCB.getGeom();
 				

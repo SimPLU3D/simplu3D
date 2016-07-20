@@ -117,7 +117,7 @@ public class SamplePredicate<O extends AbstractSimpleBuilding, C extends Abstrac
 
 			// On parcourt les limites séparaticves
 			for (SpecificCadastralBoundary sCB : cP
-					.getSpecificCadastralBoundary()) {
+					.getBoundaries()) {
 
 				// En fonction du type on ajoute à telle ou telle géométrie
 

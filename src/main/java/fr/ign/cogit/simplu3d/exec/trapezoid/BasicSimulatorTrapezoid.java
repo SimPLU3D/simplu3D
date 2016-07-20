@@ -1,13 +1,13 @@
 package fr.ign.cogit.simplu3d.exec.trapezoid;
 
 import java.io.File;
+import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
@@ -113,8 +113,8 @@ public class BasicSimulatorTrapezoid {
 			// Instanciation du sampler avec l'unité foncière et les valeurs
 			// ci-dessus
 
-			IFeatureCollection<SpecificCadastralBoundary> lSB = bPU.getCadastralParcels().get(0)
-					.getSpecificCadastralBoundaryByType(SpecificCadastralBoundaryType.ROAD);
+			List<SpecificCadastralBoundary> lSB = bPU.getCadastralParcels().get(0)
+					.getBoundariesByType(SpecificCadastralBoundaryType.ROAD);
 
 			IGeometry[] limits = new IGeometry[lSB.size()];
 			int count = 0;

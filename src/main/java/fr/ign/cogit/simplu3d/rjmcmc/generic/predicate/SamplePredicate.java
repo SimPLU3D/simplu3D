@@ -99,7 +99,7 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 		for (CadastralParcel cP : bPU.getCadastralParcels()) {
 
 			// On parcourt les limites séparaticves
-			for (SpecificCadastralBoundary sCB : cP.getSpecificCadastralBoundary()) {
+			for (SpecificCadastralBoundary sCB : cP.getBoundaries()) {
 
 				// En fonction du type on ajoute à telle ou telle géométrie
 

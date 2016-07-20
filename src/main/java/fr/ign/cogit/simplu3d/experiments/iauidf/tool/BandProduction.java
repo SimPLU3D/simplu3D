@@ -34,8 +34,7 @@ public class BandProduction {
 
 		// On créé la géométrie des limites donnant sur la voirie
 
-		IFeatureCollection<SpecificCadastralBoundary> lBordureVoirie = bPU
-				.getCadastralParcels().get(0).getSpecificCadastralBoundaryByType(SpecificCadastralBoundaryType.ROAD);
+		List<SpecificCadastralBoundary> lBordureVoirie = bPU.getCadastralParcels().get(0).getBoundariesByType(SpecificCadastralBoundaryType.ROAD);
 		for (SpecificCadastralBoundary sc : lBordureVoirie) {
 			iMSRoad.add((IOrientableCurve) sc.getGeom());
 		}
@@ -82,7 +81,7 @@ public class BandProduction {
 
 		// On créé la géométrie des autres limites séparatives
 		IMultiCurve<IOrientableCurve> iMSLim = new GM_MultiCurve<>();
-		List<SpecificCadastralBoundary> lBordureLat = bPU.getCadastralParcels().get(0).getSpecificCadastralBoundary();
+		List<SpecificCadastralBoundary> lBordureLat = bPU.getCadastralParcels().get(0).getBoundaries();
 
 		for (SpecificCadastralBoundary sc : lBordureLat) {
 
@@ -90,7 +89,7 @@ public class BandProduction {
 				iMSLim.add((IOrientableCurve) sc.getGeom());
 			}
 		}
-		List<SpecificCadastralBoundary> lBordureFond = bPU.getCadastralParcels().get(0).getSpecificCadastralBoundary();
+		List<SpecificCadastralBoundary> lBordureFond = bPU.getCadastralParcels().get(0).getBoundaries();
 		for (SpecificCadastralBoundary sc : lBordureFond) {
 			if (sc.getType() == SpecificCadastralBoundaryType.BOT) {
 				iMSLim.add((IOrientableCurve) sc.getGeom());
