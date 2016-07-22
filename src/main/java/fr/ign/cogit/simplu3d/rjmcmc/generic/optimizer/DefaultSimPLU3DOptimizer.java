@@ -2,7 +2,6 @@ package fr.ign.cogit.simplu3d.rjmcmc.generic.optimizer;
 
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
-import fr.ign.cogit.simplu3d.rjmcmc.generic.endTest.StabilityEndTest;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.CountVisitor;
 import fr.ign.mpp.configuration.BirthDeathModification;
@@ -10,6 +9,7 @@ import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
 import fr.ign.simulatedannealing.endtest.EndTest;
 import fr.ign.simulatedannealing.endtest.MaxIterationEndTest;
+import fr.ign.simulatedannealing.endtest.StabilityEndTest;
 import fr.ign.simulatedannealing.schedule.GeometricSchedule;
 import fr.ign.simulatedannealing.schedule.Schedule;
 import fr.ign.simulatedannealing.temperature.SimpleTemperature;

@@ -47,7 +47,6 @@ import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.IntersectionVolumeBinaryEnerg
 import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.VolumeUnaryEnergy;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.optimizer.DefaultSimPLU3DOptimizer;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.sampler.GreenSamplerBlockTemperature;
-import fr.ign.cogit.simplu3d.rjmcmc.generic.transformation.ChangeValue;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.PrepareVisitors;
 import fr.ign.mpp.DirectRejectionSampler;
 import fr.ign.mpp.DirectSampler;
@@ -69,6 +68,7 @@ import fr.ign.rjmcmc.energy.MultipliesBinaryEnergy;
 import fr.ign.rjmcmc.energy.MultipliesUnaryEnergy;
 import fr.ign.rjmcmc.energy.PlusUnaryEnergy;
 import fr.ign.rjmcmc.energy.UnaryEnergy;
+import fr.ign.rjmcmc.kernel.ChangeValue;
 import fr.ign.rjmcmc.kernel.Kernel;
 import fr.ign.rjmcmc.kernel.NullView;
 import fr.ign.rjmcmc.kernel.Variate;

@@ -372,8 +372,8 @@ public class Exec {
 		// //////On découpe la parcelle en bande en fonction des règlements
 
 		// ART_5 Superficie minimale 88= non renseignable, 99= non réglementé
-		int r_art5 = r1.getArt_5();
-		if (r_art5 != 99) {
+		double r_art5 = r1.getArt_5();
+		if (r_art5 != 99.0) {
 			if (bPU.getpol2D().area() < r_art5) {
 				return featC;
 			}

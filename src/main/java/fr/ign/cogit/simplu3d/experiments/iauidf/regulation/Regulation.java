@@ -27,19 +27,19 @@ public class Regulation {
 
 	// Les intitulés des colonnes
 	private int code_imu, insee, date_approbation, fonctions, top_zac,
-			zonage_coherent, correction_zonage, typ_bande, bande, art_5,
-			art_71,  art_74, art_8, art_10_top, art_101;
+			zonage_coherent, correction_zonage, typ_bande, bande,
+			art_71,  art_74, art_10_top ;
 	private String libelle_zone, libelle_de_base, libelle_de_dul;
 
-	private double art_72,art_73, art_6, art_9, art_102, art_12, art_14, art_13;
+	private double  art_5,art_72,art_73,  art_8, art_6, art_9, art_102, art_12, art_14, art_13, art_101;
 
 	public Regulation(int code_imu, String libelle_zone, int insee,
 			int date_approbation, String libelle_de_base,
 			String libelle_de_dul, int fonctions, int top_zac,
 			int zonage_coherent, int correction_zonage, int typ_bande,
-			int bande, int art_5, double art_6, int art_71, double art_72,
-			double art_73, int art_74, int art_8, double art_9, int art_10_top,
-			int art_101, double art_102, double art_12, double art_13,
+			int bande, double art_5, double art_6, int art_71, double art_72,
+			double art_73, int art_74, double art_8, double art_9, int art_10_top,
+			double art_101, double art_102, double art_12, double art_13,
 			double art_14) {
 		super();
 		this.code_imu = code_imu;
@@ -296,7 +296,7 @@ Double.parseDouble(split[23].toString()),
 
 	// ART_5 Superficie minimale 88= non renseignable, 99= non réglementé
 
-	public int getArt_5() {
+	public double getArt_5() {
 		return art_5;
 	}
 
@@ -340,7 +340,7 @@ Double.parseDouble(split[23].toString()),
 
 	// ART_8 Distance minimale des constructions par rapport aux autres sur une
 	// même propriété imposée en mètre 88= non renseignable, 99= non réglementé
-	public int getArt_8() {
+	public double getArt_8() {
 		return art_8;
 	}
 
@@ -360,7 +360,7 @@ Double.parseDouble(split[23].toString()),
 
 	// ART_101 Hauteur maximum autorisée 88= non renseignable, 99= non
 	// réglementé
-	public int getArt_101() {
+	public double getArt_101() {
 		return art_101;
 	}
 
