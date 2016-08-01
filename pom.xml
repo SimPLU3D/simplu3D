@@ -5,7 +5,7 @@
 
 	<groupId>fr.ign.cogit</groupId>
 	<artifactId>simplu3d</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>simplu3d</name>
 
@@ -60,9 +60,9 @@
 					<environmentVariables>
 						<PATH>${basedir}\lib\native_libraries\windows-amd64\</PATH>
 					</environmentVariables>
-          <excludes>
-            <exclude>**/SimulatorTest.java</exclude>
-          </excludes>
+					<excludes>
+						<exclude>**/SimulatorTest.java</exclude>
+					</excludes>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -272,7 +272,7 @@
 	</profiles>
 
 	<repositories>
-			<repository>
+		<repository>
 			<id>cogit-snapshots</id>
 			<name>Cogit Snapshots Repository</name>
 			<url>https://forge-cogit.ign.fr/nexus/content/repositories/snapshots/</url>
@@ -309,22 +309,6 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
-		<!--	<repository>
-			<id>Central</id>
-			<name>Central Repository</name>
-			<url>http://repo1.maven.org/maven2</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<id>iscpif-ign-snapshots</id>
-			<name>ISCPIF Snapshot repository for IGN</name>
-			<url>http://maven.iscpif.fr/ign-snapshots/</url>
-		</repository>-->
 		<repository>
 			<id>osgeo-geotools</id>
 			<url>http://download.osgeo.org/webdav/geotools/</url>
@@ -343,12 +327,14 @@
 		<dependency>
 			<groupId>fr.ign.cogit</groupId>
 			<artifactId>simplu3d-rules</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>1.1-SNAPSHOT</version>
 			<exclusions>
+			<!-- 
 				<exclusion>
 					<groupId>fr.ign.cogit</groupId>
 					<artifactId>geoxygene-util</artifactId>
 				</exclusion>
+			 -->
 				<exclusion>
 					<groupId>jama</groupId>
 					<artifactId>jama</artifactId>
@@ -372,6 +358,13 @@
 			<groupId>fr.ign</groupId>
 			<artifactId>librjmcmc4j-geometry</artifactId>
 			<version>${librjmcmc4j.version}</version>
+			<exclusions>
+				<!-- TODO create a 1.1 version of librjmcmc4j with a dependency to geotools 14 -->
+				<exclusion>
+					<groupId>org.geotools</groupId>
+					<artifactId>gt-shapefile</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 	<distributionManagement>
@@ -385,15 +378,5 @@
 			<name>Nexus Snapshots Repository</name>
 			<url>https://forge-cogit.ign.fr/nexus/content/repositories/snapshots/</url>
 		</snapshotRepository>
-	     <!---   <repository>
-			<id>iscpif-ign-releases</id>
-			<name>ISCPIF Release repository for IGN</name>
-			<url>http://maven.iscpif.fr/ign-releases/</url>
-		</repository> 
-		<snapshotRepository>
-			<id>iscpif-ign-snapshots</id>
-			<name>ISCPIF Snapshot repository for IGN</name>
-			<url>http://maven.iscpif.fr/ign-snapshots/</url>
-		</snapshotRepository> -->
 	</distributionManagement>
 </project>
