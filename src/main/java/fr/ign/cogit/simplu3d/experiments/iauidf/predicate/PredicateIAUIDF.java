@@ -15,9 +15,9 @@ import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.experiments.iauidf.regulation.Regulation;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundarySide;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundaryType;
+import fr.ign.cogit.simplu3d.model.ParcelBoundary;
+import fr.ign.cogit.simplu3d.model.ParcelBoundarySide;
+import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.ParallelCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.ParallelCuboid2;
@@ -40,7 +40,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 	Geometry jtsCurveLatRightArt71 = null;
 
-	public static SpecificCadastralBoundarySide RIGHT_OF_LEFT_FOR_ART_71 = SpecificCadastralBoundarySide.RIGHT;
+	public static ParcelBoundarySide RIGHT_OF_LEFT_FOR_ART_71 = ParcelBoundarySide.RIGHT;
 
 	public PredicateIAUIDF(BasicPropertyUnit bPU, Regulation r1, Regulation r2) throws Exception {
 		super();
@@ -71,12 +71,12 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		for (CadastralParcel cP : currentBPU.getCadastralParcels()) {
 
 			// On parcourt les limites séparaticves
-			for (SpecificCadastralBoundary sCB : cP.getBoundaries()) {
+			for (ParcelBoundary sCB : cP.getBoundaries()) {
 
 				// En fonction du type on ajoute à telle ou telle géométrie
 
 				// Fond de parcel
-				if (sCB.getType() == SpecificCadastralBoundaryType.BOT) {
+				if (sCB.getType() == ParcelBoundaryType.BOT) {
 
 					IGeometry geom = sCB.getGeom();
 
@@ -91,7 +91,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 				}
 
 				// Limite latérale
-				if (sCB.getType() == SpecificCadastralBoundaryType.LAT) {
+				if (sCB.getType() == ParcelBoundaryType.LAT) {
 
 					IGeometry geom = sCB.getGeom();
 
@@ -115,7 +115,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 				}
 
 				// Limite front
-				if (sCB.getType() == SpecificCadastralBoundaryType.ROAD) {
+				if (sCB.getType() == ParcelBoundaryType.ROAD) {
 
 					IGeometry geom = sCB.getGeom();
 

@@ -17,9 +17,9 @@ import fr.ign.cogit.simplu3d.importer.CadastralParcelLoader;
 import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundarySide;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundaryType;
+import fr.ign.cogit.simplu3d.model.ParcelBoundary;
+import fr.ign.cogit.simplu3d.model.ParcelBoundarySide;
+import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.paralellcuboid.ParallelCuboidOptimizer;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
@@ -67,7 +67,7 @@ public class BasicSimulatorTrapezoid {
 		CadastralParcelLoader.TYPE_ANNOTATION = 2;
 //		CadastralParcelLoader.ATT_HAS_TO_BE_SIMULATED = "simul";
 
-		PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = SpecificCadastralBoundarySide.LEFT;
+		PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = ParcelBoundarySide.LEFT;
 	}
 
 	/**
@@ -113,12 +113,12 @@ public class BasicSimulatorTrapezoid {
 			// Instanciation du sampler avec l'unité foncière et les valeurs
 			// ci-dessus
 
-			List<SpecificCadastralBoundary> lSB = bPU.getCadastralParcels().get(0)
-					.getBoundariesByType(SpecificCadastralBoundaryType.ROAD);
+			List<ParcelBoundary> lSB = bPU.getCadastralParcels().get(0)
+					.getBoundariesByType(ParcelBoundaryType.ROAD);
 
 			IGeometry[] limits = new IGeometry[lSB.size()];
 			int count = 0;
-			for (SpecificCadastralBoundary sc : lSB) {
+			for (ParcelBoundary sc : lSB) {
 
 				limits[count] = sc.getGeom();
 

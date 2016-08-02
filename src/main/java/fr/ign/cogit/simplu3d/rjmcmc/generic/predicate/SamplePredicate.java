@@ -14,8 +14,8 @@ import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundaryType;
+import fr.ign.cogit.simplu3d.model.ParcelBoundary;
+import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
@@ -99,12 +99,12 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 		for (CadastralParcel cP : bPU.getCadastralParcels()) {
 
 			// On parcourt les limites séparaticves
-			for (SpecificCadastralBoundary sCB : cP.getBoundaries()) {
+			for (ParcelBoundary sCB : cP.getBoundaries()) {
 
 				// En fonction du type on ajoute à telle ou telle géométrie
 
 				// Fond de parcel
-				if (sCB.getType() == SpecificCadastralBoundaryType.BOT) {
+				if (sCB.getType() == ParcelBoundaryType.BOT) {
 
 					IGeometry geom = sCB.getGeom();
 
@@ -119,7 +119,7 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 				}
 
 				// Limite latérale
-				if (sCB.getType() == SpecificCadastralBoundaryType.LAT) {
+				if (sCB.getType() == ParcelBoundaryType.LAT) {
 
 					IGeometry geom = sCB.getGeom();
 
@@ -134,7 +134,7 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 				}
 
 				// Limite front
-				if (sCB.getType() == SpecificCadastralBoundaryType.ROAD) {
+				if (sCB.getType() == ParcelBoundaryType.ROAD) {
 
 					IGeometry geom = sCB.getGeom();
 

@@ -21,7 +21,7 @@ import fr.ign.cogit.simplu3d.experiments.iauidf.regulation.Regulation;
 import fr.ign.cogit.simplu3d.experiments.iauidf.tool.BandProduction;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
+import fr.ign.cogit.simplu3d.model.ParcelBoundary;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.builder.ParallelCuboidBuilder;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.builder.SimpleCuboidBuilder;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.builder.SimpleCuboidBuilder2;
@@ -289,10 +289,10 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 
 				band2parallel = true;
 
-				List<SpecificCadastralBoundary> featC = bpU.getCadastralParcels().get(0)
+				List<ParcelBoundary> featC = bpU.getCadastralParcels().get(0)
 						.getBoundariesBySide(PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71);
 				IMultiCurve<IOrientableCurve> ims = new GM_MultiCurve<>();
-				for (SpecificCadastralBoundary s : featC) {
+				for (ParcelBoundary s : featC) {
 					ims.addAll(FromGeomToLineString.convert(s.getGeom()));
 				}
 
@@ -301,7 +301,7 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 
 					featC = bpU.getCadastralParcels().get(0).getBoundaries();
 
-					for (SpecificCadastralBoundary s : featC) {
+					for (ParcelBoundary s : featC) {
 						ims.addAll(FromGeomToLineString.convert(s.getGeom()));
 					}
 

@@ -12,8 +12,8 @@ import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundaryType;
+import fr.ign.cogit.simplu3d.model.ParcelBoundary;
+import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.rjmcmc.energy.UnaryEnergy;
 
@@ -32,10 +32,10 @@ public class AlignementEnergy<T extends AbstractSimpleBuilding> implements
 		for (CadastralParcel cP : bPU.getCadastralParcels()) {
 			// for (SubParcel sB : cP.getSubParcel()) {
 
-			for (SpecificCadastralBoundary sCB : cP
+			for (ParcelBoundary sCB : cP
 					.getBoundaries()) {
 
-				if (sCB.getType() == SpecificCadastralBoundaryType.ROAD) {
+				if (sCB.getType() == ParcelBoundaryType.ROAD) {
 
 					IGeometry geom = sCB.getGeom();
 

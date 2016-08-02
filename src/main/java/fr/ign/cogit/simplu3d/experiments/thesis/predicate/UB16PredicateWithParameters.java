@@ -19,8 +19,8 @@ import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundaryType;
+import fr.ign.cogit.simplu3d.model.ParcelBoundary;
+import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
@@ -73,9 +73,9 @@ public class UB16PredicateWithParameters<O extends Cuboid, C extends AbstractGra
     for (CadastralParcel cP : bPU.getCadastralParcels()) {
       // for (SubParcel sB : cP.getSubParcel()) {
 
-      for (SpecificCadastralBoundary sCB : cP.getBoundaries()) {
+      for (ParcelBoundary sCB : cP.getBoundaries()) {
 
-        if (sCB.getType() == SpecificCadastralBoundaryType.ROAD) {
+        if (sCB.getType() == ParcelBoundaryType.ROAD) {
 
           IGeometry geom = sCB.getGeom();
 
@@ -88,7 +88,7 @@ public class UB16PredicateWithParameters<O extends Cuboid, C extends AbstractGra
                 .println("Classe UB14PredicateFull : quelque chose n'est pas un ICurve");
           }
 
-        } else if (sCB.getType() != SpecificCadastralBoundaryType.INTRA) {
+        } else if (sCB.getType() != ParcelBoundaryType.INTRA) {
           IGeometry geom = sCB.getGeom();
 
           if (geom instanceof IOrientableCurve) {

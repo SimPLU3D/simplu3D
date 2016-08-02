@@ -15,8 +15,8 @@ import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.experiments.enau.geometry.DeformedCuboid;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundaryType;
+import fr.ign.cogit.simplu3d.model.ParcelBoundary;
+import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
 
 public class ENAUMorphoIndicators {
 	
@@ -42,12 +42,12 @@ public class ENAUMorphoIndicators {
 		for (CadastralParcel cP : bpu.getCadastralParcels()) {
 			// for (SubParcel sB : cP.getSubParcel()) {
 
-			for (SpecificCadastralBoundary sCB : cP
+			for (ParcelBoundary sCB : cP
 					.getBoundaries()) {
 
 				IGeometry geom = sCB.getGeom();
 				
-				if (sCB.getType() == SpecificCadastralBoundaryType.ROAD) {
+				if (sCB.getType() == ParcelBoundaryType.ROAD) {
 
 				
 

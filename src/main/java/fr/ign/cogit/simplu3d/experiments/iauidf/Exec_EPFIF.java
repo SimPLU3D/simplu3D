@@ -34,7 +34,7 @@ import fr.ign.cogit.simplu3d.importer.CadastralParcelLoader;
 import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundarySide;
+import fr.ign.cogit.simplu3d.model.ParcelBoundarySide;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.mix.MultipleBuildingsCuboid;
 import fr.ign.mpp.configuration.BirthDeathModification;
@@ -104,7 +104,7 @@ public class Exec_EPFIF {
 
 		CadastralParcelLoader.TYPE_ANNOTATION = 2;
 
-		PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = SpecificCadastralBoundarySide.LEFT;
+		PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = ParcelBoundarySide.LEFT;
 	}
 
 	public static Map<Integer, List<Regulation>> prepareRegulation() throws IOException {
@@ -301,13 +301,13 @@ public class Exec_EPFIF {
 			// meilleure
 			// :
 
-			PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = SpecificCadastralBoundarySide.RIGHT;
+			PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = ParcelBoundarySide.RIGHT;
 
 			IFeatureCollection<IFeature> featC1 = new FT_FeatureCollection<>();
 
 			featC1.addAll(simulRegulationByBasicPropertyUnit(env, bPU, imu, r1, r2, fParam));
 
-			PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = SpecificCadastralBoundarySide.LEFT;
+			PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = ParcelBoundarySide.LEFT;
 
 			IFeatureCollection<IFeature> featC2 = new FT_FeatureCollection<>();
 

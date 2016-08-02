@@ -17,8 +17,8 @@ import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToSurface;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.simplu3d.experiments.iauidf.regulation.Regulation;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundaryType;
+import fr.ign.cogit.simplu3d.model.ParcelBoundary;
+import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
 
 public class BandProduction {
 
@@ -34,8 +34,8 @@ public class BandProduction {
 
 		// On créé la géométrie des limites donnant sur la voirie
 
-		List<SpecificCadastralBoundary> lBordureVoirie = bPU.getCadastralParcels().get(0).getBoundariesByType(SpecificCadastralBoundaryType.ROAD);
-		for (SpecificCadastralBoundary sc : lBordureVoirie) {
+		List<ParcelBoundary> lBordureVoirie = bPU.getCadastralParcels().get(0).getBoundariesByType(ParcelBoundaryType.ROAD);
+		for (ParcelBoundary sc : lBordureVoirie) {
 			iMSRoad.add((IOrientableCurve) sc.getGeom());
 		}
 
@@ -73,18 +73,18 @@ public class BandProduction {
 
 		// On créé la géométrie des autres limites séparatives
 		IMultiCurve<IOrientableCurve> iMSLim = new GM_MultiCurve<>();
-		List<SpecificCadastralBoundary> lBordureLat = bPU.getCadastralParcels().get(0)
+		List<ParcelBoundary> lBordureLat = bPU.getCadastralParcels().get(0)
 				.getBoundaries();
 
-		for (SpecificCadastralBoundary sc : lBordureLat) {
+		for (ParcelBoundary sc : lBordureLat) {
 
-			if (sc.getType() == SpecificCadastralBoundaryType.LAT) {
+			if (sc.getType() == ParcelBoundaryType.LAT) {
 				iMSLim.add((IOrientableCurve) sc.getGeom());
 			}
 		}
-		List<SpecificCadastralBoundary> lBordureFond = bPU.getCadastralParcels().get(0).getBoundaries();
-		for (SpecificCadastralBoundary sc : lBordureFond) {
-			if (sc.getType() == SpecificCadastralBoundaryType.BOT) {
+		List<ParcelBoundary> lBordureFond = bPU.getCadastralParcels().get(0).getBoundaries();
+		for (ParcelBoundary sc : lBordureFond) {
+			if (sc.getType() == ParcelBoundaryType.BOT) {
 				iMSLim.add((IOrientableCurve) sc.getGeom());
 			}
 		}
