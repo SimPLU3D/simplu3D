@@ -340,6 +340,40 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 				return false;
 			}
 		}
+		
+		
+		
+		//EXTRA RULE :   la distance entre deux bâtiments sur une même parcelle 
+		// est égale à la hauteur divisée par deux du bâtiment le plus haut
+		
+		int nbCuboid = 	lCuboid.size();
+		
+		
+		
+		double hMax = -1;
+		
+		for (O o : lCuboid) {
+			hMax = Math.max(hMax, o.getHeight());
+		}
+		
+		//on divise par 2 le hMax
+		hMax = hMax * 0.5;
+		
+		for(int i=0;i<nbCuboid;i ++){
+			Cuboid cI = lCuboid.get(i);
+			
+			for(int j=i+1;j<nbCuboid;j ++){
+				Cuboid cJ = lCuboid.get(j);
+				
+				double distance = cI.getFootprint().distance(cJ.getFootprint());
+				
+				if(distance < hMax){
+					return false;
+				}
+				
+				
+			}	
+		}
 
 		return true;
 

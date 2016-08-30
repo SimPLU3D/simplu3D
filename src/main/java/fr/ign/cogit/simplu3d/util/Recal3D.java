@@ -23,6 +23,7 @@ import fr.ign.cogit.geoxygene.contrib.cartetopo.Face;
 import fr.ign.cogit.geoxygene.contrib.cartetopo.Groupe;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
+import fr.ign.cogit.geoxygene.sig3d.calculation.OrientedBoundingBox;
 import fr.ign.cogit.geoxygene.sig3d.calculation.Util;
 import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToSurface;
 import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromPolygonToLineString;
@@ -124,6 +125,19 @@ System.out.println("Debout");
 			AttributeManager.addAttribute(feat1, "ID", id, "Integer");
 			AttributeManager.addAttribute(feat2, "ID", id, "Integer");
 			
+			if (feat2.getGeom() != null) {
+				AttributeManager.addAttribute(feat1, "Aire", feat2.getGeom().area(), "Double");
+				AttributeManager.addAttribute(feat2, "Aire", feat2.getGeom().area(), "Double");
+				
+				OrientedBoundingBox oBB = new OrientedBoundingBox(feat.getGeom());
+
+				double height =  (oBB.getzMax() - oBB.getzMin());
+				AttributeManager.addAttribute(feat1, "Hauteur",height, "Double");
+				AttributeManager.addAttribute(feat2, "Hauteur",height, "Double");
+				
+			}
+
+
 			
 			AttributeManager.addAttribute(feat1, "Type", "Wall", "String");
 			AttributeManager.addAttribute(feat2, "Type", "Roof", "String");
