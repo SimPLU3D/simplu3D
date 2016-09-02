@@ -9,7 +9,7 @@ A library to automatically general built configuration that respect urban regula
 Introduction
 ---------------------
 
-This research library is developed as part of [COGIT laboratory](http://recherche.ign.fr/labos/cogit/accueilCOGIT.php) researches concerning processing of urban regulation. 
+This research library is developed as part of [COGIT team](http://recherche.ign.fr/labos/cogit/accueilCOGIT.php) researches concerning processing of urban regulation. 
 
 It provides an implementation of multi-dimensionnal simulated annealing algorithm to produce built configuration from a set of boxes constrained by urban regulation that optimizes a utility function. 
 
