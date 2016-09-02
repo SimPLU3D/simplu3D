@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import fr.ign.cogit.simplu3d.checker.Checker;
+import fr.ign.cogit.simplu3d.checker.ContextRuleCheck;
 import fr.ign.cogit.simplu3d.checker.Rules;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
@@ -59,9 +60,12 @@ public class RennesSamplePredicate<O extends Cuboid, C extends AbstractGraphConf
 		if(lBuildings.isEmpty()){
 			return true;
 		}
+		
+		ContextRuleCheck cRc = new ContextRuleCheck();
+		cRc.setStopOnFailure(true);
 
 		// On vérifie que la liste des contraintes non respsectées est vide
-		boolean checked = Checker.check(currentBPU, currentRules,true).isEmpty();
+		boolean checked = Checker.check(currentBPU, currentRules,cRc).isEmpty();
 
 		// On vire les
 		for (Cuboid b : lBuildings) {

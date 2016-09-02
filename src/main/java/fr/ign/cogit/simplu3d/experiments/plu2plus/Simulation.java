@@ -9,6 +9,7 @@ import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.checker.CompositeChecker;
+import fr.ign.cogit.simplu3d.checker.ContextRuleCheck;
 import fr.ign.cogit.simplu3d.experiments.plu2plus.checker.CheckerGenerator;
 import fr.ign.cogit.simplu3d.experiments.plu2plus.predicate.CheckerPredicate;
 import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
@@ -42,11 +43,18 @@ public class Simulation {
 		// Instantiation of the sampler
 		OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();
 
+		ContextRuleCheck context = new ContextRuleCheck();
+		context.setStopOnFailure(true);
+		
+		
 		// Initialisation of the Checker
 		CompositeChecker checker = CheckerGenerator.generate(bPU);
+		
+		
+
 
 		CheckerPredicate<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new CheckerPredicate<>(
-				bPU, checker);
+				bPU, checker,context);
 		// Run of the optimisation on a parcel with the predicate
 		GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred);
 

@@ -56,7 +56,7 @@ public class BasicSimulator {
 		Parameters p = Parameters.unmarshall(new File(folderName + fileName));
 
 		// Load default environment (data are in resource directory)
-		Environnement env = LoaderSHP.load(new File(
+		Environnement env = LoaderSHP.loadNoDTM(new File(
 				DemoEnvironmentProvider.class.getClassLoader().getResource("fr/ign/cogit/simplu3d/data/").getPath()));
 
 		// Select a parcel on which generation is proceeded

@@ -3,6 +3,7 @@ package fr.ign.cogit.simplu3d.experiments.plu2plus.predicate;
 import java.util.List;
 
 import fr.ign.cogit.simplu3d.checker.CompositeChecker;
+import fr.ign.cogit.simplu3d.checker.ContextRuleCheck;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
@@ -14,11 +15,13 @@ public class CheckerPredicate<O extends Cuboid, C extends AbstractGraphConfigura
 
 	private BasicPropertyUnit bPU;
 	private CompositeChecker check;
-
-	public CheckerPredicate(BasicPropertyUnit bPU, CompositeChecker check) {
+	private ContextRuleCheck cRc;
+	
+	public CheckerPredicate(BasicPropertyUnit bPU, CompositeChecker check,ContextRuleCheck cRc) {
 		super();
 		this.bPU = bPU;
 		this.check = check;
+		this.cRc = cRc;
 	}
 
 	@Override
@@ -38,7 +41,7 @@ public class CheckerPredicate<O extends Cuboid, C extends AbstractGraphConfigura
 
 		}
 
-		boolean checked = check.check(bPU).isEmpty();
+		boolean checked = check.check(bPU, cRc).isEmpty();
 		
 		
 
