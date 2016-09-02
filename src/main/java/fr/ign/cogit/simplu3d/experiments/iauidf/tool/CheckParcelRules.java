@@ -3,7 +3,6 @@ package fr.ign.cogit.simplu3d.experiments.iauidf.tool;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.LogManager;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;

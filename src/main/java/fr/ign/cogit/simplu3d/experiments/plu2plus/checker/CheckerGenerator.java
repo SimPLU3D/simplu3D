@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.ign.cogit.simplu3d.checker.CompositeChecker;
-import fr.ign.cogit.simplu3d.checker.ContextRuleCheck;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
 import fr.ign.cogit.simplu3d.model.UrbaZone;
@@ -18,6 +17,9 @@ public class CheckerGenerator {
 		UrbaZone zone = bPU.getCadastralParcels().get(0).getSubParcels().get(0).getUrbaZone();
 		//Regle 4
 		List<ParcelBoundaryType> lPB = new ArrayList<ParcelBoundaryType>();
+		lPB.add(ParcelBoundaryType.LAT);
+		lPB.add(ParcelBoundaryType.BOT);
+	
 		check.addChild(new CheckerProspect(1, 2, lPB, bPU));
 		
 		//Regles 5
