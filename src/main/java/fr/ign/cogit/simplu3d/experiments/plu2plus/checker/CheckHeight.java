@@ -24,7 +24,7 @@ public class CheckHeight implements IRuleChecker {
 
 
 	@Override
-	public List<UnrespectedRule> check(BasicPropertyUnit bPU, ContextRuleCheck checker) {
+	public List<UnrespectedRule> check(BasicPropertyUnit bPU, ContextRuleCheck context) {
 
 		
 		List<UnrespectedRule> lUNR = new ArrayList<UnrespectedRule>();
@@ -39,7 +39,7 @@ public class CheckHeight implements IRuleChecker {
 
 			boolean bool = (b.height(0, 1) < heightMax);
 
-			if (!bool & this.isStopOnFailure()) {
+			if (!bool & context.isStopOnFailure()) {
 				lUNR.add(null);
 				return lUNR;
 

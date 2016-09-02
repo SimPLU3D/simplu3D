@@ -33,7 +33,7 @@ public class CheckerDistanceParcelBoundaries  implements IRuleChecker {
 
 	}
 	@Override
-	public List<UnrespectedRule> check(BasicPropertyUnit bPU, ContextRuleCheck checker) {
+	public List<UnrespectedRule> check(BasicPropertyUnit bPU, ContextRuleCheck context) {
 
 		List<UnrespectedRule> lUNR = new ArrayList<UnrespectedRule>();
 
@@ -49,7 +49,7 @@ public class CheckerDistanceParcelBoundaries  implements IRuleChecker {
 
 			boolean bool = (dMeasured< dmin);
 
-			if (!bool & this.isStopOnFailure()) {
+			if (!bool & context.isStopOnFailure()) {
 				lUNR.add(null);
 				return lUNR;
 

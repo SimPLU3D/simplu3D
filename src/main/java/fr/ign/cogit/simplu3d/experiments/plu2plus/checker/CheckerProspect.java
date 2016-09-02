@@ -35,7 +35,7 @@ public class CheckerProspect implements IRuleChecker {
 	}
 
 	@Override
-	public List<UnrespectedRule> check(BasicPropertyUnit bPU, ContextRuleCheck checker) {
+	public List<UnrespectedRule> check(BasicPropertyUnit bPU, ContextRuleCheck context) {
 
 		List<UnrespectedRule> lUNR = new ArrayList<UnrespectedRule>();
 
@@ -49,7 +49,7 @@ public class CheckerProspect implements IRuleChecker {
 
 			boolean bool = b.prospect(ims, slope, hIni);
 
-			if (!bool & this.isStopOnFailure()) {
+			if (!bool & context.isStopOnFailure()) {
 				lUNR.add(null);
 				return lUNR;
 
