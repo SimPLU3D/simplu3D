@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import fr.ign.cogit.simplu3d.checker.Checker;
-import fr.ign.cogit.simplu3d.checker.ContextRuleCheck;
+import fr.ign.cogit.simplu3d.checker.RuleContext;
 import fr.ign.cogit.simplu3d.checker.Rules;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
@@ -61,7 +61,7 @@ public class RennesSamplePredicate<O extends Cuboid, C extends AbstractGraphConf
 			return true;
 		}
 		
-		ContextRuleCheck cRc = new ContextRuleCheck();
+		RuleContext cRc = new RuleContext();
 		cRc.setStopOnFailure(true);
 
 		// On vérifie que la liste des contraintes non respsectées est vide

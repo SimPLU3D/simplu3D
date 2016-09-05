@@ -7,7 +7,7 @@ import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
 import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToLineString;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
-import fr.ign.cogit.simplu3d.checker.ContextRuleCheck;
+import fr.ign.cogit.simplu3d.checker.RuleContext;
 import fr.ign.cogit.simplu3d.checker.IRuleChecker;
 import fr.ign.cogit.simplu3d.checker.UnrespectedRule;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
@@ -33,7 +33,7 @@ public class CheckerDistanceParcelBoundaries  implements IRuleChecker {
 
 	}
 	@Override
-	public List<UnrespectedRule> check(BasicPropertyUnit bPU, ContextRuleCheck context) {
+	public List<UnrespectedRule> check(BasicPropertyUnit bPU, RuleContext context) {
 
 		List<UnrespectedRule> lUNR = new ArrayList<UnrespectedRule>();
 

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.simplu3d.checker.ContextRuleCheck;
+import fr.ign.cogit.simplu3d.checker.RuleContext;
 import fr.ign.cogit.simplu3d.checker.IRuleChecker;
 import fr.ign.cogit.simplu3d.checker.UnrespectedRule;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
@@ -25,7 +25,7 @@ public class CheckCES implements IRuleChecker {
 	}
 
 	@Override
-	public List<UnrespectedRule> check(BasicPropertyUnit bPU,ContextRuleCheck checker) {
+	public List<UnrespectedRule> check(BasicPropertyUnit bPU,RuleContext checker) {
 	
 
 		List<Building> lBuildings = bPU.getBuildings();
