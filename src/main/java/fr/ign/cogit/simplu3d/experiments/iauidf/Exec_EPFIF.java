@@ -45,14 +45,14 @@ import fr.ign.parameters.Parameters;
 /**
  * Simulator for EPFIF comparator
  * 
- * @author mickael
+ * @author mickaelbrasebin
  *
  */
 public class Exec_EPFIF {
 
-	public static boolean DEBUG_MODE = true;
+	public static boolean DEBUG_MODE = false;
 	private static Logger log = Logger.getLogger(Exec_EPFIF.class);
-	
+
 	public static List<IMultiSurface<IOrientableSurface>> lMS = new ArrayList<>();
 	public static List<IMultiSurface<IOrientableSurface>> debugSurface = new ArrayList<>();
 	public static List<IMultiCurve<IOrientableCurve>> debugLine = new ArrayList<>();
@@ -60,8 +60,7 @@ public class Exec_EPFIF {
 	public final static String folder = "/home/mickael/data/mbrasebin/donnees/IAUIDF/Nouveaux_tests_comparatifs/Eval_EPF_2/";
 	public final static String file_rules = folder + "rules.csv";
 	public final static String out_folder = folder + "out/";
-	
-	
+
 	public static void main(String[] args) throws Exception {
 		init();
 		// Dossier contenant IMU_MANTES_TEST.csv et les sous dossier par code
@@ -72,20 +71,19 @@ public class Exec_EPFIF {
 		// On traite indépendamment chaque zone imu
 		for (int currentImu : regulation.keySet()) {
 
+	
+
 			System.out.println("Numéro imu : " + currentImu);
 
 			try {
 
 				List<Regulation> lR = regulation.get(currentImu);
-				
-		
 
 				String folderName = BasicSimulator.class.getClassLoader().getResource("scenario/").getPath();
 				String fileName = "parameters_iauidf.xml";
 				File f = new File(folderName + fileName);
-		
-				
-				boolean simul = simulRegulationByIMU(currentImu, folder + currentImu + "/", lR,f);
+
+				boolean simul = simulRegulationByIMU(currentImu, folder + currentImu + "/", lR, f);
 
 				if (!simul) {
 					log.warn("--Probleme pour la simulation : " + currentImu);
@@ -96,7 +94,6 @@ public class Exec_EPFIF {
 
 		}
 	}
-
 
 	// Initialisation des attributs différents du schéma de base
 	// et le fichier de paramètre commun à toutes les simulations
@@ -134,46 +131,42 @@ public class Exec_EPFIF {
 
 			}
 
-			
 			System.out.println("*************************************************");
-			System.out.println("*******************"+listValue[0]+"******************");
-			
+			System.out.println("*******************" + listValue[0] + "******************");
+
 			int code_imu = Integer.parseInt(newmap.get("IMU").toString());
-			String libelle_zone =newmap.get("VILLE").toString(); //LIBELLE_ZONE
-			int insee = Integer.parseInt(newmap.get("INSEE").toString()); 
-			int date_approbation = Integer.parseInt(newmap.get("INSEE").toString()); 
-			String libelle_de_base = newmap.get("VILLE").toString(); //LIBELLE_DE_BASE
-			String libelle_de_dul = newmap.get("VILLE").toString(); //LIBELLE_DE_DUL
-			int fonctions = Integer.parseInt(newmap.get("FONCTIONS").toString()); 
-			int top_zac =  Integer.parseInt(newmap.get("TOP_ZAC").toString()); 
-			int zonage_coherent =  Integer.parseInt(newmap.get("ZONAGE_COHERENT").toString()); 
-			int correction_zonage =  Integer.parseInt(newmap.get("CORRECTION_ZONAGE").toString());
-			int typ_bande =  Integer.parseInt(newmap.get("TYP_BANDE").toString());
+			String libelle_zone = newmap.get("VILLE").toString(); // LIBELLE_ZONE
+			int insee = Integer.parseInt(newmap.get("INSEE").toString());
+			int date_approbation = Integer.parseInt(newmap.get("INSEE").toString());
+			String libelle_de_base = newmap.get("VILLE").toString(); // LIBELLE_DE_BASE
+			String libelle_de_dul = newmap.get("VILLE").toString(); // LIBELLE_DE_DUL
+			int fonctions = Integer.parseInt(newmap.get("FONCTIONS").toString());
+			int top_zac = Integer.parseInt(newmap.get("TOP_ZAC").toString());
+			int zonage_coherent = Integer.parseInt(newmap.get("ZONAGE_COHERENT").toString());
+			int correction_zonage = Integer.parseInt(newmap.get("CORRECTION_ZONAGE").toString());
+			int typ_bande = Integer.parseInt(newmap.get("TYP_BANDE").toString());
 			int bande = Integer.parseInt(newmap.get("BANDE").toString());
-			int art_5 = Integer.parseInt(newmap.get("ART_5").toString());		
-			double art_6 = Double.parseDouble(newmap.get("ART_6").toString());		
-			int art_71 = Integer.parseInt(newmap.get("ART_71").toString());		
-			double art_72 =  Double.parseDouble(newmap.get("ART_72").toString());				
+			int art_5 = Integer.parseInt(newmap.get("ART_5").toString());
+			double art_6 = Double.parseDouble(newmap.get("ART_6").toString());
+			int art_71 = Integer.parseInt(newmap.get("ART_71").toString());
+			double art_72 = Double.parseDouble(newmap.get("ART_72").toString());
 			double art_73 = Double.parseDouble(newmap.get("ART_73").toString());
-			int art_74 = Integer.parseInt(newmap.get("ART_74").toString());		
-			double art_8 =  Double.parseDouble(newmap.get("ART_8").toString());			
-			double art_9 = Double.parseDouble(newmap.get("ART_9").toString());		
-			int art_10_top = Integer.parseInt(newmap.get("ART_10_TOP").toString());		
-			int art_101 = Integer.parseInt(newmap.get("ART_10").toString());		//ATTENTION A CHANGER
-			int art_102 = Integer.parseInt(newmap.get("ART_10").toString());	
-			int art_12 = Integer.parseInt(newmap.get("ART_12").toString());			
-			double  art_13 = Double.parseDouble(newmap.get("ART_13").toString());		
-			double art_14 = Double.parseDouble(newmap.get("ART_14").toString());	
-			
-			Regulation r = new Regulation(code_imu, libelle_zone,  insee,
-					 date_approbation,  libelle_de_base,
-					 libelle_de_dul,  fonctions,  top_zac,
-					 zonage_coherent,  correction_zonage,  typ_bande,
-					 bande,  art_5,  art_6,  art_71,  art_72,
-					 art_73,  art_74,  art_8,  art_9,  art_10_top,
-					 art_101,  art_102,  art_12,  art_13,
-					 art_14);
-			
+			int art_74 = Integer.parseInt(newmap.get("ART_74").toString());
+			double art_8 = Double.parseDouble(newmap.get("ART_8").toString());
+			double art_9 = Double.parseDouble(newmap.get("ART_9").toString());
+			int art_10_top = Integer.parseInt(newmap.get("ART_10_TOP").toString());
+			int art_101 = Integer.parseInt(newmap.get("ART_10").toString()); // ATTENTION
+																				// A
+																				// CHANGER
+			int art_102 = Integer.parseInt(newmap.get("ART_10").toString());
+			double art_12 = Double.parseDouble(newmap.get("ART_12").toString());
+			double art_13 = Double.parseDouble(newmap.get("ART_13").toString());
+			double art_14 = Double.parseDouble(newmap.get("ART_14").toString());
+
+			Regulation r = new Regulation(code_imu, libelle_zone, insee, date_approbation, libelle_de_base,
+					libelle_de_dul, fonctions, top_zac, zonage_coherent, correction_zonage, typ_bande, bande, art_5,
+					art_6, art_71, art_72, art_73, art_74, art_8, art_9, art_10_top, art_101, art_102, art_12, art_13,
+					art_14);
 
 			List<Regulation> lRegulation = new ArrayList<>();
 			lRegulation.add(r);
@@ -182,30 +175,28 @@ public class Exec_EPFIF {
 			System.out.println(r.toString());
 
 			if (bande != 0) {
-				int fonctions_2 = Integer.parseInt(newmap.get("FONCTIONS_2").toString()); 
-				int art_5_2 = Integer.parseInt(newmap.get("ART_5_2").toString());		
-				double art_6_2 = Double.parseDouble(newmap.get("ART_6_2").toString());		
-				int art_71_2 = Integer.parseInt(newmap.get("ART_71_2").toString());		
-				double art_72_2 =  Double.parseDouble(newmap.get("ART_72_2").toString());				
+				int fonctions_2 = Integer.parseInt(newmap.get("FONCTIONS_2").toString());
+				int art_5_2 = Integer.parseInt(newmap.get("ART_5_2").toString());
+				double art_6_2 = Double.parseDouble(newmap.get("ART_6_2").toString());
+				int art_71_2 = Integer.parseInt(newmap.get("ART_71_2").toString());
+				double art_72_2 = Double.parseDouble(newmap.get("ART_72_2").toString());
 				double art_73_2 = Double.parseDouble(newmap.get("ART_73_2").toString());
-				int art_74_2 = Integer.parseInt(newmap.get("ART_74_2").toString());		
-				double art_8_2 =  Double.parseDouble(newmap.get("ART_8_2").toString());			
-				double art_9_2 = Double.parseDouble(newmap.get("ART_9_2").toString());		
-				int art_10_top_2 = Integer.parseInt(newmap.get("ART_10_TOP_1_2").toString());		
-				int art_101_2 = Integer.parseInt(newmap.get("ART_10_2_2").toString());		//ATTENTION A CHANGER
-				int art_102_2 = Integer.parseInt(newmap.get("ART_10_2_2").toString());		
-				int art_12_2 = Integer.parseInt(newmap.get("ART_12_2").toString());			
-				double art_13_2 = Double.parseDouble(newmap.get("ART_13_2").toString());		
-				double art_14_2 = Double.parseDouble(newmap.get("ART_14_2").toString());	
-				
-				Regulation r2 = new Regulation(code_imu, libelle_zone,  insee,
-						 date_approbation,  libelle_de_base,
-						 libelle_de_dul,  fonctions_2,  top_zac,
-						 zonage_coherent,  correction_zonage,  typ_bande,
-						 bande,  art_5_2,  art_6_2,  art_71_2,  art_72_2,
-						 art_73_2,  art_74_2,  art_8_2,  art_9_2,  art_10_top_2,
-						 art_101_2,  art_102_2,  art_12_2,  art_13_2,
-						 art_14_2);
+				int art_74_2 = Integer.parseInt(newmap.get("ART_74_2").toString());
+				double art_8_2 = Double.parseDouble(newmap.get("ART_8_2").toString());
+				double art_9_2 = Double.parseDouble(newmap.get("ART_9_2").toString());
+				int art_10_top_2 = Integer.parseInt(newmap.get("ART_10_TOP_1_2").toString());
+				int art_101_2 = Integer.parseInt(newmap.get("ART_10_2_2").toString()); // ATTENTION
+																						// A
+																						// CHANGER
+				int art_102_2 = Integer.parseInt(newmap.get("ART_10_2_2").toString());
+				double art_12_2 = Double.parseDouble(newmap.get("ART_12_2").toString());
+				double art_13_2 = Double.parseDouble(newmap.get("ART_13_2").toString());
+				double art_14_2 = Double.parseDouble(newmap.get("ART_14_2").toString());
+
+				Regulation r2 = new Regulation(code_imu, libelle_zone, insee, date_approbation, libelle_de_base,
+						libelle_de_dul, fonctions_2, top_zac, zonage_coherent, correction_zonage, typ_bande, bande,
+						art_5_2, art_6_2, art_71_2, art_72_2, art_73_2, art_74_2, art_8_2, art_9_2, art_10_top_2,
+						art_101_2, art_102_2, art_12_2, art_13_2, art_14_2);
 
 				System.out.println(r2.toString());
 
@@ -221,7 +212,6 @@ public class Exec_EPFIF {
 		return lMap;
 
 	}
-
 
 	/**
 	 * Simulations portant sur chaque zone IMU
@@ -245,14 +235,13 @@ public class Exec_EPFIF {
 		boolean isOk = true;
 
 		for (BasicPropertyUnit bPU : env.getBpU()) {
-		
-			
-			if(bPU.getCadastralParcels().get(0).hasToBeSimulated() ){
+
+			if (bPU.getCadastralParcels().get(0).hasToBeSimulated()) {
 				featC.addAll(simulationForEachBPU(env, bPU, lRegulation, imu, fParam));
 			}
 
 		}
-		System.out.println("-- Nombre de surface : " + debugSurface.size());
+		System.out.println("-- Nombre de surfaces : " + debugSurface.size());
 		String fileName = out_folder + "simul_" + imu + ".shp";
 		System.out.println(fileName);
 		ShapefileWriter.write(featC, fileName, CRS.decode("EPSG:2154"));
@@ -262,20 +251,21 @@ public class Exec_EPFIF {
 
 		return isOk;
 	}
-	
-	public static IFeatureCollection<IFeature> simulationForEachBPU(Environnement env, BasicPropertyUnit bPU, List<Regulation> lRegulation, int imu, File fParam ) throws Exception{
-		
-		//Stocke les résultats
+
+	public static IFeatureCollection<IFeature> simulationForEachBPU(Environnement env, BasicPropertyUnit bPU,
+			List<Regulation> lRegulation, int imu, File fParam) throws Exception {
+
+		// Stocke les résultats
 		IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
-	
-		//On ne simule pas sur les très petites parcelles qui peuvent être des erreurs dus à la carte topo
-		if(bPU.getCadastralParcels().get(0).getArea() < 5){
+
+		// On ne simule pas sur les très petites parcelles qui peuvent être des
+		// erreurs dus à la carte topo
+		if (bPU.getCadastralParcels().get(0).getArea() < 5) {
 			System.out.println("Probablement une erreur de carte topologique.");
 			return featC;
 		}
-	
 
-		//Il y a 1 ou 2 réglementaiton par parcelle
+		// Il y a 1 ou 2 réglementaiton par parcelle
 		Regulation r1 = lRegulation.get(0);
 		Regulation r2 = null;
 
@@ -290,9 +280,9 @@ public class Exec_EPFIF {
 			System.out.println("R2 : " + r2);
 
 		}
-		
-		
-		//Somme nous dans le cas où les bâtiments doivent être accolé aux limites latérales ?
+
+		// Somme nous dans le cas où les bâtiments doivent être accolé aux
+		// limites latérales ?
 		if (r1 != null && r1.getArt_71() == 2 || r2 != null && r2.getArt_71() == 2) {
 
 			// Cas ou les bâtiments se collent d'un des 2 côtés, on simule
@@ -311,7 +301,6 @@ public class Exec_EPFIF {
 
 			IFeatureCollection<IFeature> featC2 = new FT_FeatureCollection<>();
 
-
 			featC2.addAll(simulRegulationByBasicPropertyUnit(env, bPU, imu, r1, r2, fParam));
 
 			featC.addAll(fusionne(featC1, featC2));
@@ -323,11 +312,6 @@ public class Exec_EPFIF {
 		}
 		return featC;
 	}
-	
-	
-	
-	
-	
 
 	public static IFeature retrieveFeat(IFeatureCollection<IFeature> featColl, BasicPropertyUnit bPU) {
 
@@ -433,7 +417,7 @@ public class Exec_EPFIF {
 	private static Parameters initiateSimulationParamters(Regulation r1, Regulation r2, File f) throws Exception {
 		// Chargement du fichier de configuration
 
-		Parameters p = Parameters.unmarshall(f );
+		Parameters p = Parameters.unmarshall(f);
 
 		if (r2 != null) {
 
@@ -468,29 +452,31 @@ public class Exec_EPFIF {
 		}
 
 		/*
-		double longueur1 = Double.NEGATIVE_INFINITY;
-
-		if (r1.getGeomBande() != null && !r1.getGeomBande().isEmpty()) {
-			OrientedBoundingBox oBB1 = new OrientedBoundingBox(r1.getGeomBande());
-
-			longueur1 = oBB1.getLength();
-		}
-
-	
-		if (r2 != null) {
-			OrientedBoundingBox oBB2 = new OrientedBoundingBox(r2.getGeomBande());
-
-			double longueur2 = oBB2.getLength();
-
-			p.set("maxlen", Math.min(p.getDouble("maxlen"), Math.max(longueur1, longueur2)));
-
-			p.set("maxwid", Math.min(p.getDouble("maxwid"), Math.max(longueur1, longueur2)));
-
-		} else {
-			p.set("maxlen", Math.min(p.getDouble("maxlen"), longueur1));
-			p.set("maxwid", Math.min(p.getDouble("maxwid"), longueur1));
-
-		}*/
+		 * double longueur1 = Double.NEGATIVE_INFINITY;
+		 * 
+		 * if (r1.getGeomBande() != null && !r1.getGeomBande().isEmpty()) {
+		 * OrientedBoundingBox oBB1 = new
+		 * OrientedBoundingBox(r1.getGeomBande());
+		 * 
+		 * longueur1 = oBB1.getLength(); }
+		 * 
+		 * 
+		 * if (r2 != null) { OrientedBoundingBox oBB2 = new
+		 * OrientedBoundingBox(r2.getGeomBande());
+		 * 
+		 * double longueur2 = oBB2.getLength();
+		 * 
+		 * p.set("maxlen", Math.min(p.getDouble("maxlen"), Math.max(longueur1,
+		 * longueur2)));
+		 * 
+		 * p.set("maxwid", Math.min(p.getDouble("maxwid"), Math.max(longueur1,
+		 * longueur2)));
+		 * 
+		 * } else { p.set("maxlen", Math.min(p.getDouble("maxlen"), longueur1));
+		 * p.set("maxwid", Math.min(p.getDouble("maxwid"), longueur1));
+		 * 
+		 * }
+		 */
 
 		if (p.getDouble("maxlen") < p.getDouble("minlen")) {
 			return null;
@@ -521,14 +507,15 @@ public class Exec_EPFIF {
 		// //////On découpe la parcelle en bande en fonction des règlements
 
 		// ART_5 Superficie minimale 88= non renseignable, 99= non réglementé
-		//Si ce n'est pas respecté on ne fait même pas de simulation
+		// Si ce n'est pas respecté on ne fait même pas de simulation
 		double r_art5 = r1.getArt_5();
 		if (r_art5 != 99) {
 			if (bPU.getpol2D().area() < r_art5) {
 				return featC;
 			}
 		}
-		//Processus découpant la zone dans laquelle on met les bâtiments à partir des règles
+		// Processus découpant la zone dans laquelle on met les bâtiments à
+		// partir des règles
 		BandProduction bP = new BandProduction(bPU, r1, r2);
 
 		if (r2 == null || r2.getGeomBande() == null || r2.getGeomBande().isEmpty()) {
@@ -548,7 +535,7 @@ public class Exec_EPFIF {
 			debugLine.add(bP.getLineRoad());
 		}
 
-		Parameters p = initiateSimulationParamters(r1, r2,fParam);
+		Parameters p = initiateSimulationParamters(r1, r2, fParam);
 		// initialisation des paramètres de simulation
 		if (p == null) {
 			return featC;
@@ -567,9 +554,8 @@ public class Exec_EPFIF {
 		if (cc == null) {
 			return featC;
 		}
-		
-		
-		//On liste les boîtes simulées et on ajoute les attributs nécessaires
+
+		// On liste les boîtes simulées et on ajoute les attributs nécessaires
 		for (GraphVertex<Cuboid> v : cc.getGraph().vertexSet()) {
 
 			IFeature feat = new DefaultFeature(v.getValue().generated3DGeom());
@@ -581,14 +567,13 @@ public class Exec_EPFIF {
 			AttributeManager.addAttribute(feat, "Rotation", v.getValue().orientation, "Double");
 			AttributeManager.addAttribute(feat, "ID_PARC", bPU.getId(), "Integer");
 			double area = 0;
-			
-			if(feat.getGeom() != null && (! feat.getGeom().isEmpty())){
-				area = feat.getGeom().area();
+
+			if (v.getValue().getFootprint() != null && (!v.getValue().getFootprint().isEmpty())) {
+				area =v.getValue().getFootprint().area();
 			}
-			
+
 			AttributeManager.addAttribute(feat, "Aire", area, "Double");
-			
-			
+
 			featC.add(feat);
 		}
 		return featC;

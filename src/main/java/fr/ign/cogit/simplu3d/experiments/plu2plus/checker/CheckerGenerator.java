@@ -15,6 +15,11 @@ public class CheckerGenerator {
 
 
 		UrbaZone zone = bPU.getCadastralParcels().get(0).getSubParcels().get(0).getUrbaZone();
+		
+		//Regle 1
+		check.addChild(new CheckOppositeProspect(1, 0, bPU));
+		
+		
 		//Regle 4
 		List<ParcelBoundaryType> lPB = new ArrayList<ParcelBoundaryType>();
 		lPB.add(ParcelBoundaryType.LAT);
@@ -35,6 +40,8 @@ public class CheckerGenerator {
 		//Regle 8
 		double hMax = deterMinHMax(zone);
 		check.addChild(new CheckHeight(hMax));
+		
+
 
 
 		return check;

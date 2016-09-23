@@ -17,7 +17,7 @@ import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.contrib.geometrie.Angle;
 import fr.ign.cogit.geoxygene.contrib.geometrie.Operateurs;
-import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToLineString;
+import fr.ign.cogit.geoxygene.convert.FromGeomToLineString;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;

@@ -1,42 +1,90 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <parameters>
-        <!-- Dossier contenant l'environnement géo, il contient bati.shp, parcelle.shp, route.shp, zonage.shp, PRESRIPTION_SURF.shp-->
+        <!-- Dossier contenant l'environnement géon il contient bati.shp, parcelle.shp, route.shp, zonage.shp, PRESRIPTION_SURF.shp-->
 		<param key="folder" value=""/>
         <!-- Paramètres relatifs à l'énergie -->
         <!-- Énergie de création d'un cube dans une configuration m^3-->
-		<param key="energy" value="1" />
+		<param key="energy" value="5" />
         <!-- Pondération du critère de volume-->
     	<param key="ponderation_volume" value="1" />
-
-        <!--Distribution (équiprobable) des dimensions des boîtes-->
+        <!-- Pondération négative du volume dépassant de la parcelle-->
+        <param key="ponderation_difference_ext" value="5" />         
+        <!-- Pondération négative d'une boîte en intersectant une autre-->
+		<param key="ponderation_volume_inter" value="1" />         
+        
+        
+        <!--Paramètres du toits valeurs min et max-->
+        
+                <param key="r0min" value="10" />
+		<param key="r0max" value="20" />
         <!-- Largeur et longueur !-->
-        <param key="minlen" value="4" />
-		<param key="maxlen" value="100" />
+        <param key="r1min" value="10" />
+		<param key="r1max" value="20" />
 		
-		<param key="minwid" value="4" />
-		<param key="maxwid" value="15" />
+		<param key="r2min" value="1" />
+		<param key="r2max" value="5" />
         <!-- Hauteur !-->
-		<param key="minheight" value ="0.5" />
-		<param key="maxheight" value="25" />
+		<param key="r3min" value ="2" />
+		<param key="r3max" value="12" />
+		
+		
+		<!-- Amplitude max d'un changement de dimension (m) !-->
+		         <param key="r0a" value="2" />
+		         
+         <param key="r1a" value="2" />
+         <!-- Amplitude max d'un changement de hauteur !-->
+         <param key="r2a" value="2" />
+         <!-- Amplitude max d'un déplacement !-->
+         <param key="r3a" value="2" />
+         <!-- Amplitude max d'une rotation ° !-->
+         <param key="r4a" value="180" />
+		
+		
+		
+		
+		
+		<!--Paramètres des murs valeurs min et max-->
+        <!-- Largeur et longueur !-->
+        
+                <param key="w0min" value="10" />
+		<param key="w0max" value="20" />
+		
+		
+        <param key="w1min" value="10" />
+		<param key="w1max" value="20" />
+		
+		<param key="w2min" value="1" />
+		<param key="w2max" value="5" />
+        <!-- Hauteur !-->
+		<param key="w3min" value ="2" />
+		<param key="w3max" value="12" />
+		
+		
+		
+				
+		<!-- Amplitude max d'un changement de dimension (m) !-->
+		<param key="w0a" value="2" />
+         <param key="w1a" value="2" />
+         <!-- Amplitude max d'un changement de hauteur !-->
+         <param key="w2a" value="2" />
+         <!-- Amplitude max d'un déplacement !-->
+         <param key="w3a" value="2" />
+         <!-- Amplitude max d'une rotation ° !-->
+         <param key="w4a" value="180" />
+
+
 
         <!-- Probabilités !-->
         <!-- Création/destruction d'une boîte !-->
         <!-- Les autre smouvements sont équiprobables !-->
-		<param key="pbirthdeath" value="0.2" />
-		<param key="pbirth" value="1.0" />
+		<param key="pbirth" value="0.2" />
+		<param key="pdeath" value="0.5" />
          <!-- Déplacements !-->
-         <!-- Amplitude max d'un changement de dimension (m) !-->
-         <param key="amplitudeMaxDim" value="2" />
-         <!-- Amplitude max d'un changement de hauteur !-->
-         <param key="amplitudeHeight" value="2" />
-         <!-- Amplitude max d'un déplacement !-->
-         <param key="amplitudeMove" value="2" />
-         <!-- Amplitude max d'une rotation ° !-->
-         <param key="amplitudeRotate" value="180" />
+
         
         <!-- Paramètres de température (on considère une fonction temp * deccoef^it) !-->
         <!-- Température initiale !-->
-		<param key="temp" value="180000" />
+		<param key="temp" value="10800" />
         <!-- Température initiale !-->
 		<param key="deccoef" value="0.99999" />
         
@@ -52,16 +100,16 @@
         <!-- Indique si il s'agit d'un nombre absolu d'itérations true ou un nombre relatif 
         à la non amélioration de la configuration-->
         <param key="isAbsoluteNumber" value="false" />
-		<param key="nbiter" value="50000" />
+		<param key="nbiter" value="200000" />
         <param key="delta" value="5" />
         
         <param key="poisson" value="20" />
         
         <!-- Paramètres relatifs aux visiteur!-->
          <!-- Nombre d'itérations de dump!-->
-		<param key="nbdump" value="10000" />
+		<param key="nbdump" value="5000" />
          <!-- Nombre d'itérations de save!-->
-		<param key="nbsave" value="5000000" />
+		<param key="nbsave" value="10000" />
         <!-- Visiteurs utilisés-->
         <!-- Sortie console -->
         <param key="outputstreamvisitor" value="true" />
@@ -101,7 +149,7 @@
        <param key="csvfilenamend" value="exportEndStats.csv" />  
         
         <!-- Dossier des sorties des visiteur -->
-        <param key="result" value="/home/adminlocal/tmp/" />
+        <param key="result" value="/media/mickael/Data/" />           
 </parameters>
 
 

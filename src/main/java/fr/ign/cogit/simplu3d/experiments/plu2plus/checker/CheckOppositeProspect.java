@@ -15,23 +15,30 @@ import fr.ign.cogit.simplu3d.model.Building;
 import fr.ign.cogit.simplu3d.model.ParcelBoundary;
 import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
 
-public class CheckerDistanceParcelBoundaries  implements IRuleChecker {
-	
+public class CheckOppositeProspect implements IRuleChecker {
 
-	private double dmin;
+	private double slope;
+	private double hIni;
 	private IMultiCurve<IOrientableCurve> ims;
 
-	public CheckerDistanceParcelBoundaries(double dmin, List<ParcelBoundaryType> lTypes, BasicPropertyUnit bPU) {
+	public CheckOppositeProspect(double slope, double hIni, BasicPropertyUnit bPU) {
 		super();
-		this.dmin = dmin;
-		List<ParcelBoundary> lPB = bPU.getCadastralParcels().get(0).getBoundariesByTypes(lTypes);
+		this.slope = slope;
+		this.hIni = hIni;
+		List<ParcelBoundary> lPB = bPU.getCadastralParcels().get(0).getBoundariesByType(ParcelBoundaryType.ROAD);
 
 		ims = new GM_MultiCurve<>();
 		for (ParcelBoundary pB : lPB) {
-			ims.addAll(FromGeomToLineString.convert(pB.getGeom()));
+			
+			ParcelBoundary oppositeBoundary = pB.getOppositeBoundary();
+			
+			if(oppositeBoundary == null) continue;
+			
+			ims.addAll(FromGeomToLineString.convert(oppositeBoundary.getGeom()));
 		}
 
 	}
+
 	@Override
 	public List<UnrespectedRule> check(BasicPropertyUnit bPU, RuleContext context) {
 
@@ -44,10 +51,8 @@ public class CheckerDistanceParcelBoundaries  implements IRuleChecker {
 		}
 
 		for (Building b : lBuildings) {
-			
-			double dMeasured = b.getFootprint().distance(ims);
 
-			boolean bool = (dMeasured< dmin);
+			boolean bool = b.prospect(ims, slope, hIni);
 
 			if (!bool & context.isStopOnFailure()) {
 				lUNR.add(null);
@@ -56,13 +61,12 @@ public class CheckerDistanceParcelBoundaries  implements IRuleChecker {
 			}
 
 			if (!bool) {
-				lUNR.add(new UnrespectedRule("Distance minimale non respectée : " + dmin + " > " + dMeasured , b.getGeom(), "Distance"));
+				lUNR.add(new UnrespectedRule("Prospect non respecté", b.getGeom(), "Prospect"));
 			}
 
 		}
 
 		return lUNR;
 	}
-
 
 }
