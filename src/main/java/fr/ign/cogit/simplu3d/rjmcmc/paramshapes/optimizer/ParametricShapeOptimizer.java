@@ -86,8 +86,8 @@ public class ParametricShapeOptimizer<C extends ParametricBuilding>
 				roofFactory.getMaxParameters());
 
 		UniformBirth<ParametricBuilding> birth = new UniformBirth<ParametricBuilding>(rng,
-				new ParametricBuilding(roofFactory, wallFactory, minCoord),
-				new ParametricBuilding(roofFactory, wallFactory, maxCoord), builder, TransformToSurface.class,
+				new ParametricBuilding(wallFactory,roofFactory,  minCoord),
+				new ParametricBuilding(wallFactory,roofFactory,  maxCoord), builder, TransformToSurface.class,
 				samplingSurface);
 
 		// Distribution de poisson
