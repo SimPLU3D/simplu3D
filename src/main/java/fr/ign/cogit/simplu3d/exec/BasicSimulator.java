@@ -73,7 +73,7 @@ public class BasicSimulator {
 		// Distance to lateral parcel limits
 		double distReculLat = 4;
 		// Distance between two buildings of a parcel
-		double distanceInterBati = 5;
+		double distanceInterBati = 0;
 		// Maximal ratio built area
 		double maximalCES = 2;
 

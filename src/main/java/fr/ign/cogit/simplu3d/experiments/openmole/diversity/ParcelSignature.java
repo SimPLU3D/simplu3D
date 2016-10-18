@@ -10,19 +10,25 @@ import fr.ign.cogit.simplu3d.util.convert.ExportAsFeatureCollection;
 import fr.ign.mpp.configuration.GraphConfiguration;
 
 public class ParcelSignature {
-  GraphConfiguration<Cuboid> conf;
-  BasicPropertyUnit propertyUnit;
+  IFeatureCollection<IFeature> collection ;
+  IEnvelope envelope;
 
-  public ParcelSignature(GraphConfiguration<Cuboid> c, BasicPropertyUnit bPU) {
-    this.conf = c;
-    this.propertyUnit = bPU;
+  public ParcelSignature(   GraphConfiguration<Cuboid> c , BasicPropertyUnit bPU) {
+    ExportAsFeatureCollection exporter = new ExportAsFeatureCollection(c);
+    IFeatureCollection<IFeature> collection = exporter.getFeatureCollection();
+    this.collection = collection;
+    this.envelope = bPU.getGeom().getEnvelope();
+  }
+  
+  
+  public ParcelSignature( IEnvelope envelope,IFeatureCollection<IFeature> featColl){
+    this.collection = featColl;
+    this.envelope = envelope;
   }
 
   public long getSignature(double tileSize) {
     String result = "";
-    ExportAsFeatureCollection exporter = new ExportAsFeatureCollection(this.conf);
-    IFeatureCollection<IFeature> collection = exporter.getFeatureCollection();
-    IEnvelope envelope = this.propertyUnit.getGeom().getEnvelope();
+
     double w = envelope.width();
     double l = envelope.length();
     int numberOfTilesX = Math.max(1, (int) (w / tileSize));

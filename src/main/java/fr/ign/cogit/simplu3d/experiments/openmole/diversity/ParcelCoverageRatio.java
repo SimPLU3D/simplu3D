@@ -21,21 +21,28 @@ import fr.ign.cogit.simplu3d.util.convert.ExportAsFeatureCollection;
 import fr.ign.mpp.configuration.GraphConfiguration;
 
 public class ParcelCoverageRatio {
-  GraphConfiguration<Cuboid> conf;
-  BasicPropertyUnit propertyUnit;
+  IFeatureCollection<IFeature> featColl;
+  double area;
 
   public ParcelCoverageRatio(GraphConfiguration<Cuboid> c, BasicPropertyUnit bPU) {
-    this.conf = c;
-    this.propertyUnit = bPU;
+    ExportAsFeatureCollection exporter = new ExportAsFeatureCollection(c);
+    IFeatureCollection<IFeature> collection = exporter.getFeatureCollection();
+    this.featColl = collection;
+    this.area = bPU.getGeom().area();
+  }
+  
+  
+  public ParcelCoverageRatio(IFeatureCollection<IFeature> featColl, double area) {
+    this.featColl = featColl;
+    this.area = area;
   }
 
   @SuppressWarnings("unchecked")
   public double getCoverageRatio() {
-    ExportAsFeatureCollection exporter = new ExportAsFeatureCollection(this.conf);
-    IFeatureCollection<IFeature> collection = exporter.getFeatureCollection();
-    double area = this.propertyUnit.getGeom().area();
+
+
     List<GM_MultiSurface<IPolygon>> list = new ArrayList<>();
-    for (IFeature f : collection) {
+    for (IFeature f : featColl) {
       list.add((GM_MultiSurface<IPolygon>) f.getGeom());
     }
     // if there is no object, don't bother

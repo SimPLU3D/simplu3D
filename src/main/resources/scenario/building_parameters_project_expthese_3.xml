@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <parameters>
-        <!-- Dossier contenant l'environnement géon il contient bati.shp, parcelle.shp, route.shp, zonage.shp, PRESRIPTION_SURF.shp-->
+        <!-- Dossier contenant l'environnement géond il contient bati.shp, parcelle.shp, route.shp, zonage.shp, PRESRIPTION_SURF.shp-->
 		<param key="folder" value=""/>
         <!-- Paramètres relatifs à l'énergie -->
         <!-- Énergie de création d'un cube dans une configuration m^3-->
@@ -84,7 +84,7 @@
         <!-- Sortie ShapeFileWriter -->
         <param key="shapefilewriter" value="false" />   
         <!-- Sortie Statsvisitor -->
-        <param key="statsvisitor" value="false" />      
+        <param key="statsvisitor" value="true" />      
         <!-- Sortie FilmVisitor -->
         <param key="filmvisitor" value="false" />
         <param key="filmvisitorx" value="1051180.7261527262" />
@@ -106,7 +106,7 @@
        <param key="csvfilenamend" value="exportEndStats.csv" />  
         
         <!-- Dossier des sorties des visiteur -->
-        <param key="result" value="/media/mickael/Data/" />           
+        <param key="result" value="/home/pchapron/dev/sorties_simplu/" />           
 </parameters>
 
 
