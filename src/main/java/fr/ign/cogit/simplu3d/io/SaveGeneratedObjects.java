@@ -40,7 +40,7 @@ public class SaveGeneratedObjects {
   public static final String TABLE_GENERATED_BUILDING = "generatedbuildings";
 
   public static boolean saveShapefile(String path, GraphConfiguration<? extends AbstractSimpleBuilding> cc, int idParcelle, long seed) {
-    ExportAsFeatureCollection exporter = new ExportAsFeatureCollection(cc, idParcelle, seed);
+    ExportAsFeatureCollection exporter = new ExportAsFeatureCollection(cc, idParcelle);
     ShapefileWriter.write(exporter.getFeatureCollection(), path);
     return true;
   }

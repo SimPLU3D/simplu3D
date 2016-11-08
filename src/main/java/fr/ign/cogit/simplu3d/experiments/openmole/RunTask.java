@@ -1,12 +1,17 @@
 package fr.ign.cogit.simplu3d.experiments.openmole;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.geotools.factory.GeoTools;
 import org.geotools.factory.Hints;
 import org.geotools.feature.DefaultFeatureCollections;
+import org.geotools.feature.type.FeatureTypeFactoryImpl;
 import org.geotools.filter.FilterFactoryImpl;
 import org.geotools.referencing.factory.ReferencingObjectFactory;
 import org.geotools.referencing.factory.epsg.FactoryUsingWKT;
@@ -15,7 +20,6 @@ import org.geotools.referencing.operation.DefaultMathTransformFactory;
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
-import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.demo.DemoEnvironmentProvider;
 import fr.ign.cogit.simplu3d.exec.BasicSimulator;
 import fr.ign.cogit.simplu3d.exec.experimentation.SamplePredicate;
@@ -45,6 +49,8 @@ public class RunTask {
     
     String folderName = BasicSimulator.class.getClassLoader().getResource("scenario/").getPath();
     String fileName = "building_parameters_project_expthese_3.xml";
+    //String fileName = "recuit_bourrin.xml";
+    
     int idBPU = 255;
     double distReculVoirie = 4.53125;
     double distReculFond = 2.65625;
@@ -63,7 +69,7 @@ public class RunTask {
         slopeRoad, hauteurMax, seed);
     
     
-    System.out.println("energy = " + result.energy + " with coverage = "
+    System.out.println("energyTot = " + result.energy + " with coverage = "
         + result.coverageRatio + " and signature " + result.signature);
   }
 
@@ -77,6 +83,11 @@ public class RunTask {
     hints.put(Hints.DATUM_FACTORY, TestDatumFactory.class);
     hints.put(Hints.FEATURE_COLLECTIONS, DefaultFeatureCollections.class);
     hints.put(Hints.FILTER_FACTORY, FilterFactoryImpl.class);
+    //hints.put(Hints.FEATURE_FACTORY, FeatureFactory.class);
+    //hints.put(Hints.ATTRIBUTE_TYPE_FACTORY, AttributeTypeBuilder.class);
+    hints.put(Hints.FEATURE_TYPE_FACTORY, FeatureTypeFactoryImpl.class);
+    //hints.put(Hints.ATTRIBUTE_TYPE_FACTORY, AttributeTypeFacImpl.class );
+  
   }
 
   public static TaskResult run(File folder, File folderOut, File parameterFile,
@@ -136,6 +147,9 @@ public class RunTask {
         + "_ces_" + maximalCES + "_hini_" + hIniRoad + "_sro_" + slopeRoad
         + "_hmax_" + hauteurMax + "_seed_" + seed + "_en_" + energy + "_sig_"
         + signature + "_cov_" + coverageRatio + ".shp";
+    
+    
+    
     SaveGeneratedObjects.saveShapefile(pathShapeFile, cc, idBPU, seed);
     return new TaskResult(energy, coverageRatio, signature);
   }
@@ -148,6 +162,7 @@ public class RunTask {
 
     // Tous les cuboids de la zone
     IFeatureCollection<IFeature> cuboidOut = new FT_FeatureCollection<>();
+    Collection<String[]> arrayParametersOut = new ArrayList<>();
     //
     double energyTot = 0;
     double areaTot = 0;
@@ -181,8 +196,13 @@ public class RunTask {
       }
       
       System.out.println("ID Parcel : " + bPUTemp.getId());
+      System.out.println("Simulation begins");
+      
+      //System.out.println("Tile size : " + p.getDouble("tileSize"));
       // Chargement de l'optimiseur
       OptimisedBuildingsCuboidDirectRejectionNoVisitor oCB = new OptimisedBuildingsCuboidDirectRejectionNoVisitor();
+      //  OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();
+
       // Chargement des règles à appliquer
       SamplePredicate<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new SamplePredicate<>(
           bPUTemp, distReculVoirie, distReculFond, distReculLat, maximalCES,
@@ -190,42 +210,71 @@ public class RunTask {
       p.set("maxheight", hauteurMax);
       RandomGenerator rng = new MersenneTwister(seed);
       // Exécution de l'optimisation
+      //      GraphConfiguration<Cuboid> cc = oCB.process( bPUTemp, p, env, bPUTemp.getId(), pred);
       GraphConfiguration<Cuboid> cc = oCB.process(rng, bPUTemp, p, env, pred);
-
-      ExportAsFeatureCollection export = new ExportAsFeatureCollection(cc,
-          bPUTemp.getId(), seed);
+      
+      for (Cuboid c : cc) {
+        double[] conf = c.toArray();
+        String[] array = new String[conf.length + 1];
+        array[0] = String.valueOf(bPUTemp.getId());
+        for (int i = 0; i < conf.length; i++) {
+          array[i+1] = String.valueOf(conf[i]);
+        }
+        arrayParametersOut.add(array);
+      }
+      
+      ExportAsFeatureCollection export = new ExportAsFeatureCollection(cc, bPUTemp.getId());
       cuboidOut.addAll(export.getFeatureCollection());
       
       
       energyTot = energyTot + cc.getEnergy();
       areaTot = areaTot + bPUTemp.getArea();
       
-      break;
+      System.out.println("Simulation ends");
+
     }
 
     // Identifiant de la parcelle
+    
+    System.out.println("ParcelSignature begins");
  
-    ParcelSignature signatureEvaluator = new ParcelSignature(env.getBpU().getEnvelope(), cuboidOut);
-    long signature = signatureEvaluator.getSignature(p.getDouble("tileSize"));
+  //  ParcelSignature signatureEvaluator = new ParcelSignature(env.getBpU().getEnvelope(), cuboidOut);
+    long signature = 0; // signatureEvaluator.getSignature(p.getDouble("tileSize"));
 
     
+    System.out.println("ParcelCoverageRatio begins");
  
     // Signature sur la zone
     ParcelCoverageRatio coverageRatioEvaluator = new ParcelCoverageRatio(cuboidOut, areaTot);
     double coverageRatio = coverageRatioEvaluator.getCoverageRatio();
-
-    String pathShapeFile = folderOut + File.separator + "sim_" + "_drv_"
-        + distReculVoirie + "_drf_" + distReculFond + "_drl_" + distReculLat
-        + "_ces_" + maximalCES + "_hini_" + hIniRoad + "_sro_" + slopeRoad
-        + "_hmax_" + hauteurMax + "_seed_" + seed + "_en_" + energyTot + "_sig_"
-        + signature + "_cov_" + coverageRatio + ".shp";
     
     
-    ShapefileWriter.write(cuboidOut, pathShapeFile );
+    // System.out.println("ShapefileWriter begins");
+    
+    
+//    String pathShapeFile =folderOut + File.separator + "test.shp";
     
 
+    //String pathShapeFile = folderOut + File.separator +  "out.shp";
+    
+  
+//    ShapefileWriter.write(cuboidOut, pathShapeFile );
     
     
+    String pathCSVFile =folderOut + File.separator + "out.csv";
+    File outCSVFile=new File(pathCSVFile);
+    BufferedWriter writer = new BufferedWriter(new FileWriter(outCSVFile));
+    writer.write("idparcel,centerx, centery, length, width, height, orientation\n");
+    for (String[] array:arrayParametersOut) {
+      String line = array[0];
+      for (int i = 1 ; i < array.length ; i++) line += ", " + array[i];
+      writer.write(line+"\n");
+    }
+    //Close writer
+    writer.close();
+
+    //System.out.println("Return Taskresult");
+
     return new TaskResult(energyTot, coverageRatio, signature);
   }
 

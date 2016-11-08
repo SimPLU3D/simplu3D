@@ -4,6 +4,7 @@ import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IEnvelope;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Envelope;
+import fr.ign.cogit.geoxygene.util.index.Tiling;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.util.convert.ExportAsFeatureCollection;
@@ -28,6 +29,12 @@ public class ParcelSignature {
 
   public long getSignature(double tileSize) {
     String result = "";
+    
+    if(! collection.hasSpatialIndex()){
+      
+      collection.initSpatialIndex(Tiling.class , false);
+      
+    }
 
     double w = envelope.width();
     double l = envelope.length();

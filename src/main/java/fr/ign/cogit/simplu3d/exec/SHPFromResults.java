@@ -1,0 +1,186 @@
+package fr.ign.cogit.simplu3d.exec;
+
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.BufferedReader;
+import java.io.FileReader ;
+import java.util.List;
+
+import com.vividsolutions.jts.geom.GeometryFactory;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+
+import fr.ign.cogit.geoxygene.api.feature.IFeature;
+import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
+import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
+import fr.ign.cogit.geoxygene.feature.DefaultFeature;
+import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
+import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
+import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
+import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
+import fr.ign.cogit.simplu3d.demo.DemoEnvironmentProvider;
+import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
+import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
+import fr.ign.cogit.simplu3d.model.Environnement;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid.OptimisedBuildingsCuboidFinalDirectRejection;
+import fr.ign.cogit.simplu3d.rjmcmc.generic.predicate.SamplePredicate;
+import fr.ign.cogit.simplu3d.util.AssignZ;
+import fr.ign.cogit.simplu3d.util.convert.ExportAsFeatureCollection;
+import fr.ign.mpp.configuration.BirthDeathModification;
+import fr.ign.mpp.configuration.GraphConfiguration;
+import fr.ign.mpp.configuration.GraphVertex;
+import fr.ign.parameters.Parameters;
+
+/**
+ * 
+ * This software is released under the licence CeCILL
+ * see LICENSE.TXT
+ * see <http://www.cecill.info/ http://www.cecill.info/
+ * 
+ * @copyright IGN
+ * 
+ * @author Paul Chapron (si si) 
+ * 
+ * @version 1.0
+ * 
+ *          Reconstruit un ShapeFile des bâtiments d'une zone urbaine (plusieurs parcelles) 
+ *          à partir de ses caractéristiques géométriques  tirées des fichiers 
+ *          de simulations ordonnés selon un plan d'exploration OpenMOLE
+ * 
+ */
+public class SHPFromResults {
+
+    /**
+     * @param args
+     */
+
+    public static void main(String[] args) throws Exception {
+     
+      System.out.println("chargement fichiers resultats");
+      // repertoire où openmole stocke les resultats 
+      File resultsFolder = new File("/home/pchapron/.openmole/HP1111W090-Ubuntu/webui/projects/results");
+
+      
+      FilenameFilter csvfileFilter = new  FilenameFilter() {
+        @Override
+        public boolean accept(File dir, String name) {
+          return name.endsWith(".csv");
+        }
+      };
+      FilenameFilter folderFilter = new FilenameFilter() {
+        @Override
+        public boolean accept(File dir, String name) {
+          return new File(dir,name).isDirectory();
+        }
+      };
+      
+      File[] listOfFiles = resultsFolder.listFiles(csvfileFilter);
+      File[] directories = resultsFolder.listFiles(folderFilter);
+      
+      
+      int  idxdir = 0 ; 
+          
+     // File f = "/home/pchapron/dev/result_Simplu/results/shape_2025967707654652509_-19524.765210399386_0.09999942901127996_00/out.csv";
+      
+      
+      
+      File dir = directories[idxdir];
+     // File f = dir.listFiles(csvfileFilter)[idxdir];
+      File f = new File("/home/pchapron/dev/result_Simplu/results/shape_2025967707654652509_-19524.765210399386_0.09999942901127996_0/out.csv");
+      
+      
+      
+      System.out.println("fichier resultat " + idxdir);
+      System.out.println(f.getName());
+      System.out.println("Contenu du fichier");
+      
+      // charge les lignes de f dans une liste  
+      // et met les idParcell dans un hashset
+     BufferedReader reader = new BufferedReader(new FileReader(f));
+     List<String> lines = new ArrayList<>();
+     ArrayList<Integer> idparcels = new ArrayList<Integer>();
+     
+     String line = null;
+     while ((line = reader.readLine()) != null) {
+         lines.add(line);
+         idparcels.add(Integer.parseInt(line.split(",")[0])); 
+     }
+     reader.close();
+          
+     // récupère les idParcel uniques par la création d'hashset
+     HashSet<Integer> uniqueIdParcels = new HashSet<Integer>(idparcels);
+     System.out.println("id parcels distinctes "+ uniqueIdParcels.toString());
+
+     ArrayList<Cuboid> cuboZone = new ArrayList<Cuboid>();
+     // pour chaque parcelle , creation de cuboides  
+     for (Integer idparc : uniqueIdParcels){
+       ArrayList<Cuboid> cuboParc = new ArrayList<Cuboid>();
+       System.out.println("#Parcelle "+ idparc+"#");      
+       for(String l : lines){
+         int idCurrentParcel = Integer.parseInt(l.split(",")[0]);
+         // pour les lignes de la même parcelle on crée des cuboid
+         if (idCurrentParcel == idparc){
+           Cuboid cu = CuboidFromLine(l);
+           cuboParc.add(cu);
+           //System.out.println("Cuboïde créé dans parcelle" + idparc +"\n");
+           //System.out.println(cuboZone.size()+"cuboides au total");
+         }
+       }
+       cuboZone.addAll(cuboParc);
+     }
+     System.out.println(cuboZone.size()+"cuboides dans la zone");
+     
+     
+   //export shp 
+     IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
+        
+     for (Cuboid c : cuboZone) {
+       //Output feature with generated geometry
+       IFeature feat = new DefaultFeature(c.generated3DGeom());
+       
+       AttributeManager.addAttribute(feat, "Longueur", Math.max(c.length, c.width),
+           "Double");
+   AttributeManager.addAttribute(feat, "Largeur", Math.min(c.length, c.width), "Double");
+   AttributeManager.addAttribute(feat, "Hauteur", c.height, "Double");
+   AttributeManager.addAttribute(feat, "Rotation", c.orientation, "Double");
+
+       iFeatC.add(feat);
+     }
+
+     
+     File folderSHP=new File("/home/pchapron/temp/");
+      
+     String pathShapeFile =folderSHP + File.separator + "SHPwriter.shp";
+     System.out.println(pathShapeFile);
+     ShapefileWriter.write(iFeatC, pathShapeFile );
+     
+     System.out.println("ta da ");
+    }//main
+
+    
+    public static Cuboid CuboidFromLine(String l){
+
+      if(l.isEmpty()){
+        return null;
+      }
+      else {
+        // splitte la ligne en colonnes 
+        String[] columns = l.split(","); 
+        ArrayList<Double> attr = new ArrayList<Double>() ;
+        for (String col : columns){
+          Double d = Double.parseDouble(col);
+          attr.add(d);
+        }
+        // crée le cuboid 
+        Cuboid c = new Cuboid(attr.get(1), attr.get(2),
+            attr.get(3), attr.get(4),
+            attr.get(5), attr.get(6));
+        return c ;
+      }
+    }
+
+    
+    
+}
