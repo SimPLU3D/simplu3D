@@ -32,7 +32,7 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
  * 
  * @version 1.0
  **/
-public class LoaderCuboid2 {
+public class LoaderCuboid {
 
   public static List<Cuboid> loadFromShapeFile(String shapeFile) {
     return loadFromCollection(ShapefileReader.read(shapeFile));

@@ -10,7 +10,7 @@ import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid2;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.PrepareVisitors;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
@@ -75,7 +75,7 @@ public class OptimisedBuildingsCuboidFinalDirectRejection extends BasicCuboidOpt
 		int loadExistingConfig = p.getInteger("load_existing_config");
 		if (loadExistingConfig == 1) {
 			String configPath = p.get("config_shape_file").toString();
-			List<Cuboid> lCuboid = LoaderCuboid2.loadFromShapeFile(configPath);
+			List<Cuboid> lCuboid = LoaderCuboid.loadFromShapeFile(configPath);
 			BirthDeathModification<Cuboid> m = conf.newModification();
 			for (Cuboid c : lCuboid) {
 				m.insertBirth(c);

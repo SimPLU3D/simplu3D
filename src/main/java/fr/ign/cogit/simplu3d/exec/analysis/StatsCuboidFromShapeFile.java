@@ -3,7 +3,7 @@ package fr.ign.cogit.simplu3d.exec.analysis;
 import java.util.List;
 
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid2;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid;
 
 /**
  * 
@@ -31,7 +31,7 @@ public class StatsCuboidFromShapeFile {
    */
   public static void main(String[] args) {
     String configPath = "C:/Users/mbrasebin/Desktop/Exp1/test1BatBloc/result_1643897   .shp";
-    List<Cuboid> lCuboid = LoaderCuboid2.loadFromShapeFile(configPath);
+    List<Cuboid> lCuboid = LoaderCuboid.loadFromShapeFile(configPath);
     
       
     for(Cuboid c : lCuboid){

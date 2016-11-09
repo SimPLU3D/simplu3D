@@ -38,7 +38,7 @@ import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.geoxygene.util.index.Tiling;
 import fr.ign.cogit.simplu3d.model.AbstractBuilding;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid2;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid;
 
 /**
  * Class that enables the fusion of Cuboid Geometry in order to make consistant
@@ -84,7 +84,7 @@ System.out.println("Debout");
 
 		// Load Cuboid from a generate ShapeFile (we can use date output from
 		// the optimization algorithm)
-		List<Cuboid> lCuboid = LoaderCuboid2.loadFromShapeFile(shpeIn);
+		List<Cuboid> lCuboid = LoaderCuboid.loadFromShapeFile(shpeIn);
 
 		// Do not forget to set the 3D geometry
 		for (Cuboid c : lCuboid) {

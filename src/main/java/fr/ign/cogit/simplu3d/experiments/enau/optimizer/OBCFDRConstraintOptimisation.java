@@ -15,7 +15,7 @@ import fr.ign.cogit.simplu3d.experiments.enau.energy.ServitudeVue;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid2;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid.BasicCuboidOptimizer;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.DifferenceVolumeUnaryEnergy;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.IntersectionVolumeBinaryEnergy;
@@ -83,7 +83,7 @@ public class OBCFDRConstraintOptimisation extends BasicCuboidOptimizer<Cuboid> {
 		int loadExistingConfig = p.getInteger("load_existing_config");
 		if (loadExistingConfig == 1) {
 			String configPath = p.get("config_shape_file").toString();
-			List<Cuboid> lCuboid = LoaderCuboid2.loadFromShapeFile(configPath);
+			List<Cuboid> lCuboid = LoaderCuboid.loadFromShapeFile(configPath);
 			BirthDeathModification<Cuboid> m = conf.newModification();
 			for (Cuboid c : lCuboid) {
 				m.insertBirth(c);
