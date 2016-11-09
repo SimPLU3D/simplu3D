@@ -1,9 +1,12 @@
 package fr.ign.cogit.simplu3d.experiments.plu2plus.predicate;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import fr.ign.cogit.simplu3d.checker.CompositeChecker;
-import fr.ign.cogit.simplu3d.checker.RuleContext;
+import fr.ign.cogit.simplu3d.experiments.plu2plus.context.SimulationcheckerContext;
+import fr.ign.cogit.simplu3d.model.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
@@ -15,9 +18,9 @@ public class CheckerPredicate<O extends Cuboid, C extends AbstractGraphConfigura
 
 	private BasicPropertyUnit bPU;
 	private CompositeChecker check;
-	private RuleContext cRc;
-	
-	public CheckerPredicate(BasicPropertyUnit bPU, CompositeChecker check,RuleContext cRc) {
+	private SimulationcheckerContext cRc;
+
+	public CheckerPredicate(BasicPropertyUnit bPU, CompositeChecker check, SimulationcheckerContext cRc) {
 		super();
 		this.bPU = bPU;
 		this.check = check;
@@ -26,34 +29,45 @@ public class CheckerPredicate<O extends Cuboid, C extends AbstractGraphConfigura
 
 	@Override
 	public boolean check(C arg0, M arg1) {
+		
+		
+		
 
-		List<O> births = arg1.getBirth();
-		List<O> deaths = arg1.getDeath();
+		List<AbstractBuilding> buildings = new ArrayList<>();
+
+		Iterator<O> iTBat = arg0.iterator();
+
+		while (iTBat.hasNext()) {
+
+			O batTemp = iTBat.next();
+
+			if (! arg1.getDeath().isEmpty() && batTemp == arg1.getDeath().get(0)) {
+				continue;
+			}
+
+			buildings.add(batTemp);
+
+		}
+
+		Cuboid newCuboid = null;
+
+		if (!arg1.getBirth().isEmpty()) {
+
+			newCuboid = arg1.getBirth().get(0);
+		}
+
+		buildings.addAll(bPU.getBuildings());
+
+		cRc.setNewCuboid(newCuboid);
+		cRc.setExistingCuboid(buildings);
 
 		
-		if (births != null) {
-			bPU.getBuildings().addAll(births);
 
-		}
-
-		if (deaths != null) {
-			bPU.getBuildings().removeAll(births);
-
-		}
-
+	
+		
 		boolean checked = check.check(bPU, cRc).isEmpty();
 		
-		
 
-		if (births != null) {
-			bPU.getBuildings().removeAll(births);
-
-		}
-
-		if (deaths != null) {
-			bPU.getBuildings().addAll(births);
-
-		}
 
 		return checked;
 	}

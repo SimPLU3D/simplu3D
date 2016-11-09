@@ -64,6 +64,13 @@ public class Cuboid extends AbstractSimpleBuilding implements ISimPLU3DPrimitive
 
 	@Override
 	public double intersectionArea(Primitive p) {
+		
+		
+		if(p instanceof Cuboid){
+			return this.getRectangle2D().intersectionArea(((Cuboid) p).getRectangle2D());
+		}
+		
+		
 		return this.toGeometry().intersection(p.toGeometry()).getArea();
 	}
 

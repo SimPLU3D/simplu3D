@@ -137,14 +137,25 @@ public class BasicCuboidOptimizer<C extends Cuboid> extends DefaultSimPLU3DOptim
 		// On retire de l'énergie de création, l'énergie de l'aire
 		UnaryEnergy<Cuboid> u3 = new MinusUnaryEnergy<Cuboid>(energyCreation, energyVolumePondere);
 
-		// Énergie constante : pondération de la différence
-		ConstantEnergy<Cuboid, Cuboid> ponderationDifference = new ConstantEnergy<Cuboid, Cuboid>(
-				p.getDouble("ponderation_difference_ext"));
-		// On ajoute l'énergie de différence : la zone en dehors de la parcelle
-		UnaryEnergy<Cuboid> u4 = new DifferenceVolumeUnaryEnergy<Cuboid>(geom);
-		UnaryEnergy<Cuboid> u5 = new MultipliesUnaryEnergy<Cuboid>(ponderationDifference, u4);
-		UnaryEnergy<Cuboid> unaryEnergy = new PlusUnaryEnergy<Cuboid>(u3, u5);
-
+		
+		double ponderationExt = 
+				p.getDouble("ponderation_difference_ext");
+		
+		
+		UnaryEnergy<Cuboid> unaryEnergy;
+		
+		if(ponderationExt != 0){
+			// Énergie constante : pondération de la différence
+			ConstantEnergy<Cuboid, Cuboid> ponderationDifference = new ConstantEnergy<Cuboid, Cuboid>(
+					p.getDouble("ponderation_difference_ext"));
+			// On ajoute l'énergie de différence : la zone en dehors de la parcelle
+			UnaryEnergy<Cuboid> u4 = new DifferenceVolumeUnaryEnergy<Cuboid>(geom);
+			UnaryEnergy<Cuboid> u5 = new MultipliesUnaryEnergy<Cuboid>(ponderationDifference, u4);
+			 unaryEnergy = new PlusUnaryEnergy<Cuboid>(u3, u5);
+		}else{
+			unaryEnergy = u3;
+		}
+		
 		// Énergie binaire : intersection entre deux rectangles
 		ConstantEnergy<Cuboid, Cuboid> c3 = new ConstantEnergy<Cuboid, Cuboid>(p.getDouble("ponderation_volume_inter"));
 		BinaryEnergy<Cuboid, Cuboid> b1 = new IntersectionVolumeBinaryEnergy<Cuboid>();

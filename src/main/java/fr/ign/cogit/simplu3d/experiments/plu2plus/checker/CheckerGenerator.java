@@ -19,28 +19,36 @@ public class CheckerGenerator {
 		//Regle 1
 		check.addChild(new CheckOppositeProspect(1, 0, bPU));
 		
+
+		
 		
 		//Regle 4
 		List<ParcelBoundaryType> lPB = new ArrayList<ParcelBoundaryType>();
 		lPB.add(ParcelBoundaryType.LAT);
 		lPB.add(ParcelBoundaryType.BOT);
 	
-		check.addChild(new CheckerProspect(1, 2, lPB, bPU));
+		 check.addChild(new CheckerProspect(1, 2, lPB, bPU));
+		
+		
 		
 		//Regles 5
 		double dMin = deterMineDM(zone); 
 		if(dMin > 0){
 			check.addChild(new CheckerDistanceParcelBoundaries(dMin, lPB, bPU));
 		}
-
-		//Regle 7
-		double cesMax = determineMaxCES(zone);
-		check.addChild(new CheckCES(cesMax, bPU));
+		
+		
 		
 		//Regle 8
 		double hMax = deterMinHMax(zone);
 		check.addChild(new CheckHeight(hMax));
 		
+
+
+		//Regle 7
+		double cesMax = determineMaxCES(zone);
+		check.addChild(new CheckCES(cesMax, bPU));
+
 
 
 
@@ -62,7 +70,7 @@ public class CheckerGenerator {
 			return 1;
 
 		}
-		System.out.println("ERROR ZONE NOT FOUND :" + uZ.getLibelle());
+		//		System.out.println("(1) ERROR ZONE NOT FOUND :" + uZ.getLibelle());
 		return 0;
 
 	}
@@ -78,7 +86,11 @@ public class CheckerGenerator {
 		String type = uZ.getLibelle();
 		if(type.equals("UBe") || type.equals("UBf") || type.equals("UBe1")  ) return 16;
 		if(type.equals("UBg") || type.equals("UBg1")  ) return 22;
-		System.out.println("ERROR ZONE NOT FOUND :" + type);
+		if(type.equals("UEb")) return 16;
+		if(type.equals("UEb1")) return 30;
+		
+		
+	//	System.out.println("(2) ERROR ZONE NOT FOUND :" + type);
 		return 0;
 		
 		

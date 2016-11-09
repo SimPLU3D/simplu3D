@@ -6,11 +6,13 @@ import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
+import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
+import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.checker.CompositeChecker;
-import fr.ign.cogit.simplu3d.checker.RuleContext;
 import fr.ign.cogit.simplu3d.experiments.plu2plus.checker.CheckerGenerator;
+import fr.ign.cogit.simplu3d.experiments.plu2plus.context.SimulationcheckerContext;
 import fr.ign.cogit.simplu3d.experiments.plu2plus.predicate.CheckerPredicate;
 import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
@@ -28,11 +30,26 @@ public class Simulation {
 		String folderName = "/home/mickael/data/mbrasebin/donnees/PLU2PLUS/Projet/";
 		String paramFile = folderName + "parameters_meylan.xml";
 
+		String pathEmprise = folderName + "temp_data/emprise_proj.shp";
+
+		IFeature featForbiddenZone = ShapefileReader.read(pathEmprise).get(0);
+
 		Parameters p = Parameters.unmarshall(new File(paramFile));
 
 		Environnement env = LoaderSHP.loadNoDTM(new File(folderName));
 
-		IFeatureCollection<IFeature> featC = simulateBPU(env, p, env.getBpU().get(8));
+		IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
+
+		for (BasicPropertyUnit bPU : env.getBpU()) {
+			
+	
+
+			if (featForbiddenZone.getGeom().intersects(bPU.getpol2D())) {
+
+				featC.addAll(simulateBPU(env, p, bPU));
+			}
+
+		}
 
 		ShapefileWriter.write(featC, folderName + "out/result.shp");
 
@@ -43,18 +60,14 @@ public class Simulation {
 		// Instantiation of the sampler
 		OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();
 
-		RuleContext context = new RuleContext();
+		SimulationcheckerContext context = new SimulationcheckerContext();
 		context.setStopOnFailure(true);
-		
-		
+
 		// Initialisation of the Checker
 		CompositeChecker checker = CheckerGenerator.generate(bPU);
-		
-		
-
 
 		CheckerPredicate<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new CheckerPredicate<>(
-				bPU, checker,context);
+				bPU, checker, context);
 		// Run of the optimisation on a parcel with the predicate
 		GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred);
 
@@ -72,6 +85,7 @@ public class Simulation {
 			AttributeManager.addAttribute(feat, "Largeur", Math.min(v.getValue().length, v.getValue().width), "Double");
 			AttributeManager.addAttribute(feat, "Hauteur", v.getValue().height, "Double");
 			AttributeManager.addAttribute(feat, "Rotation", v.getValue().orientation, "Double");
+			AttributeManager.addAttribute(feat, "IdParcel", bPU.getCadastralParcels().get(0).getCode(), "String");
 
 			iFeatC.add(feat);
 

@@ -1,17 +1,25 @@
 package fr.ign.cogit.simplu3d.experiments.plu2plus.checker;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
+
+import ch.qos.logback.core.Context;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
+import fr.ign.cogit.geoxygene.util.conversion.JtsGeOxygene;
 import fr.ign.cogit.simplu3d.checker.IRuleChecker;
 import fr.ign.cogit.simplu3d.checker.RuleContext;
 import fr.ign.cogit.simplu3d.checker.UnrespectedRule;
+import fr.ign.cogit.simplu3d.experiments.plu2plus.context.SimulationcheckerContext;
+import fr.ign.cogit.simplu3d.model.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
-import fr.ign.cogit.simplu3d.model.Building;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 
 public class CheckCES implements IRuleChecker {
-	
+
 	public final static String CODE_CES = "CES";
 
 	private double cesMax;
@@ -25,31 +33,84 @@ public class CheckCES implements IRuleChecker {
 	}
 
 	@Override
-	public List<UnrespectedRule> check(BasicPropertyUnit bPU,RuleContext checker) {
-	
+	public List<UnrespectedRule> check(BasicPropertyUnit bPU, RuleContext checker) {
 
-		List<Building> lBuildings = bPU.getBuildings();
+		List<AbstractBuilding> lBuildings = new ArrayList<>();
 
-		List<UnrespectedRule> lUNR = new ArrayList<UnrespectedRule>();
-		
-		if(lBuildings.isEmpty()) {return lUNR;}
+		if (checker instanceof SimulationcheckerContext) {
+			
+			if(((SimulationcheckerContext) checker).getNewCuboid() == null){
+				return new ArrayList<>();
+			}
 
-		int nbElem = lBuildings.size();
-
-		IGeometry geom = lBuildings.get(0).getFootprint();
-
-		for (int i = 1; i < nbElem; i++) {
-
-			geom = geom.union(lBuildings.get(i).getFootprint());
-
+			lBuildings.addAll(((SimulationcheckerContext) checker).getExistingCuboid());
+			lBuildings.add(((SimulationcheckerContext) checker).getNewCuboid());
+			
+			
+		} else {
+			lBuildings.addAll(bPU.getBuildings());
 		}
 
 		double airePAr = this.bPU.getGeom().area();
 
-		double ces = (geom.area() / airePAr);
+		try {
+			return this.evaluateCES(airePAr, lBuildings, checker);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+
+	public List<UnrespectedRule> evaluateCES(double parcelleArea, List<AbstractBuilding> lBuildings, RuleContext context) throws Exception {
+
+		List<UnrespectedRule> lUNR = new ArrayList<UnrespectedRule>();
+
+		if (lBuildings.isEmpty()) {
+			return lUNR;
+		}
+
+		int nbElem = lBuildings.size();
+		
+		
+		Collection<Geometry> collGeom = new ArrayList<>();
+
+
+		
+
+
+		Geometry geomTemp;	
+				
+
+		for (int i = 0; i < nbElem; i++) {
+			
+			if(lBuildings.get(i) instanceof Cuboid){
+				geomTemp=  ((Cuboid) lBuildings.get(i)).toGeometry();
+			}else{
+				geomTemp = JtsGeOxygene.makeJtsGeom(lBuildings.get(i).getGeom());
+			}
+			
+			collGeom.add(geomTemp);
+
+		}
+
+		Geometry union = CascadedPolygonUnion.union(collGeom);
+		
+		double ces = (union.getArea() / parcelleArea);
 
 		if (ces > cesMax) {
-			lUNR.add(new UnrespectedRule("CES dépassé : " + ces + "> " + cesMax, geom, CODE_CES));
+			
+	
+			if(context instanceof SimulationcheckerContext){
+				lUNR.add(null);
+			}else{
+				lUNR.add(new UnrespectedRule("CES dépassé : " + ces + "> " + cesMax, JtsGeOxygene.makeGeOxygeneGeom(union), CODE_CES));
+			}
+			
+			
+			
+			
 		}
 
 		return lUNR;

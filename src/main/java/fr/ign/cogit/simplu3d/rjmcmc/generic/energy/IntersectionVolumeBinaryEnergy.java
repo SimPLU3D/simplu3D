@@ -1,5 +1,6 @@
 package fr.ign.cogit.simplu3d.rjmcmc.generic.energy;
 
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
 import fr.ign.rjmcmc.energy.BinaryEnergy;
 
@@ -25,8 +26,16 @@ public class IntersectionVolumeBinaryEnergy<T extends ISimPLU3DPrimitive> implem
 
 	@Override
 	public double getValue(T t, T u) {
+		
+		double areaInter;
+		if(t instanceof Cuboid && u instanceof Cuboid){
+			areaInter = t.intersectionArea(u);
+		}else{
+			areaInter = 	 t.intersectionArea(u);
+		}
+		
 
-		double areaInter = t.intersectionArea(u);
+
 		return areaInter * Math.min(t.getHeight(), u.getHeight());
 
 	}

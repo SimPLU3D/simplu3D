@@ -31,7 +31,7 @@ public class DifferenceVolumeUnaryEnergy<T extends ISimPLU3DPrimitive> implement
 	@Override
 	public double getValue(T t) {
 
-		Geometry difference = t.toGeometry().buffer(0.01).difference(this.bpu.buffer(2));
+		Geometry difference = t.toGeometry().difference(this.bpu);
 		double height = t.getHeight();
 		return difference.getArea() * height;
 

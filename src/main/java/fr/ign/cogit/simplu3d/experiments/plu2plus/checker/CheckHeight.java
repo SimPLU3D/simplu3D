@@ -6,36 +6,50 @@ import java.util.List;
 import fr.ign.cogit.simplu3d.checker.IRuleChecker;
 import fr.ign.cogit.simplu3d.checker.RuleContext;
 import fr.ign.cogit.simplu3d.checker.UnrespectedRule;
+import fr.ign.cogit.simplu3d.experiments.plu2plus.context.SimulationcheckerContext;
+import fr.ign.cogit.simplu3d.model.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
-import fr.ign.cogit.simplu3d.model.Building;
 
 public class CheckHeight implements IRuleChecker {
-	
-	
+
 	private double heightMax;
-	
-	
 
 	public CheckHeight(double heightMax) {
 		super();
 		this.heightMax = heightMax;
 	}
 
-
-
 	@Override
 	public List<UnrespectedRule> check(BasicPropertyUnit bPU, RuleContext context) {
 
-		
-		List<UnrespectedRule> lUNR = new ArrayList<UnrespectedRule>();
+		List<AbstractBuilding> lBuildings = new ArrayList<>();
 
-		List<Building> lBuildings = bPU.getBuildings();
+		if (context instanceof SimulationcheckerContext) {
+
+			if (((SimulationcheckerContext) context).getNewCuboid() == null) {
+				return new ArrayList<>();
+			}
+
+			lBuildings.addAll(((SimulationcheckerContext) context).getExistingCuboid());
+
+
+		} else {
+			lBuildings.addAll(bPU.getBuildings());
+		}
+
+		return checkHeight(bPU, lBuildings, context);
+
+	}
+
+	public List<UnrespectedRule> checkHeight(BasicPropertyUnit bPU, List<AbstractBuilding> lBuildings,
+			RuleContext context) {
+		List<UnrespectedRule> lUNR = new ArrayList<UnrespectedRule>();
 
 		if (lBuildings.isEmpty()) {
 			return lUNR;
 		}
 
-		for (Building b : lBuildings) {
+		for (AbstractBuilding b : lBuildings) {
 
 			boolean bool = (b.height(0, 1) < heightMax);
 
@@ -52,11 +66,6 @@ public class CheckHeight implements IRuleChecker {
 		}
 
 		return lUNR;
-		
-		
 	}
-	
-	
-	
 
 }

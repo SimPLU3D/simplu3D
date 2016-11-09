@@ -10,6 +10,8 @@ import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.simplu3d.checker.IRuleChecker;
 import fr.ign.cogit.simplu3d.checker.RuleContext;
 import fr.ign.cogit.simplu3d.checker.UnrespectedRule;
+import fr.ign.cogit.simplu3d.experiments.plu2plus.context.SimulationcheckerContext;
+import fr.ign.cogit.simplu3d.model.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Building;
 import fr.ign.cogit.simplu3d.model.ParcelBoundary;
@@ -35,15 +37,44 @@ public class CheckerDistanceParcelBoundaries  implements IRuleChecker {
 	@Override
 	public List<UnrespectedRule> check(BasicPropertyUnit bPU, RuleContext context) {
 
-		List<UnrespectedRule> lUNR = new ArrayList<UnrespectedRule>();
 
-		List<Building> lBuildings = bPU.getBuildings();
 
+		List<AbstractBuilding> lBuildings = new ArrayList<>();
+		
+		if (context instanceof SimulationcheckerContext) {
+			
+			if(((SimulationcheckerContext) context).getNewCuboid() == null){
+				return new ArrayList<>();
+			}
+
+
+			lBuildings.add(((SimulationcheckerContext) context).getNewCuboid());
+			
+			
+		} else {
+			lBuildings.addAll(bPU.getBuildings());
+		}
+		
+
+		return evaluateDistance(lBuildings, context);
+
+	}
+	
+	
+	
+	public List<UnrespectedRule> evaluateDistance( List<AbstractBuilding> lBuildings, RuleContext context) {
+		
+		 List<UnrespectedRule> lUNR = new ArrayList<>();
+		 
+		 
 		if (lBuildings.isEmpty()) {
 			return lUNR;
 		}
+		
+		if(ims.isEmpty())
+		{return lUNR;}
 
-		for (Building b : lBuildings) {
+		for (AbstractBuilding b : lBuildings) {
 			
 			double dMeasured = b.getFootprint().distance(ims);
 
@@ -60,8 +91,12 @@ public class CheckerDistanceParcelBoundaries  implements IRuleChecker {
 			}
 
 		}
+		
+		
 
 		return lUNR;
+		
+		
 	}
 
 

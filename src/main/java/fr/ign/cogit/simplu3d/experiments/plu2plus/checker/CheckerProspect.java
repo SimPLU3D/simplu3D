@@ -10,6 +10,8 @@ import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.simplu3d.checker.IRuleChecker;
 import fr.ign.cogit.simplu3d.checker.RuleContext;
 import fr.ign.cogit.simplu3d.checker.UnrespectedRule;
+import fr.ign.cogit.simplu3d.experiments.plu2plus.context.SimulationcheckerContext;
+import fr.ign.cogit.simplu3d.model.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Building;
 import fr.ign.cogit.simplu3d.model.ParcelBoundary;
@@ -37,15 +39,39 @@ public class CheckerProspect implements IRuleChecker {
 	@Override
 	public List<UnrespectedRule> check(BasicPropertyUnit bPU, RuleContext context) {
 
+		List<AbstractBuilding> lBuildings = new ArrayList<>();
+
+		if (context instanceof SimulationcheckerContext) {
+
+			if (((SimulationcheckerContext) context).getNewCuboid() == null) {
+				return new ArrayList<>();
+			}
+
+		
+			lBuildings.add(((SimulationcheckerContext) context).getNewCuboid());
+
+		} else {
+			lBuildings.addAll(bPU.getBuildings());
+		}
+
+		return checkProspect(bPU, lBuildings, context);
+	}
+
+	public List<UnrespectedRule> checkProspect(BasicPropertyUnit bPU, List<AbstractBuilding> buildings,
+			RuleContext context) {
+
 		List<UnrespectedRule> lUNR = new ArrayList<UnrespectedRule>();
-
-		List<Building> lBuildings = bPU.getBuildings();
-
-		if (lBuildings.isEmpty()) {
+		
+		if(ims.isEmpty()){
 			return lUNR;
 		}
 
-		for (Building b : lBuildings) {
+	
+		if (buildings.isEmpty()) {
+			return lUNR;
+		}
+
+		for (AbstractBuilding b : buildings) {
 
 			boolean bool = b.prospect(ims, slope, hIni);
 
@@ -62,6 +88,7 @@ public class CheckerProspect implements IRuleChecker {
 		}
 
 		return lUNR;
+
 	}
 
 }
