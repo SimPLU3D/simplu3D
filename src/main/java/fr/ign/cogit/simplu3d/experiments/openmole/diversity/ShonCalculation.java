@@ -58,9 +58,11 @@ public class ShonCalculation {
 
 			for (Cuboid cTemp : intersectedCuboid) {
 
-				if (geom == null || geom.isEmpty())
+				if (geom == null || geom.isEmpty()){
 					break;
 
+				}
+					
 				geom = geom.difference(cTemp.getFootprint());
 
 			}
