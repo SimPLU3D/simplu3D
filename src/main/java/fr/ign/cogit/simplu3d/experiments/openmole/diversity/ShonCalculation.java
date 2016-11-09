@@ -3,31 +3,22 @@ package fr.ign.cogit.simplu3d.experiments.openmole.diversity;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.ign.cogit.geoxygene.api.feature.IFeature;
-import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
-import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid;
 
 public class ShonCalculation {
 
-	
-	
-	
-	public static void main(String[] args){
-		
-	
-		List<Cuboid> lC = LoaderCuboid.loadFromShapeFile("/home/mickael/data/mbrasebin/these_Mickael/Exp3/result1/restrictedresult/shp_6.0_ 2.5_0_ene-56068.127520271904.shp");
-		
+	public static void main(String[] args) {
+
+		List<Cuboid> lC = LoaderCuboid.loadFromShapeFile(
+				"/home/mickael/data/mbrasebin/these_Mickael/Exp3/result1/restrictedresult/shp_6.0_ 2.5_0_ene-56068.127520271904.shp");
+
 		ShonCalculation sC = new ShonCalculation(lC);
 		double shon = sC.getShon();
-		System.out.println("Shon : "+ shon );
-		
+		System.out.println("Shon : " + shon);
+
 	}
-	
-	
 
 	List<Cuboid> cuboids;
 
@@ -67,19 +58,16 @@ public class ShonCalculation {
 
 			for (Cuboid cTemp : intersectedCuboid) {
 
-				if(geom ==null || geom.isEmpty()) break;
-				
-				
+				if (geom == null || geom.isEmpty())
+					break;
+
 				geom = geom.difference(cTemp.getFootprint());
 
 			}
-			
-			
-			if(!( geom ==null) &&  ! (geom.isEmpty())) {
+
+			if (!(geom == null) && !(geom.isEmpty())) {
 				shon = shon + geom.area() * c.height / 3;
 			}
-			
-			
 
 		}
 
