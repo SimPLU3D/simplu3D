@@ -13,7 +13,7 @@ public class MaxHeight {
 
 	}
 
-	public double count() {
+	public double height() {
 
 		double heightMax = 0;
 
