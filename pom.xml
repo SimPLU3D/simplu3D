@@ -20,6 +20,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<librjmcmc4j.version>1.1-SNAPSHOT</librjmcmc4j.version>
+		<geoxygene.version>1.9-SNAPSHOT</geoxygene.version>
 	</properties>
 
 	<developers>
@@ -321,12 +322,8 @@
 			<artifactId>simplu3d-rules</artifactId>
 			<version>1.1-SNAPSHOT</version>
 			<exclusions>
-			<!-- 
-				<exclusion>
-					<groupId>fr.ign.cogit</groupId>
-					<artifactId>geoxygene-util</artifactId>
-				</exclusion>
-			 -->
+				<!-- <exclusion> <groupId>fr.ign.cogit</groupId> <artifactId>geoxygene-util</artifactId> 
+					</exclusion> -->
 				<exclusion>
 					<groupId>jama</groupId>
 					<artifactId>jama</artifactId>
@@ -350,6 +347,11 @@
 			<groupId>fr.ign</groupId>
 			<artifactId>librjmcmc4j-geometry</artifactId>
 			<version>${librjmcmc4j.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>geoxygene-sig3d-appli</artifactId>
+			<groupId>fr.ign.cogit</groupId>
+			<version>${geoxygene.version}</version>
 		</dependency>
 	</dependencies>
 	<distributionManagement>
