@@ -9,7 +9,6 @@ import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.sig3d.convert.transform.Extrusion2DObject;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
-import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
 import fr.ign.cogit.simplu3d.demo.DemoEnvironmentProvider;
 import fr.ign.cogit.simplu3d.exec.BasicSimulator;
 import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
@@ -88,19 +87,18 @@ public class SimulateAndCalcProfile {
 			}
 
 		}
-		
-		
-		 IFeatureCollection<IFeature> featCollOut = calculateProfile(env,iFeatC);
-		 System.out.println("NB Points : " + featCollOut.size());
+
+		IFeatureCollection<IFeature> featCollOut = calculateProfile(env, iFeatC);
+		System.out.println("NB Points : " + featCollOut.size());
 	}
 
-	public static IFeatureCollection<IFeature> calculateProfile(Environnement environnement, IFeatureCollection<IFeature> featCuboid) {
+	public static IFeatureCollection<IFeature> calculateProfile(Environnement environnement,
+			IFeatureCollection<IFeature> featCuboid) {
 		// Mandatory due to precision trunk in Geoxygene core
 		DirectPosition.PRECISION = 10;
 
 		// Settings of out folder
 		String folderOut = "/home/mickael/temp/";
-
 
 		IFeatureCollection<IFeature> transformeRoad = new FT_FeatureCollection<>();
 
@@ -145,7 +143,7 @@ public class SimulateAndCalcProfile {
 
 		// Point export
 		profile.exportPoints(folderOut + "pointout.shp");
-		
+
 		return profile.getPproj();
 
 	}
