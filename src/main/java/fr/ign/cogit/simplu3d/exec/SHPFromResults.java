@@ -1,7 +1,9 @@
 package fr.ign.cogit.simplu3d.exec;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.FileReader ;
 import java.util.List;
@@ -60,7 +62,9 @@ public class SHPFromResults {
      
       System.out.println("chargement fichiers resultats");
       // repertoire où openmole stocke les resultats 
-      File resultsFolder = new File("/home/pchapron/.openmole/HP1111W090-Ubuntu/webui/projects/results");
+     // File resultsFolder = new File("/home/pchapron/.openmole/HP1111W090-Ubuntu/webui/projects/results");
+     
+      File resultsFolder = new File("/home/pchapron/dev/sorties_simplu/");
 
       
       FilenameFilter csvfileFilter = new  FilenameFilter() {
@@ -69,6 +73,16 @@ public class SHPFromResults {
           return name.endsWith(".csv");
         }
       };
+      
+      FilenameFilter cuboidsFileFilter = new  FilenameFilter() {
+        @Override
+        public boolean accept(File dir, String name) {
+          return !(name.contains("energy"));
+        }
+      };
+      
+      
+      
       FilenameFilter folderFilter = new FilenameFilter() {
         @Override
         public boolean accept(File dir, String name) {
@@ -76,38 +90,96 @@ public class SHPFromResults {
         }
       };
       
-      File[] listOfFiles = resultsFolder.listFiles(csvfileFilter);
+      
+      
       File[] directories = resultsFolder.listFiles(folderFilter);
       
-      
-      int  idxdir = 0 ; 
-          
-     // File f = "/home/pchapron/dev/result_Simplu/results/shape_2025967707654652509_-19524.765210399386_0.09999942901127996_00/out.csv";
-      
-      
-      
-      File dir = directories[idxdir];
-     // File f = dir.listFiles(csvfileFilter)[idxdir];
-      File f = new File("/home/pchapron/dev/result_Simplu/results/shape_2025967707654652509_-19524.765210399386_0.09999942901127996_0/out.csv");
-      
-      
-      
-      System.out.println("fichier resultat " + idxdir);
+      for   (int idxdir = 0 ; idxdir< 8; idxdir++ ) {
+
+
+        File dir = directories[idxdir];
+        File[] listOfCuboidsdir = dir.listFiles(folderFilter);
+        System.out.println("Repertoire courrant:##"+dir.getName());
+
+        for ( File dd : listOfCuboidsdir){
+          System.out.println("generation du fichier contenu dans  :"+ dd.getName());
+          //premier et unique fichier du repertoire
+          File f = dd.listFiles(csvfileFilter)[0];
+          System.out.println("fichier  "+ f.getName());
+          String finalFileName = dir.getName()+dd.getName()+f.getName();
+          finalFileName= finalFileName.replace(".csv", "");
+          SHPWriterFromCSVfile(f, finalFileName);
+
+        }
+        // File f = dir.listFiles(csvfileFilter)[idxdir];
+        //File f = new File("/home/pchapron/dev/result_Simplu/results/shape_2025967707654652509_-19524.765210399386_0.09999942901127996_0/out.csv");
+      }
+
+      //SHPWriterFromCSVfile(f, FinalFileName);
+
+      System.out.println("ta da ");
+    }//main
+
+    
+    public static Cuboid CuboidFromLine(String l){
+
+      if(l.isEmpty()){
+        return null;
+      }
+      else {
+        // splitte la ligne en colonnes 
+        String[] columns = l.split(","); 
+        ArrayList<Double> attr = new ArrayList<Double>() ;
+        for (String col : columns){
+          Double d = Double.parseDouble(col);
+          attr.add(d);
+        }
+        // crée le cuboid 
+        Cuboid c = new Cuboid(attr.get(1), attr.get(2),
+            attr.get(3), attr.get(4),
+            attr.get(5), attr.get(6));
+        return c ;
+      }
+    }
+
+    public static void SHPWriterFromCSVfile(File f, String finalFileName){
+
+     
       System.out.println(f.getName());
       System.out.println("Contenu du fichier");
       
       // charge les lignes de f dans une liste  
       // et met les idParcell dans un hashset
-     BufferedReader reader = new BufferedReader(new FileReader(f));
+     BufferedReader reader = null;
+    try {
+      reader = new BufferedReader(new FileReader(f));
+    } catch (FileNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
      List<String> lines = new ArrayList<>();
      ArrayList<Integer> idparcels = new ArrayList<Integer>();
-     
      String line = null;
-     while ((line = reader.readLine()) != null) {
-         lines.add(line);
-         idparcels.add(Integer.parseInt(line.split(",")[0])); 
-     }
-     reader.close();
+     try {
+       reader.readLine(); // pour skip la première ligne
+       
+      while ((line = reader.readLine()) != null) {
+           lines.add(line);
+           idparcels.add(Integer.parseInt(line.split(",")[0])); 
+       }
+    } catch (NumberFormatException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+     try {
+      reader.close();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
           
      // récupère les idParcel uniques par la création d'hashset
      HashSet<Integer> uniqueIdParcels = new HashSet<Integer>(idparcels);
@@ -152,35 +224,9 @@ public class SHPFromResults {
      
      File folderSHP=new File("/home/pchapron/temp/");
       
-     String pathShapeFile =folderSHP + File.separator + "SHPwriter.shp";
+     String pathShapeFile =folderSHP + File.separator + finalFileName+".shp";
      System.out.println(pathShapeFile);
      ShapefileWriter.write(iFeatC, pathShapeFile );
-     
-     System.out.println("ta da ");
-    }//main
 
-    
-    public static Cuboid CuboidFromLine(String l){
-
-      if(l.isEmpty()){
-        return null;
-      }
-      else {
-        // splitte la ligne en colonnes 
-        String[] columns = l.split(","); 
-        ArrayList<Double> attr = new ArrayList<Double>() ;
-        for (String col : columns){
-          Double d = Double.parseDouble(col);
-          attr.add(d);
-        }
-        // crée le cuboid 
-        Cuboid c = new Cuboid(attr.get(1), attr.get(2),
-            attr.get(3), attr.get(4),
-            attr.get(5), attr.get(6));
-        return c ;
-      }
     }
-
-    
-    
 }
