@@ -22,7 +22,7 @@ public class RunBuildingProfile {
 		DirectPosition.PRECISION = 10;
 
 		// Settings of out folder
-		String folderOut = "/home/mickael/temp/";
+		String folderOut = "/home/pchapron/temp/";
 
 		String folderIn = DemoEnvironmentProvider.class.getClassLoader().getResource("fr/ign/cogit/simplu3d/")
 				.getPath();
@@ -54,7 +54,7 @@ public class RunBuildingProfile {
 		profile.loadData();
 
 		// This lines allows the visualisation of the scene
-		profile.display();
+		//profile.display();
 
 		// Calculation of the profilLe
 		// The results may be acccessible by getPproj method
@@ -67,7 +67,7 @@ public class RunBuildingProfile {
 		profile.process();
 
 		// Update in the visualisation if available
-		profile.updateDisplay();
+		//profile.updateDisplay();
 
 		// Point export
 		profile.exportPoints(folderOut + "pointout.shp");
@@ -84,7 +84,7 @@ public class RunBuildingProfile {
 
 		
 		ShapefileWriter.write(featCOut, folderOut + "pointout_test.shp");
-		
+		System.out.println("Finished");
 
 	}
 
