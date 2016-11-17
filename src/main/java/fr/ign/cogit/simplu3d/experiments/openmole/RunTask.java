@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -21,14 +22,19 @@ import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
+import fr.ign.cogit.geoxygene.sig3d.convert.transform.Extrusion2DObject;
+import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
+import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.demo.DemoEnvironmentProvider;
 import fr.ign.cogit.simplu3d.exec.BasicSimulator;
+import fr.ign.cogit.simplu3d.exec.buildingprofile.SimulateAndCalcProfile;
 import fr.ign.cogit.simplu3d.exec.experimentation.SamplePredicate;
 import fr.ign.cogit.simplu3d.experiments.openmole.diversity.BoxCounter;
 import fr.ign.cogit.simplu3d.experiments.openmole.diversity.EntropyIndicator;
 import fr.ign.cogit.simplu3d.experiments.openmole.diversity.MaxHeight;
 import fr.ign.cogit.simplu3d.experiments.openmole.diversity.ParcelCoverageRatio;
 import fr.ign.cogit.simplu3d.experiments.openmole.diversity.ParcelSignature;
+import fr.ign.cogit.simplu3d.experiments.openmole.diversity.ProfileMoran;
 import fr.ign.cogit.simplu3d.experiments.openmole.diversity.ShonCalculation;
 import fr.ign.cogit.simplu3d.experiments.openmole.msc.TestDatumFactory;
 import fr.ign.cogit.simplu3d.io.SaveGeneratedObjects;
@@ -39,6 +45,8 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid.OptimisedBuildingsCuboidDirectRejectionNoVisitor;
 import fr.ign.cogit.simplu3d.util.AssignZ;
 import fr.ign.cogit.simplu3d.util.convert.ExportAsFeatureCollection;
+import fr.ign.cogit.streetprofile.model.Profile;
+import fr.ign.cogit.streetprofile.model.Profile.SIDE;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
@@ -53,8 +61,8 @@ public class RunTask {
 
 
     String folderName = BasicSimulator.class.getClassLoader().getResource("scenario/").getPath();
-    String fileName = "building_parameters_project_expthese_3.xml";
-    //String fileName = "recuit_bourrin.xml";
+    //String fileName = "building_parameters_project_expthese_3.xml";
+    String fileName = "recuit_bourrin.xml";
 
     int idBPU = 255;
     double distReculVoirie = 4.53125;
@@ -204,7 +212,7 @@ public class RunTask {
         continue;
       }
 
-      //System.out.println("ID Parcel : " + bPUTemp.getId());
+      System.out.println("ID Parcel : " + bPUTemp.getId());
       //System.out.println("Simulation begins");
 
       //System.out.println("Tile size : " + p.getDouble("tileSize"));
@@ -264,10 +272,10 @@ public class RunTask {
     ParcelCoverageRatio coverageRatioEvaluator = new ParcelCoverageRatio(cuboidOut, areaTot);
     double coverageRatio = coverageRatioEvaluator.getCoverageRatio();
 
-    // System.out.println("ShapefileWriter begins");
+     System.out.println("ShapefileWriter begins");
     //    String pathShapeFile =folderOut + File.separator + "test.shp";
-    //String pathShapeFile = folderOut + File.separator +  "out.shp";
-    //    ShapefileWriter.write(cuboidOut, pathShapeFile );
+    String pathShapeFile = folderOut + File.separator +  "out.shp";
+        ShapefileWriter.write(cuboidOut, pathShapeFile );
 
     EntropyIndicator ent = new EntropyIndicator();
     ent.calculate(env, energy_parcels, areaTot, energyTot);
@@ -283,6 +291,27 @@ public class RunTask {
     
     
     double densite = shon/ areaTot;
+    System.out.println("essai profil");
+    
+    
+
+    Profile profile = SimulateAndCalcProfile.calculateProfile(env, cuboidOut);
+    
+    List<Double> heights = profile.getHeightAlongRoad(SIDE.BOTH);
+
+    ProfileMoran pM = new ProfileMoran();
+    pM.calculate(heights);
+    double moranProfile = pM.getMoranProfileFinal();
+    
+    
+    
+    //###########################################"
+    
+    
+    
+    
+    
+    
     
 
     String pathCSVFile =folderOut + File.separator + "out.csv";
@@ -297,9 +326,9 @@ public class RunTask {
     //Close writer
     writer.close();
 
-    //System.out.println("Return Taskresult");
+    System.out.println("Return Taskresult");
 
-    return new TaskExploPSE(energyTot, coverageRatio, gini, moran, entropy, boxCount, maxHeight, densite);
+    return new TaskExploPSE(energyTot, coverageRatio, gini, moran, entropy, boxCount, maxHeight, densite, moranProfile);
   }
 
 }

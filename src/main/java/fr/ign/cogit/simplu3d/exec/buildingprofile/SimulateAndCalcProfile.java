@@ -88,17 +88,16 @@ public class SimulateAndCalcProfile {
 
 		}
 
-		IFeatureCollection<IFeature> featCollOut = calculateProfile(env, iFeatC);
+		IFeatureCollection<IFeature> featCollOut = calculateProfile(env, iFeatC).getPproj();
 		System.out.println("NB Points : " + featCollOut.size());
 	}
 
-	public static IFeatureCollection<IFeature> calculateProfile(Environnement environnement,
+	public static Profile calculateProfile(Environnement environnement,
 			IFeatureCollection<IFeature> featCuboid) {
 		// Mandatory due to precision trunk in Geoxygene core
 		DirectPosition.PRECISION = 10;
 
-		// Settings of out folder
-		String folderOut = "/home/mickael/temp/";
+		
 
 		IFeatureCollection<IFeature> transformeRoad = new FT_FeatureCollection<>();
 
@@ -126,7 +125,7 @@ public class SimulateAndCalcProfile {
 		profile.loadData();
 
 		// This lines allows the visualisation of the scene
-		profile.display();
+		//profile.display();
 
 		// Calculation of the profilLe
 		// The results may be acccessible by getPproj method
@@ -139,12 +138,12 @@ public class SimulateAndCalcProfile {
 		profile.process();
 
 		// Update in the visualisation if available
-		profile.updateDisplay();
+		//profile.updateDisplay();
 
 		// Point export
-		profile.exportPoints(folderOut + "pointout.shp");
+		//profile.exportPoints(folderOut + "pointout.shp");
 
-		return profile.getPproj();
+		return profile;
 
 	}
 

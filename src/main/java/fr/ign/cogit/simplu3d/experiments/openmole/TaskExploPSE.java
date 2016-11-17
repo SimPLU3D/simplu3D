@@ -11,30 +11,32 @@ public class TaskExploPSE {
  public double boxCount;
  public double maxHeight;
  public double densite;
-  
-  public TaskExploPSE(double energyTot, double coverageRatio, double gini,
-      double moran, double entropy, double boxCount, double maxHeight,
-      double densite) {
-    super();
-    this.energyTot = energyTot;
-    this.coverageRatio = coverageRatio;
-    this.gini = gini;
-    this.moran = moran;
-    this.entropy = entropy;
-    this.boxCount = boxCount;
-    this.maxHeight = maxHeight;
-    this.densite = densite;
-  }
+ public double profileMoran ;
+
+
+ public TaskExploPSE(double energyTot, double coverageRatio, double gini,
+     double moran, double entropy, double boxCount, double maxHeight,
+     double densite, double profileMoran) {
+   super();
+   this.energyTot = energyTot;
+   this.coverageRatio = coverageRatio;
+   this.gini = gini;
+   this.moran = moran;
+   this.entropy = entropy;
+   this.boxCount = boxCount;
+   this.maxHeight = maxHeight;
+   this.densite = densite;
+   this.profileMoran = profileMoran;
+ }
 
   
   
-
   @Override
   public String toString() {
     return "TaskExploPSE [energyTot=" + energyTot + ", coverageRatio="
         + coverageRatio + ", gini=" + gini + ", moran=" + moran + ", entropy="
         + entropy + ", boxCount=" + boxCount + ", maxHeight=" + maxHeight
-        + ", densite=" + densite + "]";
+        + ", densite=" + densite + ", profileMoran=" + profileMoran + "]";
   }
 
 
@@ -79,6 +81,17 @@ public class TaskExploPSE {
     return densite;
   }
   
-  
+
+
+  public double getProfileMoran() {
+    return profileMoran;
+  }
+
+
+
+
+
+
+
   
 }
