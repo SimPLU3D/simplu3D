@@ -96,7 +96,7 @@ public class BandProduction {
 		}
 
 		// Idem s'il y a un règlement de deuxième bande
-		if (r2 != null) {
+		if (r2 != null && ! iMSRoad.isEmpty()) {
 
 			iMSBande2 = FromGeomToSurface.convertMSGeom(pol_BPU.difference(iMSRoad.buffer(profBande)));
 
