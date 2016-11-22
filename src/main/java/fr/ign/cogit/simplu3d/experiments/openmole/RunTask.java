@@ -61,8 +61,8 @@ public class RunTask {
 
 
     String folderName = BasicSimulator.class.getClassLoader().getResource("scenario/").getPath();
-    //String fileName = "building_parameters_project_expthese_3.xml";
-    String fileName = "recuit_bourrin.xml";
+    String fileName = "building_parameters_project_expthese_3.xml";
+    //String fileName = "recuit_bourrin.xml";
 
     int idBPU = 255;
     double distReculVoirie = 4.53125;
