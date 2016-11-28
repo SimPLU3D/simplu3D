@@ -64,7 +64,7 @@ public class SHPFromResults {
       // repertoire où openmole stocke les resultats 
      // File resultsFolder = new File("/home/pchapron/.openmole/HP1111W090-Ubuntu/webui/projects/results");
      
-      File resultsFolder = new File("/home/pchapron/dev/sorties_simplu/");
+      File resultsFolder = new File("/home/pchapron/dev/result_Simplu/pointsInteret/");
 
       
       FilenameFilter csvfileFilter = new  FilenameFilter() {
@@ -94,23 +94,23 @@ public class SHPFromResults {
       
       File[] directories = resultsFolder.listFiles(folderFilter);
       
-      for   (int idxdir = 0 ; idxdir< 8; idxdir++ ) {
+      for   (int idxdir = 0 ; idxdir < directories.length; idxdir++ ) {
 
 
         File dir = directories[idxdir];
         File[] listOfCuboidsdir = dir.listFiles(folderFilter);
-        System.out.println("Repertoire courrant:##"+dir.getName());
+        //System.out.println("Repertoire courrant:##"+dir.getName());
 
-        for ( File dd : listOfCuboidsdir){
-          System.out.println("generation du fichier contenu dans  :"+ dd.getName());
+        //for ( File dd : listOfCuboidsdir){
+         
           //premier et unique fichier du repertoire
-          File f = dd.listFiles(csvfileFilter)[0];
-          System.out.println("fichier  "+ f.getName());
-          String finalFileName = dir.getName()+dd.getName()+f.getName();
+          File f = dir.listFiles(csvfileFilter)[0];
+          System.out.println("fichier  "+ (idxdir + 1)+ "/"+ directories.length);
+          String finalFileName = dir.getName()+f.getName();
           finalFileName= finalFileName.replace(".csv", "");
           SHPWriterFromCSVfile(f, finalFileName);
 
-        }
+        //}
         // File f = dir.listFiles(csvfileFilter)[idxdir];
         //File f = new File("/home/pchapron/dev/result_Simplu/results/shape_2025967707654652509_-19524.765210399386_0.09999942901127996_0/out.csv");
       }
@@ -145,9 +145,7 @@ public class SHPFromResults {
     public static void SHPWriterFromCSVfile(File f, String finalFileName){
 
      
-      System.out.println(f.getName());
-      System.out.println("Contenu du fichier");
-      
+     
       // charge les lignes de f dans une liste  
       // et met les idParcell dans un hashset
      BufferedReader reader = null;
@@ -183,13 +181,13 @@ public class SHPFromResults {
           
      // récupère les idParcel uniques par la création d'hashset
      HashSet<Integer> uniqueIdParcels = new HashSet<Integer>(idparcels);
-     System.out.println("id parcels distinctes "+ uniqueIdParcels.toString());
+    //System.out.println("id parcels distinctes "+ uniqueIdParcels.toString());
 
      ArrayList<Cuboid> cuboZone = new ArrayList<Cuboid>();
      // pour chaque parcelle , creation de cuboides  
      for (Integer idparc : uniqueIdParcels){
        ArrayList<Cuboid> cuboParc = new ArrayList<Cuboid>();
-       System.out.println("#Parcelle "+ idparc+"#");      
+       //System.out.println("#Parcelle "+ idparc+"#");      
        for(String l : lines){
          int idCurrentParcel = Integer.parseInt(l.split(",")[0]);
          // pour les lignes de la même parcelle on crée des cuboid
@@ -225,7 +223,6 @@ public class SHPFromResults {
      File folderSHP=new File("/home/pchapron/temp/");
       
      String pathShapeFile =folderSHP + File.separator + finalFileName+".shp";
-     System.out.println(pathShapeFile);
      ShapefileWriter.write(iFeatC, pathShapeFile );
 
     }

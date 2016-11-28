@@ -64,15 +64,15 @@ public class RunTask {
     String fileName = "building_parameters_project_expthese_3.xml";
     //String fileName = "recuit_bourrin.xml";
 
-    int idBPU = 255;
-    double distReculVoirie = 4.53125;
-    double distReculFond = 2.65625;
-    double distReculLat = 2.65625;
-    double maximalCES = 0.40937499999999993;
-    double hIniRoad = 3.59375;
-    double slopeRoad = 0.09375;
-    double hauteurMax = 14.6875;
-    long seed = -3637137549655303736L;
+    //int idBPU = 255;,1.0,0.0,0.5,,7146147864011356101
+    double distReculVoirie = 10.0;
+    double distReculFond = 10.0;
+    double distReculLat = 5.0;
+    double maximalCES = 1.0;
+    double hIniRoad = 0.0;
+    double slopeRoad = 0.5;
+    double hauteurMax = 23.96742381;
+    long seed = 7146147864011356101L;
     // TaskResult result = run(folder, folderOut, parameterFile, idBPU,
     //     distReculVoirie, distReculFond, distReculLat, maximalCES, hIniRoad,
     //    slopeRoad, hauteurMax, seed);
@@ -272,11 +272,11 @@ public class RunTask {
     ParcelCoverageRatio coverageRatioEvaluator = new ParcelCoverageRatio(cuboidOut, areaTot);
     double coverageRatio = coverageRatioEvaluator.getCoverageRatio();
 
-     System.out.println("ShapefileWriter begins");
+    // System.out.println("ShapefileWriter begins");
     //    String pathShapeFile =folderOut + File.separator + "test.shp";
-    String pathShapeFile = folderOut + File.separator +  "out.shp";
-        ShapefileWriter.write(cuboidOut, pathShapeFile );
-
+//    String pathShapeFile = folderOut + File.separator +  "out.shp";
+//        ShapefileWriter.write(cuboidOut, pathShapeFile );
+//        System.out.println("ShapefileWriter ends");
     EntropyIndicator ent = new EntropyIndicator();
     ent.calculate(env, energy_parcels, areaTot, energyTot);
     double gini = ent.getGiniFinal();
