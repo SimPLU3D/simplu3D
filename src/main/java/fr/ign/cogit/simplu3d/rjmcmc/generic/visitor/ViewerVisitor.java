@@ -150,7 +150,9 @@ public class ViewerVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraph
 
 	private static void represent(Environnement env, MainWindow mW, Parameters p) {
 		List<Theme> lTheme = new ArrayList<RepEnvironnement.Theme>();
-		// lTheme.add(Theme.TOIT_BATIMENT);
+		lTheme.add(Theme.TOIT_BATIMENT);
+		lTheme.add(Theme.FACADE_BATIMENT);
+		
 		lTheme.add(Theme.VOIRIE);
 		// lTheme.add(Theme.FAITAGE);
 		// lTheme.add(Theme.PIGNON);

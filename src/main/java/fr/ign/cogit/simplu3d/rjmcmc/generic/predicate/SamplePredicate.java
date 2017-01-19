@@ -13,16 +13,18 @@ import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
+import fr.ign.cogit.simplu3d.model.Building;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.ParcelBoundary;
 import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
+import fr.ign.cogit.simplu3d.util.CuboidGroupCreation;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
 
-public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>>
-		implements ConfigurationModificationPredicate<C, M> {
+public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>> implements ConfigurationModificationPredicate<C, M> {
 
 	// Des valeurs pour les différentes contraintes
 	private double distReculVoirie = 0.0;
@@ -38,16 +40,11 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 	 * Constructeur de la classe
 	 * 
 	 * @param currentBPU
-	 *            : l'unité foncière sur laquelle on construit (généralement : 1
-	 *            parcelle, ça peut être utile pour accélérer les traitements,
-	 *            mais ce n'est pas fait ici)
+	 *            : l'unité foncière sur laquelle on construit (généralement : 1 parcelle, ça peut être utile pour accélérer les traitements, mais ce n'est pas fait ici)
 	 * @param distReculVoirie
-	 *            : distance de recul par rapport à la voirie (la référence ici
-	 *            est la limite séparative donnant sur la rue annotée comme
-	 *            ROAD)
+	 *            : distance de recul par rapport à la voirie (la référence ici est la limite séparative donnant sur la rue annotée comme ROAD)
 	 * @param distReculFond
-	 *            : distance de recul par rapport aux bordures annotées comme
-	 *            fond de parcelle annotée comme BOT
+	 *            : distance de recul par rapport aux bordures annotées comme fond de parcelle annotée comme BOT
 	 * @param distReculLat
 	 *            : distance de recul par rapport aux bordures annotée comme LAT
 	 * @param distanceInterBati
@@ -56,8 +53,7 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 	 *            : CES maximum
 	 * @throws Exception
 	 */
-	public SamplePredicate(BasicPropertyUnit currentBPU, double distReculVoirie, double distReculFond,
-			double distReculLat, double distanceInterBati, double maximalCES) throws Exception {
+	public SamplePredicate(BasicPropertyUnit currentBPU, double distReculVoirie, double distReculFond, double distReculLat, double distanceInterBati, double maximalCES) throws Exception {
 		// On appelle l'autre connstructeur qui renseigne un certain nombre de
 		// géométries
 		this(currentBPU);
@@ -76,9 +72,7 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 	Geometry jtsCurveLimiteLatParcel = null;
 
 	/**
-	 * Ce constructeur initialise les géométries curveLimiteFondParcel,
-	 * curveLimiteFrontParcel & curveLimiteLatParcel car elles seront utilisées
-	 * pour exprimer certaines contraintes
+	 * Ce constructeur initialise les géométries curveLimiteFondParcel, curveLimiteFrontParcel & curveLimiteLatParcel car elles seront utilisées pour exprimer certaines contraintes
 	 * 
 	 * @param bPU
 	 * @throws Exception
@@ -112,8 +106,7 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 						curveLimiteFondParcel.add((IOrientableCurve) geom);
 
 					} else {
-						System.out.println(
-								"Classe SamplePredicate : quelque chose n'est pas un ICurve : " + geom.getClass());
+						System.out.println("Classe SamplePredicate : quelque chose n'est pas un ICurve : " + geom.getClass());
 					}
 
 				}
@@ -127,8 +120,7 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 						curveLimiteLatParcel.add((IOrientableCurve) geom);
 
 					} else {
-						System.out.println(
-								"Classe SamplePredicate : quelque chose n'est pas un ICurve : " + geom.getClass());
+						System.out.println("Classe SamplePredicate : quelque chose n'est pas un ICurve : " + geom.getClass());
 					}
 
 				}
@@ -142,8 +134,7 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 						curveLimiteFrontParcel.add((IOrientableCurve) geom);
 
 					} else {
-						System.out.println(
-								"Classe SamplePredicate : quelque chose n'est pas un ICurve : " + geom.getClass());
+						System.out.println("Classe SamplePredicate : quelque chose n'est pas un ICurve : " + geom.getClass());
 					}
 
 				}
@@ -168,17 +159,12 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 	}
 
 	/**
-	 * Cette méthode est executée à chaque fois que le système suggère une
-	 * nouvelle proposition. C => contient la configuration courante (en termes
-	 * de cuboids proposés) M => les modifications que l'on souhaite apporter à
-	 * la configuration courante. Normalement, il n'y a jamais plus d'une
-	 * naissance ou d'une mort dans M, mais là dans le code on fait comme si
-	 * c'était possible, mais ça peut être simplifié
+	 * Cette méthode est executée à chaque fois que le système suggère une nouvelle proposition. C => contient la configuration courante (en termes de cuboids proposés) M => les modifications que l'on souhaite apporter à la configuration courante. Normalement, il n'y a jamais
+	 * plus d'une naissance ou d'une mort dans M, mais là dans le code on fait comme si c'était possible, mais ça peut être simplifié
 	 */
 	@Override
 	public boolean check(C c, M m) {
-		
-		
+
 		// Il s'agit des objets de la classe Cuboid
 		List<O> lO = m.getBirth();
 
@@ -244,8 +230,13 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 
 		// Pour produire des boîtes séparées et vérifier que la distance inter
 		// bâtiment est respectée
-		if (!checkDistanceInterBuildings(c, m)) {
-			return false;
+		try {
+			if (!checkDistanceInterBuildings(c, m)) {
+				return false;
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		// Pour vérifier que le CES (surface bâti) est respecté
@@ -264,9 +255,10 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 	 * @param c
 	 * @param m
 	 * @return
+	 * @throws Exception
 	 */
-	private boolean checkDistanceInterBuildings(C c, M m) {
-
+	private boolean checkDistanceInterBuildings(C c, M m) throws Exception {
+		GeometryFactory gf = new GeometryFactory();
 		// On récupère les objets ajoutées lors de la proposition
 		List<O> lO = m.getBirth();
 
@@ -276,6 +268,18 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 
 		if (!m.getDeath().isEmpty()) {
 			batDeath = m.getDeath().get(0);
+		}
+
+		
+		//On regarde la distance entre les bâtiments existants
+		//et les boîtes que l'on ajoute
+		for (Building b : currentBPU.getBuildings()) {
+			for (O ab : lO) {
+				Geometry geomBat = AdapterFactory.toGeometry(gf, b.getFootprint());
+				if (geomBat.distance(ab.toGeometry()) < distanceInterBati) {
+					return false;
+				}
+			}
 		}
 
 		// On parcourt les boîtes existantes dans la configuration courante
@@ -364,6 +368,17 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 
 			geom = geom.union(lCuboid.get(i).toGeometry());
 
+		}
+
+		List<Cuboid> lBatIni = new ArrayList<>();
+		for (ISimPLU3DPrimitive s : lCuboid) {
+			lBatIni.add((Cuboid) s);
+		}
+
+		List<List<? extends Cuboid>> groupes = CuboidGroupCreation.createGroup(lBatIni, 0.5);
+
+		if (groupes.size() > 1) {
+			return false;
 		}
 
 		// On récupère la superficie de la basic propertyUnit
