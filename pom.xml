@@ -5,7 +5,7 @@
 
 	<groupId>fr.ign.cogit</groupId>
 	<artifactId>simplu3d</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0</version>
 	<packaging>jar</packaging>
 	<name>simplu3d</name>
 
@@ -343,7 +343,7 @@
 		<dependency>
 			<groupId>fr.ign.cogit</groupId>
 			<artifactId>simplu3d-rules</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>1.0</version>
 			<exclusions>
 				<exclusion>
 					<groupId>fr.ign.cogit</groupId>
