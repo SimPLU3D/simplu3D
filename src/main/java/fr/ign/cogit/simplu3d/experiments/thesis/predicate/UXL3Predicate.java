@@ -9,8 +9,8 @@ import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
+import fr.ign.cogit.simplu3d.model.ParcelBoundary;
+import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
@@ -42,11 +42,11 @@ public class UXL3Predicate<O extends AbstractSimpleBuilding, C extends AbstractG
 
     List<IOrientableCurve> lCurve = new ArrayList<>();
 
-    for (CadastralParcel cP : bPU.getCadastralParcel()) {
+    for (CadastralParcel cP : bPU.getCadastralParcels()) {
       // for (SubParcel sB : cP.getSubParcel()) {
-      for (SpecificCadastralBoundary sCB : cP.getSpecificCadastralBoundary()) {
+      for (ParcelBoundary sCB : cP.getBoundaries()) {
 
-        if (sCB.getType() != SpecificCadastralBoundaryType.INTRA) {
+        if (sCB.getType() != ParcelBoundaryType.INTRA) {
           IGeometry geom = sCB.getGeom();
 
           if (geom instanceof IOrientableCurve) {

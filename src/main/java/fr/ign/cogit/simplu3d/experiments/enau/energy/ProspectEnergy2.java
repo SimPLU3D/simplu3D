@@ -14,8 +14,8 @@ import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.experiments.enau.geometry.DeformedCuboid;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
+import fr.ign.cogit.simplu3d.model.ParcelBoundary;
+import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.rjmcmc.energy.UnaryEnergy;
 
@@ -32,13 +32,13 @@ public class ProspectEnergy2<T> implements UnaryEnergy<T> {
 
 		List<IOrientableCurve> lCurveVoirie = new ArrayList<>();
 
-		for (CadastralParcel cP : bPU.getCadastralParcel()) {
+		for (CadastralParcel cP : bPU.getCadastralParcels()) {
 			// for (SubParcel sB : cP.getSubParcel()) {
 
-			for (SpecificCadastralBoundary sCB : cP
-					.getSpecificCadastralBoundary()) {
+			for (ParcelBoundary sCB : cP
+					.getBoundaries()) {
 
-				if (sCB.getType() != SpecificCadastralBoundaryType.ROAD) {
+				if (sCB.getType() != ParcelBoundaryType.ROAD) {
 
 					IGeometry geom = sCB.getGeom();
 

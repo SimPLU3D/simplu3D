@@ -5,7 +5,7 @@
 
 	<groupId>fr.ign.cogit</groupId>
 	<artifactId>simplu3d</artifactId>
-	<version>1.0</version>
+	<version>1.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>simplu3d</name>
 
@@ -19,7 +19,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<librjmcmc4j.version>1.0-SNAPSHOT</librjmcmc4j.version>
+		<librjmcmc4j.version>1.1-SNAPSHOT</librjmcmc4j.version>
+		<geoxygene.version>1.9-SNAPSHOT</geoxygene.version>
 	</properties>
 
 	<developers>
@@ -60,9 +61,9 @@
 					<environmentVariables>
 						<PATH>${basedir}\lib\native_libraries\windows-amd64\</PATH>
 					</environmentVariables>
-          <excludes>
-            <exclude>**/SimulatorTest.java</exclude>
-          </excludes>
+					<excludes>
+						<exclude>**/SimulatorTest.java</exclude>
+					</excludes>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -70,10 +71,10 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.4</version>
 				<configuration>
-					<compilerVersion>1.7</compilerVersion>
-					<source>1.7</source>
-					<complianceLevel>1.7</complianceLevel>
-					<target>1.7</target>
+					<compilerVersion>1.8</compilerVersion>
+					<source>1.8</source>
+					<complianceLevel>1.8</complianceLevel>
+					<target>1.8</target>
 					<includes>
 						<include>**/*</include>
 					</includes>
@@ -272,7 +273,7 @@
 	</profiles>
 
 	<repositories>
-			<repository>
+		<repository>
 			<id>cogit-snapshots</id>
 			<name>Cogit Snapshots Repository</name>
 			<url>https://forge-cogit.ign.fr/nexus/content/repositories/snapshots/</url>
@@ -302,30 +303,6 @@
 			</snapshots>
 		</repository>
 		<repository>
-			<id>iscpif-ign-releases</id>
-			<name>ISCPIF Release repository for IGN</name>
-			<url>http://maven.iscpif.fr/ign-releases/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<!--	<repository>
-			<id>Central</id>
-			<name>Central Repository</name>
-			<url>http://repo1.maven.org/maven2</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<id>iscpif-ign-snapshots</id>
-			<name>ISCPIF Snapshot repository for IGN</name>
-			<url>http://maven.iscpif.fr/ign-snapshots/</url>
-		</repository>-->
-		<repository>
 			<id>osgeo-geotools</id>
 			<url>http://download.osgeo.org/webdav/geotools/</url>
 			<snapshots>
@@ -343,12 +320,10 @@
 		<dependency>
 			<groupId>fr.ign.cogit</groupId>
 			<artifactId>simplu3d-rules</artifactId>
-			<version>1.0</version>
+			<version>1.1-SNAPSHOT</version>
 			<exclusions>
-				<exclusion>
-					<groupId>fr.ign.cogit</groupId>
-					<artifactId>geoxygene-util</artifactId>
-				</exclusion>
+				<!-- <exclusion> <groupId>fr.ign.cogit</groupId> <artifactId>geoxygene-util</artifactId> 
+					</exclusion> -->
 				<exclusion>
 					<groupId>jama</groupId>
 					<artifactId>jama</artifactId>
@@ -373,6 +348,11 @@
 			<artifactId>librjmcmc4j-geometry</artifactId>
 			<version>${librjmcmc4j.version}</version>
 		</dependency>
+		<dependency>
+			<artifactId>geoxygene-sig3d-appli</artifactId>
+			<groupId>fr.ign.cogit</groupId>
+			<version>${geoxygene.version}</version>
+		</dependency>
 	</dependencies>
 	<distributionManagement>
 		<repository>
@@ -385,15 +365,5 @@
 			<name>Nexus Snapshots Repository</name>
 			<url>https://forge-cogit.ign.fr/nexus/content/repositories/snapshots/</url>
 		</snapshotRepository>
-	     <!---   <repository>
-			<id>iscpif-ign-releases</id>
-			<name>ISCPIF Release repository for IGN</name>
-			<url>http://maven.iscpif.fr/ign-releases/</url>
-		</repository> 
-		<snapshotRepository>
-			<id>iscpif-ign-snapshots</id>
-			<name>ISCPIF Snapshot repository for IGN</name>
-			<url>http://maven.iscpif.fr/ign-snapshots/</url>
-		</snapshotRepository> -->
 	</distributionManagement>
 </project>

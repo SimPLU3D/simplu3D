@@ -3,7 +3,6 @@ package fr.ign.cogit.simplu3d.experiments.iauidf.tool;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiCurve;
@@ -12,13 +11,13 @@ import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
-import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToLineString;
-import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToSurface;
+import fr.ign.cogit.geoxygene.convert.FromGeomToLineString;
+import fr.ign.cogit.geoxygene.convert.FromGeomToSurface;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.simplu3d.experiments.iauidf.regulation.Regulation;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
+import fr.ign.cogit.simplu3d.model.ParcelBoundary;
+import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
 
 public class BandProduction {
 
@@ -34,9 +33,8 @@ public class BandProduction {
 
 		// On créé la géométrie des limites donnant sur la voirie
 
-		IFeatureCollection<SpecificCadastralBoundary> lBordureVoirie = bPU.getCadastralParcel().get(0)
-				.getSpecificCadastralBoundaryByType(SpecificCadastralBoundaryType.ROAD);
-		for (SpecificCadastralBoundary sc : lBordureVoirie) {
+		List<ParcelBoundary> lBordureVoirie = bPU.getCadastralParcels().get(0).getBoundariesByType(ParcelBoundaryType.ROAD);
+		for (ParcelBoundary sc : lBordureVoirie) {
 			iMSRoad.add((IOrientableCurve) sc.getGeom());
 		}
 
@@ -74,19 +72,18 @@ public class BandProduction {
 
 		// On créé la géométrie des autres limites séparatives
 		IMultiCurve<IOrientableCurve> iMSLim = new GM_MultiCurve<>();
-		IFeatureCollection<SpecificCadastralBoundary> lBordureLat = bPU.getCadastralParcel().get(0)
-				.getSpecificCadastralBoundary();
+		List<ParcelBoundary> lBordureLat = bPU.getCadastralParcels().get(0)
+				.getBoundaries();
 
-		for (SpecificCadastralBoundary sc : lBordureLat) {
+		for (ParcelBoundary sc : lBordureLat) {
 
-			if (sc.getType() == SpecificCadastralBoundaryType.LAT) {
+			if (sc.getType() == ParcelBoundaryType.LAT) {
 				iMSLim.add((IOrientableCurve) sc.getGeom());
 			}
 		}
-		IFeatureCollection<SpecificCadastralBoundary> lBordureFond = bPU.getCadastralParcel().get(0)
-				.getSpecificCadastralBoundary();
-		for (SpecificCadastralBoundary sc : lBordureFond) {
-			if (sc.getType() == SpecificCadastralBoundaryType.BOT) {
+		List<ParcelBoundary> lBordureFond = bPU.getCadastralParcels().get(0).getBoundaries();
+		for (ParcelBoundary sc : lBordureFond) {
+			if (sc.getType() == ParcelBoundaryType.BOT) {
 				iMSLim.add((IOrientableCurve) sc.getGeom());
 			}
 		}
@@ -99,7 +96,7 @@ public class BandProduction {
 		}
 
 		// Idem s'il y a un règlement de deuxième bande
-		if (r2 != null) {
+		if (r2 != null && ! iMSRoad.isEmpty()) {
 
 			iMSBande2 = FromGeomToSurface.convertMSGeom(pol_BPU.difference(iMSRoad.buffer(profBande)));
 

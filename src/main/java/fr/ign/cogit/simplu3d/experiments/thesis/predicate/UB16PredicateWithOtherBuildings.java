@@ -9,15 +9,15 @@ import fr.ign.cogit.geoxygene.api.spatial.coordgeom.ILineString;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToSurface;
+import fr.ign.cogit.geoxygene.convert.FromGeomToSurface;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_LineString;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.simplu3d.model.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
+import fr.ign.cogit.simplu3d.model.ParcelBoundary;
+import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
@@ -66,12 +66,12 @@ public class UB16PredicateWithOtherBuildings<O extends Cuboid, C extends Abstrac
 
         List<IOrientableCurve> lCurveLatBot = new ArrayList<>();
 
-        for (CadastralParcel cP : bPU.getCadastralParcel()) {
+        for (CadastralParcel cP : bPU.getCadastralParcels()) {
             // for (SubParcel sB : cP.getSubParcel()) {
 
-            for (SpecificCadastralBoundary sCB : cP.getSpecificCadastralBoundary()) {
+            for (ParcelBoundary sCB : cP.getBoundaries()) {
 
-                if (sCB.getType() == SpecificCadastralBoundaryType.ROAD) {
+                if (sCB.getType() == ParcelBoundaryType.ROAD) {
 
                     IGeometry geom = sCB.getGeom();
 
@@ -84,7 +84,7 @@ public class UB16PredicateWithOtherBuildings<O extends Cuboid, C extends Abstrac
                                 .println("Classe UB14PredicateFull : quelque chose n'est pas un ICurve");
                     }
 
-                } else if (sCB.getType() != SpecificCadastralBoundaryType.INTRA) {
+                } else if (sCB.getType() != ParcelBoundaryType.INTRA) {
                     IGeometry geom = sCB.getGeom();
 
                     if (geom instanceof IOrientableCurve) {
@@ -257,7 +257,7 @@ public class UB16PredicateWithOtherBuildings<O extends Cuboid, C extends Abstrac
 
         }
 
-        double airePAr = this.bPU.getCadastralParcel().get(0).getArea();
+        double airePAr = this.bPU.getCadastralParcels().get(0).getArea();
 
         return ((aireBuilt / airePAr) <= 0.5);
     }

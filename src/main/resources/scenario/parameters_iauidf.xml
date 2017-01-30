@@ -10,14 +10,14 @@
 
         <!--Distribution (équiprobable) des dimensions des boîtes-->
         <!-- Largeur et longueur !-->
-        <param key="minlen" value="7" />
-		<param key="maxlen" value="50" />
+        <param key="minlen" value="4" />
+		<param key="maxlen" value="100" />
 		
 		<param key="minwid" value="4" />
 		<param key="maxwid" value="15" />
         <!-- Hauteur !-->
 		<param key="minheight" value ="0.5" />
-		<param key="maxheight" value="12" />
+		<param key="maxheight" value="25" />
 
         <!-- Probabilités !-->
         <!-- Création/destruction d'une boîte !-->
@@ -36,7 +36,7 @@
         
         <!-- Paramètres de température (on considère une fonction temp * deccoef^it) !-->
         <!-- Température initiale !-->
-		<param key="temp" value="18000" />
+		<param key="temp" value="180000" />
         <!-- Température initiale !-->
 		<param key="deccoef" value="0.99999" />
         

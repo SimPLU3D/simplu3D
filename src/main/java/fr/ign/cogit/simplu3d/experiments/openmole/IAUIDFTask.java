@@ -89,7 +89,7 @@ public class IAUIDFTask {
 
 		for (BasicPropertyUnit bPU : env.getBpU()) {
 
-			String id = bPU.getCadastralParcel().get(0).getParcelle_id();
+			String id = bPU.getCadastralParcels().get(0).getCode();
 
 			/*
 			 * if(! id.equals("930100000V0139")){ continue; }

@@ -14,8 +14,8 @@ import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
+import fr.ign.cogit.simplu3d.model.ParcelBoundary;
+import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
@@ -113,16 +113,16 @@ public class SamplePredicate<O extends AbstractSimpleBuilding, C extends Abstrac
 
 		// On parcourt les parcelles du BasicPropertyUnit (un propriétaire peut
 		// avoir plusieurs parcelles)
-		for (CadastralParcel cP : currentBPU.getCadastralParcel()) {
+		for (CadastralParcel cP : currentBPU.getCadastralParcels()) {
 
 			// On parcourt les limites séparaticves
-			for (SpecificCadastralBoundary sCB : cP
-					.getSpecificCadastralBoundary()) {
+			for (ParcelBoundary sCB : cP
+					.getBoundaries()) {
 
 				// En fonction du type on ajoute à telle ou telle géométrie
 
 				// Fond de parcel
-				if (sCB.getType() == SpecificCadastralBoundaryType.BOT) {
+				if (sCB.getType() == ParcelBoundaryType.BOT) {
 
 					IGeometry geom = sCB.getGeom();
 
@@ -138,7 +138,7 @@ public class SamplePredicate<O extends AbstractSimpleBuilding, C extends Abstrac
 				}
 
 				// Limite latérale
-				if (sCB.getType() == SpecificCadastralBoundaryType.LAT) {
+				if (sCB.getType() == ParcelBoundaryType.LAT) {
 
 					IGeometry geom = sCB.getGeom();
 
@@ -154,7 +154,7 @@ public class SamplePredicate<O extends AbstractSimpleBuilding, C extends Abstrac
 				}
 
 				// Limite front
-				if (sCB.getType() == SpecificCadastralBoundaryType.ROAD) {
+				if (sCB.getType() == ParcelBoundaryType.ROAD) {
 
 					IGeometry geom = sCB.getGeom();
 
@@ -296,7 +296,7 @@ public class SamplePredicate<O extends AbstractSimpleBuilding, C extends Abstrac
 
 		}
 
-		double airePAr = this.currentBPU.getCadastralParcel().get(0).getArea();
+		double airePAr = this.currentBPU.getCadastralParcels().get(0).getArea();
 
 		return ((geom.getArea() / airePAr) <= this.maximalCES);
 	}

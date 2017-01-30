@@ -1,7 +1,6 @@
 package fr.ign.cogit.simplu3d.rjmcmc.cuboid.builder;
 
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.SimpleCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.SimpleCuboid2;
 import fr.ign.mpp.kernel.ObjectBuilder;
 

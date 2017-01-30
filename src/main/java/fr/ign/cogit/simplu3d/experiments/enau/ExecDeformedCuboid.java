@@ -10,7 +10,6 @@ import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.experiments.enau.geometry.DeformedCuboid;
 import fr.ign.cogit.simplu3d.experiments.enau.optimizer.DeformedOptimizer;
-import fr.ign.cogit.simplu3d.importer.CadastralParcelLoader;
 import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
@@ -30,7 +29,7 @@ public class ExecDeformedCuboid {
 
 		String fileName = "building_parameters_project_expthese_3.xml";
 
-		CadastralParcelLoader.ATT_ID_PARC = "id_parcell";
+		//CadastralParcelLoader.ATT_ID_PARC = "id_parcell";
 		AssignZ.DEFAULT_Z = 0;
 
 		// Chargement de l'environnement

@@ -10,9 +10,9 @@ import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.contrib.cartetopo.Face;
 import fr.ign.cogit.geoxygene.contrib.delaunay.TriangulationJTS;
+import fr.ign.cogit.geoxygene.convert.FromGeomToSurface;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
-import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToSurface;
 import fr.ign.cogit.geoxygene.sig3d.distribution.EquiSurfaceDistribution;
 import fr.ign.cogit.geoxygene.sig3d.topology.TriangulationLoader;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
@@ -53,7 +53,7 @@ public class InversionBirth {
     IFeatureCollection<IFeature> feat = ShapefileReader.read(file);
 
     if (feat == null || feat.isEmpty()) return;
-    List<IOrientableSurface> lOS = FromGeomToSurface.convertGeom(feat.get(1)
+		List<IOrientableSurface> lOS = FromGeomToSurface.convertGeom(feat.get(1)
         .getGeom());
 
     TriangulationJTS triangulation = TriangulationLoader

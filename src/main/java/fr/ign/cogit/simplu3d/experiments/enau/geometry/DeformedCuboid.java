@@ -287,7 +287,7 @@ public class DeformedCuboid extends AbstractSimpleBuilding implements ISimPLU3DP
 		this.height3 = list.get(6);
 		this.height4 = list.get(7);
 		this.orientation = list.get(8);
-		this.isNew = true;
+		this.setGenerated(true);
 	}
 
 	public IGeometry generated3DGeom() {

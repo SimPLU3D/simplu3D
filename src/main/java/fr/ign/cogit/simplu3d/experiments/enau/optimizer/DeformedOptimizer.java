@@ -14,7 +14,7 @@ import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
-import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToLineString;
+import fr.ign.cogit.geoxygene.convert.FromGeomToLineString;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.experiments.enau.builder.DeformedCuboidBuilder;
@@ -37,9 +37,9 @@ import fr.ign.cogit.simplu3d.experiments.enau.transformation.MoveParallelDeforme
 import fr.ign.cogit.simplu3d.experiments.enau.transformation.RotateCuboid;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundarySide;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
+import fr.ign.cogit.simplu3d.model.ParcelBoundary;
+import fr.ign.cogit.simplu3d.model.ParcelBoundarySide;
+import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth.TransformToSurface;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.DifferenceVolumeUnaryEnergy;
@@ -106,7 +106,7 @@ public class DeformedOptimizer extends DefaultSimPLU3DOptimizer<Cuboid> {
 
 		EndTest end = this.create_end_test(p);
 
-		PrepareVisitors<DeformedCuboid> pv = new PrepareVisitors<>();
+		PrepareVisitors<DeformedCuboid> pv = new PrepareVisitors<>(env);
 
 		/*
 		 * < This is the way to launch the optimization process. Here, the magic
@@ -232,12 +232,12 @@ public class DeformedOptimizer extends DefaultSimPLU3DOptimizer<Cuboid> {
 
 		IMultiCurve<IOrientableCurve> ims = new GM_MultiCurve<>();
 
-		for (SpecificCadastralBoundary scb : bpU.getCadastralParcel().get(0).getSpecificCadastralBoundary()) {
+		for (ParcelBoundary scb : bpU.getCadastralParcels().get(0).getBoundaries()) {
 			switch (pos) {
 
 			case DROITE:
 
-				if (scb.getSide() == SpecificCadastralBoundarySide.RIGHT) {
+				if (scb.getSide() == ParcelBoundarySide.RIGHT) {
 					ims.addAll(FromGeomToLineString.convert(scb.getGeom()));
 				}
 
@@ -245,19 +245,19 @@ public class DeformedOptimizer extends DefaultSimPLU3DOptimizer<Cuboid> {
 
 			case GAUCHE:
 
-				if (scb.getSide() == SpecificCadastralBoundarySide.LEFT) {
+				if (scb.getSide() == ParcelBoundarySide.LEFT) {
 					ims.addAll(FromGeomToLineString.convert(scb.getGeom()));
 				}
 				break;
 			case FOND:
 
-				if (scb.getType() == SpecificCadastralBoundaryType.BOT) {
+				if (scb.getType() == ParcelBoundaryType.BOT) {
 					ims.addAll(FromGeomToLineString.convert(scb.getGeom()));
 				}
 				break;
 
 			case DEVANT:
-				if (scb.getType() == SpecificCadastralBoundaryType.ROAD) {
+				if (scb.getType() == ParcelBoundaryType.ROAD) {
 					ims.addAll(FromGeomToLineString.convert(scb.getGeom()));
 				}
 				break;

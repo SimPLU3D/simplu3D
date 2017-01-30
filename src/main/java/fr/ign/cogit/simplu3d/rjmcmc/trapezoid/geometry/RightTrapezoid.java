@@ -53,7 +53,7 @@ public class RightTrapezoid extends AbstractSimpleBuilding implements ISimPLU3DP
 	public RightTrapezoid(double centerx, double centery, double length1, double length2, double length3, double width,
 			double height, double orientation) {
 		super();
-		this.isNew = true;
+		this.generated = true;
 		this.centerx = centerx;
 		this.centery = centery;
 		this.length1 = length1;
@@ -81,7 +81,7 @@ public class RightTrapezoid extends AbstractSimpleBuilding implements ISimPLU3DP
 		this.width = list.get(5);
 		this.height = list.get(6);
 		this.orientation = list.get(7);
-		this.isNew = true;
+		this.generated = true;
 
 	}
 

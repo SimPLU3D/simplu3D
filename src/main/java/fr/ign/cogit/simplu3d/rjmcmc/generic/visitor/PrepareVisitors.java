@@ -7,6 +7,7 @@ import java.util.List;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
+import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
@@ -19,13 +20,14 @@ public class PrepareVisitors<C extends ISimPLU3DPrimitive> {
 
 	private List<Visitor<GraphConfiguration<C>, BirthDeathModification<C>>> lSupplementaryVisitors = new ArrayList<>();
 	
+	private Environnement env;
 	
-	public PrepareVisitors(){
-		
+	public PrepareVisitors(Environnement env){
+		this.env = env;
 	}
 
-	public PrepareVisitors(List<Visitor<GraphConfiguration<C>, BirthDeathModification<C>>> lSupplementaryVisitors) {
-		super();
+	public PrepareVisitors(Environnement env,List<Visitor<GraphConfiguration<C>, BirthDeathModification<C>>> lSupplementaryVisitors) {
+		this(env);
 		this.lSupplementaryVisitors = lSupplementaryVisitors;
 	}
 
@@ -46,8 +48,7 @@ public class PrepareVisitors<C extends ISimPLU3DPrimitive> {
 		}
 
 		if (p.getBoolean("visitorviewer")) {
-			ViewerVisitor<C, GraphConfiguration<C>, BirthDeathModification<C>> visitorViewer = new ViewerVisitor<>(
-					"" + id, p);
+			ViewerVisitor<C, GraphConfiguration<C>, BirthDeathModification<C>> visitorViewer = new ViewerVisitor<>(env,"" + id, p);
 			list.add(visitorViewer);
 		}
 
@@ -71,7 +72,7 @@ public class PrepareVisitors<C extends ISimPLU3DPrimitive> {
 					p.getInteger("filmvisitorb"));
 
 			FilmVisitor<C, GraphConfiguration<C>, BirthDeathModification<C>> visitorViewerFilmVisitor = new FilmVisitor<>(
-					dpCentre, viewTo, p.getString("result"), c, p);
+					dpCentre, viewTo, p.getString("result"), c, p,env);
 			list.add(visitorViewerFilmVisitor);
 		}
 

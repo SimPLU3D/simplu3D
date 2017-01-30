@@ -55,7 +55,7 @@ public class ParallelTrapezoid2 extends RightTrapezoid {
 		this.width = list.get(3);
 		this.height = list.get(4);
 		this.abscisse = list.get(5);
-		this.isNew = true;
+		this.generated = true;
 
 	}
 

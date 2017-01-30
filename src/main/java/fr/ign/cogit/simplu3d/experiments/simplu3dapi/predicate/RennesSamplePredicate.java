@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import fr.ign.cogit.simplu3d.checker.Checker;
+import fr.ign.cogit.simplu3d.checker.RuleContext;
 import fr.ign.cogit.simplu3d.checker.Rules;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
@@ -53,19 +54,22 @@ public class RennesSamplePredicate<O extends Cuboid, C extends AbstractGraphConf
 		// a plusieurs sous parcelles faudrait faire une intégration plus
 		// propre)
 		for (Cuboid b : lBuildings) {
-			this.currentBPU.getCadastralParcel().get(0).getSubParcel().get(0).getBuildingsParts().add(b);
+			this.currentBPU.getCadastralParcels().get(0).getSubParcels().get(0).getBuildingsParts().add(b);
 		}
 		
 		if(lBuildings.isEmpty()){
 			return true;
 		}
+		
+		RuleContext cRc = new RuleContext();
+		cRc.setStopOnFailure(true);
 
 		// On vérifie que la liste des contraintes non respsectées est vide
-		boolean checked = Checker.check(currentBPU, currentRules,true).isEmpty();
+		boolean checked = Checker.check(currentBPU, currentRules,cRc).isEmpty();
 
 		// On vire les
 		for (Cuboid b : lBuildings) {
-			this.currentBPU.getCadastralParcel().get(0).getSubParcel().get(0).getBuildingsParts().remove(b);
+			this.currentBPU.getCadastralParcels().get(0).getSubParcels().get(0).getBuildingsParts().remove(b);
 		}
 
 		return checked;

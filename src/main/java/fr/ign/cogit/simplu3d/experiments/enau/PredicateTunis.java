@@ -14,9 +14,9 @@ import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.experiments.enau.geometry.DeformedCuboid;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundarySide;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
+import fr.ign.cogit.simplu3d.model.ParcelBoundary;
+import fr.ign.cogit.simplu3d.model.ParcelBoundarySide;
+import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
@@ -89,13 +89,13 @@ public class PredicateTunis<O extends AbstractSimpleBuilding, C extends Abstract
 		
 		List<IOrientableCurve> lCurveLatRight = new ArrayList<>();
 
-		for (CadastralParcel cP : bPU.getCadastralParcel()) {
+		for (CadastralParcel cP : bPU.getCadastralParcels()) {
 			// for (SubParcel sB : cP.getSubParcel()) {
 
-			for (SpecificCadastralBoundary sCB : cP
-					.getSpecificCadastralBoundary()) {
+			for (ParcelBoundary sCB : cP
+					.getBoundaries()) {
 
-				if (sCB.getType() == SpecificCadastralBoundaryType.ROAD) {
+				if (sCB.getType() == ParcelBoundaryType.ROAD) {
 
 					IGeometry geom = sCB.getGeom();
 
@@ -108,7 +108,7 @@ public class PredicateTunis<O extends AbstractSimpleBuilding, C extends Abstract
 								.println("Classe UB14PredicateFull : quelque chose n'est pas un ICurve");
 					}
 
-				} else if (sCB.getType() != SpecificCadastralBoundaryType.ROAD) {
+				} else if (sCB.getType() != ParcelBoundaryType.ROAD) {
 					IGeometry geom = sCB.getGeom();
 
 					if (geom instanceof IOrientableCurve) {
@@ -122,7 +122,7 @@ public class PredicateTunis<O extends AbstractSimpleBuilding, C extends Abstract
 
 				}
 				
-				if(sCB.getSide() == SpecificCadastralBoundarySide.RIGHT){
+				if(sCB.getSide() == ParcelBoundarySide.RIGHT){
 					lCurveLatRight.add((IOrientableCurve) sCB.getGeom());
 				}
 
@@ -315,7 +315,7 @@ public class PredicateTunis<O extends AbstractSimpleBuilding, C extends Abstract
 	area = area + geom.getArea();
 		}
 
-		double airePAr = this.bPU.getCadastralParcel().get(0).getArea();
+		double airePAr = this.bPU.getCadastralParcels().get(0).getArea();
 
 		return ((area / airePAr) <= this.maximalCES);
 	}

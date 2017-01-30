@@ -15,9 +15,9 @@ import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.experiments.iauidf.regulation.Regulation;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundarySide;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
+import fr.ign.cogit.simplu3d.model.ParcelBoundary;
+import fr.ign.cogit.simplu3d.model.ParcelBoundarySide;
+import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.ParallelCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.ParallelCuboid2;
@@ -40,7 +40,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 	Geometry jtsCurveLatRightArt71 = null;
 
-	public static SpecificCadastralBoundarySide RIGHT_OF_LEFT_FOR_ART_71 = SpecificCadastralBoundarySide.RIGHT;
+	public static ParcelBoundarySide RIGHT_OF_LEFT_FOR_ART_71 = ParcelBoundarySide.RIGHT;
 
 	public PredicateIAUIDF(BasicPropertyUnit bPU, Regulation r1, Regulation r2) throws Exception {
 		super();
@@ -68,15 +68,15 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 		// On parcourt les parcelles du BasicPropertyUnit (un propriétaire peut
 		// avoir plusieurs parcelles)
-		for (CadastralParcel cP : currentBPU.getCadastralParcel()) {
+		for (CadastralParcel cP : currentBPU.getCadastralParcels()) {
 
 			// On parcourt les limites séparaticves
-			for (SpecificCadastralBoundary sCB : cP.getSpecificCadastralBoundary()) {
+			for (ParcelBoundary sCB : cP.getBoundaries()) {
 
 				// En fonction du type on ajoute à telle ou telle géométrie
 
 				// Fond de parcel
-				if (sCB.getType() == SpecificCadastralBoundaryType.BOT) {
+				if (sCB.getType() == ParcelBoundaryType.BOT) {
 
 					IGeometry geom = sCB.getGeom();
 
@@ -91,7 +91,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 				}
 
 				// Limite latérale
-				if (sCB.getType() == SpecificCadastralBoundaryType.LAT) {
+				if (sCB.getType() == ParcelBoundaryType.LAT) {
 
 					IGeometry geom = sCB.getGeom();
 
@@ -115,7 +115,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 				}
 
 				// Limite front
-				if (sCB.getType() == SpecificCadastralBoundaryType.ROAD) {
+				if (sCB.getType() == ParcelBoundaryType.ROAD) {
 
 					IGeometry geom = sCB.getGeom();
 
@@ -227,6 +227,8 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 				}
 
 			} else if (birth instanceof ParallelCuboid2) {
+				
+		
 
 				if (!checkBandRegulationSpecArt71(r2, birth)) {
 
@@ -236,6 +238,10 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 				// System.out.println("Je retourne true");
 
 			} else if (birth instanceof SimpleCuboid2) {
+				
+				
+		
+
 
 				if (r2.getArt_71() != 2) {
 					if (!checkBandRegulation(r2, birth))
@@ -264,6 +270,8 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 	}
 
 	public boolean checkParcelRegulation(Regulation r, C c, M m) {
+		
+
 
 		// On fait la liste de tous les objets après modification
 		List<O> lCuboid = new ArrayList<>();
@@ -306,7 +314,11 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 			areaBuilt += area;
 			shonBuilt += area * nbEtage;
+			
+		
 		}
+		
+
 
 		double areaBPU = this.currentBPU.getArea();
 
@@ -315,16 +327,18 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 		double reg9 = r.getArt_9();
 		if (reg9 != 99 & reg9 != 88) {
-			if (areaBuilt / areaBPU > reg9) {
+			if ( (areaBuilt / areaBPU) > reg9) {
 				return false;
 			}
 		}
+
+		
 		// ART_13 Part minimale d'espaces libre de toute construction exprimée
 		// par rapport à la surface totale de la parcelle Valeur comprise de 0 à
 		// 1, 88 si non renseignable, 99 si non règlementé
 		double reg13 = r.getArt_13();
 		if (reg13 != 99 & reg13 != 88) {
-			if (areaBuilt / areaBPU > (1 - reg13)) {
+			if ((areaBuilt / areaBPU) > (1 - reg13)) {
 				return false;
 			}
 		}
@@ -335,6 +349,8 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		// par rapport à la surface totale de la parcelle Valeur comprise de 0 à
 		// 1, 88 si non renseignable, 99 si non règlementé
 		double reg14 = r.getArt_14();
+
+		
 		if (reg14 != 0.0 & reg14 != 99 & reg14 != 88) {
 			if (shonBuilt / areaBPU > reg14) {
 				return false;
@@ -349,7 +365,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		int nbCuboid = 	lCuboid.size();
 		
 		
-		
+
 		double hMax = -1;
 		
 		for (O o : lCuboid) {
@@ -384,6 +400,8 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		if (r == null || !r.getEpsilonBuffer().contains(cuboid.toGeometry())) {
 			return false;
 		}
+		
+	//if(true) return true;
 
 		/*
 		 * if (r == null || !r.getEpsilonBuffer().contains(cuboid.toGeometry()))
@@ -397,6 +415,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		// parcelle
 		// Existe t il ?
 		double r_art72 = r.getArt_72();
+
 		if (jtsCurveLatRightArt71 != null && r_art72 != 88.0 && r_art72 != 99.0) {
 			// On vérifie la distance
 			if (this.jtsCurveLatRightArt71.distance(cuboid.toGeometry()) < r_art72) {
@@ -406,6 +425,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 			}
 
 		}
+
 
 		// if(true)return true;
 
@@ -503,7 +523,8 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		if (r == null || !r.getEpsilonBuffer().contains(cuboid.toGeometry())) {
 			return false;
 		}
-
+		
+	
 		/*
 		 * 
 		 * 

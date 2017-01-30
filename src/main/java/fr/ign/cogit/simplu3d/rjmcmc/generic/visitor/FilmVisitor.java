@@ -76,10 +76,11 @@ public class FilmVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraphCo
 	private String folder;
 	private int count = 0;
 	private Color col;
+	
 
-	public FilmVisitor(IDirectPosition dp, Vecteur vectOrientation, String folder, Color col, Parameters p) {
+	public FilmVisitor(IDirectPosition dp, Vecteur vectOrientation, String folder, Color col, Parameters p, Environnement env) {
 		mW = new MainWindow();
-		represent(Environnement.getInstance(), mW, p);
+		represent(env, mW, p);
 		this.dp = dp;
 		this.vectOrientation = vectOrientation;
 		this.folder = folder;

@@ -20,6 +20,12 @@ public class ExportAsFeatureCollection {
     this.config = cc;
   }
 
+  public ExportAsFeatureCollection(GraphConfiguration<? extends AbstractSimpleBuilding> cc, int id) {
+    this.config = cc;
+    this.id = id;
+    this.exportId = true;
+  }
+
   public ExportAsFeatureCollection(GraphConfiguration<? extends AbstractSimpleBuilding> cc, int id, long seed) {
     this.config = cc;
     this.id = id;
@@ -38,10 +44,10 @@ public class ExportAsFeatureCollection {
       if (this.exportId) {
         AttributeManager.addAttribute(feat, "idparc", this.id, "Integer");
       }
-      AttributeManager.addAttribute(feat, "largeur", largeur, "Double");
-      AttributeManager.addAttribute(feat, "longueur", longueur, "Double");
-      AttributeManager.addAttribute(feat, "hauteur", hauteur, "Double");
-      AttributeManager.addAttribute(feat, "orient", orientation, "Double");
+      //AttributeManager.addAttribute(feat, "largeur", largeur, "Double");
+      //AttributeManager.addAttribute(feat, "longueur", longueur, "Double");
+      //AttributeManager.addAttribute(feat, "hauteur", hauteur, "Double");
+      //AttributeManager.addAttribute(feat, "orient", orientation, "Double");
       if (this.exportSeed) {
         AttributeManager.addAttribute(feat, "seed", this.seed, "Long");
       }

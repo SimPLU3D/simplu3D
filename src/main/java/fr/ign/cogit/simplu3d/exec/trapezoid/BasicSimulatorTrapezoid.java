@@ -1,26 +1,25 @@
 package fr.ign.cogit.simplu3d.exec.trapezoid;
 
 import java.io.File;
+import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.experiments.iauidf.predicate.PredicateIAUIDF;
 import fr.ign.cogit.simplu3d.importer.CadastralParcelLoader;
-import fr.ign.cogit.simplu3d.importer.RoadImporter;
 import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundarySide;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary.SpecificCadastralBoundaryType;
+import fr.ign.cogit.simplu3d.model.ParcelBoundary;
+import fr.ign.cogit.simplu3d.model.ParcelBoundarySide;
+import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.paralellcuboid.ParallelCuboidOptimizer;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
@@ -59,16 +58,16 @@ public class BasicSimulatorTrapezoid {
 	// Initialisation des attributs différents du schéma de base
 	// et le fichier de paramètre commun à toutes les simulations
 	public static void init() throws Exception {
-		RoadImporter.ATT_NOM_RUE = "NOM_VOIE_G";
-		RoadImporter.ATT_LARGEUR = "LARGEUR";
-		RoadImporter.ATT_TYPE = "NATURE";
+//		RoadReader.ATT_NOM_RUE = "NOM_VOIE_G";
+//		RoadReader.ATT_LARGEUR = "LARGEUR";
+//		RoadReader.ATT_TYPE = "NATURE";
 
-		LoaderSHP.NOM_FICHIER_PARCELLE = "parcelle.shp";
+		//LoaderSHP.NOM_FICHIER_PARCELLE = "parcelle.shp";
 
 		CadastralParcelLoader.TYPE_ANNOTATION = 2;
-		CadastralParcelLoader.ATT_HAS_TO_BE_SIMULATED = "simul";
+//		CadastralParcelLoader.ATT_HAS_TO_BE_SIMULATED = "simul";
 
-		PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = SpecificCadastralBoundarySide.LEFT;
+		PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = ParcelBoundarySide.LEFT;
 	}
 
 	/**
@@ -114,12 +113,12 @@ public class BasicSimulatorTrapezoid {
 			// Instanciation du sampler avec l'unité foncière et les valeurs
 			// ci-dessus
 
-			IFeatureCollection<SpecificCadastralBoundary> lSB = bPU.getCadastralParcel().get(0)
-					.getSpecificCadastralBoundaryByType(SpecificCadastralBoundaryType.ROAD);
+			List<ParcelBoundary> lSB = bPU.getCadastralParcels().get(0)
+					.getBoundariesByType(ParcelBoundaryType.ROAD);
 
 			IGeometry[] limits = new IGeometry[lSB.size()];
 			int count = 0;
-			for (SpecificCadastralBoundary sc : lSB) {
+			for (ParcelBoundary sc : lSB) {
 
 				limits[count] = sc.getGeom();
 

@@ -94,7 +94,7 @@ public class OptimisedParallelTrapezoidFinalDirectRejection extends DefaultSimPL
 		Schedule<SimpleTemperature> sch = create_schedule(p);
 
 		EndTest end = create_end_test(p);
-		PrepareVisitors<ParallelTrapezoid2> pv = new PrepareVisitors<>();
+		PrepareVisitors<ParallelTrapezoid2> pv = new PrepareVisitors<>(env);
 
 		SimulatedAnnealing.optimize(rG, conf, samp, sch, end, pv.prepare(p, bpu.getId()));
 		return conf;

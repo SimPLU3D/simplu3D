@@ -8,12 +8,11 @@ import org.apache.commons.math3.random.RandomGenerator;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
-import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IEnvelope;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromGeomToLineString;
+import fr.ign.cogit.geoxygene.convert.FromGeomToLineString;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.experiments.iauidf.predicate.PredicateIAUIDF;
@@ -21,7 +20,7 @@ import fr.ign.cogit.simplu3d.experiments.iauidf.regulation.Regulation;
 import fr.ign.cogit.simplu3d.experiments.iauidf.tool.BandProduction;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
-import fr.ign.cogit.simplu3d.model.SpecificCadastralBoundary;
+import fr.ign.cogit.simplu3d.model.ParcelBoundary;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.builder.ParallelCuboidBuilder;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.builder.SimpleCuboidBuilder;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.builder.SimpleCuboidBuilder2;
@@ -118,7 +117,7 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 
 		EndTest end = create_end_test(p);
 
-		PrepareVisitors<Cuboid> pv = new PrepareVisitors<>();
+		PrepareVisitors<Cuboid> pv = new PrepareVisitors<>(env);
 		CompositeVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> mVisitor = pv.prepare(p,
 				bpu.getId());
 		/*
@@ -289,19 +288,19 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 
 				band2parallel = true;
 
-				IFeatureCollection<SpecificCadastralBoundary> featC = bpU.getCadastralParcel().get(0)
-						.getSpecificSideBoundary(PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71);
+				List<ParcelBoundary> featC = bpU.getCadastralParcels().get(0)
+						.getBoundariesBySide(PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71);
 				IMultiCurve<IOrientableCurve> ims = new GM_MultiCurve<>();
-				for (SpecificCadastralBoundary s : featC) {
+				for (ParcelBoundary s : featC) {
 					ims.addAll(FromGeomToLineString.convert(s.getGeom()));
 				}
 
 				// On se colle partout si on peut pas déterminer de côté.
 				if (ims.isEmpty()) {
 
-					featC = bpU.getCadastralParcel().get(0).getSpecificCadastralBoundary();
+					featC = bpU.getCadastralParcels().get(0).getBoundaries();
 
-					for (SpecificCadastralBoundary s : featC) {
+					for (ParcelBoundary s : featC) {
 						ims.addAll(FromGeomToLineString.convert(s.getGeom()));
 					}
 
