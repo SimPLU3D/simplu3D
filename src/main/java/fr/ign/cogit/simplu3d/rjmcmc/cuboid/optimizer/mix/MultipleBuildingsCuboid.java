@@ -231,32 +231,28 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 		// On prépare les zones dans lesquelles les boîtes seront tirées
 		////////////////////////
 
-		// On récupère la bande numéro 1 et on la réduit en fonction des
-		// dimension si on doit tirer dedans pour
-		// pour augmenter les chances de respecter les règles
+		// On récupère la bande numéro 1
 		IGeometry geomBand1 = r1.getGeomBande();
-		if (bP.getLineRoad() != null && !bP.getLineRoad().isEmpty()) {
-			geomBand1 = geomBand1.intersection(bP.getLineRoad().buffer(d[3] / 2 + v[3]));
-		}
-
-		// On récupère la seconde bande
-		IGeometry geomBand2 = null;
-		if (r2 != null) {
-			geomBand2 = r2.getGeomBande();
-		}
 
 		////////////////////////
 		// On prépare les transforme
 		////////////////////////
 
-		// On calcule la transforme 1 => il n'est pas initialisé s'il n'y a pas de bande 1
+		// On calcule la transforme 1 => il n'est pas initialisé s'il n'y a pas
+		// de bande 1
 		Transform transformBand1 = null;
 
 		if (geomBand1 != null && !geomBand1.isEmpty()) {
 			if (band1Parallel) {
+				// The center is included in a band equals to half of max
+				// allowed width  according to alignment line
+				geomBand1 = geomBand1.intersection(bP.getLineRoad().buffer(maxwid / 2));
 
 				transformBand1 = new ParallelPolygonTransform(d2, v, geomBand1);
 			} else {
+
+				geomBand1 = geomBand1.buffer(-minwid / 2);
+
 				transformBand1 = new TransformToSurface(d2, v, geomBand1);
 			}
 		}
@@ -275,12 +271,16 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 
 		boolean band2parallel = false;
 
-	
-		
-		// On calcule la transforme 2 => il n'est pas initialisé s'il n'y a pas de bande 2
+		// On calcule la transforme 2 => il n'est pas initialisé s'il n'y a pas
+		// de bande 2
 		Transform transformBand2 = null;
 
-		
+		// On récupère la seconde bande
+		IGeometry geomBand2 = null;
+		if (r2 != null) {
+			geomBand2 = r2.getGeomBande();
+		}
+
 		// On calcule la transforme 2 et le builder 2
 		if (geomBand2 != null && !geomBand2.isEmpty()) {
 
@@ -305,11 +305,17 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 					}
 
 				}
+				
+				// The center is included in a band equals to half of max
+				// allowed width according to alignment line
+				geomBand2 = geomBand2.intersection(ims.buffer(maxwid / 2));
 
 				builderBand2 = new ParallelCuboidBuilder(ims.toArray(), 2);
 				transformBand2 = new ParallelPolygonTransform(d, v, geomBand2);
 
 			} else {
+				
+				geomBand2 = geomBand2.buffer(- minwid   / 2 ); 
 
 				builderBand2 = new SimpleCuboidBuilder2();
 				transformBand2 = new TransformToSurface(d, v, geomBand2);
@@ -329,23 +335,22 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 		List<Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> kernels = new ArrayList<>(3);
 		NullView<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> nullView = new NullView<>();
 
-		
-		//Noyau pour la bande 1
+		// Noyau pour la bande 1
 		if (transformBand1 != null) {
 			List<Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> lKernelsBand1 = new ArrayList<>();
 			lKernelsBand1 = getBande1Kernels(variate, nullView, p, transformBand1, builderBand1, band1Parallel);
 			kernels.addAll(lKernelsBand1);
 		} else {
-			p_simple = 1; //pas de transform on ne sera jamais dans la bande 1
+			p_simple = 1; // pas de transform on ne sera jamais dans la bande 1
 		}
-		
-		//Noyaux pour la bande 1
+
+		// Noyaux pour la bande 1
 		if (transformBand2 != null) {
 			List<Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> lKernelsBand2 = new ArrayList<>();
 			lKernelsBand2 = getBande2Kernels(variate, nullView, p, transformBand2, builderBand2, band2parallel);
 			kernels.addAll(lKernelsBand2);
 		} else {
-			p_simple = 0; //pas de transform on ne sera jamais dans la bande 2
+			p_simple = 0; // pas de transform on ne sera jamais dans la bande 2
 		}
 
 		// Si on ne peut pas construire dans la deuxième bande ni dans la
