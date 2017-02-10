@@ -13,7 +13,6 @@ import fr.ign.cogit.simplu3d.checker.UnrespectedRule;
 import fr.ign.cogit.simplu3d.experiments.plu2plus.context.SimulationcheckerContext;
 import fr.ign.cogit.simplu3d.model.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
-import fr.ign.cogit.simplu3d.model.Building;
 import fr.ign.cogit.simplu3d.model.ParcelBoundary;
 import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
 

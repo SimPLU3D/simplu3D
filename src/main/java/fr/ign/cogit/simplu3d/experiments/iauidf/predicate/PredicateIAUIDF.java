@@ -23,6 +23,7 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.ParallelCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.ParallelCuboid2;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.SimpleCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.SimpleCuboid2;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.mix.MultipleBuildingsCuboid;
 import fr.ign.geometry.SquaredDistance;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
@@ -156,21 +157,16 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 	@Override
 	public boolean check(C c, M m) {
-		
-
-		
 
 		// Pour produire des boîtes séparées et vérifier que la distance inter
 		// bâtiment est respectée
 		// ART_8 Distance minimale des constructions par rapport aux autres sur
 		// une même propriété imposée en mètre 88= non renseignable, 99= non
 		// réglementé
-		if (!checkDistanceInterBuildings(c, m, r1.getArt_8())) { //r1.getArt_8()
+		if ((!MultipleBuildingsCuboid.ALLOW_INTERSECTING_CUBOID)
+				&& (!checkDistanceInterBuildings(c, m, r1.getArt_8()))) { // r1.getArt_8()
 			return false;
 		}
-		
-
-
 
 		O birth = null;
 
@@ -196,7 +192,6 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		if (!checkParcelRegulation(r1, c, m)) {
 			return false;
 		}
-	
 
 		// Vérification des règles au niveau des bandes (localement)
 
@@ -227,8 +222,6 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 				}
 
 			} else if (birth instanceof ParallelCuboid2) {
-				
-		
 
 				if (!checkBandRegulationSpecArt71(r2, birth)) {
 
@@ -238,10 +231,6 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 				// System.out.println("Je retourne true");
 
 			} else if (birth instanceof SimpleCuboid2) {
-				
-				
-		
-
 
 				if (r2.getArt_71() != 2) {
 					if (!checkBandRegulation(r2, birth))
@@ -249,7 +238,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 				}
 
 			} else if (birth instanceof SimpleCuboid) {
-				
+
 				if (r1.getArt_71() != 2) {
 
 					if (!checkBandRegulation(r1, birth)) {
@@ -257,7 +246,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 					}
 
 				}
-				
+
 			} else {
 				System.out.println("Predicate IAUIDF - Unexpected class during object birth : "
 						+ birth.getClass().getCanonicalName());
@@ -270,8 +259,6 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 	}
 
 	public boolean checkParcelRegulation(Regulation r, C c, M m) {
-		
-
 
 		// On fait la liste de tous les objets après modification
 		List<O> lCuboid = new ArrayList<>();
@@ -314,11 +301,8 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 			areaBuilt += area;
 			shonBuilt += area * nbEtage;
-			
-		
-		}
-		
 
+		}
 
 		double areaBPU = this.currentBPU.getArea();
 
@@ -327,12 +311,11 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 		double reg9 = r.getArt_9();
 		if (reg9 != 99 & reg9 != 88) {
-			if ( (areaBuilt / areaBPU) > reg9) {
+			if ((areaBuilt / areaBPU) > reg9) {
 				return false;
 			}
 		}
 
-		
 		// ART_13 Part minimale d'espaces libre de toute construction exprimée
 		// par rapport à la surface totale de la parcelle Valeur comprise de 0 à
 		// 1, 88 si non renseignable, 99 si non règlementé
@@ -350,45 +333,39 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		// 1, 88 si non renseignable, 99 si non règlementé
 		double reg14 = r.getArt_14();
 
-		
 		if (reg14 != 0.0 & reg14 != 99 & reg14 != 88) {
 			if (shonBuilt / areaBPU > reg14) {
 				return false;
 			}
 		}
-		
-		
-		
-		//EXTRA RULE :   la distance entre deux bâtiments sur une même parcelle 
+
+		// EXTRA RULE : la distance entre deux bâtiments sur une même parcelle
 		// est égale à la hauteur divisée par deux du bâtiment le plus haut
-		
-		int nbCuboid = 	lCuboid.size();
-		
-		
+
+		int nbCuboid = lCuboid.size();
 
 		double hMax = -1;
-		
+
 		for (O o : lCuboid) {
 			hMax = Math.max(hMax, o.getHeight());
 		}
-		
-		//on divise par 2 le hMax
+
+		// on divise par 2 le hMax
 		hMax = hMax * 0.5;
-		
-		for(int i=0;i<nbCuboid;i ++){
+
+		for (int i = 0; i < nbCuboid; i++) {
 			Cuboid cI = lCuboid.get(i);
-			
-			for(int j=i+1;j<nbCuboid;j ++){
+
+			for (int j = i + 1; j < nbCuboid; j++) {
 				Cuboid cJ = lCuboid.get(j);
-				
+
 				double distance = cI.getFootprint().distance(cJ.getFootprint());
-				
-				if(distance < hMax){
+
+				if (distance < hMax) {
 					return false;
 				}
-				
-				
-			}	
+
+			}
 		}
 
 		return true;
@@ -400,8 +377,8 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		if (r == null || !r.getEpsilonBuffer().contains(cuboid.toGeometry())) {
 			return false;
 		}
-		
-	//if(true) return true;
+
+		// if(true) return true;
 
 		/*
 		 * if (r == null || !r.getEpsilonBuffer().contains(cuboid.toGeometry()))
@@ -425,7 +402,6 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 			}
 
 		}
-
 
 		// if(true)return true;
 
@@ -523,8 +499,7 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		if (r == null || !r.getEpsilonBuffer().contains(cuboid.toGeometry())) {
 			return false;
 		}
-		
-	
+
 		/*
 		 * 
 		 * 

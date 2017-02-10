@@ -39,6 +39,7 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.RotateCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth.ParallelPolygonTransform;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth.TransformToSurface;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.parallelCuboid.MoveParallelCuboid;
+import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.IntersectionVolumeBinaryEnergy;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.VolumeUnaryEnergy;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.sampler.GreenSamplerBlockTemperature;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.PrepareVisitors;
@@ -54,8 +55,10 @@ import fr.ign.rjmcmc.acceptance.Acceptance;
 import fr.ign.rjmcmc.acceptance.MetropolisAcceptance;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
 import fr.ign.rjmcmc.distribution.PoissonDistribution;
+import fr.ign.rjmcmc.energy.BinaryEnergy;
 import fr.ign.rjmcmc.energy.ConstantEnergy;
 import fr.ign.rjmcmc.energy.MinusUnaryEnergy;
+import fr.ign.rjmcmc.energy.MultipliesBinaryEnergy;
 import fr.ign.rjmcmc.energy.MultipliesUnaryEnergy;
 import fr.ign.rjmcmc.energy.UnaryEnergy;
 import fr.ign.rjmcmc.kernel.ChangeValue;
@@ -87,6 +90,8 @@ import fr.ign.simulatedannealing.visitor.CompositeVisitor;
  * @version 1.0
  **/
 public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
+
+	public static boolean ALLOW_INTERSECTING_CUBOID = false;
 
 	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, Parameters p, Environnement env,
 			PredicateIAUIDF<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred, Regulation r1,
@@ -144,6 +149,41 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 	 */
 	@Override
 	public GraphConfiguration<Cuboid> create_configuration(Parameters p, Geometry geom, BasicPropertyUnit bpu) {
+
+		if (ALLOW_INTERSECTING_CUBOID) {
+			return create_configuration_intersection(p, geom, bpu);
+		}
+
+		return create_configuration_no_inter(p, geom, bpu);
+
+	}
+
+	private GraphConfiguration<Cuboid> create_configuration_intersection(Parameters p, Geometry geom,
+			BasicPropertyUnit bpu) {
+		// Énergie constante : à la création d'un nouvel objet
+		ConstantEnergy<Cuboid, Cuboid> energyCreation = new ConstantEnergy<Cuboid, Cuboid>(p.getDouble("energy"));
+		// Énergie constante : pondération de l'intersection
+		ConstantEnergy<Cuboid, Cuboid> ponderationVolume = new ConstantEnergy<Cuboid, Cuboid>(
+				p.getDouble("ponderation_volume"));
+		// Énergie unaire : aire dans la parcelle
+		UnaryEnergy<Cuboid> energyVolume = new VolumeUnaryEnergy<Cuboid>();
+		// Multiplication de l'énergie d'intersection et de l'aire
+		UnaryEnergy<Cuboid> energyVolumePondere = new MultipliesUnaryEnergy<Cuboid>(ponderationVolume, energyVolume);
+
+		// On retire de l'énergie de création, l'énergie de l'aire
+		UnaryEnergy<Cuboid> u3 = new MinusUnaryEnergy<Cuboid>(energyCreation, energyVolumePondere);
+
+		// Énergie binaire : intersection entre deux rectangles
+		ConstantEnergy<Cuboid, Cuboid> c3 = new ConstantEnergy<Cuboid, Cuboid>(p.getDouble("ponderation_volume_inter"));
+		BinaryEnergy<Cuboid, Cuboid> b1 = new IntersectionVolumeBinaryEnergy<Cuboid>();
+		BinaryEnergy<Cuboid, Cuboid> binaryEnergy = new MultipliesBinaryEnergy<Cuboid, Cuboid>(c3, b1);
+		// empty initial configuration*/
+		GraphConfiguration<Cuboid> conf = new GraphConfiguration<>(u3, binaryEnergy);
+		return conf;
+	}
+
+	private GraphConfiguration<Cuboid> create_configuration_no_inter(Parameters p, Geometry geom,
+			BasicPropertyUnit bpu) {
 		// Énergie constante : à la création d'un nouvel objet
 		double energyCrea = p.getDouble("energy");
 		ConstantEnergy<Cuboid, Cuboid> energyCreation = new ConstantEnergy<Cuboid, Cuboid>(energyCrea);
@@ -245,7 +285,7 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 		if (geomBand1 != null && !geomBand1.isEmpty()) {
 			if (band1Parallel) {
 				// The center is included in a band equals to half of max
-				// allowed width  according to alignment line
+				// allowed width according to alignment line
 				geomBand1 = geomBand1.intersection(bP.getLineRoad().buffer(maxwid / 2));
 
 				transformBand1 = new ParallelPolygonTransform(d2, v, geomBand1);
@@ -305,7 +345,7 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 					}
 
 				}
-				
+
 				// The center is included in a band equals to half of max
 				// allowed width according to alignment line
 				geomBand2 = geomBand2.intersection(ims.buffer(maxwid / 2));
@@ -314,8 +354,8 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 				transformBand2 = new ParallelPolygonTransform(d, v, geomBand2);
 
 			} else {
-				
-				geomBand2 = geomBand2.buffer(- minwid   / 2 ); 
+
+				geomBand2 = geomBand2.buffer(-minwid / 2);
 
 				builderBand2 = new SimpleCuboidBuilder2();
 				transformBand2 = new TransformToSurface(d, v, geomBand2);

@@ -7,13 +7,15 @@
 		<param key="energy" value="1" />
         <!-- Pondération du critère de volume-->
     	<param key="ponderation_volume" value="1" />
+    	<!-- Pondération négative d'une boîte en intersectant une autre -->
+		<param key="ponderation_volume_inter" value="15" />
 
         <!--Distribution (équiprobable) des dimensions des boîtes-->
         <!-- Largeur et longueur !-->
         <param key="minlen" value="4" />
-		<param key="maxlen" value="100" />
+		<param key="maxlen" value="5" />
 		
-		<param key="minwid" value="4" />
+		<param key="minwid" value="2" />
 		<param key="maxwid" value="15" />
         <!-- Hauteur !-->
 		<param key="minheight" value ="0.5" />

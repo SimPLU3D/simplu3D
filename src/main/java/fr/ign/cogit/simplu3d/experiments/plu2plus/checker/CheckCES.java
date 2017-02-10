@@ -7,8 +7,6 @@ import java.util.List;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
 
-import ch.qos.logback.core.Context;
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.util.conversion.JtsGeOxygene;
 import fr.ign.cogit.simplu3d.checker.IRuleChecker;
 import fr.ign.cogit.simplu3d.checker.RuleContext;

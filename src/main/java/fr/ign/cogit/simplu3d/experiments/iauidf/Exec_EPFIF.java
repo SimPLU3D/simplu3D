@@ -62,6 +62,9 @@ public class Exec_EPFIF {
 	public final static String out_folder = folder + "out/";
 
 	public static void main(String[] args) throws Exception {
+		
+		MultipleBuildingsCuboid.ALLOW_INTERSECTING_CUBOID = true;
+		
 		init();
 		// Dossier contenant IMU_MANTES_TEST.csv et les sous dossier par code
 		// IMU
@@ -71,7 +74,7 @@ public class Exec_EPFIF {
 		// On traite indépendamment chaque zone imu
 		for (int currentImu : regulation.keySet()) {
 
-	
+			if(currentImu != 75038131) continue;
 
 			System.out.println("Numéro imu : " + currentImu);
 
