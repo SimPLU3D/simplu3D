@@ -74,7 +74,6 @@ public class Exec_EPFIF {
 		// On traite indépendamment chaque zone imu
 		for (int currentImu : regulation.keySet()) {
 
-			if(currentImu != 75038131) continue;
 
 			System.out.println("Numéro imu : " + currentImu);
 
