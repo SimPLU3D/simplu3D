@@ -62,9 +62,9 @@ public class Exec_EPFIF {
 	public final static String out_folder = folder + "out/";
 
 	public static void main(String[] args) throws Exception {
-		
-		MultipleBuildingsCuboid.ALLOW_INTERSECTING_CUBOID = true;
-		
+
+		MultipleBuildingsCuboid.ALLOW_INTERSECTING_CUBOID = false;
+
 		init();
 		// Dossier contenant IMU_MANTES_TEST.csv et les sous dossier par code
 		// IMU
@@ -74,8 +74,8 @@ public class Exec_EPFIF {
 		// On traite indépendamment chaque zone imu
 		for (int currentImu : regulation.keySet()) {
 
-
 			System.out.println("Numéro imu : " + currentImu);
+	
 
 			try {
 
@@ -547,11 +547,14 @@ public class Exec_EPFIF {
 		MultipleBuildingsCuboid oCB = new MultipleBuildingsCuboid();
 		PredicateIAUIDF<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new PredicateIAUIDF<>(
 				bPU, r1, r2);
+
+		
 		if (p.getBoolean("shapefilewriter")) {
 			new File(p.getString("result") + imu).mkdir();
 		}
 		// Lancement de l'optimisation avec unité foncière, paramètres,
 		// environnement, id et prédicat
+		
 		GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, pred, r1, r2, bP);
 		if (cc == null) {
 			return featC;
@@ -571,7 +574,7 @@ public class Exec_EPFIF {
 			double area = 0;
 
 			if (v.getValue().getFootprint() != null && (!v.getValue().getFootprint().isEmpty())) {
-				area =v.getValue().getFootprint().area();
+				area = v.getValue().getFootprint().area();
 			}
 
 			AttributeManager.addAttribute(feat, "Aire", area, "Double");

@@ -232,20 +232,20 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 			} else if (birth instanceof SimpleCuboid2) {
 
-				if (r2.getArt_71() != 2) {
+		
 					if (!checkBandRegulation(r2, birth))
 						return false;
-				}
+			
 
 			} else if (birth instanceof SimpleCuboid) {
 
-				if (r1.getArt_71() != 2) {
+		
 
 					if (!checkBandRegulation(r1, birth)) {
 						return false;
 					}
 
-				}
+		
 
 			} else {
 				System.out.println("Predicate IAUIDF - Unexpected class during object birth : "

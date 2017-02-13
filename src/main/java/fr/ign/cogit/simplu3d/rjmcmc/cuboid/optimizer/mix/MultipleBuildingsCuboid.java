@@ -273,6 +273,7 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 
 		// On récupère la bande numéro 1
 		IGeometry geomBand1 = r1.getGeomBande();
+		IGeometry geomBand2 = null;
 
 		////////////////////////
 		// On prépare les transforme
@@ -281,48 +282,62 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 		// On calcule la transforme 1 => il n'est pas initialisé s'il n'y a pas
 		// de bande 1
 		Transform transformBand1 = null;
-
+		ObjectBuilder<Cuboid> builderBand1 = null;
+		Class<?> c1 = null;
 		if (geomBand1 != null && !geomBand1.isEmpty()) {
 			if (band1Parallel) {
+
+				// S'il n'y a qu'une seule bande de constructibilité
+				// On peut demander à construire des bâtiments dans la bande
+				// derrière
+				// le bâtiment aligné à la voirie
+				// On va séparer en 2 en fonction de la largeur max du bâtiment
+				if (r2 == null) {
+
+					geomBand2 = geomBand1.difference(bP.getLineRoad().buffer(maxwid));
+
+					// Si la bande est toute petite alors, on ne met rien
+					if (geomBand2.area() < 5) {
+						geomBand2 = null;
+					}
+
+				}
+
 				// The center is included in a band equals to half of max
 				// allowed width according to alignment line
+
 				geomBand1 = geomBand1.intersection(bP.getLineRoad().buffer(maxwid / 2));
 
+				builderBand1 = new ParallelCuboidBuilder(bP.getLineRoad().toArray(), 1);
 				transformBand1 = new ParallelPolygonTransform(d2, v, geomBand1);
+				c1 =  ParallelCuboid.class;
 			} else {
 
 				geomBand1 = geomBand1.buffer(-minwid / 2);
 
 				transformBand1 = new TransformToSurface(d2, v, geomBand1);
+				builderBand1 = new SimpleCuboidBuilder();
+				c1 =  SimpleCuboid.class;
 			}
-		}
-
-		ObjectBuilder<Cuboid> builderBand1 = null;
-		// On calcule le builder 1
-		if (band1Parallel) {
-			builderBand1 = new ParallelCuboidBuilder(bP.getLineRoad().toArray(), 1);
-
-		} else {
-
-			builderBand1 = new SimpleCuboidBuilder();
 		}
 
 		ObjectBuilder<Cuboid> builderBand2 = null;
 
 		boolean band2parallel = false;
+		Class<?> c2 = null;
 
 		// On calcule la transforme 2 => il n'est pas initialisé s'il n'y a pas
 		// de bande 2
 		Transform transformBand2 = null;
 
 		// On récupère la seconde bande
-		IGeometry geomBand2 = null;
+
 		if (r2 != null) {
 			geomBand2 = r2.getGeomBande();
 		}
 
 		// On calcule la transforme 2 et le builder 2
-		if (geomBand2 != null && !geomBand2.isEmpty()) {
+		if (r2 != null && geomBand2 != null && !geomBand2.isEmpty()) {
 
 			if (r2 != null && r2.getArt_71() == 2) {
 
@@ -352,14 +367,24 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 
 				builderBand2 = new ParallelCuboidBuilder(ims.toArray(), 2);
 				transformBand2 = new ParallelPolygonTransform(d, v, geomBand2);
+				c2 = ParallelCuboid2.class;
 
 			} else {
 
 				geomBand2 = geomBand2.buffer(-minwid / 2);
 
-				builderBand2 = new SimpleCuboidBuilder2();
+				builderBand2 = new SimpleCuboidBuilder();
 				transformBand2 = new TransformToSurface(d, v, geomBand2);
+				c2 = SimpleCuboid2.class;
 			}
+		}
+
+		// Cas où il n'y a qu'une seule bande, mais qu'on implante des bâtiments
+		// derrière
+		if (r2 == null && geomBand2 != null) {
+			builderBand2 = new SimpleCuboidBuilder();
+			transformBand2 = new TransformToSurface(d, v, geomBand2);
+			c2 = SimpleCuboid.class;
 		}
 
 		////////////////////////
@@ -385,10 +410,18 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 		}
 
 		// Noyaux pour la bande 1
-		if (transformBand2 != null) {
+		if (r2 != null && transformBand2 != null) {
 			List<Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> lKernelsBand2 = new ArrayList<>();
 			lKernelsBand2 = getBande2Kernels(variate, nullView, p, transformBand2, builderBand2, band2parallel);
 			kernels.addAll(lKernelsBand2);
+		} else if (r2 == null && transformBand2 != null) { // Cas une seule
+															// bande et on bâtie
+															// derrière
+
+			List<Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> lKernelsBand2 = new ArrayList<>();
+			lKernelsBand2 = getBande1Kernels(variate, nullView, p, transformBand2, builderBand2, false);
+			kernels.addAll(lKernelsBand2);
+
 		} else {
 			p_simple = 0; // pas de transform on ne sera jamais dans la bande 2
 		}
@@ -405,7 +438,7 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 		// CuboidSampler objectSampler = new CuboidSampler(rng, p_simple,
 		// transformSimple, transformParallel);
 		MixCuboidSampler objectSampler = new MixCuboidSampler(rng, p_simple, transformBand1, transformBand2,
-				builderBand1, builderBand2);
+				builderBand1, builderBand2, c1, c2);
 
 		// poisson distribution
 		PoissonDistribution distribution = new PoissonDistribution(rng, p.getDouble("poisson"));
