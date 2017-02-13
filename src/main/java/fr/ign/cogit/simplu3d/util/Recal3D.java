@@ -37,6 +37,7 @@ import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.geoxygene.util.index.Tiling;
 import fr.ign.cogit.simplu3d.model.AbstractBuilding;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid;
 
@@ -166,10 +167,10 @@ System.out.println("Debout");
 
 		// In order to speed up calculation the cuboid are separated into
 		// connected sets of cuboid
-		List<List<? extends Cuboid>> lGroupe = CuboidGroupCreation.createGroup(lAB, connexionDistance);
+		List<List<AbstractSimpleBuilding>> lGroupe = CuboidGroupCreation.createGroup(lAB, connexionDistance);
 
 		int count = 0;
-		for (List<? extends Cuboid> groupe : lGroupe) {
+		for (List<AbstractSimpleBuilding> groupe : lGroupe) {
 
 			System.out.println("groupe " + (++count));
 			// The fusion is processed on each group
@@ -193,12 +194,12 @@ System.out.println("Debout");
 	 * @param threshold
 	 * @return
 	 */
-	public static IFeatureCollection<IFeature> cutGeometry(List<? extends Cuboid> lAB, double threshold) {
+	public static IFeatureCollection<IFeature> cutGeometry(List<AbstractSimpleBuilding> lAB, double threshold) {
 		// We initialize the height and the footprints of this cuboid
 		List<IOrientableSurface> lOS = new ArrayList<>();
 		List<Double> lHeight = new ArrayList<>();
 
-		for (Cuboid ab : lAB) {
+		for (AbstractSimpleBuilding ab : lAB) {
 
 			lOS.add(ab.getFootprint());
 			lHeight.add(ab.height(0, 1));
@@ -335,7 +336,7 @@ System.out.println("Debout");
 	 *            : Topologic map threshold
 	 * @return
 	 */
-	public static IFeatureCollection<IFeature> fusionneGeomByGroup(List<? extends Cuboid> lAB, double zMini, double thresholdTopoMap, double heightThreshold) {
+	public static IFeatureCollection<IFeature> fusionneGeomByGroup(List<AbstractSimpleBuilding> lAB, double zMini, double thresholdTopoMap, double heightThreshold) {
 
 	
 

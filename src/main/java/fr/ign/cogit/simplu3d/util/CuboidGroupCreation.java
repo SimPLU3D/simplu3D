@@ -3,7 +3,7 @@ package fr.ign.cogit.simplu3d.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 
 public class CuboidGroupCreation {
 	/**
@@ -14,22 +14,23 @@ public class CuboidGroupCreation {
 	 *            : minimal distance to consider 2 boxes as connected
 	 * @return
 	 */
-	public static List<List<? extends Cuboid>> createGroup(List<? extends Cuboid> lBatIn, double connexionDistance) {
+	public static List<List<AbstractSimpleBuilding>> createGroup(List<? extends AbstractSimpleBuilding> lBatIn,
+			double connexionDistance) {
 
-		List<List<? extends Cuboid>> listGroup = new ArrayList<>();
+		List<List<AbstractSimpleBuilding>> listGroup = new ArrayList<>();
 
 		while (!lBatIn.isEmpty()) {
 
-			Cuboid batIni = lBatIn.remove(0);
+			AbstractSimpleBuilding batIni = lBatIn.remove(0);
 
-			List<Cuboid> currentGroup = new ArrayList<>();
+			List<AbstractSimpleBuilding> currentGroup = new ArrayList<>();
 			currentGroup.add(batIni);
 
 			int nbElem = lBatIn.size();
 
 			bouclei: for (int i = 0; i < nbElem; i++) {
 
-				for (Cuboid batTemp : currentGroup) {
+				for (AbstractSimpleBuilding batTemp : currentGroup) {
 
 					if (lBatIn.get(i).getFootprint().distance(batTemp.getFootprint()) < connexionDistance) {
 
@@ -46,7 +47,6 @@ public class CuboidGroupCreation {
 
 			listGroup.add(currentGroup);
 		}
-
 
 		return listGroup;
 

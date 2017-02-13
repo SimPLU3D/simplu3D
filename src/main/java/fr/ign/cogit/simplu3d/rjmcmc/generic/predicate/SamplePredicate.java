@@ -17,6 +17,7 @@ import fr.ign.cogit.simplu3d.model.Building;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.ParcelBoundary;
 import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
 import fr.ign.cogit.simplu3d.util.CuboidGroupCreation;
@@ -164,6 +165,7 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 	 */
 	@Override
 	public boolean check(C c, M m) {
+
 
 		// Il s'agit des objets de la classe Cuboid
 		List<O> lO = m.getBirth();
@@ -370,12 +372,12 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 
 		}
 
-		List<Cuboid> lBatIni = new ArrayList<>();
+		List<AbstractSimpleBuilding> lBatIni = new ArrayList<>();
 		for (ISimPLU3DPrimitive s : lCuboid) {
-			lBatIni.add((Cuboid) s);
+			lBatIni.add((AbstractSimpleBuilding) s);
 		}
 
-		List<List<? extends Cuboid>> groupes = CuboidGroupCreation.createGroup(lBatIni, 0.5);
+		List<List<AbstractSimpleBuilding>> groupes = CuboidGroupCreation.createGroup(lBatIni, 0.5);
 
 		if (groupes.size() > 1) {
 			return false;

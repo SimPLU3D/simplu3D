@@ -19,6 +19,7 @@ import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.ParcelBoundary;
 import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.util.CuboidGroupCreation;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
@@ -200,7 +201,7 @@ public class UB14PredicateFull<O extends Cuboid, C extends AbstractGraphConfigur
     //    return false;
     //}
 
-    List<List<? extends Cuboid>> groupes = CuboidGroupCreation.createGroup(lBatIni, 0.5);
+    List<List<AbstractSimpleBuilding>> groupes = CuboidGroupCreation.createGroup(lBatIni, 0.5);
 
     if (groupes.size() > 1) {
       return false;

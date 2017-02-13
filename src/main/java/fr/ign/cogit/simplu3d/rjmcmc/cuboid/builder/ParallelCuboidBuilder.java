@@ -69,7 +69,7 @@ public class ParallelCuboidBuilder implements ObjectBuilder<Cuboid>{
 
 	@Override
 	public int size() {
-		return 4;
+		return 6;
 	}
 
 	@Override
@@ -78,6 +78,9 @@ public class ParallelCuboidBuilder implements ObjectBuilder<Cuboid>{
 		coordinates[0] = pc.centerx;
 		coordinates[1] = pc.centery;
 		coordinates[2] = pc.length;
-		coordinates[3] = pc.height;
+		coordinates[3] = pc.width;
+		coordinates[4] = pc.height;
+		coordinates[5] = pc.orientation;
+
 	}
 }
