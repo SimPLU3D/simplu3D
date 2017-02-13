@@ -24,8 +24,8 @@ public class ParallelPolygonTransformTest {
     //   .makeGeOxygene("LINESTRING ( 41.17690621518163 -1.7138068416609316, 39.98850675084454 -16.47296147939581, 20.092399589846092 -22.60663613403888 )");
    // ILineString limit2 = (ILineString) WktGeOxygene
     //     .makeGeOxygene("LINESTRING ( 30.596317435922344 9.7484976692033, 21.54914732032382 4.036513147066944, 16.83388492956696 -2.4038452403082764 )");
-    double[] d = new double[] { 0, 0, 1, 3, 3, 0 };
-    double[] v = new double[] { 0, 0, 5, 0, 30, 0 };
+    double[] d = new double[] { 0, 0, 1, 3, 3,  0 };
+    double[] v = new double[] { 0, 0, 5, 30, 0,  0 };
 
     t = new ParallelPolygonTransform(d, v, polygon);
   }
