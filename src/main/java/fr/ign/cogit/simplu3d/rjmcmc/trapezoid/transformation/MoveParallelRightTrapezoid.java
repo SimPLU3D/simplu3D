@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.rjmcmc.trapezoid.transform.birth.parallelTrapezoid;
+package fr.ign.cogit.simplu3d.rjmcmc.trapezoid.transformation;
 
 import fr.ign.rjmcmc.kernel.Transform;
 

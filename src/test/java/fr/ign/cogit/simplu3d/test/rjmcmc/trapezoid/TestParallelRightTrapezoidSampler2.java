@@ -32,6 +32,7 @@ import fr.ign.random.Random;
 import fr.ign.rjmcmc.acceptance.MetropolisAcceptance;
 import fr.ign.rjmcmc.distribution.PoissonDistribution;
 import fr.ign.rjmcmc.energy.ConstantEnergy;
+import fr.ign.rjmcmc.kernel.ChangeValue;
 import fr.ign.rjmcmc.kernel.Kernel;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.SimpleTemperature;
@@ -81,21 +82,42 @@ public class TestParallelRightTrapezoidSampler2 {
 		double orientationMax = 1;
 
 		int nbSample = 50;
+		
+		ParallelRightTrapezoidBuilder2 builder = new ParallelRightTrapezoidBuilder2(limits, polygon);
 
 		UniformBirth<ParallelTrapezoid2> birth = new UniformBirth<ParallelTrapezoid2>(rng,
 				new ParallelTrapezoid2(xmin, ymin, length1min, length2min, length3min, widhtmin, heightMin,
 						orientationMin),
 				new ParallelTrapezoid2(xmax, ymax, length1max, length2max, length3max, widhtmax, heightMax,
 						orientationMax),
-				new ParallelRightTrapezoidBuilder2(limits, polygon), ParallelTrapezoidTransform.class,
+				builder, ParallelTrapezoidTransform.class,
 				polygon.buffer(-widhtmax));
 
 		List<Kernel<GraphConfiguration<ParallelTrapezoid2>, BirthDeathModification<ParallelTrapezoid2>>> kernels = new ArrayList<>(
 				3);
 		KernelFactory<ParallelTrapezoid2, GraphConfiguration<ParallelTrapezoid2>, BirthDeathModification<ParallelTrapezoid2>> factory = new KernelFactory<>();
 		// TODO Use a KernelProposalRatio to propose only birth when size is 0
+		
+		
 		kernels.add(factory.make_uniform_birth_death_kernel(rng, new ParallelRightTrapezoidBuilder2(limits, polygon),
 				birth, 1.0, 1.0, "BirthDeath"));
+		
+		kernels.add(factory.make_uniform_modification_kernel(rng, builder, new ChangeValue(0.5, 6, 2), 0.2,
+				"ChgLength"));
+		
+		
+		kernels.add(factory.make_uniform_modification_kernel(rng, builder, new ChangeValue(0.5, 6, 3), 0.2,
+				"ChgWidth"));
+
+
+		kernels.add(factory.make_uniform_modification_kernel(rng, builder, new ChangeValue(0.5, 6, 4), 0.2,
+				"ChgHeight"));
+
+		kernels.add(factory.make_uniform_modification_kernel(rng, builder, new ChangeValue(0.5, 6, 5), 0.2,
+				"ChgAbscisse"));
+
+		
+		
 
 		DirectSampler<ParallelTrapezoid2, GraphConfiguration<ParallelTrapezoid2>, BirthDeathModification<ParallelTrapezoid2>> ds = new DirectSampler<>(
 				distribution, birth);

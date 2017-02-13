@@ -77,7 +77,7 @@ public class BasicSimulatorTrapezoid {
 	// [building_footprint_rectangle_cli_main
 	public static void main(String[] args) throws Exception {
 
-		boolean triangle_or_cuboid = false;
+		boolean triangle_or_cuboid = true;
 
 		init();
 
@@ -92,9 +92,9 @@ public class BasicSimulatorTrapezoid {
 		// Recul par rapport à la voirie
 		double distReculVoirie = 0.0;
 		// Recul par rapport au fond de la parcelle
-		double distReculFond = 2;
+		double distReculFond = 0;
 		// Recul par rapport aux bordures latérales
-		double distReculLat = 2;
+		double distReculLat = 0;
 		// Distance entre 2 boîtes d'une même parcelle
 		double distanceInterBati = 5;
 		// CES maximal (2 ça ne sert à rien)
@@ -125,9 +125,7 @@ public class BasicSimulatorTrapezoid {
 				count++;
 			}
 
-			if (count == 0) {
-				continue;
-			}
+			
 
 			RandomGenerator rng = Random.random();
 			if (triangle_or_cuboid) {
@@ -176,8 +174,7 @@ public class BasicSimulatorTrapezoid {
 
 			}
 			
-			break;
-
+			
 		}
 
 		// On écrit en sortie le shapefile
