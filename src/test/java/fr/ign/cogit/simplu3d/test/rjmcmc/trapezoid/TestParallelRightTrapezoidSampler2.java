@@ -64,7 +64,7 @@ public class TestParallelRightTrapezoidSampler2 {
 		double ymax = env.getUpperCorner().getY();
 
 		double length1min = 1;
-		double length1max = 2;
+		double length1max = 15;
 
 		double length2min = 1;
 		double length2max = 15;

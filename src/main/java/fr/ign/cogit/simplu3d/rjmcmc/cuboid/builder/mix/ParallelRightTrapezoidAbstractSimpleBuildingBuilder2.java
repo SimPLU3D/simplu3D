@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.rjmcmc.trapezoid.builder;
+package fr.ign.cogit.simplu3d.rjmcmc.cuboid.builder.mix;
 
 import java.util.List;
 
@@ -21,17 +21,18 @@ import fr.ign.cogit.geoxygene.convert.FromGeomToLineString;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.geometry.ParallelTrapezoid2;
 import fr.ign.mpp.kernel.ObjectBuilder;
 
-public class ParallelRightTrapezoidBuilder2 implements ObjectBuilder<ParallelTrapezoid2> {
+public class ParallelRightTrapezoidAbstractSimpleBuildingBuilder2 implements ObjectBuilder<AbstractSimpleBuilding> {
 
 	GeometryFactory factory;
 	MultiLineString limits;
 	IMultiCurve<ILineString> limitsGeox;
 	double factMult = 200;
 
-	public ParallelRightTrapezoidBuilder2(IGeometry[] limits, IGeometry polygon) {
+	public ParallelRightTrapezoidAbstractSimpleBuildingBuilder2(IGeometry[] limits, IGeometry polygon) {
 		super();
 		factory = new GeometryFactory();
 		LineString[] lineStrings = new LineString[limits.length];
@@ -62,12 +63,13 @@ public class ParallelRightTrapezoidBuilder2 implements ObjectBuilder<ParallelTra
 	}
 
 	@Override
-	public ParallelTrapezoid2 build(double[] val1) {
+	public AbstractSimpleBuilding build(double[] val1) {
 
 		IDirectPosition dpOrientation = Operateurs.pointEnAbscisseCurviligne(limitsGeox, val1[5] * limitsGeox.length());
 
 		IDirectPosition centre = new DirectPosition(val1[0], val1[1]);
 
+		
 		Angle angleOr = new Angle(dpOrientation, centre);
 		// angleOr.ajoute(new Angle(Math.PI/2));
 		// angleOr.ajoute(new Angle(Math.PI/2));
@@ -76,7 +78,7 @@ public class ParallelRightTrapezoidBuilder2 implements ObjectBuilder<ParallelTra
 		double orientation = angleOr.getValeur();
 
 		double a = Math.cos(orientation) * val1[3] / 2;
-		double b = Math.sin(orientation) * val1[3]/ 2;
+		double b = Math.sin(orientation) * val1[3] / 2;
 		/*
 		 * 
 		 * RightTrapezoid rt = new RightTrapezoid(val1[0], val1[1], val1[2], 0,
@@ -144,8 +146,9 @@ public class ParallelRightTrapezoidBuilder2 implements ObjectBuilder<ParallelTra
 		if (length2 == Double.POSITIVE_INFINITY || length3 == Double.POSITIVE_INFINITY) {
 			length2 = 0;
 			length3 = 0;
-			return new ParallelTrapezoid2(val1[0], val1[1],0, length3, length2, 0,0,0);
+			return new ParallelTrapezoid2(val1[0], val1[1], 0, length3, length2, 0, 0, 0);
 		}
+
 
 		ParallelTrapezoid2 t2 = new ParallelTrapezoid2(val1[0], val1[1], val1[2], length3, length2, val1[3], val1[4],
 				val1[5]);
@@ -154,16 +157,8 @@ public class ParallelRightTrapezoidBuilder2 implements ObjectBuilder<ParallelTra
 	}
 
 	@Override
-	public void setCoordinates(ParallelTrapezoid2 t, double[] val1) {
-		val1[0] = t.centerx;
-		val1[1] = t.centery;
-		val1[2] = t.length1;
-		// val1[3] = t.length2;
-		// val1[3] = t.length3;
-		val1[3] = t.width;
-		val1[4] = t.height;
-		val1[5] = t.abscisse;
-
+	public void setCoordinates(AbstractSimpleBuilding t, double[] val1) {
+			t.setCoordinates(val1);
 	}
 
 	@Override

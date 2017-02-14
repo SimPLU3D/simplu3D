@@ -26,7 +26,6 @@ import fr.ign.cogit.geoxygene.util.conversion.JtsGeOxygene;
 import fr.ign.cogit.simplu3d.model.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.Environnement;
-import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
 import fr.ign.geometry.IntersectionArea;
 import fr.ign.geometry.Primitive;
 import fr.ign.geometry.Rectangle2D;
@@ -47,7 +46,7 @@ import fr.ign.geometry.Rectangle2D;
  * 
  * @version 1.0
  **/
-public class Cuboid extends AbstractSimpleBuilding implements ISimPLU3DPrimitive {
+public class Cuboid extends AbstractSimpleBuilding {
 
 	public Cuboid(double centerx, double centery, double length, double width, double height, double orientation) {
 		super();
@@ -64,13 +63,11 @@ public class Cuboid extends AbstractSimpleBuilding implements ISimPLU3DPrimitive
 
 	@Override
 	public double intersectionArea(Primitive p) {
-		
-		
-		if(p instanceof Cuboid){
+
+		if (p instanceof Cuboid) {
 			return this.getRectangle2D().intersectionArea(((Cuboid) p).getRectangle2D());
 		}
-		
-		
+
 		return this.toGeometry().intersection(p.toGeometry()).getArea();
 	}
 
@@ -119,6 +116,20 @@ public class Cuboid extends AbstractSimpleBuilding implements ISimPLU3DPrimitive
 	public Object[] getArray() {
 		return new Object[] { this.centerx, this.centery, this.length, this.width, this.height, this.orientation };
 	}
+	
+	
+
+	@Override
+	public void setCoordinates(double[] val1) {
+		val1[0] =		 this.centerx;
+		 val1[1] =  this.centery; 
+		 val1[2] =  this.length;
+		 val1[3] =  this.width;
+		 val1[4] = this.height ;
+		 val1[5] = this.orientation ;
+
+	}
+	
 
 	@Override
 	public int size() {
@@ -433,5 +444,6 @@ public class Cuboid extends AbstractSimpleBuilding implements ISimPLU3DPrimitive
 
 		return volume;
 	}
+
 
 }

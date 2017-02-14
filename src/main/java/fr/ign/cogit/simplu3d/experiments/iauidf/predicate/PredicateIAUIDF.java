@@ -18,18 +18,18 @@ import fr.ign.cogit.simplu3d.model.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.ParcelBoundary;
 import fr.ign.cogit.simplu3d.model.ParcelBoundarySide;
 import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.ParallelCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.ParallelCuboid2;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.SimpleCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.SimpleCuboid2;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.mix.MultipleBuildingsCuboid;
-import fr.ign.geometry.SquaredDistance;
+import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.geometry.ParallelTrapezoid2;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
 
-public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>>
+public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>>
 		implements ConfigurationModificationPredicate<C, M> {
 
 	private BasicPropertyUnit currentBPU;
@@ -157,6 +157,8 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 	@Override
 	public boolean check(C c, M m) {
+		
+
 
 		// Pour produire des boîtes séparées et vérifier que la distance inter
 		// bâtiment est respectée
@@ -167,6 +169,11 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 				&& (!checkDistanceInterBuildings(c, m, r1.getArt_8()))) { // r1.getArt_8()
 			return false;
 		}
+		
+		
+
+	
+		
 
 		O birth = null;
 
@@ -205,7 +212,8 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 		if (birth != null) {
 
-			if (birth instanceof ParallelCuboid) {
+			if (birth instanceof ParallelCuboid || birth instanceof ParallelTrapezoid2) {
+			
 
 				if (r1.getArt_71() != 2) {
 
@@ -232,20 +240,14 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 			} else if (birth instanceof SimpleCuboid2) {
 
-		
-					if (!checkBandRegulation(r2, birth))
-						return false;
-			
+				if (!checkBandRegulation(r2, birth))
+					return false;
 
 			} else if (birth instanceof SimpleCuboid) {
 
-		
-
-					if (!checkBandRegulation(r1, birth)) {
-						return false;
-					}
-
-		
+				if (!checkBandRegulation(r1, birth)) {
+					return false;
+				}
 
 			} else {
 				System.out.println("Predicate IAUIDF - Unexpected class during object birth : "
@@ -259,6 +261,8 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 	}
 
 	public boolean checkParcelRegulation(Regulation r, C c, M m) {
+
+
 
 		// On fait la liste de tous les objets après modification
 		List<O> lCuboid = new ArrayList<>();
@@ -288,8 +292,9 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		// On ajoute tous les nouveaux objets
 		lCuboid.addAll(m.getBirth());
 
+		// double shonBuilt = 0;
 		double areaBuilt = 0;
-		double shonBuilt = 0;
+		
 
 		for (O cubTemp : lCuboid) {
 			if (cubTemp == cuboidDead) {
@@ -297,10 +302,10 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 			}
 
 			double area = cubTemp.getArea(); // .toGeometry().getArea();
-			int nbEtage = 1 + (int) (cubTemp.height / 3);
+		//	int nbEtage = 1 + (int) (cubTemp.height / 3);
 
 			areaBuilt += area;
-			shonBuilt += area * nbEtage;
+		//	shonBuilt += area * nbEtage;
 
 		}
 
@@ -328,16 +333,18 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 		// ART_14 Coefficient d'occupation du sol 88= non renseignable, 99= non
 		// réglementé
-		// ART_13 Part minimale d'espaces libre de toute construction exprimée
-		// par rapport à la surface totale de la parcelle Valeur comprise de 0 à
-		// 1, 88 si non renseignable, 99 si non règlementé
+		// Normalement déssactivée, demande de l'IAU
+		/*
 		double reg14 = r.getArt_14();
 
 		if (reg14 != 0.0 & reg14 != 99 & reg14 != 88) {
 			if (shonBuilt / areaBPU > reg14) {
 				return false;
 			}
-		}
+		}*/
+
+		
+		
 
 		// EXTRA RULE : la distance entre deux bâtiments sur une même parcelle
 		// est égale à la hauteur divisée par deux du bâtiment le plus haut
@@ -354,10 +361,10 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 		hMax = hMax * 0.5;
 
 		for (int i = 0; i < nbCuboid; i++) {
-			Cuboid cI = lCuboid.get(i);
+			AbstractSimpleBuilding cI = lCuboid.get(i);
 
 			for (int j = i + 1; j < nbCuboid; j++) {
-				Cuboid cJ = lCuboid.get(j);
+				AbstractSimpleBuilding cJ = lCuboid.get(j);
 
 				double distance = cI.getFootprint().distance(cJ.getFootprint());
 
@@ -662,10 +669,9 @@ public class PredicateIAUIDF<O extends Cuboid, C extends AbstractGraphConfigurat
 
 				// On prend en compte la hauteur max si elle est supérieure à la
 				// contrainte de distance
-				double distComp = Math.max(distanceInterBati, Math.max(ab.height(), batTemp.height()));
+				double distComp = Math.max(distanceInterBati, Math.max(ab.getHeight(), batTemp.getHeight()));
 
-				if ((new SquaredDistance(ab.getRectangle2D(), batTemp.getRectangle2D())).getSquaredDistance() < distComp
-						* distComp) {
+				if (ab.getFootprint().distance(batTemp.getFootprint()) < distComp) {
 					return false;
 				}
 

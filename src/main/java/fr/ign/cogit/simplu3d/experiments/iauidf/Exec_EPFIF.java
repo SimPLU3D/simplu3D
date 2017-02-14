@@ -35,8 +35,10 @@ import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.model.ParcelBoundarySide;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.mix.MultipleBuildingsCuboid;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.mix.MultipleBuildingsTrapezoidCuboid;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.mpp.configuration.GraphVertex;
@@ -52,6 +54,8 @@ public class Exec_EPFIF {
 
 	public static boolean DEBUG_MODE = false;
 	private static Logger log = Logger.getLogger(Exec_EPFIF.class);
+
+	private static boolean USE_DEMO_SAMPLER = true;
 
 	public static List<IMultiSurface<IOrientableSurface>> lMS = new ArrayList<>();
 	public static List<IMultiSurface<IOrientableSurface>> debugSurface = new ArrayList<>();
@@ -73,9 +77,12 @@ public class Exec_EPFIF {
 
 		// On traite indépendamment chaque zone imu
 		for (int currentImu : regulation.keySet()) {
+			
+			if(currentImu != 91009675){
+				continue;
+			}
 
 			System.out.println("Numéro imu : " + currentImu);
-	
 
 			try {
 
@@ -543,18 +550,37 @@ public class Exec_EPFIF {
 			return featC;
 		}
 
+		if (USE_DEMO_SAMPLER) {
+
+			featC.addAll(simulRegulationByBasicPropertyUnitFinalTrapezoid(env, bPU, imu, r1, r2, p, bP));
+
+		} else {
+
+			featC.addAll(simulRegulationByBasicPropertyUnitFinal(env, bPU, imu, r1, r2, p, bP));
+		}
+
+		return featC;
+	}
+
+	//
+
+	private static IFeatureCollection<IFeature> simulRegulationByBasicPropertyUnitFinal(Environnement env,
+			BasicPropertyUnit bPU, int imu, Regulation r1, Regulation r2, Parameters p, BandProduction bP)
+			throws Exception {
+
+		IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
+
 		// Création du Sampler (qui va générer les propositions de solutions)
 		MultipleBuildingsCuboid oCB = new MultipleBuildingsCuboid();
 		PredicateIAUIDF<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new PredicateIAUIDF<>(
 				bPU, r1, r2);
 
-		
 		if (p.getBoolean("shapefilewriter")) {
 			new File(p.getString("result") + imu).mkdir();
 		}
 		// Lancement de l'optimisation avec unité foncière, paramètres,
 		// environnement, id et prédicat
-		
+
 		GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, pred, r1, r2, bP);
 		if (cc == null) {
 			return featC;
@@ -581,7 +607,57 @@ public class Exec_EPFIF {
 
 			featC.add(feat);
 		}
+
 		return featC;
+
+	}
+
+	private static IFeatureCollection<IFeature> simulRegulationByBasicPropertyUnitFinalTrapezoid(Environnement env,
+			BasicPropertyUnit bPU, int imu, Regulation r1, Regulation r2, Parameters p, BandProduction bP)
+			throws Exception {
+
+		IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
+
+		// Création du Sampler (qui va générer les propositions de solutions)
+		MultipleBuildingsTrapezoidCuboid oCB = new MultipleBuildingsTrapezoidCuboid();
+		PredicateIAUIDF<AbstractSimpleBuilding, GraphConfiguration<AbstractSimpleBuilding>, BirthDeathModification<AbstractSimpleBuilding>> pred = new PredicateIAUIDF<>(
+				bPU, r1, r2);
+
+		if (p.getBoolean("shapefilewriter")) {
+			new File(p.getString("result") + imu).mkdir();
+		}
+		// Lancement de l'optimisation avec unité foncière, paramètres,
+		// environnement, id et prédicat
+
+		GraphConfiguration<AbstractSimpleBuilding> cc = oCB.process(bPU, p, env, pred, r1, r2, bP);
+		if (cc == null) {
+			return featC;
+		}
+
+		// On liste les boîtes simulées et on ajoute les attributs nécessaires
+		for (GraphVertex<AbstractSimpleBuilding> v : cc.getGraph().vertexSet()) {
+
+			IFeature feat = new DefaultFeature(v.getValue().generated3DGeom());
+			// On ajoute des attributs aux entités (dimension des objets)
+			AttributeManager.addAttribute(feat, "Longueur", Math.max(v.getValue().length, v.getValue().width),
+					"Double");
+			AttributeManager.addAttribute(feat, "Largeur", Math.min(v.getValue().length, v.getValue().width), "Double");
+			AttributeManager.addAttribute(feat, "Hauteur", v.getValue().height, "Double");
+			AttributeManager.addAttribute(feat, "Rotation", v.getValue().orientation, "Double");
+			AttributeManager.addAttribute(feat, "ID_PARC", bPU.getId(), "Integer");
+			double area = 0;
+
+			if (v.getValue().getFootprint() != null && (!v.getValue().getFootprint().isEmpty())) {
+				area = v.getValue().getFootprint().area();
+			}
+
+			AttributeManager.addAttribute(feat, "Aire", area, "Double");
+
+			featC.add(feat);
+		}
+
+		return featC;
+
 	}
 
 	// Affiche les réglements chargés

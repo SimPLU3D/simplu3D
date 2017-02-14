@@ -95,6 +95,28 @@ public class RightTrapezoid extends AbstractSimpleBuilding implements ISimPLU3DP
 		return new double[] { this.centerx, this.centery, this.length1, this.length2, this.length3, this.width,
 				this.height, this.orientation };
 	}
+	
+	
+	
+	
+	
+	@Override
+	public void setCoordinates(double[] val1) {
+		
+		this.centerx = val1[0] ; 
+		this.centery= val1[1] ;  
+		this.length1= val1[2] ;  
+		this.length2= val1[3] ;  
+		this.length3= val1[4] ;  
+		this.width= val1[5] ; 
+		this.height= val1[6];  
+		this.orientation = val1[7]; 
+	}
+
+	
+	
+	
+	
 
 	private static GeometryFactory geomFact = new GeometryFactory();
 	Polygon geomJTS = null;
@@ -319,5 +341,6 @@ public class RightTrapezoid extends AbstractSimpleBuilding implements ISimPLU3DP
 
 		return volume;
 	}
+
 
 }

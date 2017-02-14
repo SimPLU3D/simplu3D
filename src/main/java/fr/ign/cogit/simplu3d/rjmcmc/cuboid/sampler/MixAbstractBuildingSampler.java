@@ -2,27 +2,28 @@ package fr.ign.cogit.simplu3d.rjmcmc.cuboid.sampler;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.mpp.kernel.ObjectBuilder;
 import fr.ign.mpp.kernel.ObjectSampler;
 import fr.ign.rjmcmc.kernel.Transform;
 import fr.ign.rjmcmc.kernel.Variate;
 
-public class MixCuboidSampler implements ObjectSampler<Cuboid> {
+public class MixAbstractBuildingSampler implements ObjectSampler<AbstractSimpleBuilding> {
 
 	RandomGenerator engine;
 	double p_simple;
-	Cuboid object;
+	AbstractSimpleBuilding object;
 	Variate variate;
 	Transform transformBand2;
 	Transform transformBand1;
-	ObjectBuilder<Cuboid> builder1;
-	ObjectBuilder<Cuboid> builder2;
+	ObjectBuilder<AbstractSimpleBuilding> builder1;
+	ObjectBuilder<AbstractSimpleBuilding> builder2;
 	Class<?> c1;
 	Class<?> c2;
 
-	public MixCuboidSampler(RandomGenerator e, double p_simple, Transform transformBand1, Transform transformBand2,
-			ObjectBuilder<Cuboid> builder1, ObjectBuilder<Cuboid> builder2, Class<?> c1, Class<?> c2) {
+	public MixAbstractBuildingSampler(RandomGenerator e, double p_simple, Transform transformBand1, Transform transformBand2,
+			ObjectBuilder<AbstractSimpleBuilding> builder1, ObjectBuilder<AbstractSimpleBuilding> builder2,
+			Class<? extends AbstractSimpleBuilding> c1, Class<? extends AbstractSimpleBuilding> c2) {
 		this.engine = e;
 		this.p_simple = p_simple;
 		this.transformBand2 = transformBand2;
@@ -55,7 +56,7 @@ public class MixCuboidSampler implements ObjectSampler<Cuboid> {
 	}
 
 	@Override
-	public double pdf(Cuboid t) {
+	public double pdf(AbstractSimpleBuilding t) {
 		if (c2 != null && c2.isInstance(t)) {
 			double[] val1 = new double[builder2.size()];
 			builder2.setCoordinates(t, val1);
@@ -77,7 +78,7 @@ public class MixCuboidSampler implements ObjectSampler<Cuboid> {
 	}
 
 	@Override
-	public Cuboid getObject() {
+	public AbstractSimpleBuilding getObject() {
 		return this.object;
 	}
 
