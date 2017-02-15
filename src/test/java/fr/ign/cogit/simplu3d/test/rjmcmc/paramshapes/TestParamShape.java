@@ -1,6 +1,5 @@
 package fr.ign.cogit.simplu3d.test.rjmcmc.paramshapes;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +12,6 @@ import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
-import fr.ign.cogit.geoxygene.sig3d.semantic.VectorLayer;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ParseException;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
@@ -22,7 +20,6 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth.TransformToSurfa
 import fr.ign.cogit.simplu3d.rjmcmc.generic.sampler.GreenSamplerBlockTemperature;
 import fr.ign.cogit.simplu3d.rjmcmc.paramshp.builder.LBuildingWithRoofBuilder;
 import fr.ign.cogit.simplu3d.rjmcmc.paramshp.geometry.impl.LBuildingWithRoof;
-import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.geometry.RightTrapezoid;
 import fr.ign.mpp.DirectSampler;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
@@ -33,7 +30,6 @@ import fr.ign.random.Random;
 import fr.ign.rjmcmc.acceptance.MetropolisAcceptance;
 import fr.ign.rjmcmc.distribution.PoissonDistribution;
 import fr.ign.rjmcmc.energy.ConstantEnergy;
-import fr.ign.rjmcmc.kernel.ChangeValue;
 import fr.ign.rjmcmc.kernel.Kernel;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.SimpleTemperature;
@@ -89,9 +85,6 @@ public class TestParamShape {
 				new LBuildingWithRoof(xmax, ymax, l1max, l2max, h1max, h2max, heightToTopgMax, orientationMax,
 						heightguterrMax, shiftMax),
 				builder, TransformToSurface.class, (IGeometry) polygon);
-		
-		
-		
 
 		List<Kernel<GraphConfiguration<LBuildingWithRoof>, BirthDeathModification<LBuildingWithRoof>>> kernels = new ArrayList<>(
 				3);
@@ -99,8 +92,6 @@ public class TestParamShape {
 		// TODO Use a KernelProposalRatio to propose only birth when size is 0
 
 		kernels.add(factory.make_uniform_birth_death_kernel(rng, builder, birth, 1.0, 1.0, "BirthDeath"));
-
-
 
 		DirectSampler<LBuildingWithRoof, GraphConfiguration<LBuildingWithRoof>, BirthDeathModification<LBuildingWithRoof>> ds = new DirectSampler<>(
 				distribution, birth);
@@ -122,8 +113,6 @@ public class TestParamShape {
 		System.out.println(featColl.size());
 		ShapefileWriter.write(featColl, "test_tra.shp");
 
-
-
 	}
 
 	public static IFeatureCollection<IFeature> exportColl(GraphConfiguration<LBuildingWithRoof> gC) {
@@ -135,8 +124,6 @@ public class TestParamShape {
 			// On ajoute des attributs aux entités (dimension des objets)
 			AttributeManager.addAttribute(feat, "x", v.getValue().centerx, "Double");
 			AttributeManager.addAttribute(feat, "y", v.getValue().centery, "Double");
-
-
 
 			featC.add(feat);
 
