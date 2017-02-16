@@ -104,8 +104,8 @@ public class LBuildingWithRoof extends AbstractSimpleBuilding {
 
 	@Override
 	public double getVolume() {
-		return this.getArea() * this.getHeight() - this.shift * (this.height - this.hgutter) * this.l1 / 3
-				- this.shift * (this.height - this.hgutter) * this.l2 / 3;
+		return this.getArea() * this.getHeight() - (this.shift * this.height * this.l1 / 3)
+				- (this.shift * this.height * this.h1 / 3);
 	}
 
 	@Override
@@ -116,7 +116,7 @@ public class LBuildingWithRoof extends AbstractSimpleBuilding {
 
 	@Override
 	public double getArea() {
-		return this.l2 * this.h1 + (this.l1 - this.l2) * this.h2;
+		return (this.l1 + this.l2) * (this.h1 + this.h2);
 	}
 
 	private Polygon geomJTS;
@@ -131,14 +131,19 @@ public class LBuildingWithRoof extends AbstractSimpleBuilding {
 					(IDirectPosition) new DirectPosition(centerx, centery + h1),
 					(IDirectPosition) new DirectPosition(centerx - l2, centery + h1),
 					(IDirectPosition) new DirectPosition(centerx - l2, centery - h2),
-					(IDirectPosition) new DirectPosition(centerx + l1 + l2, centery - h2),
-					(IDirectPosition) new DirectPosition(centerx + l1 + l2, centery),
+					(IDirectPosition) new DirectPosition(centerx + l1 , centery - h2),
+					(IDirectPosition) new DirectPosition(centerx + l1 , centery),
 					(IDirectPosition) new DirectPosition(centerx, centery)))));
 
 			pol = CommonAlgorithms.rotation(pol, new DirectPosition(centerx, centery), this.orientation);
 
 			try {
 				this.geomJTS = (Polygon) JtsGeOxygene.makeJtsGeom(pol);
+				
+				
+				if(this.geomJTS == null){
+					System.out.println("null ? ");
+				}
 
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -361,7 +366,7 @@ public class LBuildingWithRoof extends AbstractSimpleBuilding {
 		val1[4] = this.h1;
 		val1[5] = this.h2;
 		val1[6] = this.height;
-		val1[7]= this.orientation;
+		val1[7]=	 this.orientation;
 		val1[8]=  this.hgutter;
 		val1[9] = this.shift;
 

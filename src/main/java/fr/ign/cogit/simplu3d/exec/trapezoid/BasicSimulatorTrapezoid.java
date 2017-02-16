@@ -12,19 +12,19 @@ import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
-import fr.ign.cogit.simplu3d.experiments.iauidf.predicate.PredicateIAUIDF;
 import fr.ign.cogit.simplu3d.importer.CadastralParcelLoader;
 import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.model.ParcelBoundary;
-import fr.ign.cogit.simplu3d.model.ParcelBoundarySide;
 import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.paralellcuboid.ParallelCuboidOptimizer;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.optimizer.DefaultSimPLU3DOptimizer;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.predicate.SamplePredicate;
+import fr.ign.cogit.simplu3d.rjmcmc.paramshp.geometry.impl.LBuildingWithRoof;
+import fr.ign.cogit.simplu3d.rjmcmc.paramshp.optimizer.OptimisedLShapeDirectRejection;
 import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.geometry.ParallelTrapezoid2;
 import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.optimizer.OptimisedParallelTrapezoidFinalDirectRejection;
 import fr.ign.mpp.configuration.BirthDeathModification;
@@ -55,19 +55,20 @@ import fr.ign.random.Random;
  */
 public class BasicSimulatorTrapezoid {
 
-	// Initialisation des attributs différents du schéma de base
-	// et le fichier de paramètre commun à toutes les simulations
 	public static void init() throws Exception {
-//		RoadReader.ATT_NOM_RUE = "NOM_VOIE_G";
-//		RoadReader.ATT_LARGEUR = "LARGEUR";
-//		RoadReader.ATT_TYPE = "NATURE";
-
-		//LoaderSHP.NOM_FICHIER_PARCELLE = "parcelle.shp";
 
 		CadastralParcelLoader.TYPE_ANNOTATION = 2;
-//		CadastralParcelLoader.ATT_HAS_TO_BE_SIMULATED = "simul";
 
-		PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = ParcelBoundarySide.LEFT;
+	}
+
+	public enum TYPE_OF_SIMUL {
+
+		TRAPEZOID,
+
+		CUBOID,
+
+		LSHAPE;
+
 	}
 
 	/**
@@ -76,16 +77,13 @@ public class BasicSimulatorTrapezoid {
 
 	// [building_footprint_rectangle_cli_main
 	public static void main(String[] args) throws Exception {
-
-		boolean triangle_or_cuboid = true;
+		// Type de forme à simuler
+		TYPE_OF_SIMUL typeOfSimul = TYPE_OF_SIMUL.LSHAPE;
 
 		init();
 
 		// Chargement du fichier de configuration
 		String folderName = BasicSimulatorTrapezoid.class.getClassLoader().getResource("scenario/").getPath();
-		String fileName = "building_parameters_project_trapezoid_4.xml";
-
-		Parameters p = Parameters.unmarshall(new File(folderName + fileName));
 
 		IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
 		// Valeurs de règles à saisir
@@ -101,60 +99,72 @@ public class BasicSimulatorTrapezoid {
 		double maximalCES = 2;
 
 		// Chargement de l'environnement
-		Environnement env = LoaderSHP
-				.load(new File("/home/mickael/data/mbrasebin/donnees/simPLU3D/testTrapezoid"));
+		Environnement env = LoaderSHP.load(new File("/home/mickael/data/mbrasebin/donnees/simPLU3D/testTrapezoid"));
+
+		// Fichier de paramètre qui va dépendre du type d'objet simulé
+		Parameters p = null;
 
 		for (BasicPropertyUnit bPU : env.getBpU().getElements()) {
-
+			// L'optimizer
 			DefaultSimPLU3DOptimizer<? extends ISimPLU3DPrimitive> optimizer = null;
-
+			// La configuration qui va évoluer pendant la simulation
 			GraphConfiguration<? extends ISimPLU3DPrimitive> cc = null;
-
-			// Instanciation du sampler avec l'unité foncière et les valeurs
-			// ci-dessus
-
-			List<ParcelBoundary> lSB = bPU.getCadastralParcels().get(0)
-					.getBoundariesByType(ParcelBoundaryType.ROAD);
-
-			IGeometry[] limits = new IGeometry[lSB.size()];
-			int count = 0;
-			for (ParcelBoundary sc : lSB) {
-
-				limits[count] = sc.getGeom();
-
-				count++;
-			}
-
 			
-
+			//Random generator utilisé pour la suite
 			RandomGenerator rng = Random.random();
-			if (triangle_or_cuboid) {
 
-				SamplePredicate<ParallelTrapezoid2, GraphConfiguration<ParallelTrapezoid2>, BirthDeathModification<ParallelTrapezoid2>> pred = null;
+			//On fonction du type d'objet simulé
+			switch (typeOfSimul) {
+			case CUBOID:
+				SamplePredicate<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = null;
+
+				String fileName = "building_parameters_project_trapezoid_4.xml";
+
+				p = Parameters.unmarshall(new File(folderName + fileName));
+
+				optimizer = new ParallelCuboidOptimizer();
 
 				pred = new SamplePredicate<>(bPU, distReculVoirie, distReculFond, distReculLat, distanceInterBati,
+						maximalCES);
+
+				cc = ((ParallelCuboidOptimizer) optimizer).process(rng, bPU, p, env, bPU.getId(), pred,
+						calculLimit(bPU), bPU.getGeom());
+				break;
+			case LSHAPE:
+				//On instancie le prédicat (vérification des règles, normalement, rien à faire)
+				SamplePredicate<LBuildingWithRoof, GraphConfiguration<LBuildingWithRoof>, BirthDeathModification<LBuildingWithRoof>> pred3 = null;
+
+				//On indique le fichier de configuration (à créer ou utiliser un existant)
+				String fileName2 = "building_parameters_project_lshape.xml";
+				//On charge le fichier de configuration
+				p = Parameters.unmarshall(new File(folderName + fileName2));
+				//On instancie le prédicat (vérification des règles, normalement, rien à faire) 
+				pred3 = new SamplePredicate<>(bPU, distReculVoirie, distReculFond, distReculLat, distanceInterBati,
+						maximalCES);
+				
+				//On génère l'optimizer et on le lance (à faire)
+				optimizer = new OptimisedLShapeDirectRejection();
+				cc = ((OptimisedLShapeDirectRejection) optimizer).process(rng, bPU, p, env, bPU.getId(), pred3,
+						bPU.getGeom());
+
+				break;
+			case TRAPEZOID:
+
+				String fileName3 = "building_parameters_project_trapezoid_4.xml";
+
+				p = Parameters.unmarshall(new File(folderName + fileName3));
+
+				SamplePredicate<ParallelTrapezoid2, GraphConfiguration<ParallelTrapezoid2>, BirthDeathModification<ParallelTrapezoid2>> pred2 = null;
+
+				pred2 = new SamplePredicate<>(bPU, distReculVoirie, distReculFond, distReculLat, distanceInterBati,
 						maximalCES);
 				optimizer = new OptimisedParallelTrapezoidFinalDirectRejection();
 				cc = ((OptimisedParallelTrapezoidFinalDirectRejection) optimizer).process(rng, bPU, p, env, bPU.getId(),
-						pred, limits, (IGeometry) bPU.generateGeom().get(0));
-			} else {
-				
-				
-				SamplePredicate<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = null;
+						pred2, calculLimit(bPU), bPU.getGeom());
+				break;
+			default:
+				break;
 
-				
-				optimizer = new ParallelCuboidOptimizer();
-				
-				
-				pred = new SamplePredicate<>(bPU, distReculVoirie, distReculFond, distReculLat, distanceInterBati,
-						maximalCES);
-				
-				
-				cc = ((ParallelCuboidOptimizer)optimizer).process(rng,bPU, p, env,  bPU.getId(),
-						pred, limits, (IGeometry) bPU.generateGeom().get(0));
-				
-				
-				
 			}
 
 			// Lancement de l'optimisation avec unité foncière, paramètres,
@@ -173,8 +183,7 @@ public class BasicSimulatorTrapezoid {
 				iFeatC.add(feat);
 
 			}
-			
-			
+
 		}
 
 		// On écrit en sortie le shapefile
@@ -183,6 +192,24 @@ public class BasicSimulatorTrapezoid {
 
 		System.out.println("That's all folks");
 
+	}
+
+	private static IGeometry[] calculLimit(BasicPropertyUnit bPU) {
+		// Instanciation du sampler avec l'unité foncière et les valeurs
+		// ci-dessus
+		// Pour les simulation nécessitants
+		List<ParcelBoundary> lSB = bPU.getCadastralParcels().get(0).getBoundariesByType(ParcelBoundaryType.ROAD);
+
+		IGeometry[] limits = new IGeometry[lSB.size()];
+		int count = 0;
+		for (ParcelBoundary sc : lSB) {
+
+			limits[count] = sc.getGeom();
+
+			count++;
+		}
+
+		return limits;
 	}
 
 }

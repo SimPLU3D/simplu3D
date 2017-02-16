@@ -15,25 +15,32 @@
         
         <!--Distribution (équiprobable) des dimensions des boîtes-->
         <!-- Largeur et longueur !-->
-        <param key="minlen" value="2" />
-		<param key="maxlen" value="10" />
+        <param key="l1min" value="3" />
+		<param key="l1max" value="4" />
 		
-		<param key="minlen1" value="2" />
-		<param key="maxlen1" value="10" />
+		<param key="l2min" value="1" />
+		<param key="l2max" value="5" />
 		
 		
-		<param key="minlen2" value="2" />
-		<param key="maxlen2" value="10" />
+		<param key="h1min" value="1" />
+		<param key="h1max" value="2" />
 		
-		<param key="minwid" value="1" />
-		<param key="maxwid" value="5" />
+		<param key="h2min" value="1" />
+		<param key="h2max" value="2" />
         <!-- Hauteur !-->
-		<param key="minheight" value ="2" />
-		<param key="maxheight" value="12" />
+		<param key="heightToTopMin" value ="1" />
+		<param key="heightToTopgMax" value="4" />
 		
 		
+		<param key="heightgutterMin" value ="3" />
+		<param key="heightguterrMax" value="6" />
+			
+				
+		<param key="shiftMin" value ="0" />
+		<param key="shiftMax" value="1" />
 		
-		
+	
+
 		
 		
 		
