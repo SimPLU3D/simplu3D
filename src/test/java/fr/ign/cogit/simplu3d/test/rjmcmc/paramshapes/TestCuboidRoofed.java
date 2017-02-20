@@ -69,7 +69,7 @@ public class TestCuboidRoofed {
     double deltaMin = 0;
     double deltaMax = 2;
 
-    int nbSample = 50;
+    int nbSample = 10;
 
     CuboidRoofedBuilder builder = new CuboidRoofedBuilder();
 
