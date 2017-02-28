@@ -19,7 +19,6 @@ import fr.ign.cogit.simplu3d.model.ParcelBoundary;
 import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
-import fr.ign.cogit.simplu3d.util.CuboidGroupCreation;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;

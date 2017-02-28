@@ -33,13 +33,13 @@ public class CheckerGenerator {
 		r.setSlopeOppositeProspect(1.0);
 		r.sethIniOppositeProspect(0.0);
 
-		r.setArt_72(dMin);
-		r.setArt_74(1);
+		r.setArt72(dMin);
+		r.setArt74(1);
 
-		r.setArt_102(hMax);
+		r.setArt102(hMax);
 
 		r.setBand1(200.0);
-		r.setArt_9(cesMax);
+		r.setArt9(cesMax);
 
 		new SimpleBandProduction(bPU, r, null);
 
