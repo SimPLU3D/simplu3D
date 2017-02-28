@@ -27,6 +27,23 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 public class CuboidRoofed extends Cuboid {
 
   private double heightT;
+
+  public double getHeightT() {
+    return heightT;
+  }
+
+  public void setHeightT(double heightT) {
+    this.heightT = heightT;
+  }
+
+  public double getDeltaFromSide() {
+    return deltaFromSide;
+  }
+
+  public void setDeltaFromSide(double deltaFromSide) {
+    this.deltaFromSide = deltaFromSide;
+  }
+
   private double deltaFromSide;
 
   public CuboidRoofed(double centerx, double centery, double length,
