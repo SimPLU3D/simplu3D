@@ -25,7 +25,7 @@ import fr.ign.cogit.simplu3d.io.regulation.IAUIDFRegulationReader;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Building;
 import fr.ign.cogit.simplu3d.model.Environnement;
-import fr.ign.cogit.simplu3d.model.Rules;
+import fr.ign.cogit.simplu3d.model.ZoneRegulation;
 
 public class GenerateGeometricConstraints {
 
@@ -35,7 +35,7 @@ public class GenerateGeometricConstraints {
 
 		IFeatureCollection<IFeature> featC = ShapefileReader.read(path + "parcelle.shp");
 		IAUIDFRegulationReader reader = new IAUIDFRegulationReader();
-		List<Rules> lReg = reader.transformFeatureToRules(featC.get(0));
+		List<ZoneRegulation> lReg = reader.transformFeatureToRules(featC.get(0));
 
 		IFeatureCollection<IFeature> featCollBat = ShapefileReader.read(path + "building_2.shp");
 		double hauteur = Double.parseDouble(featCollBat.get(0).getAttribute("hauteur").toString());

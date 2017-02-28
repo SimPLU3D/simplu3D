@@ -19,7 +19,7 @@ import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
 import fr.ign.cogit.simplu3d.io.regulation.IAUIDFRegulationReader;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
-import fr.ign.cogit.simplu3d.model.Rules;
+import fr.ign.cogit.simplu3d.model.ZoneRegulation;
 
 public class GenerateGeometricConstraints2 {
 
@@ -29,10 +29,10 @@ public class GenerateGeometricConstraints2 {
 
 		IFeatureCollection<IFeature> featC = ShapefileReader.read(path + "parcelle.shp");
 		IAUIDFRegulationReader reader = new IAUIDFRegulationReader();
-		List<Rules> lReg = reader.transformFeatureToRules(featC.get(0));
+		List<ZoneRegulation> lReg = reader.transformFeatureToRules(featC.get(0));
 
-		Rules r1 = lReg.get(0);
-		Rules r2 = null;
+		ZoneRegulation r1 = lReg.get(0);
+		ZoneRegulation r2 = null;
 
 		List<GeometricConstraints> lGC = new ArrayList<>();
 		RuleContext context = new RuleContext();

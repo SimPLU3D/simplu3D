@@ -11,7 +11,7 @@ import fr.ign.cogit.simplu3d.checker.impl.ProspectToLatLimitChecker;
 import fr.ign.cogit.simplu3d.checker.model.CompositeChecker;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
-import fr.ign.cogit.simplu3d.model.Rules;
+import fr.ign.cogit.simplu3d.model.ZoneRegulation;
 import fr.ign.cogit.simplu3d.model.UrbaZone;
 import fr.ign.cogit.simplu3d.util.SimpleBandProduction;
 
@@ -28,7 +28,7 @@ public class CheckerGenerator {
 
 		CompositeChecker check = new CompositeChecker();
 
-		Rules r = new Rules();
+		ZoneRegulation r = new ZoneRegulation();
 
 		r.setSlopeOppositeProspect(1.0);
 		r.sethIniOppositeProspect(0.0);
