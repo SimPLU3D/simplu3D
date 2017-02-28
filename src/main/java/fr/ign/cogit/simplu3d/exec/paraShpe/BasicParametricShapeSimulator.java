@@ -12,6 +12,7 @@ import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
+import fr.ign.cogit.simplu3d.demo.DemoEnvironmentProvider;
 import fr.ign.cogit.simplu3d.importer.CadastralParcelLoader;
 import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
@@ -23,8 +24,10 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.paralellcuboid.ParallelCubo
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.optimizer.DefaultSimPLU3DOptimizer;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.predicate.SamplePredicate;
+import fr.ign.cogit.simplu3d.rjmcmc.paramshp.geometry.impl.CuboidRoofed;
 import fr.ign.cogit.simplu3d.rjmcmc.paramshp.geometry.impl.LBuildingWithRoof;
 import fr.ign.cogit.simplu3d.rjmcmc.paramshp.optimizer.OptimisedLShapeDirectRejection;
+import fr.ign.cogit.simplu3d.rjmcmc.paramshp.optimizer.OptimisedRCuboidDirectRejection;
 import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.geometry.ParallelTrapezoid2;
 import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.optimizer.OptimisedParallelTrapezoidFinalDirectRejection;
 import fr.ign.mpp.configuration.BirthDeathModification;
@@ -67,7 +70,9 @@ public class BasicParametricShapeSimulator {
 
 		CUBOID,
 
-		LSHAPE;
+		LSHAPE,
+
+		ROOFEDCUBOID;
 
 	}
 
@@ -78,12 +83,12 @@ public class BasicParametricShapeSimulator {
 	// [building_footprint_rectangle_cli_main
 	public static void main(String[] args) throws Exception {
 		// Type de forme à simuler
-		TYPE_OF_SIMUL typeOfSimul = TYPE_OF_SIMUL.LSHAPE;
-
-		init();
+		TYPE_OF_SIMUL typeOfSimul = TYPE_OF_SIMUL.ROOFEDCUBOID;
 
 		// Chargement du fichier de configuration
 		String folderName = BasicParametricShapeSimulator.class.getClassLoader().getResource("scenario/").getPath();
+
+		init();
 
 		IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
 		// Valeurs de règles à saisir
@@ -98,8 +103,8 @@ public class BasicParametricShapeSimulator {
 		// CES maximal (2 ça ne sert à rien)
 		double maximalCES = 2;
 
-		// Chargement de l'environnement
-		Environnement env = LoaderSHP.load(new File("/home/mickael/data/mbrasebin/donnees/simPLU3D/testTrapezoid"));
+		Environnement env = LoaderSHP.loadNoDTM(new File(
+				DemoEnvironmentProvider.class.getClassLoader().getResource("fr/ign/cogit/simplu3d/data/").getPath()));
 
 		// Fichier de paramètre qui va dépendre du type d'objet simulé
 		Parameters p = null;
@@ -109,11 +114,11 @@ public class BasicParametricShapeSimulator {
 			DefaultSimPLU3DOptimizer<? extends ISimPLU3DPrimitive> optimizer = null;
 			// La configuration qui va évoluer pendant la simulation
 			GraphConfiguration<? extends ISimPLU3DPrimitive> cc = null;
-			
-			//Random generator utilisé pour la suite
+
+			// Random generator utilisé pour la suite
 			RandomGenerator rng = Random.random();
 
-			//On fonction du type d'objet simulé
+			// On fonction du type d'objet simulé
 			switch (typeOfSimul) {
 			case CUBOID:
 				SamplePredicate<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = null;
@@ -131,18 +136,24 @@ public class BasicParametricShapeSimulator {
 						calculLimit(bPU), bPU.getGeom());
 				break;
 			case LSHAPE:
-				//On instancie le prédicat (vérification des règles, normalement, rien à faire)
+				// On instancie le prédicat (vérification des règles,
+				// normalement,
+				// rien à faire)
 				SamplePredicate<LBuildingWithRoof, GraphConfiguration<LBuildingWithRoof>, BirthDeathModification<LBuildingWithRoof>> pred3 = null;
 
-				//On indique le fichier de configuration (à créer ou utiliser un existant)
+				// On indique le fichier de configuration (à créer ou utiliser
+				// un
+				// existant)
 				String fileName2 = "building_parameters_project_lshape.xml";
-				//On charge le fichier de configuration
+				// On charge le fichier de configuration
 				p = Parameters.unmarshall(new File(folderName + fileName2));
-				//On instancie le prédicat (vérification des règles, normalement, rien à faire) 
+				// On instancie le prédicat (vérification des règles,
+				// normalement,
+				// rien à faire)
 				pred3 = new SamplePredicate<>(bPU, distReculVoirie, distReculFond, distReculLat, distanceInterBati,
 						maximalCES);
-				
-				//On génère l'optimizer et on le lance (à faire)
+
+				// On génère l'optimizer et on le lance (à faire)
 				optimizer = new OptimisedLShapeDirectRejection();
 				cc = ((OptimisedLShapeDirectRejection) optimizer).process(rng, bPU, p, env, bPU.getId(), pred3,
 						bPU.getGeom());
@@ -161,6 +172,29 @@ public class BasicParametricShapeSimulator {
 				optimizer = new OptimisedParallelTrapezoidFinalDirectRejection();
 				cc = ((OptimisedParallelTrapezoidFinalDirectRejection) optimizer).process(rng, bPU, p, env, bPU.getId(),
 						pred2, calculLimit(bPU), bPU.getGeom());
+				break;
+			case ROOFEDCUBOID:
+				// On instancie le prédicat (vérification des règles,
+				// normalement,
+				// rien à faire)
+				SamplePredicate<CuboidRoofed, GraphConfiguration<CuboidRoofed>, BirthDeathModification<CuboidRoofed>> pred4 = null;
+
+				// On indique le fichier de configuration (à créer ou utiliser
+				// un
+				// existant)
+				String fileName4 = "building_parameters_project_rcuboid.xml";
+				// On charge le fichier de configuration
+				p = Parameters.unmarshall(new File(folderName + fileName4));
+				// On instancie le prédicat (vérification des règles,
+				// normalement,
+				// rien à faire)
+				pred4 = new SamplePredicate<>(bPU, distReculVoirie, distReculFond, distReculLat, distanceInterBati,
+						maximalCES);
+
+				// On génère l'optimizer et on le lance (à faire)
+				optimizer = new OptimisedRCuboidDirectRejection();
+				cc = ((OptimisedRCuboidDirectRejection) optimizer).process(rng, bPU, p, env, bPU.getId(), pred4,
+						bPU.getGeom());
 				break;
 			default:
 				break;
