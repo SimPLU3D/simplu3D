@@ -121,6 +121,8 @@ Users
 --------------------
 + [IAUIDF for land price assessment : Note de conjecture ORF](http://www.orf.asso.fr/uploads/attachements/orf_nc7_ok_lg.pdf)
 + [PLU++ : for the simplification of public participation during PLU elaboration](http://ignf.github.io/PLU2PLUS/)
++ [DECODURBA : a tool dedicated to assist citizens for the construction of personnal house](http://www.logement.gouv.fr/hackurba-premier-hackathon-dedie-a-l-urbanisme-durable-recompense-tetricite). SimPLU3D was integrated to the solution proposed during the [Hackurba hackhathon](http://hackurba.strikingly.com/) and was awarded the price of National Urban Planning portal by the French Ministery of Environment.
+
 
 Acknowledgments
 ---------------------
