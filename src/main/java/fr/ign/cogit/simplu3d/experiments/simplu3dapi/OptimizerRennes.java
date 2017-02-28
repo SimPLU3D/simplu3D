@@ -24,11 +24,11 @@ package fr.ign.cogit.simplu3d.experiments.simplu3dapi;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.ign.cogit.simplu3d.checker.Rules;
 import fr.ign.cogit.simplu3d.experiments.simplu3dapi.object.ParametricCuboid;
 import fr.ign.cogit.simplu3d.experiments.simplu3dapi.predicate.RennesSamplePredicate;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
+import fr.ign.cogit.simplu3d.model.Rules;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid.OptimisedBuildingsCuboidFinalDirectRejection;
 import fr.ign.mpp.configuration.BirthDeathModification;

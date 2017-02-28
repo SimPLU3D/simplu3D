@@ -99,7 +99,7 @@ public class LBuildingWithRoof extends AbstractSimpleBuilding {
 
 	@Override
 	public double getHeight() {
-		return this.height  + this.hgutter;
+		return this.height + this.hgutter;
 	}
 
 	@Override
@@ -131,17 +131,16 @@ public class LBuildingWithRoof extends AbstractSimpleBuilding {
 					(IDirectPosition) new DirectPosition(centerx, centery + h1),
 					(IDirectPosition) new DirectPosition(centerx - l2, centery + h1),
 					(IDirectPosition) new DirectPosition(centerx - l2, centery - h2),
-					(IDirectPosition) new DirectPosition(centerx + l1 , centery - h2),
-					(IDirectPosition) new DirectPosition(centerx + l1 , centery),
+					(IDirectPosition) new DirectPosition(centerx + l1, centery - h2),
+					(IDirectPosition) new DirectPosition(centerx + l1, centery),
 					(IDirectPosition) new DirectPosition(centerx, centery)))));
 
 			pol = CommonAlgorithms.rotation(pol, new DirectPosition(centerx, centery), this.orientation);
 
 			try {
 				this.geomJTS = (Polygon) JtsGeOxygene.makeJtsGeom(pol);
-				
-				
-				if(this.geomJTS == null){
+
+				if (this.geomJTS == null) {
 					System.out.println("null ? ");
 				}
 
@@ -198,6 +197,21 @@ public class LBuildingWithRoof extends AbstractSimpleBuilding {
 		return zMin;
 	}
 
+	public IGeometry getGeom() {
+		return generated3DGeom();
+	}
+
+	public boolean prospect(IGeometry geom, double slope, double hIni) {
+
+		double distance = this.getFootprint().distance(geom);
+
+		if (distance * slope + hIni < shift + this.getHeight()) {
+			return false;
+		}
+
+		return true;
+	}
+
 	@Override
 	public IGeometry generated3DGeom() {
 
@@ -232,10 +246,10 @@ public class LBuildingWithRoof extends AbstractSimpleBuilding {
 		Vecteur vt2 = vz.prodVectoriel(v2);
 		vt2 = vt2.multConstante(this.shift * (this.l1 + this.l2 / 2));
 		IDirectPosition dp6 = vt2.translate(dpc2);
-		dp6.setZ(this.getZmin() + this.height  + this.hgutter);
+		dp6.setZ(this.getZmin() + this.height + this.hgutter);
 
 		IDirectPosition dp8 = new DirectPosition(dp0.getX() / 2 + dp3.getX() / 2, dp0.getY() / 2 + dp3.getY() / 2);
-		dp8.setZ(this.getZmin() + this.height  + this.hgutter);
+		dp8.setZ(this.getZmin() + this.height + this.hgutter);
 
 		IDirectPosition dp0Bas = (IDirectPosition) dp0.clone();
 		dp0Bas.setZ(this.getZmin());
@@ -366,8 +380,8 @@ public class LBuildingWithRoof extends AbstractSimpleBuilding {
 		val1[4] = this.h1;
 		val1[5] = this.h2;
 		val1[6] = this.height;
-		val1[7]=	 this.orientation;
-		val1[8]=  this.hgutter;
+		val1[7] = this.orientation;
+		val1[8] = this.hgutter;
 		val1[9] = this.shift;
 
 	}
@@ -377,7 +391,5 @@ public class LBuildingWithRoof extends AbstractSimpleBuilding {
 		return "LBuildingWithRoof [hgutter=" + hgutter + ", h1=" + h1 + ", h2=" + h2 + ", l1=" + l1 + ", l2=" + l2
 				+ ", shift=" + shift + ", geomJTS=" + geomJTS + ", polyGeox=" + polyGeox + ", zMin=" + zMin + "]";
 	}
-	
-	
 
 }

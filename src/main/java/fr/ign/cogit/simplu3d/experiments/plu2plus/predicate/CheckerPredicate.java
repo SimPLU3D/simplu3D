@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import fr.ign.cogit.simplu3d.checker.CompositeChecker;
+import fr.ign.cogit.simplu3d.checker.model.CompositeChecker;
 import fr.ign.cogit.simplu3d.experiments.plu2plus.context.SimulationcheckerContext;
 import fr.ign.cogit.simplu3d.model.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;

@@ -9,7 +9,7 @@ import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
-import fr.ign.cogit.simplu3d.checker.CompositeChecker;
+import fr.ign.cogit.simplu3d.checker.model.CompositeChecker;
 import fr.ign.cogit.simplu3d.experiments.plu2plus.checker.CheckerGenerator;
 import fr.ign.cogit.simplu3d.experiments.plu2plus.context.SimulationcheckerContext;
 import fr.ign.cogit.simplu3d.experiments.plu2plus.predicate.CheckerPredicate;

@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.exec.trapezoid;
+package fr.ign.cogit.simplu3d.exec.paraShpe;
 
 import java.io.File;
 import java.util.List;
@@ -53,7 +53,7 @@ import fr.ign.random.Random;
  * 
  * 
  */
-public class BasicSimulatorTrapezoid {
+public class BasicParametricShapeSimulator {
 
 	public static void init() throws Exception {
 
@@ -83,7 +83,7 @@ public class BasicSimulatorTrapezoid {
 		init();
 
 		// Chargement du fichier de configuration
-		String folderName = BasicSimulatorTrapezoid.class.getClassLoader().getResource("scenario/").getPath();
+		String folderName = BasicParametricShapeSimulator.class.getClassLoader().getResource("scenario/").getPath();
 
 		IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
 		// Valeurs de règles à saisir
