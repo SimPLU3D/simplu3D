@@ -13,7 +13,7 @@ This research library is developed as part of [COGIT team](http://recherche.ign.
 
 It provides an implementation of multi-dimensionnal simulated annealing algorithm to produce built configuration from a set of boxes constrained by urban regulation that optimizes a utility function. 
 
-The project is developed over 3D GIS Open-Source library [GeOxygene](http://oxygene-project.sourceforge.net) concerning geometric operators and 3D visualization, [librjmcmc4j](https://github.com/IGNF/librjmcmc4j) for simulated annealing implementation and [simplu3d-rules](https://github.com/IGNF/simplu3d-rules) for geographical model and regulation management.
+The project is developed over 3D GIS Open-Source library [GeOxygene](https://github.com/IGNF/geoxygene) concerning geometric operators and 3D visualization, [librjmcmc4j](https://github.com/IGNF/librjmcmc4j) for simulated annealing implementation and [simplu3d-rules](https://github.com/IGNF/simplu3d-rules) for geographical model and regulation management.
 
 Conditions for use
 ---------------------
@@ -23,7 +23,7 @@ Furthermore, we are interested in every feedbacks about this library if you find
 
 Library installation
 ---------------------
-The project is build with Maven and is coded in Java (JDK 1.7 or higher is required), it has been tested in most common OS. If you are not familiar with Maven, we suggest installing developer tools and versions as described in [GeOxygene install guide](http://oxygene-project.sourceforge.net/documentation/developer/install.html).
+The project is build with Maven and is coded in Java (JDK 1.8 or higher is required), it has been tested in most common OS. If you are not familiar with Maven, we suggest installing developer tools and versions as described in [GeOxygene install guide](http://ignf.github.io/geoxygene/documentation/developer/install.html).
 
 Vidéo and illustration
 ---------------------
