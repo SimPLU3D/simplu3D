@@ -132,5 +132,5 @@ Acknowledgments
 Région in the context of [e-PLU projet](www.e-PLU.fr)
 + Mickaël Borne for improvements in the code and for refactoring
 + Imran Lokhat for tests and improvements about imrpoving the pipeline of simulation
-+ ([ISC-PIF](https://iscpif.fr/)) - Paul Chapron and Romain Reuillon for proposing methods dedicated to model exploration and simulation distribution
++ [ISC-PIF](https://iscpif.fr/) - Paul Chapron and Romain Reuillon for proposing methods dedicated to model exploration and simulation distribution
 
