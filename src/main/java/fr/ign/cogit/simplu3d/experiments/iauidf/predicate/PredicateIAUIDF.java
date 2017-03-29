@@ -1,11 +1,15 @@
 package fr.ign.cogit.simplu3d.experiments.iauidf.predicate;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
 
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
@@ -13,6 +17,7 @@ import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.experiments.iauidf.regulation.Regulation;
+import fr.ign.cogit.simplu3d.model.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.ParcelBoundary;
@@ -26,7 +31,10 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.SimpleCuboid2;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.mix.MultipleBuildingsCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.paramshp.geometry.impl.CuboidRoofed;
 import fr.ign.cogit.simplu3d.rjmcmc.paramshp.geometry.impl.LBuildingWithRoof;
+import fr.ign.cogit.simplu3d.rjmcmc.paramshp.geometry.impl.ParallelCuboidRoofed;
+import fr.ign.cogit.simplu3d.rjmcmc.paramshp.geometry.impl.ParallelCuboidRoofed2;
 import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.geometry.ParallelTrapezoid2;
+import fr.ign.cogit.simplu3d.util.CuboidGroupCreation;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
@@ -167,17 +175,22 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
 
   @Override
   public boolean check(C c, M m) {
-    // if (true)
-    // return true;
 
     // Pour produire des boîtes séparées et vérifier que la distance inter
     // bâtiment est respectée
     // ART_8 Distance minimale des constructions par rapport aux autres sur
     // une même propriété imposée en mètre 88= non renseignable, 99= non
     // réglementé
+    double distanceInterBati = r1.getArt_8();
     if ((!MultipleBuildingsCuboid.ALLOW_INTERSECTING_CUBOID)
-        && (!checkDistanceInterBuildings(c, m, r1.getArt_8()))) { // r1.getArt_8()
+        && (!checkDistanceInterBuildings(c, m, distanceInterBati))) { // r1.getArt_8()
       return false;
+    }
+
+    if (MultipleBuildingsCuboid.ALLOW_INTERSECTING_CUBOID) {
+      if (!testWidthBuilding(c, m, 7.5, distanceInterBati)) {
+        return false;
+      }
     }
 
     O birth = null;
@@ -218,7 +231,8 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
     if (birth != null) {
 
       if (birth instanceof ParallelCuboid || birth instanceof ParallelTrapezoid2
-          || birth instanceof CuboidRoofed
+          || birth.getClass().equals(CuboidRoofed.class)
+          || birth.getClass().equals(ParallelCuboidRoofed.class)
           || birth instanceof LBuildingWithRoof) {
 
         if (r1.getArt_71() != 2) {
@@ -235,7 +249,8 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
 
         }
 
-      } else if (birth instanceof ParallelCuboid2) {
+      } else if ((birth instanceof ParallelCuboid2)
+          || (birth instanceof ParallelCuboidRoofed2)) {
 
         if (!checkBandRegulationSpecArt71(r2, birth)) {
 
@@ -344,35 +359,6 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
      * if (reg14 != 0.0 & reg14 != 99 & reg14 != 88) { if (shonBuilt / areaBPU >
      * reg14) { return false; } }
      */
-
-    // EXTRA RULE : la distance entre deux bâtiments sur une même parcelle
-    // est égale à la hauteur divisée par deux du bâtiment le plus haut
-
-    int nbCuboid = lCuboid.size();
-
-    double hMax = -1;
-
-    for (O o : lCuboid) {
-      hMax = Math.max(hMax, o.getHeight());
-    }
-
-    // on divise par 2 le hMax
-    hMax = hMax * 0.5;
-
-    for (int i = 0; i < nbCuboid; i++) {
-      AbstractSimpleBuilding cI = lCuboid.get(i);
-
-      for (int j = i + 1; j < nbCuboid; j++) {
-        AbstractSimpleBuilding cJ = lCuboid.get(j);
-
-        double distance = cI.getFootprint().distance(cJ.getFootprint());
-
-        if (distance < hMax) {
-          return false;
-        }
-
-      }
-    }
 
     return true;
 
@@ -505,7 +491,8 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
 
   public boolean checkBandRegulation(Regulation r, O cuboid) {
 
-    if (r == null || !r.getEpsilonBuffer().contains(cuboid.toGeometry())) {
+    Geometry geom = cuboid.toGeometry();
+    if (r == null || !r.getEpsilonBuffer().contains(geom)) {
       return false;
     }
 
@@ -633,50 +620,217 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
 
   }
 
-  private boolean checkDistanceInterBuildings(C c, M m,
+  private boolean testWidthBuilding(C c, M m, double widthBuffer,
       double distanceInterBati) {
-
-    // On récupère les objets ajoutées lors de la proposition
-    List<O> lO = m.getBirth();
+    // On fait la liste de tous les objets après modification
+    List<O> lO = new ArrayList<>();
 
     // On récupère la boîte (si elle existe) que l'on supprime lors de la
     // modification
-    O batDeath = null;
+    O cuboidDead = null;
 
     if (!m.getDeath().isEmpty()) {
-      batDeath = m.getDeath().get(0);
+      cuboidDead = m.getDeath().get(0);
     }
 
-    // On parcourt les boîtes existantes dans la configuration courante
-    // (avant
-    // d'appliquer la modification)
     Iterator<O> iTBat = c.iterator();
+
     while (iTBat.hasNext()) {
 
       O batTemp = iTBat.next();
 
-      // Si c'est une boîte qui est amenée à disparaître après
-      // modification,
-      // elle n'entre pas en jeu dans les vérifications
-      if (batTemp == batDeath) {
+      if (batTemp == cuboidDead) {
         continue;
       }
 
-      // On parcourt les boîtes que l'on ajoute
-      for (O ab : lO) {
+      lO.add(batTemp);
 
-        // On prend en compte la hauteur max si elle est supérieure à la
-        // contrainte de distance
-        double distComp = Math.max(distanceInterBati,
-            Math.max(ab.getHeight(), batTemp.getHeight()));
+    }
 
-        if (ab.getFootprint().distance(batTemp.getFootprint()) < distComp) {
+    // On ajoute tous les nouveaux objets
+    lO.addAll(m.getBirth());
+
+    List<List<AbstractSimpleBuilding>> lGroupes = CuboidGroupCreation
+        .createGroup(lO, 0);
+
+    // System.out.println("nb groupes " + lGroupes.size());
+    for (List<AbstractSimpleBuilding> lAb : lGroupes) {
+      // System.out.println("groupe x : " + lAb.size() + " batiments");
+      if (!checkWidth(lAb, widthBuffer)) {
+        return false;
+      }
+
+    }
+
+    // Calculer la distance entre groupes
+    // 1 - par rapport à distanceInterBati
+    // 2 - par rapport à la moitié de la hauteur du plus haut cuboid
+    if (!checkDistanceInterGroups(lGroupes, distanceInterBati))
+      return false;
+
+    // System.out.println("-------------------nb groupes " + lGroupes.size());
+    return true;
+  }
+
+  // same as distanceinterbuildings but between groups
+  private boolean checkDistanceInterGroups(
+      List<List<AbstractSimpleBuilding>> lGroupes, double distanceInterBati) {
+    // si un seul groupe
+    if (lGroupes.size() < 2)
+      return true;
+    // on va stocker les hauteurs pour pas les recalculer
+    double[] heights = new double[lGroupes.size()];
+    for (int i = 0; i < lGroupes.size(); ++i) {
+      heights[i] = getGroupeHeight(lGroupes.get(i));
+    }
+    for (int i = 0; i < lGroupes.size() - 1; ++i) {
+      for (int j = i + 1; j < lGroupes.size(); ++j) {
+        double distanceGroupes = getGroupGeom(lGroupes.get(i))
+            .distance(getGroupGeom(lGroupes.get(j)));
+        double d = Math.min(Math.max(heights[i], heights[j]) * 0.5,
+            distanceInterBati);
+        // System.out.println("max(dist groupes, heights) : " + d
+        // + "---- dit inter bati : " + distanceInterBati);
+        if (distanceGroupes < d)
+          return false;
+      }
+    }
+    return true;
+  }
+
+  // get max height from group of abstractbuildings
+  private double getGroupeHeight(List<AbstractSimpleBuilding> g) {
+    double max = -1;
+    for (AbstractBuilding b : g) {
+      if (((O) b).getHeight() > max)
+        max = ((O) b).getHeight();
+    }
+    return max;
+  }
+
+  private Geometry getGroupGeom(List<AbstractSimpleBuilding> g) {
+    Collection<Geometry> collGeom = new ArrayList<>();
+    for (AbstractSimpleBuilding o : g) {
+      collGeom.add(o.toGeometry()/* .buffer(0.4) */);
+    }
+    Geometry union = CascadedPolygonUnion.union(collGeom);
+    /* union = TopologyPreservingSimplifier.simplify(union, 0.4); */
+    return union;
+  }
+
+  private GeometryFactory gf = new GeometryFactory();
+  private long c = 0;
+
+  // check width of group of cuboids
+  private boolean checkWidth(List<AbstractSimpleBuilding> lO,
+      double widthBuffer) {
+
+    if (lO.size() < 2)
+      return true;
+    Geometry union = getGroupGeom(lO);
+    // Récupérer le polygone sans le trou
+    // will that do it ?
+    // System.out.println(union.getClass());
+    if (union instanceof Polygon) {
+      union = gf
+          .createPolygon(((Polygon) union).getExteriorRing().getCoordinates())
+          .buffer(5).buffer(-5);
+      // union = DouglasPeuckerSimplifier.simplify(union.buffer(0.2), 1);
+      // union = TopologyPreservingSimplifier.simplify(union, 0.4);
+    }
+    boolean multi = false;
+    if (union instanceof MultiPolygon) {
+      System.out.println("multi " + union);
+      union = union.buffer(5).buffer(-5);
+      union = gf
+          .createPolygon(((Polygon) union).getExteriorRing().getCoordinates());
+      System.out.println("multibuffered " + union);
+      multi = true;
+      // au final on peut court circuiter ?
+      return false;
+    }
+
+    Geometry negativeBuffer = union.buffer(-widthBuffer);
+
+    if (negativeBuffer.isEmpty() || negativeBuffer.getArea() < 0.001) {
+      ++c;
+      if (c % 10000 == 0 || multi) {
+        System.out.println("**** " + multi);
+        System.out.println("**** " + union);
+        System.out.println("good width "
+            + (negativeBuffer.isEmpty() ? "empty" : negativeBuffer));
+        System.out.println("group size " + lO.size());
+      }
+      return true;
+    }
+    // System.out.println("too big");
+    // System.out.println(union);
+    // System.out.println(negativeBuffer);
+    // System.out.println("---------------------");
+    return false;
+
+  }
+
+  private boolean checkDistanceInterBuildings(C c, M m,
+      double distanceInterBati) {
+
+    // On fait la liste de tous les objets après modification
+    List<O> lO = new ArrayList<>();
+
+    // On récupère la boîte (si elle existe) que l'on supprime lors de la
+    // modification
+    O cuboidDead = null;
+
+    if (!m.getDeath().isEmpty()) {
+      cuboidDead = m.getDeath().get(0);
+    }
+
+    Iterator<O> iTBat = c.iterator();
+
+    while (iTBat.hasNext()) {
+
+      O batTemp = iTBat.next();
+
+      if (batTemp == cuboidDead) {
+        continue;
+      }
+
+      lO.add(batTemp);
+
+    }
+
+    // On ajoute tous les nouveaux objets
+    lO.addAll(m.getBirth());
+
+    // EXTRA RULE : la distance entre deux bâtiments sur une même parcelle
+    // est égale à la hauteur divisée par deux du bâtiment le plus haut
+
+    int nbCuboid = lO.size();
+
+    double hMax = -1;
+
+    for (O o : lO) {
+      hMax = Math.max(hMax, o.getHeight());
+    }
+
+    // on divise par 2 le hMax
+    hMax = hMax * 0.5;
+
+    for (int i = 0; i < nbCuboid; i++) {
+      AbstractSimpleBuilding cI = lO.get(i);
+
+      for (int j = i + 1; j < nbCuboid; j++) {
+        AbstractSimpleBuilding cJ = lO.get(j);
+
+        double distance = cI.getFootprint().distance(cJ.getFootprint());
+
+        if (distance < Math.min(hMax, distanceInterBati)) {
           return false;
         }
 
       }
-
     }
+
     return true;
 
   }
