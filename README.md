@@ -121,7 +121,7 @@ Users
 --------------------
 + [IAUIDF for land price assessment : Note de conjecture ORF](http://www.orf.asso.fr/uploads/attachements/orf_nc7_ok_lg.pdf)
 + [PLU++ : for the simplification of public participation during PLU elaboration](http://ignf.github.io/PLU2PLUS/)
-+ [DECODURBA : a tool dedicated to assist citizens for the construction of personnal house](http://www.logement.gouv.fr/hackurba-premier-hackathon-dedie-a-l-urbanisme-durable-recompense-tetricite). SimPLU3D was integrated to the solution proposed during the [Hackurba hackhathon](http://hackurba.strikingly.com/) and was awarded the price of National Urban Planning portal by the French Ministery of Environment.
++ [DECODURBA : a tool dedicated to assist citizens for the construction of personnal house](http://www.logement.gouv.fr/hackurba-premier-hackathon-dedie-a-l-urbanisme-durable-recompense-tetricite). SimPLU3D was integrated to the solution proposed during the [Hackurba hackhathon](http://hackurba.strikingly.com/) and was awarded the price of National Urban Planning Portal by the French Ministery of Environment.
 
 
 Acknowledgments
@@ -131,4 +131,6 @@ Acknowledgments
 + It is partially funded by the FUI TerraMagna project and by Île-de-France
 Région in the context of [e-PLU projet](www.e-PLU.fr)
 + Mickaël Borne for improvements in the code and for refactoring
++ Imran Lokhat for tests and improvements about imrpoving the pipeline of simulation
++ ([ISC-PIF] (https://iscpif.fr/)) - Paul Chapron and Romain Reuillon for proposing methods dedicated to model exploration and simulation distribution
 
