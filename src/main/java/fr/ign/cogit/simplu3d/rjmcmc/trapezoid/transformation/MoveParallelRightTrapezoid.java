@@ -30,15 +30,16 @@ public class MoveParallelRightTrapezoid implements Transform  {
 	  @Override
 	  public double apply(boolean direct, double[] val0, double[] val1) {
 
-	    double dx = val0[4];
-	    double dy = val0[5];
+	    double dx = val0[5];
+	    double dy = val0[6];
 	    val1[0] = val0[0] + (0.5 - dx) * amplitudeMove;
 	    val1[1] = val0[1] + (0.5 - dy) * amplitudeMove;
 	    val1[2] = val0[2];
 	    val1[3] = val0[3];
-
-	    val1[4] = 1 - dx;
-	    val1[5] = 1 - dy;
+	    val1[4] = val0[4];
+	    
+	    val1[5] = 1 - dx;
+	    val1[6] = 1 - dy;
 	    return 1;
 	  }
 
@@ -49,6 +50,6 @@ public class MoveParallelRightTrapezoid implements Transform  {
 
 	  @Override
 	  public int dimension() {
-	    return 6;
+	    return 7;
 	  }
 }
