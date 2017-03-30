@@ -13,6 +13,7 @@ import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.convert.FromGeomToLineString;
+import fr.ign.cogit.geoxygene.convert.FromGeomToSurface;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.experiments.iauidf.predicate.PredicateIAUIDF;
@@ -307,6 +308,10 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
     if (geomBand1 != null && !geomBand1.isEmpty()) {
       if (band1Parallel) {
 
+    	  
+    	  geomBand1 = geomBand1.buffer(-minwid / 2);
+    	  
+    	  
         // S'il n'y a qu'une seule bande de constructibilité
         // On peut demander à construire des bâtiments dans la bande
         // derrière
@@ -320,13 +325,13 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
           if (geomBand2.area() < 5) {
             geomBand2 = null;
           }
-
         }
 
         // The center is included in a band equals to half of max
         // allowed width according to alignment line
 
         geomBand1 = geomBand1.intersection(bP.getLineRoad().buffer(maxwid / 2));
+        r1.setGeomBande(FromGeomToSurface.convertMSGeom(geomBand1));
 
         builderBand1 = new ParallelCuboidBuilder(bP.getLineRoad().toArray(), 1);
         transformBand1 = new ParallelPolygonTransform(d2, v, geomBand1);
@@ -334,6 +339,7 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
       } else {
 
         geomBand1 = geomBand1.buffer(-minwid / 2);
+        r1.setGeomBande(FromGeomToSurface.convertMSGeom(geomBand1));
 
         transformBand1 = new TransformToSurface(d2, v, geomBand1);
         builderBand1 = new SimpleCuboidBuilder();
@@ -384,6 +390,8 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
         // The center is included in a band equals to half of max
         // allowed width according to alignment line
         geomBand2 = geomBand2.intersection(ims.buffer(maxwid / 2));
+        
+        r2.setGeomBande(FromGeomToSurface.convertMSGeom(geomBand2));
 
         builderBand2 = new ParallelCuboidBuilder(ims.toArray(), 2);
         transformBand2 = new ParallelPolygonTransform(d, v, geomBand2);
@@ -393,6 +401,8 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 
         geomBand2 = geomBand2.buffer(-minwid / 2);
 
+        r2.setGeomBande(FromGeomToSurface.convertMSGeom(geomBand2));
+        
         builderBand2 = new SimpleCuboidBuilder2();
         transformBand2 = new TransformToSurface(d, v, geomBand2);
         c2 = SimpleCuboid2.class;

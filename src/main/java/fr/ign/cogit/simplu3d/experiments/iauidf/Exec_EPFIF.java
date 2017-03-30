@@ -609,17 +609,7 @@ public class Exec_EPFIF {
       System.out.println("Une seule bande");
     }
 
-    if (DEBUG_MODE) {
 
-      if (r1 != null && r1.getGeomBande() != null) {
-        debugSurface.add(r1.getGeomBande());
-      }
-
-      if (r2 != null && r2.getGeomBande() != null) {
-        debugSurface.add(r2.getGeomBande());
-      }
-      debugLine.add(bP.getLineRoad());
-    }
 
     Parameters p = initiateSimulationParamters(r1, r2, fParam);
     // initialisation des paramètres de simulation
@@ -637,6 +627,19 @@ public class Exec_EPFIF {
       featC.addAll(simulRegulationByBasicPropertyUnitFinal(env, bPU, imu, r1,
           r2, p, bP));
     }
+    
+    
+    if (DEBUG_MODE) {
+
+        if (r1 != null && r1.getGeomBande() != null) {
+          debugSurface.add(r1.getGeomBande());
+        }
+
+        if (r2 != null && r2.getGeomBande() != null) {
+          debugSurface.add(r2.getGeomBande());
+        }
+        debugLine.add(bP.getLineRoad());
+      }
 
     return featC;
   }
@@ -673,7 +676,9 @@ public class Exec_EPFIF {
     // Lancement de l'optimisation avec unité foncière, paramètres,
     // environnement, id et prédicat
 
+    
     GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, pred, r1, r2, bP);
+
     if (cc == null) {
       return featC;
     }
@@ -738,6 +743,8 @@ public class Exec_EPFIF {
     }
     // Lancement de l'optimisation avec unité foncière, paramètres,
     // environnement, id et prédicat
+    
+
 
     GraphConfiguration<AbstractSimpleBuilding> cc = oCB.process(bPU, p, env,
         pred, r1, r2, bP);

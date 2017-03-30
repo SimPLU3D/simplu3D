@@ -181,6 +181,8 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
     // ART_8 Distance minimale des constructions par rapport aux autres sur
     // une même propriété imposée en mètre 88= non renseignable, 99= non
     // réglementé
+	  
+	 
     double distanceInterBati = r1.getArt_8();
     if ((!MultipleBuildingsCuboid.ALLOW_INTERSECTING_CUBOID)
         && (!checkDistanceInterBuildings(c, m, distanceInterBati))) { // r1.getArt_8()
@@ -333,12 +335,14 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
     // ART_9 Pourcentage d'emprise au sol maximum autorisé Valeur comprise
     // de 0 à 1, 88= non renseignable, 99= non réglementé
 
+    
+    /*
     double reg9 = r.getArt_9();
     if (reg9 != 99 & reg9 != 88) {
       if ((areaBuilt / areaBPU) > reg9) {
         return false;
       }
-    }
+    }*/
 
     // ART_13 Part minimale d'espaces libre de toute construction exprimée
     // par rapport à la surface totale de la parcelle Valeur comprise de 0 à
