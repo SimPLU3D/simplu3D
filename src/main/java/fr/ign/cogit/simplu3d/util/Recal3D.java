@@ -81,7 +81,8 @@ public class Recal3D {
     double heightThreshold = 0;// 0.5;
     // Folder in
     String strShpOut = "/home/imran/testoss/EPFIF/outCapaBig/";
-    String shpeIn = strShpOut + "simul_75020917_true_no_demo_sampler.shp";
+    int imu = 91014805;
+    String shpeIn = strShpOut + "simul_" + imu + "_true_no_demo_sampler.shp";
 
     // Load Cuboid from a generate ShapeFile (we can use date output from
     // the optimization algorithm)
@@ -102,7 +103,7 @@ public class Recal3D {
     featColl = seperateRoof(featColl);
 
     // Output shapefile
-    ShapefileWriter.write(featColl, strShpOut + "75020917_recal.shp");
+    ShapefileWriter.write(featColl, strShpOut + imu + "_recal.shp");
 
     // ShapefileWriter.write(DEBUG, strShpOut + "debug.shp");
 

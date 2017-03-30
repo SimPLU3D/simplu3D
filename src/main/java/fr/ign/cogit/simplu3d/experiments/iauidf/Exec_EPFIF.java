@@ -87,14 +87,13 @@ public class Exec_EPFIF {
     Map<Integer, List<Regulation>> regulation = prepareRegulation();
 
     Set<Integer> listeCapa = new HashSet<>();
-    Collections.addAll(listeCapa, /*
-                                   * 77049072 , 75009782 ,
-                                   */ 91014805/*
-                                              * , 91014124/*
-                                              */ , 75020917);
+    Collections.addAll(listeCapa,
+        /*
+         * 77049072 , 75009782 , 91014805/* , 91014124 ,
+         */ 75020917);
 
     for (int i = 0; i < 1; ++i) {
-      INTERSECTION = false; // (i % 2) == 0; // false;//
+      INTERSECTION = true; // (i % 2) == 0; // false;//
       MultipleBuildingsCuboid.ALLOW_INTERSECTING_CUBOID = INTERSECTION;
       // On traite indépendamment chaque zone imu
       for (int currentImu : regulation.keySet()) {
@@ -168,7 +167,6 @@ public class Exec_EPFIF {
 
       for (int i = 0; i < listValue.length; i++) {
         newmap.put(listItem[i].toString(), listValue[i]);
-
       }
 
       System.out.println("*************************************************");
@@ -292,7 +290,7 @@ public class Exec_EPFIF {
     System.out.println("-- Nombre de surfaces : " + debugSurface.size());
     String uds = USE_DEMO_SAMPLER ? "demo_sampler" : "no_demo_sampler";
     String fileName = out_folder + "simul_" + imu + "_" + INTERSECTION + "_"
-        + uds + ".shp";
+        + uds + "_2.shp";
     System.out.println(fileName);
     ShapefileWriter.write(featC, fileName, CRS.decode("EPSG:2154"));
 

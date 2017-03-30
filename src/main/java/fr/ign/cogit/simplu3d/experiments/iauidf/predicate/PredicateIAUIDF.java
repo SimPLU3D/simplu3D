@@ -735,19 +735,35 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
       union = gf
           .createPolygon(((Polygon) union).getExteriorRing().getCoordinates())
           .buffer(5).buffer(-5);
-      // union = DouglasPeuckerSimplifier.simplify(union.buffer(0.2), 1);
-      // union = TopologyPreservingSimplifier.simplify(union, 0.4);
+      union = union.buffer(5).buffer(-5);
     }
     boolean multi = false;
     if (union instanceof MultiPolygon) {
-      System.out.println("multi " + union);
-      union = union.buffer(5).buffer(-5);
-      union = gf
-          .createPolygon(((Polygon) union).getExteriorRing().getCoordinates());
-      System.out.println("multibuffered " + union);
-      multi = true;
-      // au final on peut court circuiter ?
       return false;
+      // System.out.println("multi " + union);
+      // union = union.buffer(5).buffer(-5);
+      // // if it is still a multipolygon we test if we can remove too small
+      // ones!
+      // if (union instanceof MultiPolygon) {
+      // MultiPolygon mp = ((MultiPolygon) union);
+      // int nbOfSmallOnes = 0;
+      // int bigOneindice = -1;
+      // for (int i = 0; i < mp.getNumGeometries(); ++i) {
+      // if (mp.getGeometryN(i).getArea() < 5)
+      // nbOfSmallOnes++;
+      // else
+      // bigOneindice = i;
+      // }
+      // if (mp.getNumGeometries() - nbOfSmallOnes > 1)
+      // return false;
+      // union = mp.getGeometryN(bigOneindice);
+      // }
+      // union = gf
+      // .createPolygon(((Polygon) union).getExteriorRing().getCoordinates());
+      // System.out.println("multibuffered " + union);
+      // multi = true;
+      // au final on peut court circuiter ?
+      // return false;
     }
 
     Geometry negativeBuffer = union.buffer(-widthBuffer);

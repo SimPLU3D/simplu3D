@@ -238,7 +238,7 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 
     double minwid = p.getDouble("minwid");
     double maxwid = p.getDouble("maxwid");
-
+    System.out.println("minwid " + minwid + " -- maxwid " + maxwid);
     double minheight = p.getDouble("minheight");
     double maxheight = p.getDouble("maxheight");
     double maxheight2 = p.getDouble("maxheight");
