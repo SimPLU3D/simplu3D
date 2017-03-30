@@ -400,7 +400,7 @@ public class Exec_EPFIF {
 
       IPoint dp = new GM_Point(feat.getGeom().centroid());
 
-      if (bPU.getpol2D().contains(dp)) {
+      if (bPU.getPol2D().contains(dp)) {
         return feat;
       }
 
@@ -595,7 +595,7 @@ public class Exec_EPFIF {
     // Si ce n'est pas respecté on ne fait même pas de simulation
     double r_art5 = r1.getArt_5();
     if (r_art5 != 99) {
-      if (bPU.getpol2D().area() < r_art5) {
+      if (bPU.getPol2D().area() < r_art5) {
         return featC;
       }
     }

@@ -274,7 +274,7 @@ public class DeformedOptimizer extends DefaultSimPLU3DOptimizer<Cuboid> {
 	private static IMultiCurve<IOrientableCurve> shiftRoad(BasicPropertyUnit bPU, double valShiftB,
 			IMultiCurve<IOrientableCurve> iMS) {
 
-		IDirectPosition centroidParcel = bPU.getpol2D().centroid();
+		IDirectPosition centroidParcel = bPU.getPol2D().centroid();
 		IMultiCurve<IOrientableCurve> iMSOut = new GM_MultiCurve<>();
 		for (IOrientableCurve oC : iMS) {
 
@@ -346,7 +346,7 @@ public class DeformedOptimizer extends DefaultSimPLU3DOptimizer<Cuboid> {
 		// maxdim, maxheight, Math.PI), builder, bpU.getpol2D());
 
 		if (samplingSurface == null) {
-			samplingSurface = bpU.getpol2D();
+			samplingSurface = bpU.getPol2D();
 		}
 
 		ObjectBuilder<DeformedCuboid> builder = new ParallelDeformedCuboidBuilder(ims.toArray());
@@ -360,7 +360,7 @@ public class DeformedOptimizer extends DefaultSimPLU3DOptimizer<Cuboid> {
 			d[i] = d[i] - v[i];
 		}
 
-		ParallelDeformedCuboidTransform transformParallel = new ParallelDeformedCuboidTransform(d, v, bpU.getpol2D(),
+		ParallelDeformedCuboidTransform transformParallel = new ParallelDeformedCuboidTransform(d, v, bpU.getPol2D(),
 				ims.toArray());
 
 		// Distribution de poisson
@@ -444,7 +444,7 @@ public class DeformedOptimizer extends DefaultSimPLU3DOptimizer<Cuboid> {
 		// maxdim, maxheight, Math.PI), builder, bpU.getpol2D());
 
 		if (samplingSurface == null) {
-			samplingSurface = bpU.getpol2D();
+			samplingSurface = bpU.getPol2D();
 		}
 
 		UniformBirth<DeformedCuboid> birth = new UniformBirth<DeformedCuboid>(rng,

@@ -133,7 +133,7 @@ public class ENAUMorphoIndicators {
 	///////Satisfaction CES
 	public double getSatisfactionCES(double valeurCible){
 
-		double ces = this.dC.toGeometry().getArea() / bpu.getpol2D().area();
+		double ces = this.dC.toGeometry().getArea() / bpu.getPol2D().area();
 
 		return Math.min(valeurCible, ces)
 				/ Math.max(valeurCible, ces);

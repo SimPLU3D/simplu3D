@@ -104,7 +104,7 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 
     // Géométrie de l'unité foncière sur laquelle porte la génération (on se
     // permet de faire un petit buffer)
-    IGeometry geom = bpu.getpol2D().buffer(1);
+    IGeometry geom = bpu.getPol2D().buffer(1);
 
     // Définition de la fonction d'optimisation (on optimise en décroissant)
     // relative au volume

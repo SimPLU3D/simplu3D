@@ -43,7 +43,7 @@ public class Simulation {
 			
 	
 
-			if (featForbiddenZone.getGeom().intersects(bPU.getpol2D())) {
+			if (featForbiddenZone.getGeom().intersects(bPU.getPol2D())) {
 
 				featC.addAll(simulateBPU(env, p, bPU));
 			}

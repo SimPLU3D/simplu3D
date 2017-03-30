@@ -29,7 +29,7 @@ public class BandProduction {
 	public BandProduction(BasicPropertyUnit bPU, Regulation r1, Regulation r2) {
 
 		// On récupère le polygone surlequel on va faire la découpe
-		IPolygon pol_BPU = bPU.getpol2D();
+		IPolygon pol_BPU = bPU.getPol2D();
 
 		// On créé la géométrie des limites donnant sur la voirie
 
@@ -154,7 +154,7 @@ public class BandProduction {
 
 		IMultiCurve<IOrientableCurve> iMS = new GM_MultiCurve<>();
 
-		IDirectPosition centroidParcel = bPU.getpol2D().centroid();
+		IDirectPosition centroidParcel = bPU.getPol2D().centroid();
 
 		for (IOrientableCurve oC : iMSRoad) {
 
