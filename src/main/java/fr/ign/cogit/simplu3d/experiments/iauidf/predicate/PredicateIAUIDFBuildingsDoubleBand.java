@@ -37,6 +37,8 @@ public class PredicateIAUIDFBuildingsDoubleBand<O extends AbstractSimpleBuilding
 
 	@Override
 	public boolean check(C c, M m) {
+		
+
 
 		// Pour produire des boîtes séparées et vérifier que la distance inter
 		// bâtiment est respectée
@@ -54,6 +56,8 @@ public class PredicateIAUIDFBuildingsDoubleBand<O extends AbstractSimpleBuilding
 				return false;
 			}
 		}
+		
+	
 
 		O birth = null;
 
@@ -92,7 +96,7 @@ public class PredicateIAUIDFBuildingsDoubleBand<O extends AbstractSimpleBuilding
 
 		if (birth != null) {
 
-			if (birth.getFootprint().intersects(r1.getGeomBande())) {
+			if (r1!= null && birth.getFootprint().intersects(r1.getGeomBande())) {
 
 				if (r1.getArt_71() != 2) {
 
@@ -110,7 +114,7 @@ public class PredicateIAUIDFBuildingsDoubleBand<O extends AbstractSimpleBuilding
 
 			}
 
-			if (birth.getFootprint().intersects(r2.getGeomBande())) {
+			if (r2!= null &&  birth.getFootprint().intersects(r2.getGeomBande())) {
 
 				if (r2.getArt_71() != 2) {
 

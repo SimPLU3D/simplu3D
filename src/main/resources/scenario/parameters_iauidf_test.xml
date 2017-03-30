@@ -63,12 +63,12 @@
          <!-- Nombre d'itérations de dump!-->
 		<param key="nbdump" value="10000" />
          <!-- Nombre d'itérations de save!-->
-		<param key="nbsave" value="5000000" />
+		<param key="nbsave" value="50000" />
         <!-- Visiteurs utilisés-->
         <!-- Sortie console -->
         <param key="outputstreamvisitor" value="true" />
         <!-- Sortie viewer 3D -->
-        <param key="visitorviewer" value="false" />
+        <param key="visitorviewer" value="true" />
         <param key="showbackground" value="true" />
         <param key="background_img" value="background3D.png" />
 		<param key="xminbg" value="1051042.85" />
@@ -81,7 +81,7 @@
         <!-- Sortie ShapeFileWriter -->
         <param key="shapefilewriter" value="false" />   
         <!-- Sortie Statsvisitor -->
-        <param key="statsvisitor" value="false" />      
+        <param key="statsvisitor" value="true" />      
         <!-- Sortie FilmVisitor -->
         <param key="filmvisitor" value="false" />
         <param key="filmvisitorx" value="1051180.7261527262" />

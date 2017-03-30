@@ -65,7 +65,7 @@ public class Exec_EPFIF {
   private static boolean INTERSECTION = true;
   private static int FLOOR_SIZE = 3;
   
-  private static boolean ALLOW_OBJECT_ON_TWO_BAND = true;
+  private static boolean ALLOW_OBJECT_ON_TWO_BAND = false;
 
   public static List<IMultiSurface<IOrientableSurface>> lMS = new ArrayList<>();
   public static List<IMultiSurface<IOrientableSurface>> debugSurface = new ArrayList<>();
@@ -92,7 +92,7 @@ public class Exec_EPFIF {
 
     Set<Integer> listeCapa = new HashSet<>();
     Collections.addAll(listeCapa, 
-    		77049072 /*, 75009782 ,
+    		/*77049072 ,*/ 75009782/* ,
                                     91014805/*
                                               * , 91014124/*
                                             , 75020917*/);
