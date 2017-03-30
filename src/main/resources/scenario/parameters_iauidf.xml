@@ -8,12 +8,12 @@
         <!-- Pondération du critère de volume-->
     	<param key="ponderation_volume" value="1" />
     	<!-- Pondération négative d'une boîte en intersectant une autre -->
-		<param key="ponderation_volume_inter" value="15" />
+		<param key="ponderation_volume_inter" value="1" />
 
         <!--Distribution (équiprobable) des dimensions des boîtes-->
         <!-- Largeur et longueur !-->
         <param key="minlen" value="5" />
-		<param key="maxlen" value="20" />
+		<param key="maxlen" value="100" />
 		
 		<param key="minwid" value="4" />
 		<param key="maxwid" value="15" />

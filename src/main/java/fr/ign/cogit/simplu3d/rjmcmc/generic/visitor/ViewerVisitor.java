@@ -27,7 +27,6 @@ import fr.ign.cogit.simplu3d.representation.RepEnvironnement.Theme;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
-import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.mpp.configuration.GraphVertex;
 import fr.ign.parameters.Parameters;
 import fr.ign.rjmcmc.sampler.Sampler;
@@ -61,17 +60,16 @@ public class ViewerVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraph
 	private String prefix = "";
 	private static int MIN_LAYER = 3;
 
-	private GraphConfiguration<ISimPLU3DPrimitive> bestConfig = null;
+	private C bestConfig = null;
 	private double bestValue = Double.POSITIVE_INFINITY;
 
-	public ViewerVisitor(Environnement env,String prefixe, Parameters p) {
+	public ViewerVisitor(Environnement env, String prefixe, Parameters p) {
 		prefix = prefixe;
 		if (mW == null) {
 			mW = new MainWindow();
 			// mW.getMainMenuBar().add(new IOToolBar(mW));
 			represent(env, mW, p);
-			MIN_LAYER = mW.getInterfaceMap3D().getCurrent3DMap().getLayerList()
-					.size();
+			MIN_LAYER = mW.getInterfaceMap3D().getCurrent3DMap().getLayerList().size();
 		}
 
 	}
@@ -82,19 +80,18 @@ public class ViewerVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraph
 		this.save = save;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void visit(C config, Sampler<C, M> sampler, Temperature t) {
 		++iter;
 
 		if (config.getEnergy() < bestValue) {
 			bestValue = config.getEnergy();
-			bestConfig = (GraphConfiguration<ISimPLU3DPrimitive>) config;
+			bestConfig = (C) config;
 
 		}
 
 		if ((save > 0) && (iter % save == 0)) {
-			this.addInformationToMainWindow((GraphConfiguration<ISimPLU3DPrimitive>) config);
+			this.addInformationToMainWindow((C) config);
 		}
 	}
 
@@ -108,13 +105,11 @@ public class ViewerVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraph
 		this.addInformationToMainWindow(bestConfig);
 	}
 
-	private void addInformationToMainWindow(
-			GraphConfiguration<ISimPLU3DPrimitive> config) {
+	private void addInformationToMainWindow(C config) {
 
 		IFeatureCollection<IFeature> feat = new FT_FeatureCollection<>();
 
-		for (GraphVertex<ISimPLU3DPrimitive> v : config.getGraph()
-				.vertexSet()) {
+		for (GraphVertex<O> v : config.getGraph().vertexSet()) {
 
 			IGeometry geom = null;
 
@@ -125,22 +120,19 @@ public class ViewerVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraph
 			}
 
 			DefaultFeature df = new DefaultFeature(geom);
-			AttributeManager
-					.addAttribute(df, "Energy", v.getEnergy(), "Double");
+			AttributeManager.addAttribute(df, "Energy", v.getEnergy(), "Double");
 			feat.add(df);
 
 		}
 
 		if (!feat.isEmpty()) {
-			VectorLayer vl = new VectorLayer(feat, PREFIX_NAME_STRING + prefix
-					+ " : " + iter, ColorRandom.getRandomColor());
+			VectorLayer vl = new VectorLayer(feat, PREFIX_NAME_STRING + prefix + " : " + iter,
+					ColorRandom.getRandomColor());
 
-			int nbLayer = mW.getInterfaceMap3D().getCurrent3DMap()
-					.getLayerList().size();
+			int nbLayer = mW.getInterfaceMap3D().getCurrent3DMap().getLayerList().size();
 
 			if (nbLayer > MIN_LAYER) {
-				mW.getInterfaceMap3D().getCurrent3DMap().getLayerList()
-						.get(nbLayer - 1).setVisible(false);
+				mW.getInterfaceMap3D().getCurrent3DMap().getLayerList().get(nbLayer - 1).setVisible(false);
 			}
 
 			mW.getInterfaceMap3D().getCurrent3DMap().addLayer(vl);
@@ -152,7 +144,7 @@ public class ViewerVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraph
 		List<Theme> lTheme = new ArrayList<RepEnvironnement.Theme>();
 		lTheme.add(Theme.TOIT_BATIMENT);
 		lTheme.add(Theme.FACADE_BATIMENT);
-		
+
 		lTheme.add(Theme.VOIRIE);
 		// lTheme.add(Theme.FAITAGE);
 		// lTheme.add(Theme.PIGNON);
@@ -214,8 +206,7 @@ public class ViewerVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraph
 
 		IFeatureCollection<IFeature> fc = new FT_FeatureCollection<IFeature>();
 
-		IFeature feat = new DefaultFeature(new GM_Polygon(
-				new GM_LineString(dpl)));
+		IFeature feat = new DefaultFeature(new GM_Polygon(new GM_LineString(dpl)));
 
 		fc.add(feat);
 
@@ -225,12 +216,10 @@ public class ViewerVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraph
 
 		String background = p.getString("background_img").toString();
 
-		feat.setRepresentation(new TexturedSurface(feat, TextureManager
-				.textureLoading(env.folder + background), dpUR.getX()
-				- dpLL.getX(), dpUR.getY() - dpLL.getY()));
+		feat.setRepresentation(new TexturedSurface(feat, TextureManager.textureLoading(env.folder + background),
+				dpUR.getX() - dpLL.getX(), dpUR.getY() - dpLL.getY()));
 
-		mW.getInterfaceMap3D().getCurrent3DMap()
-				.addLayer(new VectorLayer(fc, "Fond"));
+		mW.getInterfaceMap3D().getCurrent3DMap().addLayer(new VectorLayer(fc, "Fond"));
 
 	}
 }

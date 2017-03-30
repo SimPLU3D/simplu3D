@@ -77,7 +77,7 @@ public class BasicCuboidOptimizer<C extends Cuboid> extends DefaultSimPLU3DOptim
 		if (samplingSurface == null) {
 			samplingSurface = bpU.getpol2D();
 		}
-
+		
 		UniformBirth<Cuboid> birth = new UniformBirth<Cuboid>(rng,
 				new Cuboid(env.minX(), env.minY(), minlen, minwid, minheight, 0),
 				new Cuboid(env.maxX(), env.maxY(), maxlen, maxwid, maxheight, Math.PI), builder,

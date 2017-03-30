@@ -42,8 +42,8 @@ import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
 public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>>
     implements ConfigurationModificationPredicate<C, M> {
 
-  private BasicPropertyUnit currentBPU;
-  private Regulation r1, r2;
+  protected BasicPropertyUnit currentBPU;
+  protected Regulation r1, r2;
 
   Geometry jtsCurveLimiteFondParcel = null;
   Geometry jtsCurveLimiteFrontParcel = null;

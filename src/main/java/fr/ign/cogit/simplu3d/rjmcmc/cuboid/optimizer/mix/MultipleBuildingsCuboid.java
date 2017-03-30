@@ -91,8 +91,12 @@ import fr.ign.simulatedannealing.visitor.CompositeVisitor;
  **/
 public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 
-  public static boolean ALLOW_INTERSECTING_CUBOID = false;
+	  
+	  
+	  public static boolean ALLOW_INTERSECTING_CUBOID = false;
 
+	  
+	  
   public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, Parameters p,
       Environnement env,
       PredicateIAUIDF<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred,
