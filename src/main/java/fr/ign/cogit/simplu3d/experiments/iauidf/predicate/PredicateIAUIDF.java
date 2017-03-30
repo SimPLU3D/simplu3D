@@ -42,8 +42,8 @@ import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
 public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>>
     implements ConfigurationModificationPredicate<C, M> {
 
-  private BasicPropertyUnit currentBPU;
-  private Regulation r1, r2;
+  protected BasicPropertyUnit currentBPU;
+  protected Regulation r1, r2;
 
   Geometry jtsCurveLimiteFondParcel = null;
   Geometry jtsCurveLimiteFrontParcel = null;
@@ -181,6 +181,7 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
     // ART_8 Distance minimale des constructions par rapport aux autres sur
     // une même propriété imposée en mètre 88= non renseignable, 99= non
     // réglementé
+
     double distanceInterBati = r1.getArt_8();
     if ((!MultipleBuildingsCuboid.ALLOW_INTERSECTING_CUBOID)
         && (!checkDistanceInterBuildings(c, m, distanceInterBati))) { // r1.getArt_8()
@@ -732,9 +733,9 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
     // will that do it ?
     // System.out.println(union.getClass());
     if (union instanceof Polygon) {
-      union = gf
-          .createPolygon(((Polygon) union).getExteriorRing().getCoordinates())
-          .buffer(5).buffer(-5);
+      // union = gf
+      // .createPolygon(((Polygon) union).getExteriorRing().getCoordinates())
+      // .buffer(5).buffer(-5);
       union = union.buffer(5).buffer(-5);
     }
     boolean multi = false;

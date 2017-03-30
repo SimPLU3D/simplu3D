@@ -7,17 +7,19 @@
 		<param key="energy" value="1" />
         <!-- Pondération du critère de volume-->
     	<param key="ponderation_volume" value="1" />
+    	<!-- Pondération négative d'une boîte en intersectant une autre -->
+		<param key="ponderation_volume_inter" value="1" />
 
         <!--Distribution (équiprobable) des dimensions des boîtes-->
         <!-- Largeur et longueur !-->
-        <param key="minlen" value="7" />
+        <param key="minlen" value="5" />
 		<param key="maxlen" value="100" />
 		
 		<param key="minwid" value="4" />
-		<param key="maxwid" value="30" />
+		<param key="maxwid" value="15" />
         <!-- Hauteur !-->
 		<param key="minheight" value ="0.5" />
-		<param key="maxheight" value="12" />
+		<param key="maxheight" value="25" />
 
         <!-- Probabilités !-->
         <!-- Création/destruction d'une boîte !-->
@@ -36,7 +38,7 @@
         
         <!-- Paramètres de température (on considère une fonction temp * deccoef^it) !-->
         <!-- Température initiale !-->
-		<param key="temp" value="18000" />
+		<param key="temp" value="180000" />
         <!-- Température initiale !-->
 		<param key="deccoef" value="0.99999" />
         
@@ -51,8 +53,8 @@
         <!-- Nombre d'itération!-->
         <!-- Indique si il s'agit d'un nombre absolu d'itérations true ou un nombre relatif 
         à la non amélioration de la configuration-->
-        <param key="isAbsoluteNumber" value="false" />
-		<param key="nbiter" value="50000" />
+		<param key="isAbsoluteNumber" value="true" />
+		<param key="nbiter" value="1500000" />
         <param key="delta" value="5" />
         
         <param key="poisson" value="20" />
@@ -61,12 +63,12 @@
          <!-- Nombre d'itérations de dump!-->
 		<param key="nbdump" value="10000" />
          <!-- Nombre d'itérations de save!-->
-		<param key="nbsave" value="5000000" />
+		<param key="nbsave" value="50000" />
         <!-- Visiteurs utilisés-->
         <!-- Sortie console -->
         <param key="outputstreamvisitor" value="true" />
         <!-- Sortie viewer 3D -->
-        <param key="visitorviewer" value="false" />
+        <param key="visitorviewer" value="true" />
         <param key="showbackground" value="true" />
         <param key="background_img" value="background3D.png" />
 		<param key="xminbg" value="1051042.85" />
@@ -79,7 +81,7 @@
         <!-- Sortie ShapeFileWriter -->
         <param key="shapefilewriter" value="false" />   
         <!-- Sortie Statsvisitor -->
-        <param key="statsvisitor" value="false" />      
+        <param key="statsvisitor" value="true" />      
         <!-- Sortie FilmVisitor -->
         <param key="filmvisitor" value="false" />
         <param key="filmvisitorx" value="1051180.7261527262" />

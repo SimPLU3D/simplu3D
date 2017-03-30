@@ -160,7 +160,7 @@ public class ParallelCuboidOptimizer extends DefaultSimPLU3DOptimizer<ISimPLU3DP
 
 		IGeometry samplingSurface = null;
 		if (samplingSurface == null) {
-			samplingSurface = bpU.getpol2D();
+			samplingSurface = bpU.getPol2D();
 		}
 
 		Transform transform = new ParallelCuboidTransform(d2, v, samplingSurface);

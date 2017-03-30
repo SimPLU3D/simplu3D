@@ -330,7 +330,7 @@ public class EPFIFTask {
     // Si ce n'est pas respecté on ne fait même pas de simulation
     double r_art5 = r1.getArt_5();
     if (r_art5 != 99) {
-      if (bPU.getpol2D().area() < r_art5) {
+      if (bPU.getPol2D().area() < r_art5) {
         return featC;
       }
     }

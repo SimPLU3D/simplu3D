@@ -190,7 +190,7 @@ public class OptimisedParallelTrapezoidFinalDirectRejection extends DefaultSimPL
 		// maxdim, maxheight, Math.PI), builder, bpU.getpol2D());
 
 		if (samplingSurface == null) {
-			samplingSurface = bpU.getpol2D();
+			samplingSurface = bpU.getPol2D();
 		}
 
 		UniformBirth<ParallelTrapezoid2> birth = new UniformBirth<ParallelTrapezoid2>(rng,

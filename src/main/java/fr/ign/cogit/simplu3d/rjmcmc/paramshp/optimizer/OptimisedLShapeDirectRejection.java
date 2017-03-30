@@ -204,7 +204,7 @@ public class OptimisedLShapeDirectRejection extends DefaultSimPLU3DOptimizer<LBu
 
 		//On initialise la surface sur laquelle on fait la simulation
 		if (samplingSurface == null) {
-			samplingSurface = bpU.getpol2D();
+			samplingSurface = bpU.getPol2D();
 		}
 
 		//On initialise l'espace sur lequel on va calculer les objets (normalement tu as juste à changer le nom des classes)

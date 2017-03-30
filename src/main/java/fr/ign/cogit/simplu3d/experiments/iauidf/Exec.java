@@ -374,7 +374,7 @@ public class Exec {
 		// ART_5 Superficie minimale 88= non renseignable, 99= non réglementé
 		double r_art5 = r1.getArt_5();
 		if (r_art5 != 99.0) {
-			if (bPU.getpol2D().area() < r_art5) {
+			if (bPU.getPol2D().area() < r_art5) {
 				return featC;
 			}
 		}
