@@ -331,7 +331,8 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
         // allowed width according to alignment line
 
         geomBand1 = geomBand1.intersection(bP.getLineRoad().buffer(maxwid / 2));
-        r1.setGeomBande(FromGeomToSurface.convertMSGeom(geomBand1));
+
+ 
 
         builderBand1 = new ParallelCuboidBuilder(bP.getLineRoad().toArray(), 1);
         transformBand1 = new ParallelPolygonTransform(d2, v, geomBand1);
@@ -339,7 +340,6 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
       } else {
 
         geomBand1 = geomBand1.buffer(-minwid / 2);
-        r1.setGeomBande(FromGeomToSurface.convertMSGeom(geomBand1));
 
         transformBand1 = new TransformToSurface(d2, v, geomBand1);
         builderBand1 = new SimpleCuboidBuilder();
