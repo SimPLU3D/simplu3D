@@ -42,8 +42,10 @@ import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.model.ParcelBoundarySide;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.mix.MultipleBuildingsCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.mix.MultipleBuildingsTrapezoidCuboid;
+import fr.ign.cogit.simplu3d.util.SDPCalc;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.mpp.configuration.GraphVertex;
@@ -97,10 +99,10 @@ public class Exec_EPFIF {
     Map<Integer, List<Regulation>> regulation = prepareRegulation();
 
     Set<Integer> listeCapa = new HashSet<>();
-    Collections.addAll(listeCapa,
-        /* 77049072 , */ 75009782/*
-                                  * , 91014805/* , 91014124/* , 75020917
-                                  */);
+    // Collections.addAll(listeCapa, 77049072, 75009782, 91014805, 91014124,
+    // 75020917);
+
+    Collections.addAll(listeCapa, 75020917);
 
     for (int i = 0; i < 1; ++i) {
       INTERSECTION = true; // (i % 2) == 0; // false;//
@@ -320,7 +322,11 @@ public class Exec_EPFIF {
       header = "IMU;ID_PARC;Longueur;Largeur;hauteur;Rotation;Aire;Volume\n";
 
     }
-    String s = "" + header;
+
+    SDPCalc sdp = new SDPCalc();
+    double sd = sdp.process(LoaderCuboid.loadFromCollection(featC));
+
+    String s = "SDP : " + sd + "\n" + header;
     for (IFeature f : featC) {
       s += imu + ";" + f.getAttribute("ID_PARC") + ";"
           + f.getAttribute("Longueur") + ";" + f.getAttribute("Largeur") + ";"

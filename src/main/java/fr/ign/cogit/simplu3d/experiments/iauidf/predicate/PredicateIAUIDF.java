@@ -740,6 +740,7 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
     }
     boolean multi = false;
     if (union instanceof MultiPolygon) {
+      System.out.println("multi " + union);
       return false;
       // System.out.println("multi " + union);
       // union = union.buffer(5).buffer(-5);

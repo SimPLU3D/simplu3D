@@ -1,6 +1,9 @@
 package fr.ign.cogit.simplu3d.experiments.openmole;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,8 +27,10 @@ import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.model.ParcelBoundarySide;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.mix.MultipleBuildingsCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.mix.MultipleBuildingsTrapezoidCuboid;
+import fr.ign.cogit.simplu3d.util.SDPCalc;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.mpp.configuration.GraphVertex;
@@ -44,6 +49,8 @@ public class EPFIFTask {
   // ArrayList<>();
   // public static List<IMultiCurve<IOrientableCurve>> debugLine = new
   // ArrayList<>();
+
+  private static List<String> idparWithNoRules = new ArrayList<>();
 
   public static String run(File folder, File folderOut, File parameterFile,
       long seed) throws Exception {
@@ -70,18 +77,23 @@ public class EPFIFTask {
     // Stocke les résultats en sorties
     Map<String, List<Regulation>> regulation = loadRules(
         new File(folder + "/parcelle.shp"), Integer.parseInt(imu));
-
     IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
-
+    String result = "";
+    SDPCalc sdp = new SDPCalc();
     for (BasicPropertyUnit bPU : env.getBpU()) {
       String id = bPU.getCadastralParcels().get(0).getCode();
       List<Regulation> lR = regulation.get(id);
-
       if (lR != null && !lR.isEmpty()) {
         // On simule indépendemment chaque unité foncière
-        featC.addAll(simulationForEachBPU(env, bPU, lR,
+        IFeatureCollection<IFeature> feats = simulationForEachBPU(env, bPU, lR,
             Integer.parseInt(folderSplit[folderSplit.length - 1]),
-            parameterFile));
+            parameterFile);
+        if (feats.size() > 0) {
+          featC.addAll(feats);
+          double sd = sdp.process(LoaderCuboid.loadFromCollection(featC));
+          result += imu + " ; " + id + " ; " + featC.size() + " ; " + sd + "\n";
+        } else
+          result += imu + " ; " + id + " ; " + 0 + " ; " + 0 + "\n";
       } else {
         System.out.println("Regulation not found : " + id);
       }
@@ -90,13 +102,27 @@ public class EPFIFTask {
     // On écrit le fichier en sortie dans le folderout
     String uds = USE_DEMO_SAMPLER ? "demo_sampler" : "no_demo_sampler";
     String fileName = folderOut + "/simul_" + imu + "_" + INTERSECTION + "_"
-        + uds + "_.shp";
+        + uds + ".shp";
     System.out.println(fileName);
     ShapefileWriter.write(featC, fileName); // , CRS.decode("EPSG:2154") =>
                                             // supprimé à cause de la
                                             // compatibilité OSIG/Geotools
 
-    return imu + " -> " + featC.size() + " objects in shapefile";
+    // SDPCalc sdp = new SDPCalc();
+    // double sd = sdp.process(LoaderCuboid.loadFromCollection(featC));
+    // String returnRes = imu + " -> " + featC.size() + " objects in shapefile
+    // || "
+    // + "SDP : " + sd;
+    if (idparWithNoRules.size() > 0) {
+      for (String id : idparWithNoRules)
+        result += imu + " ; " + id + " ; " + -1 + " ; " + -1 + "\n";
+      result += "\n";
+    }
+    System.out.println("res " + result);
+    writeCSV(
+        folderOut + "/simul_" + imu + "_" + INTERSECTION + "_" + uds + ".csv",
+        result);
+    return result;
   }
 
   // Initialisation des attributs différents du schéma de base
@@ -132,10 +158,16 @@ public class EPFIFTask {
       int insee = Integer.parseInt(tempo.equals("") ? "-1" : tempo);
       // si champs vide ya pas eu de correspondance aves le fichier de regles
       // inutile de parser la suite (qui va planter..)
-      if (insee == -1)
+      if (insee == -1) {
+        idparWithNoRules.add(id);
         continue;
+      }
       int date_approbation = 10022001; // on désactive on en a pas besoin
                                        // Integer.parseInt(feat.getAttribute(ParcelAttributeTransfert.att_date_approbation).toString());
+      // test
+      // code_imu = Integer.parseInt(
+      // feat.getAttribute(ParcelAttributeTransfert.att_imu).toString());
+      //
       String libelle_de_base = feat
           .getAttribute(ParcelAttributeTransfert.att_libelle_de_base)
           .toString(); // LIBELLE_DE_BASE
@@ -648,6 +680,16 @@ public class EPFIFTask {
         * p.getDouble("maxlen") * p.getDouble("maxheight")));
 
     return p;
+  }
+
+  private static void writeCSV(String fileName, String lines) {
+    try {
+      Files.write(Paths.get(fileName), lines.getBytes());
+    } catch (IOException e) {
+      e.printStackTrace();
+      System.out.println("csv writing failed");
+    }
+    System.out.println("csv file " + fileName + " written");
   }
 
 }
