@@ -41,6 +41,7 @@ public class EPFIFTask {
   public static boolean USE_DEMO_SAMPLER = false;
   public static boolean INTERSECTION = false;
   public static int FLOOR_SIZE = 3;
+  public static int MAX_PARCEL_AREA = 10000;
 
   // public static boolean DEBUG_MODE = false;
   // public static List<IMultiSurface<IOrientableSurface>> lMS = new
@@ -82,7 +83,12 @@ public class EPFIFTask {
     SDPCalc sdp = new SDPCalc();
     for (BasicPropertyUnit bPU : env.getBpU()) {
       String id = bPU.getCadastralParcels().get(0).getCode();
+      System.out.println("idpar " + id);
       List<Regulation> lR = regulation.get(id);
+      if (bPU.getArea() > MAX_PARCEL_AREA) {
+        result += imu + " ; " + id + " ; " + (-69) + " ; " + (-69) + "\n";
+        continue;
+      }
       if (lR != null && !lR.isEmpty()) {
         // On simule indépendemment chaque unité foncière
         IFeatureCollection<IFeature> feats = simulationForEachBPU(env, bPU, lR,
@@ -90,8 +96,8 @@ public class EPFIFTask {
             parameterFile);
         if (feats.size() > 0) {
           featC.addAll(feats);
-          double sd = sdp.process(LoaderCuboid.loadFromCollection(featC));
-          result += imu + " ; " + id + " ; " + featC.size() + " ; " + sd + "\n";
+          double sd = sdp.process(LoaderCuboid.loadFromCollection(feats));
+          result += imu + " ; " + id + " ; " + feats.size() + " ; " + sd + "\n";
         } else
           result += imu + " ; " + id + " ; " + 0 + " ; " + 0 + "\n";
       } else {
@@ -537,11 +543,8 @@ public class EPFIFTask {
         volume = v.getValue().getVolume();
       }
 
-      double sdp = (area / bPU.getArea())
-          * (Math.floor(v.getValue().height / FLOOR_SIZE));
       AttributeManager.addAttribute(feat, "Aire", area, "Double");
       AttributeManager.addAttribute(feat, "Volume", volume, "Double");
-      AttributeManager.addAttribute(feat, "SDP", sdp, "Double");
       featC.add(feat);
     }
     return featC;
