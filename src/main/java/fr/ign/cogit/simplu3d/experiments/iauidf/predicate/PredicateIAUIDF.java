@@ -181,8 +181,7 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
     // ART_8 Distance minimale des constructions par rapport aux autres sur
     // une même propriété imposée en mètre 88= non renseignable, 99= non
     // réglementé
-	  
-	 
+
     double distanceInterBati = r1.getArt_8();
     if ((!MultipleBuildingsCuboid.ALLOW_INTERSECTING_CUBOID)
         && (!checkDistanceInterBuildings(c, m, distanceInterBati))) { // r1.getArt_8()
@@ -335,14 +334,12 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
     // ART_9 Pourcentage d'emprise au sol maximum autorisé Valeur comprise
     // de 0 à 1, 88= non renseignable, 99= non réglementé
 
-    
-    /*
     double reg9 = r.getArt_9();
     if (reg9 != 99 & reg9 != 88) {
       if ((areaBuilt / areaBPU) > reg9) {
         return false;
       }
-    }*/
+    }
 
     // ART_13 Part minimale d'espaces libre de toute construction exprimée
     // par rapport à la surface totale de la parcelle Valeur comprise de 0 à
@@ -736,22 +733,39 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
     // will that do it ?
     // System.out.println(union.getClass());
     if (union instanceof Polygon) {
-      union = gf
-          .createPolygon(((Polygon) union).getExteriorRing().getCoordinates())
-          .buffer(5).buffer(-5);
-      // union = DouglasPeuckerSimplifier.simplify(union.buffer(0.2), 1);
-      // union = TopologyPreservingSimplifier.simplify(union, 0.4);
+      // union = gf
+      // .createPolygon(((Polygon) union).getExteriorRing().getCoordinates())
+      // .buffer(5).buffer(-5);
+      union = union.buffer(5).buffer(-5);
     }
     boolean multi = false;
     if (union instanceof MultiPolygon) {
       System.out.println("multi " + union);
-      union = union.buffer(5).buffer(-5);
-      union = gf
-          .createPolygon(((Polygon) union).getExteriorRing().getCoordinates());
-      System.out.println("multibuffered " + union);
-      multi = true;
-      // au final on peut court circuiter ?
       return false;
+      // System.out.println("multi " + union);
+      // union = union.buffer(5).buffer(-5);
+      // // if it is still a multipolygon we test if we can remove too small
+      // ones!
+      // if (union instanceof MultiPolygon) {
+      // MultiPolygon mp = ((MultiPolygon) union);
+      // int nbOfSmallOnes = 0;
+      // int bigOneindice = -1;
+      // for (int i = 0; i < mp.getNumGeometries(); ++i) {
+      // if (mp.getGeometryN(i).getArea() < 5)
+      // nbOfSmallOnes++;
+      // else
+      // bigOneindice = i;
+      // }
+      // if (mp.getNumGeometries() - nbOfSmallOnes > 1)
+      // return false;
+      // union = mp.getGeometryN(bigOneindice);
+      // }
+      // union = gf
+      // .createPolygon(((Polygon) union).getExteriorRing().getCoordinates());
+      // System.out.println("multibuffered " + union);
+      // multi = true;
+      // au final on peut court circuiter ?
+      // return false;
     }
 
     Geometry negativeBuffer = union.buffer(-widthBuffer);

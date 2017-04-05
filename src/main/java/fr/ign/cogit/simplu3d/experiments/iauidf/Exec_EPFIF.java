@@ -31,7 +31,6 @@ import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
-import fr.ign.cogit.simplu3d.exec.BasicSimulator;
 import fr.ign.cogit.simplu3d.experiments.iauidf.predicate.PredicateIAUIDF;
 import fr.ign.cogit.simplu3d.experiments.iauidf.predicate.PredicateIAUIDFBuildingsDoubleBand;
 import fr.ign.cogit.simplu3d.experiments.iauidf.regulation.Regulation;
@@ -43,8 +42,10 @@ import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.model.ParcelBoundarySide;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.mix.MultipleBuildingsCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.mix.MultipleBuildingsTrapezoidCuboid;
+import fr.ign.cogit.simplu3d.util.SDPCalc;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.mpp.configuration.GraphVertex;
@@ -64,18 +65,25 @@ public class Exec_EPFIF {
   private static boolean USE_DEMO_SAMPLER = false;
   private static boolean INTERSECTION = true;
   private static int FLOOR_SIZE = 3;
-  
+
   private static boolean ALLOW_OBJECT_ON_TWO_BAND = false;
 
   public static List<IMultiSurface<IOrientableSurface>> lMS = new ArrayList<>();
   public static List<IMultiSurface<IOrientableSurface>> debugSurface = new ArrayList<>();
   public static List<IMultiCurve<IOrientableCurve>> debugLine = new ArrayList<>();
 
+  // public final static String folder =
+  // "/home/mickael/data/mbrasebin/donnees/IAUIDF/Nouveaux_tests_comparatifs/Eval_EPF_2/";
+  // public final static String file_rules = folder + "rules.csv";
+  // public final static String out_folder =
+  // "/home/mickael/data/mbrasebin/donnees/IAUIDF/Nouveaux_tests_comparatifs/Eval_EPF_2/out/";
 
+  public static final String outFolder = "outCapaBig/";
 
-  public final static String folder = "/home/mickael/data/mbrasebin/donnees/IAUIDF/Nouveaux_tests_comparatifs/Eval_EPF_2/";
+  public final static String folder = "/home/imran/Téléchargements/Test_IAUIDF/Eval_EPF_2/";
   public final static String file_rules = folder + "rules.csv";
-  public final static String out_folder = "/home/mickael/data/mbrasebin/donnees/IAUIDF/Nouveaux_tests_comparatifs/Eval_EPF_2/out/";
+  public final static String out_folder = "/home/imran/testoss/EPFIF/"
+      + outFolder;
 
   // public final static String folder =
   // "/home/mickael/data/mbrasebin/donnees/IAUIDF/Nouveaux_tests_comparatifs/Eval_EPF_2/";
@@ -91,17 +99,16 @@ public class Exec_EPFIF {
     Map<Integer, List<Regulation>> regulation = prepareRegulation();
 
     Set<Integer> listeCapa = new HashSet<>();
-    Collections.addAll(listeCapa, 
-    		/*77049072 ,*/ 75009782/* ,
-                                    91014805/*
-                                              * , 91014124/*
-                                            , 75020917*/);
+    // Collections.addAll(listeCapa, 77049072, 75009782, 91014805, 91014124,
+    // 75020917);
+
+    Collections.addAll(listeCapa, 75020917);
 
     for (int i = 0; i < 1; ++i) {
-       // (i % 2) == 0; // false;//
+      INTERSECTION = true; // (i % 2) == 0; // false;//
+      // (i % 2) == 0; // false;//
       MultipleBuildingsCuboid.ALLOW_INTERSECTING_CUBOID = INTERSECTION;
-      
-      
+
       // On traite indépendamment chaque zone imu
       for (int currentImu : regulation.keySet()) {
 
@@ -116,12 +123,15 @@ public class Exec_EPFIF {
 
           List<Regulation> lR = regulation.get(currentImu);
 
-           String folderName = BasicSimulator.class.getClassLoader()
-           .getResource("scenario/").getPath();
-           String fileName = "parameters_iauidf_test.xml";
+          // String folderName = BasicSimulator.class.getClassLoader()
+          // .getResource("scenario/").getPath();
+          // String fileName = "parameters_iauidf_test.xml";
+
+          String folderName = "/home/imran/testoss/EPFIF/";
+          String fileName = "parameters_iauidf.xml";
 
           // "big" : longueur < 100
-          //String fileName = "parameters_iauidf.xml";
+          // String fileName = "parameters_iauidf.xml";
 
           File f = new File(folderName + fileName);
 
@@ -173,7 +183,6 @@ public class Exec_EPFIF {
 
       for (int i = 0; i < listValue.length; i++) {
         newmap.put(listItem[i].toString(), listValue[i]);
-
       }
 
       System.out.println("*************************************************");
@@ -297,7 +306,7 @@ public class Exec_EPFIF {
     System.out.println("-- Nombre de surfaces : " + debugSurface.size());
     String uds = USE_DEMO_SAMPLER ? "demo_sampler" : "no_demo_sampler";
     String fileName = out_folder + "simul_" + imu + "_" + INTERSECTION + "_"
-        + uds + ".shp";
+        + uds + "_2.shp";
     System.out.println(fileName);
     ShapefileWriter.write(featC, fileName, CRS.decode("EPSG:2154"));
 
@@ -311,9 +320,13 @@ public class Exec_EPFIF {
 
     if (!Files.exists(Paths.get(fileName))) {
       header = "IMU;ID_PARC;Longueur;Largeur;hauteur;Rotation;Aire;Volume\n";
- 
+
     }
-    String s = "" + header;
+
+    SDPCalc sdp = new SDPCalc();
+    double sd = sdp.process(LoaderCuboid.loadFromCollection(featC));
+
+    String s = "SDP : " + sd + "\n" + header;
     for (IFeature f : featC) {
       s += imu + ";" + f.getAttribute("ID_PARC") + ";"
           + f.getAttribute("Longueur") + ";" + f.getAttribute("Largeur") + ";"
@@ -609,8 +622,6 @@ public class Exec_EPFIF {
       System.out.println("Une seule bande");
     }
 
-
-
     Parameters p = initiateSimulationParamters(r1, r2, fParam);
     // initialisation des paramètres de simulation
     if (p == null) {
@@ -627,19 +638,18 @@ public class Exec_EPFIF {
       featC.addAll(simulRegulationByBasicPropertyUnitFinal(env, bPU, imu, r1,
           r2, p, bP));
     }
-    
-    
+
     if (DEBUG_MODE) {
 
-        if (r1 != null && r1.getGeomBande() != null) {
-          debugSurface.add(r1.getGeomBande());
-        }
-
-        if (r2 != null && r2.getGeomBande() != null) {
-          debugSurface.add(r2.getGeomBande());
-        }
-        debugLine.add(bP.getLineRoad());
+      if (r1 != null && r1.getGeomBande() != null) {
+        debugSurface.add(r1.getGeomBande());
       }
+
+      if (r2 != null && r2.getGeomBande() != null) {
+        debugSurface.add(r2.getGeomBande());
+      }
+      debugLine.add(bP.getLineRoad());
+    }
 
     return featC;
   }
@@ -654,29 +664,24 @@ public class Exec_EPFIF {
 
     // Création du Sampler (qui va générer les propositions de solutions)
     MultipleBuildingsCuboid oCB = new MultipleBuildingsCuboid();
-    
-    
-    PredicateIAUIDF<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred;
-    		
-    if(ALLOW_OBJECT_ON_TWO_BAND){
-    	pred = new PredicateIAUIDFBuildingsDoubleBand<>(
-    	        bPU, r1, r2);
 
-    }else{
-    	
-    	pred = new PredicateIAUIDF<>(
-    	        bPU, r1, r2);
+    PredicateIAUIDF<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred;
+
+    if (ALLOW_OBJECT_ON_TWO_BAND) {
+      pred = new PredicateIAUIDFBuildingsDoubleBand<>(bPU, r1, r2);
+
+    } else {
+
+      pred = new PredicateIAUIDF<>(bPU, r1, r2);
 
     }
-    
-  
+
     if (p.getBoolean("shapefilewriter")) {
       new File(p.getString("result") + imu).mkdir();
     }
     // Lancement de l'optimisation avec unité foncière, paramètres,
     // environnement, id et prédicat
 
-    
     GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, pred, r1, r2, bP);
 
     if (cc == null) {
@@ -723,18 +728,15 @@ public class Exec_EPFIF {
 
     // Création du Sampler (qui va générer les propositions de solutions)
     MultipleBuildingsTrapezoidCuboid oCB = new MultipleBuildingsTrapezoidCuboid();
-    
-    
-    PredicateIAUIDF<AbstractSimpleBuilding, GraphConfiguration<AbstractSimpleBuilding>, BirthDeathModification<AbstractSimpleBuilding>> pred;
-	
-    if(ALLOW_OBJECT_ON_TWO_BAND){
-    	pred = new PredicateIAUIDFBuildingsDoubleBand<>(
-    	        bPU, r1, r2);
 
-    }else{
-    	
-    	pred = new PredicateIAUIDF<>(
-    	        bPU, r1, r2);
+    PredicateIAUIDF<AbstractSimpleBuilding, GraphConfiguration<AbstractSimpleBuilding>, BirthDeathModification<AbstractSimpleBuilding>> pred;
+
+    if (ALLOW_OBJECT_ON_TWO_BAND) {
+      pred = new PredicateIAUIDFBuildingsDoubleBand<>(bPU, r1, r2);
+
+    } else {
+
+      pred = new PredicateIAUIDF<>(bPU, r1, r2);
 
     }
 
@@ -743,8 +745,6 @@ public class Exec_EPFIF {
     }
     // Lancement de l'optimisation avec unité foncière, paramètres,
     // environnement, id et prédicat
-    
-
 
     GraphConfiguration<AbstractSimpleBuilding> cc = oCB.process(bPU, p, env,
         pred, r1, r2, bP);
