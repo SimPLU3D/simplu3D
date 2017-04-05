@@ -36,10 +36,7 @@ public class ExportAsFeatureCollection {
   public IFeatureCollection<IFeature> getFeatureCollection() {
     IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
     for (GraphVertex<? extends AbstractSimpleBuilding> v : this.config.getGraph().vertexSet()) {
-      double longueur = Math.max(v.getValue().length, v.getValue().width);
-      double largeur = Math.min(v.getValue().length, v.getValue().width);
-      double hauteur = v.getValue().height(0, 0);
-      double orientation = v.getValue().orientation;
+
       IFeature feat = new DefaultFeature(v.getValue().generated3DGeom());
       if (this.exportId) {
         AttributeManager.addAttribute(feat, "idparc", this.id, "Integer");
