@@ -53,7 +53,7 @@ public class EPFIFTask {
 
   private static List<String> idparWithNoRules = new ArrayList<>();
 
-  public static String run(File folder, File folderOut, File parameterFile,
+  public static String run(File folder, String dirName, File folderOut, File parameterFile,
       long seed) throws Exception {
     init();
     MultipleBuildingsCuboid.ALLOW_INTERSECTING_CUBOID = INTERSECTION;
@@ -72,9 +72,9 @@ public class EPFIFTask {
     }
 
     Environnement env = LoaderSHP.loadNoDTM(folder);
-    String[] folderSplit = folder.getAbsolutePath().split(File.separator);
+    //String[] folderSplit = folder.getAbsolutePath().split(File.separator);
     // Identifiant de l'imu courant
-    String imu = folderSplit[folderSplit.length - 1];
+    String imu = dirName;//folderSplit[folderSplit.length - 1];
     // Stocke les résultats en sorties
     Map<String, List<Regulation>> regulation = loadRules(
         new File(folder + "/parcelle.shp"), Integer.parseInt(imu));
@@ -91,9 +91,7 @@ public class EPFIFTask {
       }
       if (lR != null && !lR.isEmpty()) {
         // On simule indépendemment chaque unité foncière
-        IFeatureCollection<IFeature> feats = simulationForEachBPU(env, bPU, lR,
-            Integer.parseInt(folderSplit[folderSplit.length - 1]),
-            parameterFile);
+        IFeatureCollection<IFeature> feats = simulationForEachBPU(env, bPU, lR, Integer.parseInt(imu), parameterFile);
         if (feats.size() > 0) {
           featC.addAll(feats);
           double sd = sdp.process(LoaderCuboid.loadFromCollection(feats));
