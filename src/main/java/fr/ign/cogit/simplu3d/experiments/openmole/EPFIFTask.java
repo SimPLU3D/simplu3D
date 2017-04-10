@@ -53,8 +53,8 @@ public class EPFIFTask {
 
   private static List<String> idparWithNoRules = new ArrayList<>();
 
-  public static String run(File folder, String dirName, File folderOut, File parameterFile,
-      long seed) throws Exception {
+  public static String run(File folder, String dirName, File folderOut,
+      File parameterFile, long seed) throws Exception {
     init();
     MultipleBuildingsCuboid.ALLOW_INTERSECTING_CUBOID = INTERSECTION;
 
@@ -72,9 +72,9 @@ public class EPFIFTask {
     }
 
     Environnement env = LoaderSHP.loadNoDTM(folder);
-    //String[] folderSplit = folder.getAbsolutePath().split(File.separator);
+    // String[] folderSplit = folder.getAbsolutePath().split(File.separator);
     // Identifiant de l'imu courant
-    String imu = dirName;//folderSplit[folderSplit.length - 1];
+    String imu = dirName;// folderSplit[folderSplit.length - 1];
     // Stocke les résultats en sorties
     Map<String, List<Regulation>> regulation = loadRules(
         new File(folder + "/parcelle.shp"), Integer.parseInt(imu));
@@ -84,6 +84,8 @@ public class EPFIFTask {
     for (BasicPropertyUnit bPU : env.getBpU()) {
       String id = bPU.getCadastralParcels().get(0).getCode();
       System.out.println("idpar " + id);
+      // if (!id.equals("77108000AR0550"))
+      // continue;
       List<Regulation> lR = regulation.get(id);
       if (bPU.getArea() > MAX_PARCEL_AREA) {
         result += imu + " ; " + id + " ; " + (-69) + " ; " + (-69) + "\n";
@@ -91,7 +93,8 @@ public class EPFIFTask {
       }
       if (lR != null && !lR.isEmpty()) {
         // On simule indépendemment chaque unité foncière
-        IFeatureCollection<IFeature> feats = simulationForEachBPU(env, bPU, lR, Integer.parseInt(imu), parameterFile);
+        IFeatureCollection<IFeature> feats = simulationForEachBPU(env, bPU, lR,
+            Integer.parseInt(imu), parameterFile);
         if (feats.size() > 0) {
           featC.addAll(feats);
           double sd = sdp.process(LoaderCuboid.loadFromCollection(feats));

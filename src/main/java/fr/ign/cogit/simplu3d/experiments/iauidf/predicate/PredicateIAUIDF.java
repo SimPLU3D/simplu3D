@@ -714,7 +714,12 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
     for (AbstractSimpleBuilding o : g) {
       collGeom.add(o.toGeometry()/* .buffer(0.4) */);
     }
-    Geometry union = CascadedPolygonUnion.union(collGeom);
+    Geometry union = null;
+    try {
+      union = CascadedPolygonUnion.union(collGeom);
+    } catch (Exception e) {
+      return null;
+    }
     /* union = TopologyPreservingSimplifier.simplify(union, 0.4); */
     return union;
   }
@@ -729,6 +734,8 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
     if (lO.size() < 2)
       return true;
     Geometry union = getGroupGeom(lO);
+    if (union == null)
+      return false;
     // Récupérer le polygone sans le trou
     // will that do it ?
     // System.out.println(union.getClass());
