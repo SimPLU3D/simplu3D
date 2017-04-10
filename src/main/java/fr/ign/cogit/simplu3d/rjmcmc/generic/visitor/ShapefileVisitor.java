@@ -58,16 +58,14 @@ public class ShapefileVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGr
 
 	@Override
 	public void end(C config, Sampler<C, M> sampler, Temperature t) {
-		this.writeShapefile(fileName + "_" + String.format(formatInt, iter + 1) + ".shp", config);
+		this.writeShapefile(fileName + "_" + (iter +1 )+ ".shp", config);
 	}
-
-	String formatInt = "%1$-10d";
 
 	@Override
 	public void visit(C config, Sampler<C, M> sampler, Temperature t) {
 		++iter;
 		if ((save > 0) && (iter % save == 0)) {
-			this.writeShapefile(fileName + "_" + String.format(formatInt, iter) + ".shp", config);
+			this.writeShapefile(fileName + "_" + iter+ ".shp", config);
 		}
 	}
 
