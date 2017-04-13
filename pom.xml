@@ -356,12 +356,12 @@
 	</dependencies>
 	<distributionManagement>
 		<repository>
-			<id>ign-releases</id>
+			<id>releases</id>
 			<name>Nexus Releases Repository</name>
 			<url>https://forge-cogit.ign.fr/nexus/content/repositories/releases</url>
 		</repository>
 		<snapshotRepository>
-			<id>ign-snapshots</id>
+			<id>snapshots</id>
 			<name>Nexus Snapshots Repository</name>
 			<url>https://forge-cogit.ign.fr/nexus/content/repositories/snapshots/</url>
 		</snapshotRepository>
