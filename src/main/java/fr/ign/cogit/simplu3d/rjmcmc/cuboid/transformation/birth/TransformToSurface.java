@@ -45,10 +45,16 @@ public class TransformToSurface implements Transform {
   private double determinant;
   private double absDeterminant;
 
+  
+  private  boolean isValid = true;
+  public boolean isValid(){
+	  return isValid;
+  }
+  
   public TransformToSurface(double[] d, double[] v, IGeometry geom) {
 
     // On prépare la géométrie pour être triangulée
-    prepareGeometry(geom);
+    isValid = prepareGeometry(geom);
     this.mat = new double[d.length];
     this.delta = new double[d.length];
     this.inv = new double[d.length];
@@ -83,7 +89,7 @@ public class TransformToSurface implements Transform {
 
   private EquiSurfaceDistributionJTS eq;
 
-  private void prepareGeometry(IGeometry geom) {
+  private boolean prepareGeometry(IGeometry geom) {
     List<IOrientableSurface> lOS = FromGeomToSurface.convertGeom(geom);
 
     IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<>();
@@ -96,6 +102,7 @@ public class TransformToSurface implements Transform {
         triangulation.triangule();
       } catch (Exception e) {
         e.printStackTrace();
+        return false;
       }
 
       for (Face f : triangulation.getPopFaces()) {
@@ -104,6 +111,7 @@ public class TransformToSurface implements Transform {
         }
       }
 
+    
     }
 
     try {
@@ -111,7 +119,12 @@ public class TransformToSurface implements Transform {
 	} catch (Exception e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
+	  return false;
 	}
+    if(!eq.isValid()){
+    	return false;
+    }
+    return true;
   }
 
   public double getDeterminant() {

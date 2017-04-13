@@ -65,17 +65,17 @@ public class BasicSimulator {
 		// Instantiation of the sampler
 		OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();
 
-		// Rules parameters
+		// Rules parameters.8
 		// Distance to road
-		double distReculVoirie = 0.0;
+		double distReculVoirie = 2;
 		// Distance to bottom of the parcel
-		double distReculFond = 2;
+		double distReculFond = 0;
 		// Distance to lateral parcel limits
 		double distReculLat = 4;
 		// Distance between two buildings of a parcel
 		double distanceInterBati = 0;
 		// Maximal ratio built area
-		double maximalCES = 2;
+		double maximalCES = 0.5;
 
 		// Instantiation of the rule checker
 		SamplePredicate<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new SamplePredicate<>(

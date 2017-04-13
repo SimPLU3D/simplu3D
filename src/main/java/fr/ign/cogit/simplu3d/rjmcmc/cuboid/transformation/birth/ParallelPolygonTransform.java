@@ -37,6 +37,8 @@ public class ParallelPolygonTransform implements Transform {
   private double deltaHeight;
   private double rangeLength;
   private double rangeHeight;
+  
+  private boolean isValid = true;
 
   public ParallelPolygonTransform(double[] d, double[] v, IGeometry polygon)
       throws Exception {
@@ -52,9 +54,22 @@ public class ParallelPolygonTransform implements Transform {
 //    this.limits = factory.createMultiLineString(lineStrings);
     Geometry pp = AdapterFactory.toGeometry(factory, polygon);
     this.polygonTransform = new PolygonTransform(pp, 0.1);
+    
+    
+    isValid = this.polygonTransform.isValid();
+    
+    
     this.absJacobian = new double[2];
     this.absJacobian[0] = Math.abs(determinant) * this.polygonTransform.getAbsJacobian(true);
     this.absJacobian[1] = Math.abs(1 / determinant) * this.polygonTransform.getAbsJacobian(false);
+  }
+  
+  /**
+   * Indicate if the transform is valid (i.e: that the triangulation in the PolygonTransform is ok)
+   * @return
+   */
+  public boolean isValid(){  
+	  return isValid;
   }
 
   @Override

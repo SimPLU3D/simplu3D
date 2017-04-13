@@ -16,6 +16,7 @@ import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
+import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.experiments.iauidf.regulation.Regulation;
 import fr.ign.cogit.simplu3d.model.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
@@ -747,7 +748,7 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
     }
     boolean multi = false;
     if (union instanceof MultiPolygon) {
-      System.out.println("multi " + union);
+     // System.out.println("multi " + union);
       return false;
       // System.out.println("multi " + union);
       // union = union.buffer(5).buffer(-5);
@@ -776,15 +777,17 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
     }
 
     Geometry negativeBuffer = union.buffer(-widthBuffer);
+    
+    
 
     if (negativeBuffer.isEmpty() || negativeBuffer.getArea() < 0.001) {
       ++c;
       if (c % 10000 == 0 || multi) {
-        System.out.println("**** " + multi);
-        System.out.println("**** " + union);
-        System.out.println("good width "
-            + (negativeBuffer.isEmpty() ? "empty" : negativeBuffer));
-        System.out.println("group size " + lO.size());
+      //  System.out.println("**** " + multi);
+    	  //  System.out.println("**** " + union);
+    	  // System.out.println("good width "
+    	  //  + (negativeBuffer.isEmpty() ? "empty" : negativeBuffer));
+    	  //System.out.println("group size " + lO.size());
       }
       return true;
     }

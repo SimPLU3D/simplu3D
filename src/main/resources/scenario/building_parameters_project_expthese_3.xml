@@ -19,7 +19,7 @@
 		<param key="maxlen" value="20" />
 		
 		<param key="minwid" value="1" />
-		<param key="maxwid" value="5" />
+		<param key="maxwid" value="20" />
         <!-- Hauteur !-->
 		<param key="minheight" value ="2" />
 		<param key="maxheight" value="12" />
@@ -71,7 +71,7 @@
         <!-- Sortie console -->
         <param key="outputstreamvisitor" value="true" />
         <!-- Sortie viewer 3D -->
-        <param key="visitorviewer" value="false" />
+        <param key="visitorviewer" value="true" />
         <param key="showbackground" value="true" />
         <param key="background_img" value="background3D.png" />
 		<param key="xminbg" value="1051042.85" />
@@ -105,8 +105,8 @@
        <param key="csvvisitorend" value="false" />  
        <param key="csvfilenamend" value="exportEndStats.csv" />  
         
-        <!-- Dossier des sorties des visiteur -->
-        <param key="result" value="/home/pchapron/dev/sorties_simplu/" />           
+        <!-- Dossier des sorties des visiteur -->	<param key="maxheight" value="12" />
+        <param key="result" value="/tmp/" />           
 </parameters>
 
 
