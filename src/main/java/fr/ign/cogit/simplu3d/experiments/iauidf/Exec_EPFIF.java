@@ -80,10 +80,11 @@ public class Exec_EPFIF {
 
   public static final String outFolder = "outCapaBig/";
 
-  public final static String folder = "/home/imran/Téléchargements/Test_IAUIDF/Eval_EPF_2/";
+  public final static String folder = "/home/mickael/data/mbrasebin/donnees/IAUIDF/Nouveaux_tests_comparatifs/Eval_EPF_2/";
   public final static String file_rules = folder + "rules.csv";
-  public final static String out_folder = "/home/imran/testoss/EPFIF/"
-      + outFolder;
+  public final static String out_folder = "/home/mickael/data/mbrasebin/donnees/IAUIDF/Nouveaux_tests_comparatifs/Eval_EPF_2/out/";
+  
+  public final static String paramFile = "/home/mickael/data/mbrasebin/donnees/IAUIDF/data_grille/parameters_iauidf_real.xml";
 
   // public final static String folder =
   // "/home/mickael/data/mbrasebin/donnees/IAUIDF/Nouveaux_tests_comparatifs/Eval_EPF_2/";
@@ -102,7 +103,7 @@ public class Exec_EPFIF {
     // Collections.addAll(listeCapa, 77049072, 75009782, 91014805, 91014124,
     // 75020917);
 
-    Collections.addAll(listeCapa, 75020917);
+    Collections.addAll(listeCapa, 91014805);
 
     for (int i = 0; i < 1; ++i) {
       INTERSECTION = true; // (i % 2) == 0; // false;//
@@ -127,13 +128,11 @@ public class Exec_EPFIF {
           // .getResource("scenario/").getPath();
           // String fileName = "parameters_iauidf_test.xml";
 
-          String folderName = "/home/imran/testoss/EPFIF/";
-          String fileName = "parameters_iauidf.xml";
-
+    
           // "big" : longueur < 100
           // String fileName = "parameters_iauidf.xml";
 
-          File f = new File(folderName + fileName);
+          File f = new File(paramFile);
 
           boolean simul = simulRegulationByIMU(currentImu,
               folder + currentImu + "/", lR, f);

@@ -111,8 +111,7 @@ public class SDPCalc {
   public static void main(String[] args) {
     SDPCalc sd = new SDPCalc();
     int imu = 77017278;
-    double sdp = sd.process("/home/imran/testoss/EPFIF/outCapaBig/res/" + imu
-        + "/simulations/simul_" + imu + "_true_no_demo_sampler.shp");
+    double sdp = sd.process("/home/mickael/data/mbrasebin/donnees/IAUIDF/Nouveaux_tests_comparatifs/Eval_EPF_2/outsimul_91014805_true_no_demo_sampler_2.shp");
     System.out.println("SDP :" + sdp);
   }
 }
