@@ -254,14 +254,14 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 
 		// On regarde si la contrainte de hauteur ne permet pas de réduire
 		// l'intervallle des hauteurs
-		if (r1 != null && r1.getArt_102() != 99) {
-			maxheight = Math.min(maxheight, r1.getArt_102());
+		if (r1 != null && r1.getArt_10_m() != 99) {
+			maxheight = Math.min(maxheight, r1.getArt_10_m());
 		}
 
 		double[] d = new double[] { env.maxX(), env.maxY(), maxlen, maxwid, maxheight, Math.PI };
 
-		if (r2 != null && r2.getArt_102() != 99) {
-			maxheight2 = Math.min(maxheight2, r2.getArt_102());
+		if (r2 != null && r2.getArt_10_m() != 99) {
+			maxheight2 = Math.min(maxheight2, r2.getArt_10_m());
 		}
 
 		// On répète la même chose pour la seconde

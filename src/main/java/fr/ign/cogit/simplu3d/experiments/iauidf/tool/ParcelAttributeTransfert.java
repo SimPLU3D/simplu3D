@@ -48,8 +48,8 @@ public class ParcelAttributeTransfert {
 	public static String att_art_8 = "ART_81";
 	public static String att_art_9 = "ART_91";
 	public static String att_art_10_top = "ART_10_TOP";
-	public static String att_art_101 = "ART_101"; // ATTENTION A CHANGER
-	public static String att_art_102 = "ART_101";
+	public static String att_art_10 = "ART_101"; // ATTENTION A CHANGER
+	public static String att_art_10_m = "b1_haut_m";
 	public static String att_art_12 = "ART_121";
 	public static String att_art_13 = "ART_131";
 	public static String att_art_14 = "ART_141";
@@ -63,8 +63,8 @@ public class ParcelAttributeTransfert {
 	public static String att_art_8_2 = "ART_82";
 	public static String att_art_9_2 = "ART_92";
 	public static String att_art_10_top_2 = "ART_10_T_1";
-	public static String att_art_101_2 = "ART_102"; // ATTENTION A CHANGER
-	public static String att_art_102_2 = "ART_102";
+	public static String att_art_10_2 = "ART_102"; // ATTENTION A CHANGER
+	public static String att_art_10_m_2 = "b2_haut_m";
 	public static String att_art_12_2 = "ART_122";
 	public static String att_art_13_2 = "ART_132";
 	public static String att_art_14_2 = "ART_142";
@@ -131,15 +131,15 @@ public class ParcelAttributeTransfert {
 			double art_8 = Double.parseDouble(newmap.get(att_art_8).toString());
 			double art_9 = Double.parseDouble(newmap.get(att_art_9).toString());
 			int art_10_top = Integer.parseInt(newmap.get(att_art_10_top).toString());
-			double art_101 = Double.parseDouble(newmap.get(att_art_101).toString()); 
-			double art_102 =  Double.parseDouble(newmap.get(att_art_102).toString());
+			double art_10 = Double.parseDouble(newmap.get(att_art_10).toString()); 
+			double art_10_m =  Double.parseDouble(newmap.get(att_art_10_m).toString());
 			double art_12 =  Double.parseDouble(newmap.get(att_art_12).toString());
 			double art_13 = Double.parseDouble(newmap.get(att_art_13).toString());
 			double art_14 = Double.parseDouble(newmap.get(att_art_14).toString());
 
 			Regulation r = new Regulation(code_imu, libelle_zone, insee, date_approbation, libelle_de_base,
 					libelle_de_dul, fonctions, top_zac, zonage_coherent, correction_zonage, typ_bande, bande, art_5,
-					art_6, art_71, art_72, art_73, art_74, art_8, art_9, art_10_top, art_101, art_102, art_12, art_13,
+					art_6, art_71, art_72, art_73, art_74, art_8, art_9, art_10_top, art_10, art_10_m, art_12, art_13,
 					art_14);
 
 			List<Regulation> lRegulation = new ArrayList<>();
@@ -158,10 +158,10 @@ public class ParcelAttributeTransfert {
 				double art_8_2 = Double.parseDouble(newmap.get(att_art_8_2).toString());
 				double art_9_2 = Double.parseDouble(newmap.get(att_art_9_2).toString());
 				int art_10_top_2 = Integer.parseInt(newmap.get(att_art_10_top_2).toString());
-				double art_101_2 =  Double.parseDouble(newmap.get(att_art_101_2).toString()); // ATTENTION
+				double art_10_2 =  Double.parseDouble(newmap.get(att_art_10_2).toString()); // ATTENTION
 																						// A
 																						// CHANGER
-				double art_102_2 =  Double.parseDouble(newmap.get(att_art_102_2).toString());
+				double art_10_m_2 =  Double.parseDouble(newmap.get(att_art_10_m_2).toString());
 				double art_12_2 = Double.parseDouble(newmap.get(att_art_12_2).toString());
 				double art_13_2 = Double.parseDouble(newmap.get(att_art_13_2).toString());
 				double art_14_2 = Double.parseDouble(newmap.get(att_art_14_2).toString());
@@ -169,7 +169,7 @@ public class ParcelAttributeTransfert {
 				Regulation r2 = new Regulation(code_imu, libelle_zone, insee, date_approbation, libelle_de_base,
 						libelle_de_dul, fonctions_2, top_zac, zonage_coherent, correction_zonage, typ_bande, bande,
 						art_5_2, art_6_2, art_71_2, art_72_2, art_73_2, art_74_2, art_8_2, art_9_2, art_10_top_2,
-						art_101_2, art_102_2, art_12_2, art_13_2, art_14_2);
+						art_10_2, art_10_m_2, art_12_2, art_13_2, art_14_2);
 
 				//		System.out.println(r2.toString());
 
@@ -253,8 +253,8 @@ public class ParcelAttributeTransfert {
 			AttributeManager.addAttribute(feat, att_art_8, lReg.get(0).getArt_8(), "Double");
 			AttributeManager.addAttribute(feat, att_art_9, lReg.get(0).getArt_9(), "Double");
 			AttributeManager.addAttribute(feat, att_art_10_top, lReg.get(0).getArt_10_top(), "Integer");
-			AttributeManager.addAttribute(feat, att_art_101, lReg.get(0).getArt_101(), "Integer");
-			AttributeManager.addAttribute(feat, att_art_102, lReg.get(0).getArt_102(), "Double");
+			AttributeManager.addAttribute(feat, att_art_10, lReg.get(0).getArt_10(), "Integer");
+			AttributeManager.addAttribute(feat, att_art_10_m, lReg.get(0).getArt_10_m(), "Double");
 			AttributeManager.addAttribute(feat, att_art_12, lReg.get(0).getArt_12(), "Double");
 			AttributeManager.addAttribute(feat, att_art_13, lReg.get(0).getArt_13(), "Double");
 			AttributeManager.addAttribute(feat, att_art_14, lReg.get(0).getArt_14(), "Double");
@@ -270,8 +270,8 @@ public class ParcelAttributeTransfert {
 			AttributeManager.addAttribute(feat, att_art_8_2, lReg.get(1).getArt_8(), "Double");
 			AttributeManager.addAttribute(feat, att_art_9_2, lReg.get(1).getArt_9(), "Double");
 			AttributeManager.addAttribute(feat, att_art_10_top_2, lReg.get(1).getArt_10_top(), "String");
-			AttributeManager.addAttribute(feat, att_art_101_2, lReg.get(1).getArt_101(), "String");
-			AttributeManager.addAttribute(feat, att_art_102_2, lReg.get(1).getArt_102(), "Double");
+			AttributeManager.addAttribute(feat, att_art_10_2, lReg.get(1).getArt_10(), "String");
+			AttributeManager.addAttribute(feat, att_art_10_m_2, lReg.get(1).getArt_10_m(), "Double");
 			AttributeManager.addAttribute(feat, att_art_12_2, lReg.get(1).getArt_12(), "Double");
 			AttributeManager.addAttribute(feat, att_art_13_2, lReg.get(1).getArt_13(), "Double");
 			AttributeManager.addAttribute(feat, att_art_14_2, lReg.get(1).getArt_14(), "Double");

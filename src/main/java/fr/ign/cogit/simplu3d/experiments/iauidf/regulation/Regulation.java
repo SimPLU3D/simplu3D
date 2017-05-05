@@ -26,25 +26,20 @@ public class Regulation {
 	private static Logger log = Logger.getLogger(Regulation.class);
 
 	// Les intitulés des colonnes
-	private int code_imu, insee, date_approbation, fonctions, top_zac,
-			zonage_coherent, correction_zonage, typ_bande, bande,
-			art_71,  art_74, art_10_top ;
+	private int code_imu, insee, date_approbation, fonctions, top_zac, zonage_coherent, correction_zonage, typ_bande,
+	    bande, art_71, art_74, art_10_top;
 	private String libelle_zone, libelle_de_base, libelle_de_dul;
 
-	private double  art_5,art_72,art_73,  art_8, art_6, art_9, art_102, art_12, art_14, art_13, art_101;
+	private double art_5, art_72, art_73, art_8, art_6, art_9, art_10, art_12, art_14, art_13, art_10_m;
 
-	
-	public Regulation(){
-		
+	public Regulation() {
+
 	}
-	public Regulation(int code_imu, String libelle_zone, int insee,
-			int date_approbation, String libelle_de_base,
-			String libelle_de_dul, int fonctions, int top_zac,
-			int zonage_coherent, int correction_zonage, int typ_bande,
-			int bande, double art_5, double art_6, int art_71, double art_72,
-			double art_73, int art_74, double art_8, double art_9, int art_10_top,
-			double art_101, double art_102, double art_12, double art_13,
-			double art_14) {
+
+	public Regulation(int code_imu, String libelle_zone, int insee, int date_approbation, String libelle_de_base,
+	    String libelle_de_dul, int fonctions, int top_zac, int zonage_coherent, int correction_zonage, int typ_bande,
+	    int bande, double art_5, double art_6, int art_71, double art_72, double art_73, int art_74, double art_8,
+	    double art_9, int art_10_top, double art_10, double art_10_m, double art_12, double art_13, double art_14) {
 		super();
 		this.code_imu = code_imu;
 		this.libelle_zone = libelle_zone;
@@ -67,51 +62,43 @@ public class Regulation {
 		this.art_8 = art_8;
 		this.art_9 = art_9;
 		this.art_10_top = art_10_top;
-		this.art_101 = art_101;
-		this.art_102 = art_102;
+		this.art_10 = art_10;
+		this.art_10_m = art_10_m;
 		this.art_12 = art_12;
 		this.art_13 = art_13;
 		this.art_14 = art_14;
 	}
-	
-	public Regulation(IFeature feat){
-	   this(returnObjTab(feat));
-	
+
+	public Regulation(IFeature feat) {
+		this(returnObjTab(feat));
+
 	}
-	
-	public static Object[] returnObjTab(IFeature feat){
-	   Object[] caract =  {
-	           0, 
-	           feat.getAttribute("INSEE_1"), 
-	           feat.getAttribute("TARGET_FID"), 
-	           feat.getAttribute("Annee_muta"), 
-                feat.getAttribute("INSEE_1"),
-                feat.getAttribute("INSEE_1"), 
-                feat.getAttribute("FONCTION_1"), 
-                feat.getAttribute("TOP_ZAC_1"),  feat.getAttribute("ZONAGE_C_1"), feat.getAttribute("CORRECTI_1"), 
-                feat.getAttribute("CORRECTI_1"), feat.getAttribute("BANDE_1"), 
-                feat.getAttribute("ART_56"),  feat.getAttribute("ART_67"), feat.getAttribute("ART_71_72"), 
-                feat.getAttribute("ART_72_73"), feat.getAttribute("ART_73_74"), feat.getAttribute("ART_74_75"), 
-                feat.getAttribute("ART_89"), feat.getAttribute("ART_9_10"), feat.getAttribute("ART_10_T_1"), 
-                feat.getAttribute("ART_10_11"), feat.getAttribute("ART_102"), feat.getAttribute("ART_12_13"), 
-                feat.getAttribute("ART_13_14"), feat.getAttribute("ART_14_15")};
-	   return caract;
+
+	public static Object[] returnObjTab(IFeature feat) {
+		Object[] caract = { 0, feat.getAttribute("INSEE_1"), feat.getAttribute("TARGET_FID"),
+		    feat.getAttribute("Annee_muta"), feat.getAttribute("INSEE_1"), feat.getAttribute("INSEE_1"),
+		    feat.getAttribute("FONCTION_1"), feat.getAttribute("TOP_ZAC_1"), feat.getAttribute("ZONAGE_C_1"),
+		    feat.getAttribute("CORRECTI_1"), feat.getAttribute("CORRECTI_1"), feat.getAttribute("BANDE_1"),
+		    feat.getAttribute("ART_56"), feat.getAttribute("ART_67"), feat.getAttribute("ART_71_72"),
+		    feat.getAttribute("ART_72_73"), feat.getAttribute("ART_73_74"), feat.getAttribute("ART_74_75"),
+		    feat.getAttribute("ART_89"), feat.getAttribute("ART_9_10"), feat.getAttribute("ART_10_T_1"),
+		    feat.getAttribute("ART_10_11"), feat.getAttribute("ART_102"), feat.getAttribute("ART_12_13"),
+		    feat.getAttribute("ART_13_14"), feat.getAttribute("ART_14_15") };
+		return caract;
 	}
-	
-	
-	
-	public static Object[] returnObjTab2(IFeature feat){
-	           Object[] caract =  {0, feat.getAttribute("INSEE_1"), feat.getAttribute("TARGET_FID"), feat.getAttribute("Annee_muta"), 
-	                feat.getAttribute("INSEE_1"), feat.getAttribute("INSEE_1"), feat.getAttribute("FONCTION_1"), 
-	                feat.getAttribute("TOP_ZAC_1"),  feat.getAttribute("ZONAGE_C_1"), feat.getAttribute("CORRECTI_1"), 
-	                feat.getAttribute("CORRECTI_1"), feat.getAttribute("2_BANDE"), 
-	                feat.getAttribute("2_ART_5"),  feat.getAttribute("2_ART_6"), feat.getAttribute("2_ART_71"), 
-	                feat.getAttribute("2_ART_72"), feat.getAttribute("2_ART_73"), feat.getAttribute("2_ART_74"), 
-	                feat.getAttribute("2_ART_8"), feat.getAttribute("2_ART_9"), feat.getAttribute("2_ART_10_T"), 
-	                feat.getAttribute("2_ART_10"), feat.getAttribute("2_ART_102"), feat.getAttribute("2_ART_12"), 
-	                feat.getAttribute("2_ART_13"), feat.getAttribute("2_ART_14")};
-	           return caract;
-	        }
+
+	public static Object[] returnObjTab2(IFeature feat) {
+		Object[] caract = { 0, feat.getAttribute("INSEE_1"), feat.getAttribute("TARGET_FID"),
+		    feat.getAttribute("Annee_muta"), feat.getAttribute("INSEE_1"), feat.getAttribute("INSEE_1"),
+		    feat.getAttribute("FONCTION_1"), feat.getAttribute("TOP_ZAC_1"), feat.getAttribute("ZONAGE_C_1"),
+		    feat.getAttribute("CORRECTI_1"), feat.getAttribute("CORRECTI_1"), feat.getAttribute("2_BANDE"),
+		    feat.getAttribute("2_ART_5"), feat.getAttribute("2_ART_6"), feat.getAttribute("2_ART_71"),
+		    feat.getAttribute("2_ART_72"), feat.getAttribute("2_ART_73"), feat.getAttribute("2_ART_74"),
+		    feat.getAttribute("2_ART_8"), feat.getAttribute("2_ART_9"), feat.getAttribute("2_ART_10_T"),
+		    feat.getAttribute("2_ART_10"), feat.getAttribute("2_ART_102"), feat.getAttribute("2_ART_12"),
+		    feat.getAttribute("2_ART_13"), feat.getAttribute("2_ART_14") };
+		return caract;
+	}
 
 	public Regulation(String line) {
 
@@ -120,82 +107,42 @@ public class Regulation {
 	}
 
 	public Regulation(String[] split) {
-		this(Integer.parseInt(split[0]), 
-		        split[1], 
-		        Integer.parseInt(split[2]),
-				Integer.parseInt(split[3]), 
-				split[4], 
-				split[5], 
-				Integer
-						.parseInt(split[6]),
-						Integer.parseInt(split[7]),
-				Integer.parseInt(split[8]), 
-				Integer.parseInt(split[9]), 
-				Integer
-						.parseInt(split[10]), 
-						Integer.parseInt(split[11]),
-				Integer.parseInt(split[12]), 
-				Double.parseDouble(split[13]),
-				Integer.parseInt(split[14]), 
-				Double.parseDouble(split[15]),
-				Double.parseDouble(split[16]),  
-				Integer.parseInt(split[17]),
-				Integer.parseInt(split[18]), 
-				Double.parseDouble(split[19]),
-				Integer.parseInt(split[20]), 
-				Integer.parseInt(split[21]),
-				Double.parseDouble(split[22]),
-				Double.parseDouble(split[23]),
-				Double.parseDouble(split[24]), 
-				Double.parseDouble(split[25]));
+		this(Integer.parseInt(split[0]), split[1], Integer.parseInt(split[2]), Integer.parseInt(split[3]), split[4],
+		    split[5], Integer.parseInt(split[6]), Integer.parseInt(split[7]), Integer.parseInt(split[8]),
+		    Integer.parseInt(split[9]), Integer.parseInt(split[10]), Integer.parseInt(split[11]),
+		    Integer.parseInt(split[12]), Double.parseDouble(split[13]), Integer.parseInt(split[14]),
+		    Double.parseDouble(split[15]), Double.parseDouble(split[16]), Integer.parseInt(split[17]),
+		    Integer.parseInt(split[18]), Double.parseDouble(split[19]), Integer.parseInt(split[20]),
+		    Integer.parseInt(split[21]), Double.parseDouble(split[22]), Double.parseDouble(split[23]),
+		    Double.parseDouble(split[24]), Double.parseDouble(split[25]));
 	}
-	
-	
-	       public Regulation(Object[] split) {
-	                this(Integer.parseInt(split[0].toString()), 
-	                        split[1].toString(), 
-	                        Integer.parseInt(split[2].toString()),
-	                        (int) Double.parseDouble(split[3].toString()),
-split[4].toString(), 
-split[5].toString(), 
-(int) Double.parseDouble(split[6].toString()), 
-(int) Double.parseDouble(split[7].toString()),	                                              
-(int)  Double.parseDouble(split[8].toString()), 
-(int) Double.parseDouble(split[9].toString()), 
-(int)     Double.parseDouble(split[10].toString()),
-(int) Double.parseDouble(split[11].toString()),
-(int)   Double.parseDouble(split[12].toString()), 
-Double.parseDouble(split[13].toString()),
-(int)  Double.parseDouble(split[14].toString()), 
-Double.parseDouble(split[15].toString()),
-	                                
-Double.parseDouble(split[16].toString()),  
-(int)Double.parseDouble(split[17].toString()),
-	                                
-(int)Double.parseDouble(split[18].toString()), 
-Double.parseDouble(split[19].toString()),
- (int)     Double.parseDouble(split[20].toString()), 
- (int)Double.parseDouble(split[21].toString()),
-Double.parseDouble(split[22].toString()), 
-Double.parseDouble(split[23].toString()),
- Double.parseDouble(split[24].toString()), 
- Double.parseDouble(split[25].toString()));
-	        }
 
+	public Regulation(Object[] split) {
+		this(Integer.parseInt(split[0].toString()), split[1].toString(), Integer.parseInt(split[2].toString()),
+		    (int) Double.parseDouble(split[3].toString()), split[4].toString(), split[5].toString(),
+		    (int) Double.parseDouble(split[6].toString()), (int) Double.parseDouble(split[7].toString()),
+		    (int) Double.parseDouble(split[8].toString()), (int) Double.parseDouble(split[9].toString()),
+		    (int) Double.parseDouble(split[10].toString()), (int) Double.parseDouble(split[11].toString()),
+		    (int) Double.parseDouble(split[12].toString()), Double.parseDouble(split[13].toString()),
+		    (int) Double.parseDouble(split[14].toString()), Double.parseDouble(split[15].toString()),
 
-	           
+		    Double.parseDouble(split[16].toString()), (int) Double.parseDouble(split[17].toString()),
 
-    /**
-	 * Charge les règlements et les stockes dans une Map avec Integer = Code_Imu
-	 * et List<Regulation> = la liste des règlements (= lignes du tableau) pour
-	 * un code IMU donné
+		    (int) Double.parseDouble(split[18].toString()), Double.parseDouble(split[19].toString()),
+		    (int) Double.parseDouble(split[20].toString()), (int) Double.parseDouble(split[21].toString()),
+		    Double.parseDouble(split[22].toString()), Double.parseDouble(split[23].toString()),
+		    Double.parseDouble(split[24].toString()), Double.parseDouble(split[25].toString()));
+	}
+
+	/**
+	 * Charge les règlements et les stockes dans une Map avec Integer = Code_Imu et List<Regulation> = la liste des
+	 * règlements (= lignes du tableau) pour un code IMU donné
 	 * 
 	 * @param file
 	 * @return
 	 * @throws IOException
 	 */
-	public static Map<Integer, List<Regulation>> loadRegulationSet(String file)
-			throws IOException {
+	public static Map<Integer, List<Regulation>> loadRegulationSet(String file) throws IOException {
 
 		// On initialise la map
 		Map<Integer, List<Regulation>> table = new Hashtable<>();
@@ -364,13 +311,13 @@ Double.parseDouble(split[23].toString()),
 
 	// ART_101 Hauteur maximum autorisée 88= non renseignable, 99= non
 	// réglementé
-	public double getArt_101() {
-		return art_101;
+	public double getArt_10() {
+		return art_10;
 	}
 
 	// ART_102 Hauteur maximum autorisée En mètres
-	public double getArt_102() {
-		return art_102;
+	public double getArt_10_m() {
+		return art_10_m;
 	}
 
 	// ART_12 Nombre de places par logement 88= non renseignable, 99= non
@@ -394,24 +341,18 @@ Double.parseDouble(split[23].toString()),
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "Regulation [code_imu=" + code_imu + ", insee=" + insee
-				+ ", date_approbation=" + date_approbation + ", fonctions="
-				+ fonctions + ", top_zac=" + top_zac + ", zonage_coherent="
-				+ zonage_coherent + ", correction_zonage=" + correction_zonage
-				+ ", typ_bande=" + typ_bande + ", bande=" + bande + ", art_5="
-				+ art_5 + ", art_6=" + art_6 + ", art_71=" + art_71
-				+ ", art_72=" + art_72 + ", art_73=" + art_73 + ", art_74="
-				+ art_74 + ", art_8=" + art_8 + ", art_9=" + art_9 + ", art_10_top=" + art_10_top
-				+ ", art_101=" + art_101 + ", art_13=" + art_13
-				+ ", libelle_zone=" + libelle_zone + ", libelle_de_base="
-				+ libelle_de_base + ", libelle_de_dul=" + libelle_de_dul
-				+ ", art_9=" + art_9 + ", art_102=" + art_102 + ", art_12="
-				+ art_12 + ", art_14=" + art_14 + "]";
+		return "Regulation [code_imu=" + code_imu + ", insee=" + insee + ", date_approbation=" + date_approbation
+		    + ", fonctions=" + fonctions + ", top_zac=" + top_zac + ", zonage_coherent=" + zonage_coherent
+		    + ", correction_zonage=" + correction_zonage + ", typ_bande=" + typ_bande + ", bande=" + bande + ", art_5="
+		    + art_5 + ", art_6=" + art_6 + ", art_71=" + art_71 + ", art_72=" + art_72 + ", art_73=" + art_73 + ", art_74="
+		    + art_74 + ", art_8=" + art_8 + ", art_9=" + art_9 + ", art_10_top=" + art_10_top + ", art_10=" + art_10
+		    + ", art_13=" + art_13 + ", libelle_zone=" + libelle_zone + ", libelle_de_base=" + libelle_de_base
+		    + ", libelle_de_dul=" + libelle_de_dul + ", art_9=" + art_9 + ", art_10_m=" + art_10_m + ", art_12=" + art_12
+		    + ", art_14=" + art_14 + "]";
 	}
 
 	IMultiSurface<IOrientableSurface> geomBande = null;
@@ -436,7 +377,7 @@ Double.parseDouble(split[23].toString()),
 
 	/**
 	 * @param geomBande
-	 *            the geomBande to set
+	 *          the geomBande to set
 	 */
 	public void setGeomBande(IMultiSurface<IOrientableSurface> geomBande) {
 		this.geomBande = geomBande;
@@ -452,8 +393,7 @@ Double.parseDouble(split[23].toString()),
 
 		if (jtsGeometry == null) {
 			try {
-				jtsGeometry = AdapterFactory
-						.toGeometry(gf, this.getGeomBande());
+				jtsGeometry = AdapterFactory.toGeometry(gf, this.getGeomBande());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
