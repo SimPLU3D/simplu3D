@@ -7,6 +7,7 @@ import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.CountVisitor;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
+import fr.ign.simulatedannealing.endtest.CompositeEndTest;
 import fr.ign.simulatedannealing.endtest.EndTest;
 import fr.ign.simulatedannealing.endtest.MaxIterationEndTest;
 import fr.ign.simulatedannealing.endtest.StabilityEndTest;
@@ -14,17 +15,14 @@ import fr.ign.simulatedannealing.schedule.GeometricSchedule;
 import fr.ign.simulatedannealing.schedule.Schedule;
 import fr.ign.simulatedannealing.temperature.SimpleTemperature;
 
-public abstract class DefaultSimPLU3DOptimizer<C extends ISimPLU3DPrimitive>
-    implements ISimPLU3DOptimizer<ISimPLU3DPrimitive> {
+public abstract class DefaultSimPLU3DOptimizer<C extends ISimPLU3DPrimitive> implements ISimPLU3DOptimizer<ISimPLU3DPrimitive> {
 
   protected double coeffDec = Double.NaN;
   protected double deltaConf = Double.NaN;
-
   protected double minLengthBox = Double.NaN;
   protected double maxLengthBox = Double.NaN;
   protected double minWidthBox = Double.NaN;
   protected double maxWidthBox = Double.NaN;
-
   protected double energyCreation = Double.NaN;
   protected IGeometry samplingSurface = null;
 
@@ -61,19 +59,16 @@ public abstract class DefaultSimPLU3DOptimizer<C extends ISimPLU3DPrimitive>
   }
 
   public EndTest create_end_test(Parameters p) {
-
-    if (p.getBoolean(("isAbsoluteNumber"))) {
-      return new MaxIterationEndTest(p.getInteger("nbiter"));
-    } else {
-      double loc_deltaconf;
-      if (Double.isNaN(this.deltaConf)) {
-        loc_deltaconf = p.getDouble("delta");
-      } else {
-        loc_deltaconf = this.deltaConf;
-      }
-      System.out.println("********** delta " + loc_deltaconf + "********");
-      return new StabilityEndTest<Cuboid>(p.getInteger("nbiter"),
-          loc_deltaconf);
+  	double loc_deltaconf = Double.isNaN(this.deltaConf) ? p.getDouble("delta") : this.deltaConf;
+    switch (p.getString("end_test_type").toLowerCase()) {
+    case "absolute": return new MaxIterationEndTest(p.getInteger("absolute_nb_iter"));
+    case "relative": 
+      return new StabilityEndTest<Cuboid>(p.getInteger("relative_nb_iter"), loc_deltaconf);
+    case "composite":
+    	default:
+    		EndTest abs = new MaxIterationEndTest(p.getInteger("absolute_nb_iter"));
+    		EndTest rel = new StabilityEndTest<Cuboid>(p.getInteger("relative_nb_iter"), loc_deltaconf);
+    		return new CompositeEndTest(abs,rel);
     }
   }
 
@@ -84,14 +79,7 @@ public abstract class DefaultSimPLU3DOptimizer<C extends ISimPLU3DPrimitive>
   }
 
   public Schedule<SimpleTemperature> create_schedule(Parameters p) {
-    double coefDef = 0;
-    if (Double.isNaN(this.coeffDec)) {
-      coefDef = p.getDouble("deccoef");
-    } else {
-      coefDef = this.coeffDec;
-    }
-    return new GeometricSchedule<SimpleTemperature>(
-        new SimpleTemperature(p.getDouble("temp")), coefDef);
+    double coefDef = (Double.isNaN(this.coeffDec)) ? p.getDouble("deccoef") : this.coeffDec;
+    return new GeometricSchedule<SimpleTemperature>(new SimpleTemperature(p.getDouble("temp")), coefDef);
   }
-
 }

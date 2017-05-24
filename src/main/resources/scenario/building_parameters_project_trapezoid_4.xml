@@ -73,10 +73,10 @@
         
         
         <!-- Nombre d'itération!-->
-        <!-- Indique si il s'agit d'un nombre absolu d'itérations true ou un nombre relatif 
-        à la non amélioration de la configuration-->
-        <param key="isAbsoluteNumber" value="false" />
-		<param key="nbiter" value="200000" />
+        <!-- Indique le type de test de fin : absolute, relative ou composite-->
+        <param key="end_test_type" value="relative" />
+        <param key="absolute_nb_iter" value="2000000" />
+        <param key="relative_nb_iter" value="200000" />
         <param key="delta" value="5" />
         
         <param key="poisson" value="20" />

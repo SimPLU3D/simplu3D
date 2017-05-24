@@ -94,100 +94,67 @@ public class Exec_EPFIF {
   public static void main(String[] args) throws Exception {
     // MultipleBuildingsCuboid.ALLOW_INTERSECTING_CUBOID = INTERSECTION;
     init();
-    // Dossier contenant IMU_MANTES_TEST.csv et les sous dossier par code
-    // IMU
-
+    // Dossier contenant IMU_MANTES_TEST.csv et les sous dossier par code IMU
     Map<Integer, List<Regulation>> regulation = prepareRegulation();
 
     Set<Integer> listeCapa = new HashSet<>();
-    // Collections.addAll(listeCapa, 77049072, 75009782, 91014805, 91014124,
-    // 75020917);
+    // Collections.addAll(listeCapa, 77049072, 75009782, 91014805, 91014124, 75020917);
 
     Collections.addAll(listeCapa, 91014805);
 
     for (int i = 0; i < 1; ++i) {
-      INTERSECTION = true; // (i % 2) == 0; // false;//
-      // (i % 2) == 0; // false;//
+      INTERSECTION = true;
       MultipleBuildingsCuboid.ALLOW_INTERSECTING_CUBOID = INTERSECTION;
-
       // On traite indépendamment chaque zone imu
       for (int currentImu : regulation.keySet()) {
-
         // if (currentImu != 77049072/* 91009675 */) {
         if (!listeCapa.contains(currentImu)) {
           continue;
         }
-
         System.out.println("Numéro imu : " + currentImu);
-
         try {
-
           List<Regulation> lR = regulation.get(currentImu);
-
-          // String folderName = BasicSimulator.class.getClassLoader()
-          // .getResource("scenario/").getPath();
+          // String folderName = BasicSimulator.class.getClassLoader().getResource("scenario/").getPath();
           // String fileName = "parameters_iauidf_test.xml";
-
-    
           // "big" : longueur < 100
           // String fileName = "parameters_iauidf.xml";
-
           File f = new File(paramFile);
-
-          boolean simul = simulRegulationByIMU(currentImu,
-              folder + currentImu + "/", lR, f);
-
+          boolean simul = simulRegulationByIMU(currentImu, folder + currentImu + "/", lR, f);
           if (!simul) {
             log.warn("--Probleme pour la simulation : " + currentImu);
           }
         } catch (Exception e) {
           e.printStackTrace();
         }
-
       }
     }
   }
 
-  // Initialisation des attributs différents du schéma de base
-  // et le fichier de paramètre commun à toutes les simulations
+  // Initialisation des attributs différents du schéma de base et le fichier de paramètre commun à toutes les simulations
   public static void init() throws Exception {
-
     CadastralParcelLoader.TYPE_ANNOTATION = 2;
-
     PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = ParcelBoundarySide.LEFT;
   }
 
-  public static Map<Integer, List<Regulation>> prepareRegulation()
-      throws IOException {
-
+  public static Map<Integer, List<Regulation>> prepareRegulation() throws IOException {
     File f = new File(file_rules);
-
     Map<Integer, List<Regulation>> lMap = new HashMap<>();
     if (!f.exists()) {
       return null;
     }
-
     // On lit le fichier
     BufferedReader in = new BufferedReader(new FileReader(f));
     String line = in.readLine();
-
     Object[] listItem = line.split(";");
-
     // On traite chaque ligne
     while ((line = in.readLine()) != null) {
-
       Object[] listValue = line.split(";");
-
       Map<String, Object> newmap = new HashMap<>();
-
       for (int i = 0; i < listValue.length; i++) {
         newmap.put(listItem[i].toString(), listValue[i]);
       }
-
       System.out.println("*************************************************");
-      System.out
-          .println("*******************" + listValue[0] + "******************");
-
+      System.out.println("*******************" + listValue[0] + "******************");
       int code_imu = Integer.parseInt(newmap.get("IMU").toString());
       String libelle_zone = newmap.get("VILLE").toString(); // LIBELLE_ZONE
       int insee = Integer.parseInt(newmap.get("INSEE").toString());
@@ -196,10 +163,8 @@ public class Exec_EPFIF {
       String libelle_de_dul = newmap.get("VILLE").toString(); // LIBELLE_DE_DUL
       int fonctions = Integer.parseInt(newmap.get("FONCTIONS").toString());
       int top_zac = Integer.parseInt(newmap.get("TOP_ZAC").toString());
-      int zonage_coherent = Integer
-          .parseInt(newmap.get("ZONAGE_COHERENT").toString());
-      int correction_zonage = Integer
-          .parseInt(newmap.get("CORRECTION_ZONAGE").toString());
+      int zonage_coherent = Integer.parseInt(newmap.get("ZONAGE_COHERENT").toString());
+      int correction_zonage = Integer.parseInt(newmap.get("CORRECTION_ZONAGE").toString());
       int typ_bande = Integer.parseInt(newmap.get("TYP_BANDE").toString());
       int bande = Integer.parseInt(newmap.get("BANDE").toString());
       int art_5 = Integer.parseInt(newmap.get("ART_5").toString());
@@ -211,29 +176,22 @@ public class Exec_EPFIF {
       double art_8 = Double.parseDouble(newmap.get("ART_8").toString());
       double art_9 = Double.parseDouble(newmap.get("ART_9").toString());
       int art_10_top = Integer.parseInt(newmap.get("ART_10_TOP").toString());
-      int art_101 = Integer.parseInt(newmap.get("ART_10").toString()); // ATTENTION
-                                                                       // A
-                                                                       // CHANGER
+      int art_101 = Integer.parseInt(newmap.get("ART_10").toString()); //TODO : CHANGER
       int art_102 = Integer.parseInt(newmap.get("ART_10").toString());
       double art_12 = Double.parseDouble(newmap.get("ART_12").toString());
       double art_13 = Double.parseDouble(newmap.get("ART_13").toString());
       double art_14 = Double.parseDouble(newmap.get("ART_14").toString());
-
       Regulation r = new Regulation(code_imu, libelle_zone, insee,
           date_approbation, libelle_de_base, libelle_de_dul, fonctions, top_zac,
           zonage_coherent, correction_zonage, typ_bande, bande, art_5, art_6,
           art_71, art_72, art_73, art_74, art_8, art_9, art_10_top, art_101,
           art_102, art_12, art_13, art_14);
-
       List<Regulation> lRegulation = new ArrayList<>();
       lRegulation.add(r);
       lMap.put(code_imu, lRegulation);
-
       System.out.println(r.toString());
-
       if (bande != 0) {
-        int fonctions_2 = Integer
-            .parseInt(newmap.get("FONCTIONS_2").toString());
+        int fonctions_2 = Integer.parseInt(newmap.get("FONCTIONS_2").toString());
         int art_5_2 = Integer.parseInt(newmap.get("ART_5_2").toString());
         double art_6_2 = Double.parseDouble(newmap.get("ART_6_2").toString());
         int art_71_2 = Integer.parseInt(newmap.get("ART_71_2").toString());
@@ -242,89 +200,64 @@ public class Exec_EPFIF {
         int art_74_2 = Integer.parseInt(newmap.get("ART_74_2").toString());
         double art_8_2 = Double.parseDouble(newmap.get("ART_8_2").toString());
         double art_9_2 = Double.parseDouble(newmap.get("ART_9_2").toString());
-        int art_10_top_2 = Integer
-            .parseInt(newmap.get("ART_10_TOP_1_2").toString());
-        int art_101_2 = Integer.parseInt(newmap.get("ART_10_2_2").toString()); // ATTENTION
-                                                                               // A
-                                                                               // CHANGER
+        int art_10_top_2 = Integer.parseInt(newmap.get("ART_10_TOP_1_2").toString());
+        int art_101_2 = Integer.parseInt(newmap.get("ART_10_2_2").toString());// TODO CHANGER
         int art_102_2 = Integer.parseInt(newmap.get("ART_10_2_2").toString());
         double art_12_2 = Double.parseDouble(newmap.get("ART_12_2").toString());
         double art_13_2 = Double.parseDouble(newmap.get("ART_13_2").toString());
         double art_14_2 = Double.parseDouble(newmap.get("ART_14_2").toString());
-
         Regulation r2 = new Regulation(code_imu, libelle_zone, insee,
             date_approbation, libelle_de_base, libelle_de_dul, fonctions_2,
             top_zac, zonage_coherent, correction_zonage, typ_bande, bande,
             art_5_2, art_6_2, art_71_2, art_72_2, art_73_2, art_74_2, art_8_2,
             art_9_2, art_10_top_2, art_101_2, art_102_2, art_12_2, art_13_2,
             art_14_2);
-
         System.out.println(r2.toString());
-
         lRegulation.add(r2);
       }
-
       System.out.println("*************************************************");
-
     }
-
     in.close();
-
     return lMap;
-
   }
 
   /**
-   * Simulations portant sur chaque zone IMU
+   * Simulations portant sur chaque zone IMU.
    * 
    * @param imu
    * @param lReg
    * @return
    * @throws Exception
    */
-  public static boolean simulRegulationByIMU(int imu, String folderImu,
-      List<Regulation> lRegulation, File fParam) throws Exception {
+  public static boolean simulRegulationByIMU(int imu, String folderImu, List<Regulation> lRegulation, File fParam) throws Exception {
     if (DEBUG_MODE) {
       debugSurface = new ArrayList<>();
       debugLine = new ArrayList<>();
     }
     Environnement env = LoaderSHP.loadNoDTM(new File(folderImu));
-
     // Stocke les résultats en sorties
     IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
-
     boolean isOk = true;
-
     for (BasicPropertyUnit bPU : env.getBpU()) {
-
       if (bPU.getCadastralParcels().get(0).hasToBeSimulated()) {
         featC.addAll(simulationForEachBPU(env, bPU, lRegulation, imu, fParam));
       }
-
     }
     System.out.println("-- Nombre de surfaces : " + debugSurface.size());
     String uds = USE_DEMO_SAMPLER ? "demo_sampler" : "no_demo_sampler";
-    String fileName = out_folder + "simul_" + imu + "_" + INTERSECTION + "_"
-        + uds + "_2.shp";
+    String fileName = out_folder + "simul_" + imu + "_" + INTERSECTION + "_" + uds + "_2.shp";
     System.out.println(fileName);
     ShapefileWriter.write(featC, fileName, CRS.decode("EPSG:2154"));
-
     if (DEBUG_MODE) {
       saveShapeTest(folderImu);
     }
-    fileName = out_folder + "simul_" + imu + "_" + INTERSECTION + "_" + uds
-        + ".csv";
-
+    fileName = out_folder + "simul_" + imu + "_" + INTERSECTION + "_" + uds + ".csv";
     String header = "";
-
     if (!Files.exists(Paths.get(fileName))) {
       header = "IMU;ID_PARC;Longueur;Largeur;hauteur;Rotation;Aire;Volume\n";
-
     }
-
     SDPCalc sdp = new SDPCalc();
     double sd = sdp.process(LoaderCuboid.loadFromCollection(featC));
-
     String s = "SDP : " + sd + "\n" + header;
     for (IFeature f : featC) {
       s += imu + ";" + f.getAttribute("ID_PARC") + ";"
@@ -339,202 +272,122 @@ public class Exec_EPFIF {
   public static IFeatureCollection<IFeature> simulationForEachBPU(
       Environnement env, BasicPropertyUnit bPU, List<Regulation> lRegulation,
       int imu, File fParam) throws Exception {
-
     // Stocke les résultats
     IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
-
     // On ne simule pas sur les très petites parcelles qui peuvent être des
     // erreurs dus à la carte topo
     if (bPU.getCadastralParcels().get(0).getArea() < 5) {
       System.out.println("Probablement une erreur de carte topologique.");
       return featC;
     }
-
     // Il y a 1 ou 2 réglementaiton par parcelle
     Regulation r1 = lRegulation.get(0);
     Regulation r2 = null;
-
     if (lRegulation.size() > 1) {
       r2 = lRegulation.get(1);
     }
-
     System.out.println("R1 : " + r1);
-
     if (r2 != null) {
-
       System.out.println("R2 : " + r2);
-
     }
-
     // Somme nous dans le cas où les bâtiments doivent être accolé aux
     // limites latérales ?
-    if (r1 != null && r1.getArt_71() == 2
-        || r2 != null && r2.getArt_71() == 2) {
-
-      // Cas ou les bâtiments se collent d'un des 2 côtés, on simule
-      // les 2
-      // côtés et on regarde pour chaque parcelle quelle est la
-      // meilleure
-      // :
-
+    if (r1 != null && r1.getArt_71() == 2 || r2 != null && r2.getArt_71() == 2) {
+      // Cas ou les bâtiments se collent d'un des 2 côtés, on simule les 2
+      // côtés et on regarde pour chaque parcelle quelle est la meilleure
       PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = ParcelBoundarySide.RIGHT;
-
       IFeatureCollection<IFeature> featC1 = new FT_FeatureCollection<>();
-
-      featC1.addAll(
-          simulRegulationByBasicPropertyUnit(env, bPU, imu, r1, r2, fParam));
-
+      featC1.addAll(simulRegulationByBasicPropertyUnit(env, bPU, imu, r1, r2, fParam));
       PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = ParcelBoundarySide.LEFT;
-
       IFeatureCollection<IFeature> featC2 = new FT_FeatureCollection<>();
-
-      featC2.addAll(
-          simulRegulationByBasicPropertyUnit(env, bPU, imu, r1, r2, fParam));
-
+      featC2.addAll(simulRegulationByBasicPropertyUnit(env, bPU, imu, r1, r2, fParam));
       featC.addAll(fusionne(featC1, featC2));
-
     } else {
-      featC.addAll(
-          simulRegulationByBasicPropertyUnit(env, bPU, imu, r1, r2, fParam));
-
+      featC.addAll(simulRegulationByBasicPropertyUnit(env, bPU, imu, r1, r2, fParam));
     }
     return featC;
   }
 
-  public static IFeature retrieveFeat(IFeatureCollection<IFeature> featColl,
-      BasicPropertyUnit bPU) {
-
+  public static IFeature retrieveFeat(IFeatureCollection<IFeature> featColl, BasicPropertyUnit bPU) {
     for (IFeature feat : featColl) {
-
       if (feat.getGeom().coord().isEmpty()) {
         continue;
       }
-
       IPoint dp = new GM_Point(feat.getGeom().centroid());
-
       if (bPU.getPol2D().contains(dp)) {
         return feat;
       }
-
     }
-
     return null;
   }
 
-  private static IFeatureCollection<IFeature> fusionne(
-      IFeatureCollection<IFeature> featC1,
-      IFeatureCollection<IFeature> featC2) {
-
+  private static IFeatureCollection<IFeature> fusionne(IFeatureCollection<IFeature> featC1, IFeatureCollection<IFeature> featC2) {
     IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
-
     while (!(featC1.isEmpty()) && !featC2.isEmpty()) {
-
       IFeature featTemp = featC1.get(0);
       featC1.remove(0);
-
-      int currentID = Integer
-          .parseInt(featTemp.getAttribute("ID_PARC").toString());
-
+      int currentID = Integer.parseInt(featTemp.getAttribute("ID_PARC").toString());
       List<IFeature> lF1 = new ArrayList<>();
       lF1.add(featTemp);
-
       int nbElem = featC1.size();
-
       for (int i = 0; i < nbElem; i++) {
-
         featTemp = featC1.get(i);
-
-        if (Integer.parseInt(
-            featTemp.getAttribute("ID_PARC").toString()) == currentID) {
-
+        if (Integer.parseInt(featTemp.getAttribute("ID_PARC").toString()) == currentID) {
           lF1.add(featTemp);
           featC1.remove(i);
           i--;
           nbElem--;
         }
-
       }
-
       List<IFeature> lF2 = new ArrayList<>();
       int nbElem2 = featC2.size();
-
       for (int i = 0; i < nbElem2; i++) {
-
         featTemp = featC2.get(i);
-
-        if (Integer.parseInt(
-            featTemp.getAttribute("ID_PARC").toString()) == currentID) {
-
+        if (Integer.parseInt(featTemp.getAttribute("ID_PARC").toString()) == currentID) {
           lF2.add(featTemp);
           featC2.remove(i);
           i--;
           nbElem2--;
         }
-
       }
-
       double contrib1 = 0;
       for (IFeature feat : lF1) {
-        contrib1 = contrib1 + feat.getGeom().area()
-            * Double.parseDouble(feat.getAttribute("Hauteur").toString());
+        contrib1 = contrib1 + feat.getGeom().area() * Double.parseDouble(feat.getAttribute("Hauteur").toString());
       }
-
       double contrib2 = 0;
       for (IFeature feat : lF2) {
-        contrib2 = contrib2 + feat.getGeom().area()
-            * Double.parseDouble(feat.getAttribute("Hauteur").toString());
+        contrib2 = contrib2 + feat.getGeom().area() * Double.parseDouble(feat.getAttribute("Hauteur").toString());
       }
-
       if (contrib1 > contrib2) {
-
         featC.addAll(lF1);
-
       } else {
-
         featC.addAll(lF2);
-
       }
-
       if (featC1.isEmpty()) {
-
         featC.addAll(featC2);
         featC2.clear();
-
       }
-
     }
-
     return featC;
   }
 
-  private static Parameters initiateSimulationParamters(Regulation r1,
-      Regulation r2, File f) throws Exception {
+  private static Parameters initiateSimulationParamters(Regulation r1, Regulation r2, File f) throws Exception {
     // Chargement du fichier de configuration
-
     Parameters p = Parameters.unmarshall(f);
-
     if (r2 != null) {
-
       double newHeightMax = Math.max(r1.getArt_10_m(), r2.getArt_10_m());
-
       if (newHeightMax != 99.0) {
         p.set("maxheight", newHeightMax);
       }
-
     } else {
       if (r1.getArt_10_m() != 99) {
         p.set("maxheight", r1.getArt_10_m());
       }
-
     }
-
     if (p.getDouble("maxheight") < p.getDouble("minheight")) {
       return null;
     }
-
-    System.out.println(
-        "Hauteur " + p.getDouble("minheight") + " " + p.getDouble("maxheight"));
-
+    System.out.println("Hauteur " + p.getDouble("minheight") + " " + p.getDouble("maxheight"));
     if (r2 != null) {
       if ((r1.getArt_74() == 0) && (r2.getArt_74() == 0)
           && (r2.getArt_14() != 99) && (r1.getArt_14() != 99)
@@ -547,7 +400,6 @@ public class Exec_EPFIF {
         p.set("minheight", p.getDouble("maxheight") - 0.1);
       }
     }
-
     /*
      * double longueur1 = Double.NEGATIVE_INFINITY;
      * 
@@ -577,14 +429,10 @@ public class Exec_EPFIF {
     if (p.getDouble("maxlen") < p.getDouble("minlen")) {
       return null;
     }
-
     if (p.getDouble("maxwid") < p.getDouble("minwid")) {
       return null;
     }
-
-    p.set("temp", Math.min(p.getDouble("temp"), p.getDouble("maxlen")
-        * p.getDouble("maxlen") * p.getDouble("maxheight")));
-
+    p.set("temp", Math.min(p.getDouble("temp"), p.getDouble("maxlen") * p.getDouble("maxlen") * p.getDouble("maxheight")));
     return p;
   }
 
@@ -602,7 +450,6 @@ public class Exec_EPFIF {
     // Stocke les résultats en sorties
     IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
     // //////On découpe la parcelle en bande en fonction des règlements
-
     // ART_5 Superficie minimale 88= non renseignable, 99= non réglementé
     // Si ce n'est pas respecté on ne fait même pas de simulation
     double r_art5 = r1.getArt_5();
@@ -614,42 +461,29 @@ public class Exec_EPFIF {
     // Processus découpant la zone dans laquelle on met les bâtiments à
     // partir des règles
     BandProduction bP = new BandProduction(bPU, r1, r2);
-
-    if (r2 == null || r2.getGeomBande() == null
-        || r2.getGeomBande().isEmpty()) {
+    if (r2 == null || r2.getGeomBande() == null || r2.getGeomBande().isEmpty()) {
       r2 = null;
       System.out.println("Une seule bande");
     }
-
     Parameters p = initiateSimulationParamters(r1, r2, fParam);
     // initialisation des paramètres de simulation
     if (p == null) {
       return featC;
     }
-
     if (USE_DEMO_SAMPLER) {
-
-      featC.addAll(simulRegulationByBasicPropertyUnitFinalTrapezoid(env, bPU,
-          imu, r1, r2, p, bP));
-
+      featC.addAll(simulRegulationByBasicPropertyUnitFinalTrapezoid(env, bPU, imu, r1, r2, p, bP));
     } else {
-
-      featC.addAll(simulRegulationByBasicPropertyUnitFinal(env, bPU, imu, r1,
-          r2, p, bP));
+      featC.addAll(simulRegulationByBasicPropertyUnitFinal(env, bPU, imu, r1, r2, p, bP));
     }
-
     if (DEBUG_MODE) {
-
       if (r1 != null && r1.getGeomBande() != null) {
         debugSurface.add(r1.getGeomBande());
       }
-
       if (r2 != null && r2.getGeomBande() != null) {
         debugSurface.add(r2.getGeomBande());
       }
       debugLine.add(bP.getLineRoad());
     }
-
     return featC;
   }
 
@@ -658,102 +492,69 @@ public class Exec_EPFIF {
   private static IFeatureCollection<IFeature> simulRegulationByBasicPropertyUnitFinal(
       Environnement env, BasicPropertyUnit bPU, int imu, Regulation r1,
       Regulation r2, Parameters p, BandProduction bP) throws Exception {
-
     IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
-
     // Création du Sampler (qui va générer les propositions de solutions)
     MultipleBuildingsCuboid oCB = new MultipleBuildingsCuboid();
-
     PredicateIAUIDF<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred;
-
     if (ALLOW_OBJECT_ON_TWO_BAND) {
       pred = new PredicateIAUIDFBuildingsDoubleBand<>(bPU, r1, r2);
-
     } else {
-
       pred = new PredicateIAUIDF<>(bPU, r1, r2);
-
     }
-
     if (p.getBoolean("shapefilewriter")) {
       new File(p.getString("result") + imu).mkdir();
     }
-    // Lancement de l'optimisation avec unité foncière, paramètres,
-    // environnement, id et prédicat
-
+    // Lancement de l'optimisation avec unité foncière, paramètres, environnement, id et prédicat
     GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, pred, r1, r2, bP);
-
     if (cc == null) {
       return featC;
     }
-
     // On liste les boîtes simulées et on ajoute les attributs nécessaires
     for (GraphVertex<Cuboid> v : cc.getGraph().vertexSet()) {
       IFeature feat = new DefaultFeature(v.getValue().generated3DGeom());
       // On ajoute des attributs aux entités (dimension des objets)
-      AttributeManager.addAttribute(feat, "Longueur",
-          Math.max(v.getValue().length, v.getValue().width), "Double");
-      AttributeManager.addAttribute(feat, "Largeur",
-          Math.min(v.getValue().length, v.getValue().width), "Double");
-      AttributeManager.addAttribute(feat, "Hauteur", v.getValue().height,
-          "Double");
-      AttributeManager.addAttribute(feat, "Rotation", v.getValue().orientation,
-          "Double");
+      AttributeManager.addAttribute(feat, "Longueur", Math.max(v.getValue().length, v.getValue().width), "Double");
+      AttributeManager.addAttribute(feat, "Largeur", Math.min(v.getValue().length, v.getValue().width), "Double");
+      AttributeManager.addAttribute(feat, "Hauteur", v.getValue().height, "Double");
+      AttributeManager.addAttribute(feat, "Rotation", v.getValue().orientation, "Double");
       AttributeManager.addAttribute(feat, "ID_PARC", bPU.getId(), "Integer");
       double area = 0;
       double volume = 0;
-      if (v.getValue().getFootprint() != null
-          && (!v.getValue().getFootprint().isEmpty())) {
+      if (v.getValue().getFootprint() != null && (!v.getValue().getFootprint().isEmpty())) {
         area = v.getValue().getFootprint().area();
         volume = v.getValue().getVolume();
       }
-
-      double sdp = (area / bPU.getArea())
-          * (Math.floor(v.getValue().height / FLOOR_SIZE));
+      double sdp = (area / bPU.getArea()) * (Math.floor(v.getValue().height / FLOOR_SIZE));
       AttributeManager.addAttribute(feat, "Aire", area, "Double");
       AttributeManager.addAttribute(feat, "Volume", volume, "Double");
       AttributeManager.addAttribute(feat, "SDP", sdp, "Double");
       featC.add(feat);
     }
     return featC;
-
   }
 
   private static IFeatureCollection<IFeature> simulRegulationByBasicPropertyUnitFinalTrapezoid(
       Environnement env, BasicPropertyUnit bPU, int imu, Regulation r1,
       Regulation r2, Parameters p, BandProduction bP) throws Exception {
-
     IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
-
     // Création du Sampler (qui va générer les propositions de solutions)
     MultipleBuildingsTrapezoidCuboid oCB = new MultipleBuildingsTrapezoidCuboid();
-
     PredicateIAUIDF<AbstractSimpleBuilding, GraphConfiguration<AbstractSimpleBuilding>, BirthDeathModification<AbstractSimpleBuilding>> pred;
-
     if (ALLOW_OBJECT_ON_TWO_BAND) {
       pred = new PredicateIAUIDFBuildingsDoubleBand<>(bPU, r1, r2);
-
     } else {
-
       pred = new PredicateIAUIDF<>(bPU, r1, r2);
-
     }
-
     if (p.getBoolean("shapefilewriter")) {
       new File(p.getString("result") + imu).mkdir();
     }
-    // Lancement de l'optimisation avec unité foncière, paramètres,
-    // environnement, id et prédicat
-
-    GraphConfiguration<AbstractSimpleBuilding> cc = oCB.process(bPU, p, env,
-        pred, r1, r2, bP);
+    // Lancement de l'optimisation avec unité foncière, paramètres, environnement, id et prédicat
+    GraphConfiguration<AbstractSimpleBuilding> cc = oCB.process(bPU, p, env, pred, r1, r2, bP);
     if (cc == null) {
       return featC;
     }
-
     // On liste les boîtes simulées et on ajoute les attributs nécessaires
     for (GraphVertex<AbstractSimpleBuilding> v : cc.getGraph().vertexSet()) {
-
       IFeature feat = new DefaultFeature(v.getValue().generated3DGeom());
       // On ajoute des attributs aux entités (dimension des objets)
       double longueur = Math.max(v.getValue().length, v.getValue().width);
@@ -768,22 +569,18 @@ public class Exec_EPFIF {
       AttributeManager.addAttribute(feat, "ID_PARC", idParc, "Integer");
       double area = 0;
       double volume = 0;
-      if (v.getValue().getFootprint() != null
-          && (!v.getValue().getFootprint().isEmpty())) {
+      if (v.getValue().getFootprint() != null && (!v.getValue().getFootprint().isEmpty())) {
         area = v.getValue().getFootprint().area();
       }
       AttributeManager.addAttribute(feat, "Aire", area, "Double");
       AttributeManager.addAttribute(feat, "Volume", volume, "Double");
-
       featC.add(feat);
     }
     return featC;
-
   }
 
   // Affiche les réglements chargés
-  public static void testLoadedRegulation(
-      Map<Integer, List<Regulation>> mapReg) {
+  public static void testLoadedRegulation(Map<Integer, List<Regulation>> mapReg) {
     for (int key : mapReg.keySet()) {
       log.debug("-----key----------");
       for (Regulation reg : mapReg.get(key)) {
@@ -792,8 +589,7 @@ public class Exec_EPFIF {
     }
   }
 
-  private static void saveShapeTest(String folderImu)
-      throws NoSuchAuthorityCodeException, FactoryException {
+  private static void saveShapeTest(String folderImu) throws NoSuchAuthorityCodeException, FactoryException {
     IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
     // Petit script pour sauvegarder les bandes pour vérification
     // Le fichier généré se trouve dans le dossier imu
@@ -802,8 +598,7 @@ public class Exec_EPFIF {
         featC.add(new DefaultFeature(iS));
       }
     }
-    ShapefileWriter.write(featC, folderImu + "generatedBand.shp",
-        CRS.decode("EPSG:2154"));
+    ShapefileWriter.write(featC, folderImu + "generatedBand.shp", CRS.decode("EPSG:2154"));
     IFeatureCollection<IFeature> featC2 = new FT_FeatureCollection<>();
     // Petit script pour sauvegarder les bandes pour vérification
     // Le fichier généré se trouve dans le dossier imu
@@ -812,8 +607,7 @@ public class Exec_EPFIF {
         featC2.add(new DefaultFeature(iS));
       }
     }
-    ShapefileWriter.write(featC2, folderImu + "generatedLine.shp",
-        CRS.decode("EPSG:2154"));
+    ShapefileWriter.write(featC2, folderImu + "generatedLine.shp", CRS.decode("EPSG:2154"));
   }
 
   private static void writeCSV(String fileName, String lines) {
@@ -825,5 +619,4 @@ public class Exec_EPFIF {
     }
     System.out.println("csv file " + fileName + " written");
   }
-
 }
