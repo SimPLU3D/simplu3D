@@ -64,6 +64,7 @@ public class EPFIFTask {
   public final static int CODE_PARCEL_NO_RULE = -1;
   public final static int CODE_SIMULATION_NOT_RUNNABLE = -2;
   public final static int CODE_PARCEL_TOO_BIG = -69;
+  public final static int CODE_MIN_PARCEL_TOO_BIG = -5;
 
   private static List<String> idparWithNoRules = new ArrayList<>();
   private static List<String> idsimulationNotRunnable = new ArrayList<>();
@@ -112,25 +113,37 @@ public class EPFIFTask {
             + (CODE_PARCEL_TOO_BIG) + "\n";
         continue;
       }
+
       if (lR != null && !lR.isEmpty()) {
+        // ART_5 Superficie minimale 88= non renseignable, 99= non réglementé
+        // Si ce n'est pas respecté on ne fait même pas de simulation
+        double r_art5 = lR.get(0).getArt_5();
+        if (r_art5 != 99 || r_art5 != 88) {
+          if (bPU.getPol2D().area() < r_art5) {
+            result += imu + " ; " + id + " ; " + (CODE_MIN_PARCEL_TOO_BIG)
+                + " ; " + (CODE_MIN_PARCEL_TOO_BIG) + "\n";
+          }
+        }
         // On simule indépendemment chaque unité foncière
         IFeatureCollection<IFeature> feats = simulationForEachBPU(env, bPU, lR,
             Integer.parseInt(imu), parameterFile);
         if (!feats.isEmpty()) {
+          for (int i = 0; i < feats.size(); ++i) {
+            AttributeManager.addAttribute(feats.get(i), "imu_dir", imu,
+                "String");
+            AttributeManager.addAttribute(feats.get(i), "idpar", id, "String");
+          }
           featC.addAll(feats);
           double sd = sdp.process(LoaderCuboid.loadFromCollection(feats));
           result += imu + " ; " + id + " ; " + feats.size() + " ; " + sd + "\n";
         } else {
-
           if (!idparWithNoRules
               .contains(bPU.getCadastralParcels().get(0).getCode())) {
             if (!idsimulationNotRunnable
                 .contains(bPU.getCadastralParcels().get(0).getCode())) {
-
               result += imu + " ; " + id + " ; " + 0 + " ; " + 0 + "\n";
             }
           }
-
         }
       } else {
         System.out.println("Regulation not found : " + id);
@@ -427,12 +440,13 @@ public class EPFIFTask {
 
     // ART_5 Superficie minimale 88= non renseignable, 99= non réglementé
     // Si ce n'est pas respecté on ne fait même pas de simulation
-    double r_art5 = r1.getArt_5();
-    if (r_art5 != 99) {
-      if (bPU.getPol2D().area() < r_art5) {
-        return featC;
-      }
-    }
+    // fait en amont pour récuperer l'info
+    // double r_art5 = r1.getArt_5();
+    // if (r_art5 != 99) {
+    // if (bPU.getPol2D().area() < r_art5) {
+    // return featC;
+    // }
+    // }
     // Processus découpant la zone dans laquelle on met les bâtiments à
     // partir des règles
     BandProduction bP = new BandProduction(bPU, r1, r2);
