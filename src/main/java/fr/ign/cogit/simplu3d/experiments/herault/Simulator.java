@@ -9,9 +9,9 @@ import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
+import fr.ign.cogit.simplu3d.experiments.herault.predicate.PredicateHerault;
 import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
-import fr.ign.cogit.simplu3d.model.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid.OptimisedBuildingsCuboidFinalDirectRejection;
@@ -22,80 +22,84 @@ import fr.ign.parameters.Parameters;
 
 public class Simulator {
 
-    public static void main(String[] args) throws Exception {
-        //Chemin vers le dossier où se trouvent les données
-        String folder = "D://donnees//2AUa//";
-        //Chemin vers le fichier où les résultats seront stockés
-//        String folderOut = "D://donnees//4AUa//out2//out2.shp";
-        
-        
-        // On charge le fichier de configuration (cf regarder à l'intérieur)
-        String fileName = "parameters.xml";
-        Parameters p = Parameters.unmarshall(new File(folder + fileName));
+	public static void main(String[] args) throws Exception {
+		// Chemin vers le dossier où se trouvent les données
+		String folder = "/home/mickael/data/mbrasebin/donnees/Jennifer/Donnees/3AU/";
+		String folderOut = folder + "out.shp";
+		// Chemin vers le fichier où les résultats seront stockés
+		// String folderOut = "D://donnees//4AUa//out2//out2.shp";
 
-        // On charge l'environnement géographique
-        Environnement env = LoaderSHP.loadNoDTM(new File(folder));
+		int nbMaxBox = 2;
 
-        //Nombre de parcelles
-        System.out.println(env.getBpU().size());
+		// On charge le fichier de configuration (cf regarder à l'intérieur)
+		String fileName = "parameters.xml";
+		Parameters p = Parameters.unmarshall(new File(folder + fileName));
 
-        //Nombre de zones interdites
-        System.out.println(
-                "Number of forbidden zones : " + env.getPrescriptions().size());
-        
-        
-        //On lit le shapeFile avec la zone
-        IFeatureCollection<IFeature> featCollPLU = ShapefileReader.read(folder + "zone_urba.shp");
+		// On charge l'environnement géographique
+		Environnement env = LoaderSHP.loadNoDTM(new File(folder));
 
-        for (BasicPropertyUnit bPU : env.getBpU()) {
-            Object numparcelle = bPU.getId();
-            //String sectionparcelle = (String) bPU.getCadastralParcels().get(0).getAttribute("SECTION");
-            String folderOut = "D://donnees//2AUa//out//out_" + numparcelle + ".shp";           
-            //On vérifie que l'on doit bien simuler la parcelle
-            //Attribut "simul" dans le shapefile des parcelles à 1
-            if (!bPU.getCadastralParcels().get(0).hasToBeSimulated()) {
-                continue;
-            }
+		// Nombre de parcelles
+		System.out.println(env.getBpU().size());
 
-            //Numéro de la parcelle que l'on simule
-            System.out.println("Simulation de la parcelle : "
-                    + bPU.getCadastralParcels().get(0).getCode());
+		// Nombre de zones interdites
+		System.out.println("Number of forbidden zones : " + env.getPrescriptions().size());
 
-            // Instantiation of the sampler
-            OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();
-            
-            PredicateHerault<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new PredicateHerault<>(bPU, env.getPrescriptions(), featCollPLU.get(0));
-            
-            
-            System.out.println(pred.toString());
-            
-            GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, bPU.getId(), pred);
-            
-            
-            // Witting the output
-            IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
-            // For all generated boxes
-            for (GraphVertex<Cuboid> v : cc.getGraph().vertexSet()) {
+		
+		System.out.println(folder + "zone_urba.shp");
+		// On lit le shapeFile avec la zone
+		IFeatureCollection<IFeature> featCollPLU = ShapefileReader.read(folder + "zone_urba.shp");
 
-                    // Output feature with generated geometry
-                    IFeature feat = new DefaultFeature(v.getValue().getFootprint());
+		// Writting the output
+		IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
 
-                    // We write some attributes
-                    AttributeManager.addAttribute(feat, "Longueur", Math.max(v.getValue().length, v.getValue().width),
-                                    "Double");
-                    AttributeManager.addAttribute(feat, "Largeur", Math.min(v.getValue().length, v.getValue().width), "Double");
-                    AttributeManager.addAttribute(feat, "Hauteur", v.getValue().height, "Double");
-                    AttributeManager.addAttribute(feat, "Rotation", v.getValue().orientation, "Double");
+		for (BasicPropertyUnit bPU : env.getBpU()) {
 
-                    iFeatC.add(feat);
+			// String sectionparcelle = (String)
+			// bPU.getCadastralParcels().get(0).getAttribute("SECTION");
 
-            }
+			// On vérifie que l'on doit bien simuler la parcelle
+			// Attribut "simul" dans le shapefile des parcelles à 1
+			if (!bPU.getCadastralParcels().get(0).hasToBeSimulated()) {
+				continue;
+			}
 
-            // A shapefile is written as output
-            // WARNING : 'out' parameter from configuration file have to be change
-            ShapefileWriter.write(iFeatC, folderOut);
-        }
+			// Numéro de la parcelle que l'on simule
+			System.out.println("Simulation de la parcelle : " + bPU.getCadastralParcels().get(0).getCode());
 
-    }
+			// Instantiation of the sampler
+			OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();
+
+			PredicateHerault<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new PredicateHerault<>(
+					bPU, env.getPrescriptions(), featCollPLU.get(0), nbMaxBox);
+
+			System.out.println(pred.toString());
+
+			GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, bPU.getId(), pred);
+
+			// For all generated boxes
+			for (GraphVertex<Cuboid> v : cc.getGraph().vertexSet()) {
+
+				// Output feature with generated geometry
+				IFeature feat = new DefaultFeature(v.getValue().getFootprint());
+
+				// We write some attributes
+				AttributeManager.addAttribute(feat, "Longueur", Math.max(v.getValue().length, v.getValue().width),
+						"Double");
+				AttributeManager.addAttribute(feat, "Largeur", Math.min(v.getValue().length, v.getValue().width),
+						"Double");
+				AttributeManager.addAttribute(feat, "Hauteur", v.getValue().height, "Double");
+				AttributeManager.addAttribute(feat, "Rotation", v.getValue().orientation, "Double");
+
+				iFeatC.add(feat);
+
+			}
+
+		}
+
+		// A shapefile is written as output
+		// WARNING : 'out' parameter from configuration file have to be change
+		ShapefileWriter.write(iFeatC, folderOut);
+
+	}
 
 }

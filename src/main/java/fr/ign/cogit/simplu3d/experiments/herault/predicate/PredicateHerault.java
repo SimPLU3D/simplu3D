@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.experiments.herault;
+package fr.ign.cogit.simplu3d.experiments.herault.predicate;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -35,6 +35,8 @@ public class PredicateHerault<O extends AbstractSimpleBuilding, C extends Abstra
     Geometry jtsCurveLimiteLatParcel = null;
     IFeatureCollection<Prescription> forbiddenZones;
 
+    private int nbMaxBox;
+    
     double art_6, art_7_1, art_7_2, art_8, art_9, art_10;
     
     
@@ -48,10 +50,11 @@ public class PredicateHerault<O extends AbstractSimpleBuilding, C extends Abstra
     }
 
     public PredicateHerault(BasicPropertyUnit bPU,
-            IFeatureCollection<Prescription> forbiddenZones, IFeature zoneplu)
+            IFeatureCollection<Prescription> forbiddenZones, IFeature zoneplu, int nbMaxBox)
             throws Exception {
         super();
         this.currentBPU = bPU;
+        this.nbMaxBox = nbMaxBox;
         this.forbiddenZones = forbiddenZones;
 
         // On lit toutes les informations utiles pour vérifier les règles
@@ -274,8 +277,44 @@ public class PredicateHerault<O extends AbstractSimpleBuilding, C extends Abstra
         }
 
         // On a réussi tous les tests, on renvoie vrai
-        return true;
+        return checkNumberOfBoxes(c,m);
 
+    }
+    
+    
+    private boolean checkNumberOfBoxes(C c, M m){
+        // On fait la liste de tous les objets après modification
+        List<O> lCuboid = new ArrayList<>();
+
+        // On ajoute tous les nouveaux objets
+        lCuboid.addAll(m.getBirth());
+
+        // On récupère la boîte (si elle existe) que l'on supprime lors de la
+        // modification
+        O cuboidDead = null;
+
+        if (!m.getDeath().isEmpty()) {
+            cuboidDead = m.getDeath().get(0);
+        }
+
+        // On parcourt les objets existants moins celui qu'on supprime
+        Iterator<O> iTBat = c.iterator();
+        while (iTBat.hasNext()) {
+
+            O cuboidTemp = iTBat.next();
+
+            // Si c'est une boîte qui est amenée à disparaître après
+            // modification,
+            // elle n'entre pas en jeu dans les vérifications
+            if (cuboidTemp == cuboidDead) {
+                continue;
+            }
+
+            lCuboid.add(cuboidTemp);
+
+        }
+        
+        return lCuboid.size() < this.nbMaxBox;
     }
 
     /**
