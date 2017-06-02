@@ -11,6 +11,7 @@ import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
+import fr.ign.cogit.simplu3d.model.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid.OptimisedBuildingsCuboidFinalDirectRejection;
@@ -23,9 +24,9 @@ public class Simulator {
 
     public static void main(String[] args) throws Exception {
         //Chemin vers le dossier où se trouvent les données
-        String folder = "D://donnees//3AU//";
+        String folder = "D://donnees//2AUa//";
         //Chemin vers le fichier où les résultats seront stockés
-        String folderOut = "D://donnees//3AU//out//out.shp";
+//        String folderOut = "D://donnees//4AUa//out2//out2.shp";
         
         
         // On charge le fichier de configuration (cf regarder à l'intérieur)
@@ -47,6 +48,9 @@ public class Simulator {
         IFeatureCollection<IFeature> featCollPLU = ShapefileReader.read(folder + "zone_urba.shp");
 
         for (BasicPropertyUnit bPU : env.getBpU()) {
+            Object numparcelle = bPU.getId();
+            //String sectionparcelle = (String) bPU.getCadastralParcels().get(0).getAttribute("SECTION");
+            String folderOut = "D://donnees//2AUa//out//out_" + numparcelle + ".shp";           
             //On vérifie que l'on doit bien simuler la parcelle
             //Attribut "simul" dans le shapefile des parcelles à 1
             if (!bPU.getCadastralParcels().get(0).hasToBeSimulated()) {
@@ -90,7 +94,6 @@ public class Simulator {
             // A shapefile is written as output
             // WARNING : 'out' parameter from configuration file have to be change
             ShapefileWriter.write(iFeatC, folderOut);
-
         }
 
     }
