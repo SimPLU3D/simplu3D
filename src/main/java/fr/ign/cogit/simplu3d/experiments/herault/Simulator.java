@@ -24,8 +24,8 @@ public class Simulator {
 
 	public static void main(String[] args) throws Exception {
 		// Chemin vers le dossier où se trouvent les données
-		String folder = "/home/mickael/data/mbrasebin/donnees/Jennifer/Donnees/3AU/";
-		String folderOut = folder + "out.shp";
+		String folder = "D:/donnees/3AU/";
+	
 		// Chemin vers le fichier où les résultats seront stockés
 		// String folderOut = "D://donnees//4AUa//out2//out2.shp";
 
@@ -49,10 +49,14 @@ public class Simulator {
 		// On lit le shapeFile avec la zone
 		IFeatureCollection<IFeature> featCollPLU = ShapefileReader.read(folder + "zone_urba.shp");
 
-		// Writting the output
-		IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
 
 		for (BasicPropertyUnit bPU : env.getBpU()) {
+	                // Writting the output
+	                IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
+		    
+		    
+		    
+		    String folderOut = folder + "out" + bPU.getId() + "_.shp";
 
 			// String sectionparcelle = (String)
 			// bPU.getCadastralParcels().get(0).getAttribute("SECTION");
@@ -94,11 +98,12 @@ public class Simulator {
 
 			}
 
+		             // A shapefile is written as output
+	                // WARNING : 'out' parameter from configuration file have to be change
+	                ShapefileWriter.write(iFeatC, folderOut);
+
 		}
 
-		// A shapefile is written as output
-		// WARNING : 'out' parameter from configuration file have to be change
-		ShapefileWriter.write(iFeatC, folderOut);
 
 	}
 

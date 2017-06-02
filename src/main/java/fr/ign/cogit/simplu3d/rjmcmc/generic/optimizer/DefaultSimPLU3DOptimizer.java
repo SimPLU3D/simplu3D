@@ -60,7 +60,8 @@ public abstract class DefaultSimPLU3DOptimizer<C extends ISimPLU3DPrimitive> imp
 
   public EndTest create_end_test(Parameters p) {
   	double loc_deltaconf = Double.isNaN(this.deltaConf) ? p.getDouble("delta") : this.deltaConf;
-    switch (p.getString("end_test_type").toLowerCase()) {
+  	String option =  p.getString("end_test_type").toLowerCase();
+    switch (option) {
     case "absolute": return new MaxIterationEndTest(p.getInteger("absolute_nb_iter"));
     case "relative": 
       return new StabilityEndTest<Cuboid>(p.getInteger("relative_nb_iter"), loc_deltaconf);

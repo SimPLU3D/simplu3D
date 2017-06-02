@@ -167,7 +167,8 @@ public class PredicateHerault<O extends AbstractSimpleBuilding, C extends Abstra
 
     @Override
     public boolean check(C c, M m) {
-
+        
+   
  
         
         // Il s'agit des objets de la classe Cuboid
@@ -313,8 +314,8 @@ public class PredicateHerault<O extends AbstractSimpleBuilding, C extends Abstra
             lCuboid.add(cuboidTemp);
 
         }
-        
-        return lCuboid.size() < this.nbMaxBox;
+
+        return lCuboid.size() <= this.nbMaxBox;
     }
 
     /**

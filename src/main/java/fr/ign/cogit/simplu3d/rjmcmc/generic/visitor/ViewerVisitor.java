@@ -108,6 +108,10 @@ public class ViewerVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraph
 	private void addInformationToMainWindow(C config) {
 
 		IFeatureCollection<IFeature> feat = new FT_FeatureCollection<>();
+		
+		if(config == null || config.getGraph() == null){
+		    return;
+		}
 
 		for (GraphVertex<O> v : config.getGraph().vertexSet()) {
 
