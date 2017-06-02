@@ -78,7 +78,7 @@ public class Simulator {
             for (GraphVertex<Cuboid> v : cc.getGraph().vertexSet()) {
 
                     // Output feature with generated geometry
-                    IFeature feat = new DefaultFeature(v.getValue().generated3DGeom());
+                    IFeature feat = new DefaultFeature(v.getValue().getFootprint());
 
                     // We write some attributes
                     AttributeManager.addAttribute(feat, "Longueur", Math.max(v.getValue().length, v.getValue().width),
