@@ -24,7 +24,7 @@ public class Simulator {
 
 	public static void main(String[] args) throws Exception {
 		// Chemin vers le dossier où se trouvent les données
-		String folder = "D:/donnees/3AU/";
+		String folder = "D:/donnees/4AUb/";
 	
 		// Chemin vers le fichier où les résultats seront stockés
 		// String folderOut = "D://donnees//4AUa//out2//out2.shp";
@@ -49,6 +49,8 @@ public class Simulator {
 		// On lit le shapeFile avec la zone
 		IFeatureCollection<IFeature> featCollPLU = ShapefileReader.read(folder + "zone_urba.shp");
 
+		
+	
 
 		for (BasicPropertyUnit bPU : env.getBpU()) {
 	                // Writting the output
@@ -56,7 +58,7 @@ public class Simulator {
 		    
 		    
 		    
-		    String folderOut = folder + "out" + bPU.getId() + "_.shp";
+		    String folderOut = "D:/donnees/4AUb/out/" + "out" + env.getBpU().get(0).getCadastralParcels().get(0).getCode() + "_.shp";
 
 			// String sectionparcelle = (String)
 			// bPU.getCadastralParcels().get(0).getAttribute("SECTION");
@@ -93,7 +95,7 @@ public class Simulator {
 						"Double");
 				AttributeManager.addAttribute(feat, "Hauteur", v.getValue().height, "Double");
 				AttributeManager.addAttribute(feat, "Rotation", v.getValue().orientation, "Double");
-
+				AttributeManager.addAttribute(feat, "IdParcel", env.getBpU().get(0).getCadastralParcels().get(0).getCode(), "String");
 				iFeatC.add(feat);
 
 			}
