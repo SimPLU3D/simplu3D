@@ -24,7 +24,7 @@ public class Simulator {
 
 	public static void main(String[] args) throws Exception {
 		// Chemin vers le dossier où se trouvent les données
-		String folder = "D:/donnees/4AUb/";
+		String folder = "D:/donnees/3AU/";
 	
 		// Chemin vers le fichier où les résultats seront stockés
 		// String folderOut = "D://donnees//4AUa//out2//out2.shp";
@@ -58,7 +58,8 @@ public class Simulator {
 		    
 		    
 		    
-		    String folderOut = "D:/donnees/4AUb/out/" + "out" + env.getBpU().get(0).getCadastralParcels().get(0).getCode() + "_.shp";
+		    String folderOut = "D:/donnees/3AU/out/" + "out" +bPU.getCadastralParcels().get(0).getCode() + "_.shp";
+
 
 			// String sectionparcelle = (String)
 			// bPU.getCadastralParcels().get(0).getAttribute("SECTION");
