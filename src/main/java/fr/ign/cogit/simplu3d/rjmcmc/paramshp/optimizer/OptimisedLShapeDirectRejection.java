@@ -69,8 +69,6 @@ public class OptimisedLShapeDirectRejection extends DefaultSimPLU3DOptimizer<LBu
 	public OptimisedLShapeDirectRejection() {
 	}
 
-	
-	
 	public GraphConfiguration<LBuildingWithRoof> process(RandomGenerator rG, BasicPropertyUnit bpu, Parameters p,
 			Environnement env, int id,
 			ConfigurationModificationPredicate<GraphConfiguration<LBuildingWithRoof>, BirthDeathModification<LBuildingWithRoof>> pred,
@@ -82,7 +80,7 @@ public class OptimisedLShapeDirectRejection extends DefaultSimPLU3DOptimizer<LBu
 		GraphConfiguration<LBuildingWithRoof> conf = null;
 
 		try {
-			//On créer la configuration (notamment la fonction énergétique)
+			// On créer la configuration (notamment la fonction énergétique)
 			conf = create_configuration(p, geom, bpu);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -161,9 +159,9 @@ public class OptimisedLShapeDirectRejection extends DefaultSimPLU3DOptimizer<LBu
 			RandomGenerator rng, Parameters p, BasicPropertyUnit bpU,
 			ConfigurationModificationPredicate<GraphConfiguration<LBuildingWithRoof>, BirthDeathModification<LBuildingWithRoof>> pred,
 			IGeometry polygon) {
-		
-			
-		//On créé les bornes min et max pour le sampler (10 paramètres dans le cas du LBuildingWithRoof)
+
+		// On créé les bornes min et max pour le sampler (10 paramètres dans le
+		// cas du LBuildingWithRoof)
 		IEnvelope env = polygon.envelope();
 
 		double xmin = env.getLowerCorner().getX();
@@ -202,12 +200,13 @@ public class OptimisedLShapeDirectRejection extends DefaultSimPLU3DOptimizer<LBu
 		// A priori on redéfini le constructeur de l'objet
 		LBuildingWithRoofBuilder builder = new LBuildingWithRoofBuilder();
 
-		//On initialise la surface sur laquelle on fait la simulation
+		// On initialise la surface sur laquelle on fait la simulation
 		if (samplingSurface == null) {
 			samplingSurface = bpU.getPol2D();
 		}
 
-		//On initialise l'espace sur lequel on va calculer les objets (normalement tu as juste à changer le nom des classes)
+		// On initialise l'espace sur lequel on va calculer les objets
+		// (normalement tu as juste à changer le nom des classes)
 		UniformBirth<LBuildingWithRoof> birth = new UniformBirth<LBuildingWithRoof>(rng,
 				new LBuildingWithRoof(xmin, ymin, l1min, l2min, h1min, h2min, heightToTopMin, orientationMin,
 						heightgutterMin, shiftMin),
@@ -215,10 +214,11 @@ public class OptimisedLShapeDirectRejection extends DefaultSimPLU3DOptimizer<LBu
 						heightguterrMax, shiftMax),
 				builder, TransformToSurface.class, (IGeometry) polygon);
 
-		//La distribution de poisson qui drive le nombre total d'objets
+		// La distribution de poisson qui drive le nombre total d'objets
 		PoissonDistribution distribution = new PoissonDistribution(rng, p.getDouble("poisson"));
 
-		//Le sampler qui détermine comment on tire aléatoirement un objet dans l'espace défini
+		// Le sampler qui détermine comment on tire aléatoirement un objet dans
+		// l'espace défini
 		DirectSampler<LBuildingWithRoof, GraphConfiguration<LBuildingWithRoof>, BirthDeathModification<LBuildingWithRoof>> ds = new DirectRejectionSampler<>(
 				distribution, birth, pred);
 
@@ -227,15 +227,18 @@ public class OptimisedLShapeDirectRejection extends DefaultSimPLU3DOptimizer<LBu
 				3);
 		KernelFactory<LBuildingWithRoof, GraphConfiguration<LBuildingWithRoof>, BirthDeathModification<LBuildingWithRoof>> factory = new KernelFactory<>();
 
-		//On liste les kernels, pour le premier, tu devrais probablement le définir toi ....
+		// On liste les kernels, pour le premier, tu devrais probablement le
+		// définir toi ....
 		kernels.add(
 				factory.make_uniform_birth_death_kernel(rng, builder, birth, p.getDouble("pbirth"), 1.0, "BirthDeath"));
 		double amplitudeMove = p.getDouble("amplitudeMove");
 		kernels.add(factory.make_uniform_modification_kernel(rng, builder, new MoveLShapeBuilding(amplitudeMove), 0.2,
 				"Move"));
-		
-		//Pour les autres, le ChangeValue peut être utiliser (attention, le deuxième arguement est la taille de ton builder +1)
-		//car il utilise un tableau pour stocker les paramètres et le +1 est pour stocker de manière temporaire le tirage aléatoire
+
+		// Pour les autres, le ChangeValue peut être utiliser (attention, le
+		// deuxième arguement est la taille de ton builder +1)
+		// car il utilise un tableau pour stocker les paramètres et le +1 est
+		// pour stocker de manière temporaire le tirage aléatoire
 		double amplitudeMaxDim = p.getDouble("amplitudeMaxDim");
 		kernels.add(factory.make_uniform_modification_kernel(rng, builder,
 				new ChangeValue(amplitudeMaxDim, builder.size() + 1, 2), 0.2, "h1Change"));
@@ -264,7 +267,7 @@ public class OptimisedLShapeDirectRejection extends DefaultSimPLU3DOptimizer<LBu
 		kernels.add(factory.make_uniform_modification_kernel(rng, builder,
 				new ChangeValue(amplitudeHeight, builder.size() + 1, 9), 0.2, "changeShift"));
 
-		//On instancie le sampler avec tous les objets.
+		// On instancie le sampler avec tous les objets.
 		Sampler<GraphConfiguration<LBuildingWithRoof>, BirthDeathModification<LBuildingWithRoof>> s = new GreenSamplerBlockTemperature<>(
 				rng, ds, new MetropolisAcceptance<SimpleTemperature>(), kernels);
 		return s;
