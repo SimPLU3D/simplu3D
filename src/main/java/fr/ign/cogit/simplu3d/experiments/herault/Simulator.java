@@ -58,7 +58,7 @@ public class Simulator {
 		    
 		    
 		    
-		    String folderOut = "D:/donnees/3AU/out/" + "out" +bPU.getCadastralParcels().get(0).getCode() + "_.shp";
+		    String folderOut = "D:/donnees/3AU/out/" + "out" + bPU.getCadastralParcels().get(0).getCode() + ".shp";
 
 
 			// String sectionparcelle = (String)
@@ -96,7 +96,7 @@ public class Simulator {
 						"Double");
 				AttributeManager.addAttribute(feat, "Hauteur", v.getValue().height, "Double");
 				AttributeManager.addAttribute(feat, "Rotation", v.getValue().orientation, "Double");
-				AttributeManager.addAttribute(feat, "IdParcel", env.getBpU().get(0).getCadastralParcels().get(0).getCode(), "String");
+				AttributeManager.addAttribute(feat, "IdParcel", bPU.getCadastralParcels().get(0).getCode(), "String");
 				iFeatC.add(feat);
 
 			}
