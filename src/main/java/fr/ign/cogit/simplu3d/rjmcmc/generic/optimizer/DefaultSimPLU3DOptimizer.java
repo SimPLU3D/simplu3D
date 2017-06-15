@@ -7,6 +7,7 @@ import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.CountVisitor;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
+import fr.ign.simulatedannealing.endtest.CompositeEndTest;
 import fr.ign.simulatedannealing.endtest.EndTest;
 import fr.ign.simulatedannealing.endtest.MaxIterationEndTest;
 import fr.ign.simulatedannealing.endtest.StabilityEndTest;
@@ -16,79 +17,70 @@ import fr.ign.simulatedannealing.temperature.SimpleTemperature;
 
 public abstract class DefaultSimPLU3DOptimizer<C extends ISimPLU3DPrimitive> implements ISimPLU3DOptimizer<ISimPLU3DPrimitive> {
 
-	protected double coeffDec = Double.NaN;
-	protected double deltaConf = Double.NaN;
+  protected double coeffDec = Double.NaN;
+  protected double deltaConf = Double.NaN;
+  protected double minLengthBox = Double.NaN;
+  protected double maxLengthBox = Double.NaN;
+  protected double minWidthBox = Double.NaN;
+  protected double maxWidthBox = Double.NaN;
+  protected double energyCreation = Double.NaN;
+  protected IGeometry samplingSurface = null;
 
-	protected double minLengthBox = Double.NaN;
-	protected double maxLengthBox = Double.NaN;
-	protected double minWidthBox = Double.NaN;
-	protected double maxWidthBox = Double.NaN;
+  public void setSamplingSurface(IGeometry geom) {
+    samplingSurface = geom;
+  }
 
-	protected double energyCreation = Double.NaN;
-	protected IGeometry samplingSurface = null;
+  public void setEnergyCreation(double energyCreation) {
+    this.energyCreation = energyCreation;
+  }
 
-	public void setSamplingSurface(IGeometry geom) {
-		samplingSurface = geom;
-	}
+  public void setMinLengthBox(double minLengthBox) {
+    this.minLengthBox = minLengthBox;
+  }
 
-	public void setEnergyCreation(double energyCreation) {
-		this.energyCreation = energyCreation;
-	}
+  public void setMaxLengthBox(double maxLengthBox) {
+    this.maxLengthBox = maxLengthBox;
+  }
 
-	public void setMinLengthBox(double minLengthBox) {
-		this.minLengthBox = minLengthBox;
-	}
+  public void setMinWidthBox(double minWidthBox) {
+    this.minWidthBox = minWidthBox;
+  }
 
-	public void setMaxLengthBox(double maxLengthBox) {
-		this.maxLengthBox = maxLengthBox;
-	}
+  public void setMaxWidthBox(double maxWidthBox) {
+    this.maxWidthBox = maxWidthBox;
+  }
 
-	public void setMinWidthBox(double minWidthBox) {
-		this.minWidthBox = minWidthBox;
-	}
+  public void setCoeffDec(double coeffDec) {
+    this.coeffDec = coeffDec;
+  }
 
-	public void setMaxWidthBox(double maxWidthBox) {
-		this.maxWidthBox = maxWidthBox;
-	}
+  public void setDeltaConf(double deltaConf) {
+    this.deltaConf = deltaConf;
+  }
 
-	public void setCoeffDec(double coeffDec) {
-		this.coeffDec = coeffDec;
-	}
+  public EndTest create_end_test(Parameters p) {
+  	double loc_deltaconf = Double.isNaN(this.deltaConf) ? p.getDouble("delta") : this.deltaConf;
+  	String option =  p.getString("end_test_type").toLowerCase();
+    switch (option) {
+    case "absolute": return new MaxIterationEndTest(p.getInteger("absolute_nb_iter"));
+    case "relative": 
+      return new StabilityEndTest<Cuboid>(p.getInteger("relative_nb_iter"), loc_deltaconf);
+    case "composite":
+    	default:
+    		EndTest abs = new MaxIterationEndTest(p.getInteger("absolute_nb_iter"));
+    		EndTest rel = new StabilityEndTest<Cuboid>(p.getInteger("relative_nb_iter"), loc_deltaconf);
+    		return new CompositeEndTest(abs,rel);
+    }
+  }
 
-	public void setDeltaConf(double deltaConf) {
-		this.deltaConf = deltaConf;
-	}
-	
-	public EndTest create_end_test(Parameters p) {
+  CountVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> countV = null;
 
-		if (p.getBoolean(("isAbsoluteNumber"))) {
-			return new MaxIterationEndTest(p.getInteger("nbiter"));
-		} else {
-			double loc_deltaconf;
-			if (Double.isNaN(this.deltaConf)) {
-				loc_deltaconf = p.getDouble("delta");
-			} else {
-				loc_deltaconf = this.deltaConf;
-			}
-			return new StabilityEndTest<Cuboid>(p.getInteger("nbiter"), loc_deltaconf);
-		}
-	}
+  public int getCount() {
+    return countV.getCount();
+  }
 
-	CountVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> countV = null;
-
-	public int getCount() {
-		return countV.getCount();
-	}
-
-	
-	public Schedule<SimpleTemperature> create_schedule(Parameters p) {
-		double coefDef = 0;
-		if (Double.isNaN(this.coeffDec)) {
-			coefDef = p.getDouble("deccoef");
-		} else {
-			coefDef = this.coeffDec;
-		}
-		return new GeometricSchedule<SimpleTemperature>(new SimpleTemperature(p.getDouble("temp")), coefDef);
-	}
-
+  public Schedule<SimpleTemperature> create_schedule(Parameters p) {
+    double coefDef = (Double.isNaN(this.coeffDec)) ? p.getDouble("deccoef") : this.coeffDec;
+    return new GeometricSchedule<SimpleTemperature>(new SimpleTemperature(p.getDouble("temp")), coefDef);
+  }
 }

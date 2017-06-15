@@ -39,7 +39,7 @@ public class ParallelRightTrapezoidBuilder2 implements ObjectBuilder<ParallelTra
 			try {
 				lineStrings[i] = (LineString) AdapterFactory.toGeometry(factory, limits[i]);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
+
 				e.printStackTrace();
 			}
 		}
@@ -75,8 +75,8 @@ public class ParallelRightTrapezoidBuilder2 implements ObjectBuilder<ParallelTra
 
 		double orientation = angleOr.getValeur();
 
-		double a = Math.cos(orientation) * val1[3];
-		double b = Math.sin(orientation) * val1[3];
+		double a = Math.cos(orientation) * val1[3] / 2;
+		double b = Math.sin(orientation) * val1[3]/ 2;
 		/*
 		 * 
 		 * RightTrapezoid rt = new RightTrapezoid(val1[0], val1[1], val1[2], 0,

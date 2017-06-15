@@ -16,8 +16,7 @@ import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.builder.ParallelCuboidBuilder;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.ParallelCuboid;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth.ParallelPolygonTransform;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.parallelCuboid.MoveParallelCuboid;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth.ParallelCuboidTransform;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.DifferenceVolumeUnaryEnergy;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.IntersectionVolumeBinaryEnergy;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.VolumeUnaryEnergy;
@@ -30,6 +29,7 @@ import fr.ign.mpp.DirectSampler;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.mpp.kernel.ObjectBuilder;
+import fr.ign.mpp.kernel.UniformBirth;
 import fr.ign.mpp.kernel.UniformTypeView;
 import fr.ign.parameters.Parameters;
 import fr.ign.random.Random;
@@ -43,8 +43,8 @@ import fr.ign.rjmcmc.energy.MultipliesBinaryEnergy;
 import fr.ign.rjmcmc.energy.MultipliesUnaryEnergy;
 import fr.ign.rjmcmc.energy.PlusUnaryEnergy;
 import fr.ign.rjmcmc.energy.UnaryEnergy;
-import fr.ign.rjmcmc.kernel.ChangeValue;
 import fr.ign.rjmcmc.kernel.Kernel;
+import fr.ign.rjmcmc.kernel.NullView;
 import fr.ign.rjmcmc.kernel.Transform;
 import fr.ign.rjmcmc.kernel.Variate;
 import fr.ign.rjmcmc.sampler.Sampler;
@@ -160,74 +160,48 @@ public class ParallelCuboidOptimizer extends DefaultSimPLU3DOptimizer<ISimPLU3DP
 
 		IGeometry samplingSurface = null;
 		if (samplingSurface == null) {
-			samplingSurface = bpU.getpol2D();
+			samplingSurface = bpU.getPol2D();
 		}
 
-		Transform transform = new ParallelPolygonTransform(d2, v, samplingSurface);
+		Transform transform = new ParallelCuboidTransform(d2, v, samplingSurface);
 
 		ObjectBuilder<Cuboid> builder = new ParallelCuboidBuilder(lines, 1);
 
-		// UniformBirth<Cuboid> birth = new UniformBirth<Cuboid>(rng,
-		// new ParallelCuboid(env.minX(), env.minY(), minlen, minwid, minheight,
-		// 0),
-		// new ParallelCuboid(env.maxX(), env.maxY(), maxlen, maxwid, maxheight,
-		// Math.PI), builder,
-		// ParallelPolygonTransform.class, samplingSurface);
+		UniformBirth<Cuboid> birth = new UniformBirth<Cuboid>(rng,
+				new ParallelCuboid(env.minX(), env.minY(), minlen, minwid, minheight, 0),
+				new ParallelCuboid(env.maxX(), env.maxY(), maxlen, maxwid, maxheight, Math.PI), builder,
+				ParallelCuboidTransform.class, samplingSurface);
 
 		PoissonDistribution distribution = new PoissonDistribution(rng, p.getDouble("poisson"));
-
-		// Probabilité de naissance-morts modifications
-		/*
-		 * List<Kernel<GraphConfiguration<Cuboid>,
-		 * BirthDeathModification<Cuboid>>> kernels = new ArrayList<>(3);
-		 * KernelFactory<Cuboid, GraphConfiguration<Cuboid>,
-		 * BirthDeathModification<Cuboid>> factory = new KernelFactory<>(); //
-		 * TODO Use a KernelProposalRatio to propose only birth when size is 0
-		 * kernels.add( factory.make_uniform_birth_death_kernel(rng, builder,
-		 * birth, p.getDouble("pbirth"), 1.0, "BirthDeath")); double
-		 * amplitudeMove = p.getDouble("amplitudeMove");
-		 * kernels.add(factory.make_uniform_modification_kernel(rng, builder,
-		 * new MoveParallelRightTrapezoid(amplitudeMove), 0.2, "Move"));
-		 * 
-		 * double amplitudeMaxDim = p.getDouble("amplitudeMaxDim");
-		 * kernels.add(factory.make_uniform_modification_kernel(rng, builder,
-		 * new ChangeValue(amplitudeMaxDim, 6, 2), 0.2, "ChgLength"));
-		 * 
-		 * kernels.add(factory.make_uniform_modification_kernel(rng, builder,
-		 * new ChangeValue(amplitudeMaxDim, 6, 3), 0.2, "ChgWidth"));
-		 * 
-		 * double amplitudeHeight = p.getDouble("amplitudeHeight");
-		 * kernels.add(factory.make_uniform_modification_kernel(rng, builder,
-		 * new ChangeValue(amplitudeHeight, 6, 4), 0.2, "ChgHeight"));
-		 * 
-		 * double amplitudeRotate = p.getDouble("amplitudeRotate") * Math.PI /
-		 * 180; kernels.add(factory.make_uniform_modification_kernel(rng,
-		 * builder, new ChangeValue(amplitudeRotate, 6, 5), 0.2, "Rotate"));
-		 */
 
 		Variate variate = new Variate(rng);
 		List<Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> kernels = new ArrayList<>(3);
 		UniformTypeView<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pView = new UniformTypeView<>(
 				ParallelCuboid.class, builder);
-		Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> kernel2 = new Kernel<>(pView, pView, variate,
-				variate, transform, p.getDouble("pbirthdeath"), p.getDouble("pbirth"), "Parallel");
+		Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> kernel2 = new Kernel<>(new NullView<>(),
+				pView, variate, variate, transform, 1.0, 1.0, "Parallel");
 		kernels.add(kernel2);
 
-		double amplitudeHeight = p.getDouble("amplitudeHeight");
-		Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> parallelHeight = new Kernel<>(pView, pView,
-				variate, variate, new ChangeValue(amplitudeHeight, 5, 3), 0.2, 1.0, "ChgHeightP");
-		kernels.add(parallelHeight);
-
-		Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> parallelMovekernel = new Kernel<>(pView,
-				pView, variate, variate, new MoveParallelCuboid(p.getDouble("amplitudeMove")), 0.2, 1.0, "SimpleMoveP");
-		kernels.add(parallelMovekernel);
-
-		Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> parallelLength = new Kernel<>(pView, pView,
-				variate, variate, new ChangeValue(p.getDouble("amplitudeMaxDim"), 5, 2), 0.2, 1.0, "ChgLengthP");
-		kernels.add(parallelLength);
+		/*
+		 * double amplitudeHeight = p.getDouble("amplitudeHeight");
+		 * Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>
+		 * parallelHeight = new Kernel<>(pView, pView, variate, variate, new
+		 * ChangeValue(amplitudeHeight, 5, 3), 0.2, 1.0, "ChgHeightP");
+		 * kernels.add(parallelHeight);
+		 * 
+		 * Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>
+		 * parallelMovekernel = new Kernel<>(pView, pView, variate, variate, new
+		 * MoveParallelCuboid(p.getDouble("amplitudeMove")), 0.2, 1.0,
+		 * "SimpleMoveP"); kernels.add(parallelMovekernel);
+		 * 
+		 * Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>
+		 * parallelLength = new Kernel<>(pView, pView, variate, variate, new
+		 * ChangeValue(p.getDouble("amplitudeMaxDim"), 5, 2), 0.2, 1.0,
+		 * "ChgLengthP"); kernels.add(parallelLength);
+		 */
 
 		DirectSampler<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> ds = new DirectRejectionSampler<>(
-				distribution, null, pred);
+				distribution, birth, pred);
 
 		Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> s = new GreenSamplerBlockTemperature<>(rng,
 				ds, new MetropolisAcceptance<SimpleTemperature>(), kernels);

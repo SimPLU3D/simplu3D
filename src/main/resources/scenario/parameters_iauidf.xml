@@ -7,10 +7,12 @@
 		<param key="energy" value="1" />
         <!-- Pondération du critère de volume-->
     	<param key="ponderation_volume" value="1" />
+    	<!-- Pondération négative d'une boîte en intersectant une autre -->
+		<param key="ponderation_volume_inter" value="1" />
 
         <!--Distribution (équiprobable) des dimensions des boîtes-->
         <!-- Largeur et longueur !-->
-        <param key="minlen" value="4" />
+        <param key="minlen" value="5" />
 		<param key="maxlen" value="100" />
 		
 		<param key="minwid" value="4" />
@@ -49,10 +51,10 @@
         
         
         <!-- Nombre d'itération!-->
-        <!-- Indique si il s'agit d'un nombre absolu d'itérations true ou un nombre relatif 
-        à la non amélioration de la configuration-->
-        <param key="isAbsoluteNumber" value="false" />
-		<param key="nbiter" value="50000" />
+        <!-- Indique le type de test de fin : absolute, relative ou composite-->
+        <param key="end_test_type" value="relative" />
+        <param key="absolute_nb_iter" value="2000000" />
+        <param key="relative_nb_iter" value="50000" />
         <param key="delta" value="5" />
         
         <param key="poisson" value="20" />

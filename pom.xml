@@ -5,7 +5,7 @@
 
 	<groupId>fr.ign.cogit</groupId>
 	<artifactId>simplu3d</artifactId>
-	<version>1.1-SNAPSHOT</version>
+	<version>1.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>simplu3d</name>
 
@@ -274,7 +274,7 @@
 
 	<repositories>
 		<repository>
-			<id>cogit-snapshots</id>
+			<id>ign-snapshots</id>
 			<name>Cogit Snapshots Repository</name>
 			<url>https://forge-cogit.ign.fr/nexus/content/repositories/snapshots/</url>
 			<snapshots>
@@ -285,7 +285,7 @@
 			</releases>
 		</repository>
 		<repository>
-			<id>cogit-releases</id>
+			<id>ign-releases</id>
 			<name>Cogit Releases Repository</name>
 			<url>https://forge-cogit.ign.fr/nexus/content/repositories/releases/</url>
 			<snapshots>
@@ -320,7 +320,7 @@
 		<dependency>
 			<groupId>fr.ign.cogit</groupId>
 			<artifactId>simplu3d-rules</artifactId>
-			<version>1.1-SNAPSHOT</version>
+			<version>1.2-SNAPSHOT</version>
 			<exclusions>
 				<!-- <exclusion> <groupId>fr.ign.cogit</groupId> <artifactId>geoxygene-util</artifactId> 
 					</exclusion> -->
@@ -356,12 +356,12 @@
 	</dependencies>
 	<distributionManagement>
 		<repository>
-			<id>releases</id>
+			<id>ign-releases</id>
 			<name>Nexus Releases Repository</name>
 			<url>https://forge-cogit.ign.fr/nexus/content/repositories/releases</url>
 		</repository>
 		<snapshotRepository>
-			<id>snapshots</id>
+			<id>ign-snapshots</id>
 			<name>Nexus Snapshots Repository</name>
 			<url>https://forge-cogit.ign.fr/nexus/content/repositories/snapshots/</url>
 		</snapshotRepository>

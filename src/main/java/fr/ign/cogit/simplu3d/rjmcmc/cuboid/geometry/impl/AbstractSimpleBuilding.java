@@ -5,6 +5,7 @@ import com.vividsolutions.jts.geom.Polygon;
 
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.simplu3d.model.Building;
+import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
 import fr.ign.rjmcmc.kernel.SimpleObject;
 
 /**
@@ -23,7 +24,7 @@ import fr.ign.rjmcmc.kernel.SimpleObject;
  * 
  * @version 1.0
  **/
-public abstract class AbstractSimpleBuilding extends Building implements SimpleObject {
+public abstract class AbstractSimpleBuilding extends Building implements SimpleObject, ISimPLU3DPrimitive {
 	
 	public double centerx;
 	public double centery;
@@ -36,9 +37,7 @@ public abstract class AbstractSimpleBuilding extends Building implements SimpleO
   public AbstractSimpleBuilding() {
     super();
   }
-  public AbstractSimpleBuilding(IGeometry geom) {
-    super(geom);
-  }
+
   
   
   public abstract Polygon toGeometry();
@@ -46,5 +45,8 @@ public abstract class AbstractSimpleBuilding extends Building implements SimpleO
   public abstract boolean prospectJTS(Geometry geom, double slope, double hIni);
   
   public abstract IGeometry generated3DGeom();
+  
+  
+  public abstract void setCoordinates(double[] val1);
 
 }

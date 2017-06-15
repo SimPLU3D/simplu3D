@@ -1,39 +1,22 @@
 package fr.ign.cogit.simplu3d.exec;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader ;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.BufferedReader;
-import java.io.FileReader ;
-import java.util.List;
-
-import com.vividsolutions.jts.geom.GeometryFactory;
-
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
-import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
-import fr.ign.cogit.simplu3d.demo.DemoEnvironmentProvider;
-import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
-import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
-import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid.OptimisedBuildingsCuboidFinalDirectRejection;
-import fr.ign.cogit.simplu3d.rjmcmc.generic.predicate.SamplePredicate;
-import fr.ign.cogit.simplu3d.util.AssignZ;
-import fr.ign.cogit.simplu3d.util.convert.ExportAsFeatureCollection;
-import fr.ign.mpp.configuration.BirthDeathModification;
-import fr.ign.mpp.configuration.GraphConfiguration;
-import fr.ign.mpp.configuration.GraphVertex;
-import fr.ign.parameters.Parameters;
 
 /**
  * 

@@ -290,15 +290,15 @@ public class Exec {
 
 		if (r2 != null) {
 
-			double newHeightMax = Math.max(r1.getArt_102(), r2.getArt_102());
+			double newHeightMax = Math.max(r1.getArt_10_m(), r2.getArt_10_m());
 
 			if (newHeightMax != 99.0) {
 				p.set("maxheight", newHeightMax);
 			}
 
 		} else {
-			if (r1.getArt_102() != 99) {
-				p.set("maxheight", r1.getArt_102());
+			if (r1.getArt_10_m() != 99) {
+				p.set("maxheight", r1.getArt_10_m());
 			}
 
 		}
@@ -374,7 +374,7 @@ public class Exec {
 		// ART_5 Superficie minimale 88= non renseignable, 99= non réglementé
 		double r_art5 = r1.getArt_5();
 		if (r_art5 != 99.0) {
-			if (bPU.getpol2D().area() < r_art5) {
+			if (bPU.getPol2D().area() < r_art5) {
 				return featC;
 			}
 		}

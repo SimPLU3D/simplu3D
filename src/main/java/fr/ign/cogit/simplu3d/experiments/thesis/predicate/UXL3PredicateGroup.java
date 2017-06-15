@@ -12,6 +12,7 @@ import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.ParcelBoundary;
 import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.util.CuboidGroupCreation;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
@@ -126,7 +127,7 @@ public class UXL3PredicateGroup<O extends Cuboid, C extends AbstractGraphConfigu
 
 		}
 
-		List<List<? extends Cuboid>> groupes = CuboidGroupCreation.createGroup(lBatIni, 0.5);
+		List<List<AbstractSimpleBuilding>> groupes = CuboidGroupCreation.createGroup(lBatIni, 0.5);
 
 		int nbElem = groupes.size();
 
@@ -149,12 +150,12 @@ public class UXL3PredicateGroup<O extends Cuboid, C extends AbstractGraphConfigu
 
 	}
 
-	private double compareGroup(List<? extends Cuboid> l1, List<? extends Cuboid> l2) {
+	private double compareGroup(List<AbstractSimpleBuilding> l1, List<AbstractSimpleBuilding> l2) {
 
 		double min = Double.POSITIVE_INFINITY;
 
-		for (Cuboid o1 : l1) {
-			for (Cuboid o2 : l2) {
+		for (AbstractSimpleBuilding o1 : l1) {
+			for (AbstractSimpleBuilding o2 : l2) {
 
 				min = Math.min(o1.getFootprint().distance(o2.getFootprint()), min);
 

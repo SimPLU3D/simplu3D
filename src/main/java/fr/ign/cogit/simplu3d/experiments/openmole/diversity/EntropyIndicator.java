@@ -57,7 +57,7 @@ public class EntropyIndicator {
 
         BasicPropertyUnit bPU = new BasicPropertyUnit();
         bPU.setGeom(c.getFootprint());
-        bPU.setpol2D((IPolygon) FromGeomToSurface.convertGeom(c.getFootprint()).get(0));
+        bPU.setPol2D((IPolygon) FromGeomToSurface.convertGeom(c.getFootprint()).get(0));
 
         env.getBpU().add(bPU);
         energy_parcels.add(- c.getHeight() * c.length * c.width);

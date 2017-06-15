@@ -289,6 +289,23 @@ public class DeformedCuboid extends AbstractSimpleBuilding implements ISimPLU3DP
 		this.orientation = list.get(8);
 		this.setGenerated(true);
 	}
+	
+	
+	
+	@Override
+	public void setCoordinates(double[] val1) {
+		this.centerx = val1[0];
+		this.centery = val1[1];
+		this.length = val1[2];
+		this.width = val1[3];
+		this.height1 = val1[4];
+		this.height2 = val1[5];
+		this.height3 = val1[6];
+		this.height4 = val1[7];
+		this.orientation = val1[8];
+		this.setGenerated(true);
+		
+	}
 
 	public IGeometry generated3DGeom() {
 		return generate(this, this.getZmin());
@@ -445,4 +462,6 @@ public class DeformedCuboid extends AbstractSimpleBuilding implements ISimPLU3DP
 
 		return volume;
 	}
+
+
 }

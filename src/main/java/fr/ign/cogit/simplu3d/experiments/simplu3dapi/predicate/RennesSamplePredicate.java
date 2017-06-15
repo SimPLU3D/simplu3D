@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import fr.ign.cogit.simplu3d.checker.Checker;
-import fr.ign.cogit.simplu3d.checker.RuleContext;
-import fr.ign.cogit.simplu3d.checker.Rules;
+import fr.ign.cogit.simplu3d.checker.experiments.RennesChecker;
+import fr.ign.cogit.simplu3d.checker.model.RuleContext;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
+import fr.ign.cogit.simplu3d.model.ZoneRegulation;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
@@ -27,9 +27,9 @@ public class RennesSamplePredicate<O extends Cuboid, C extends AbstractGraphConf
 		implements ConfigurationModificationPredicate<C, M> {
 
 	private BasicPropertyUnit currentBPU = null;
-	private Rules currentRules = null;
+	private ZoneRegulation currentRules = null;
 
-	public RennesSamplePredicate(BasicPropertyUnit bPU, Rules rules) {
+	public RennesSamplePredicate(BasicPropertyUnit bPU, ZoneRegulation rules) {
 		this.currentBPU = bPU;
 		this.currentRules = rules;
 
@@ -65,7 +65,7 @@ public class RennesSamplePredicate<O extends Cuboid, C extends AbstractGraphConf
 		cRc.setStopOnFailure(true);
 
 		// On vérifie que la liste des contraintes non respsectées est vide
-		boolean checked = Checker.check(currentBPU, currentRules,cRc).isEmpty();
+		boolean checked = RennesChecker.check(currentBPU, currentRules,cRc).isEmpty();
 
 		// On vire les
 		for (Cuboid b : lBuildings) {

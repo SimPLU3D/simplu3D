@@ -23,7 +23,7 @@ import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.PrepareVisitors;
 import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.builder.ParallelRightTrapezoidBuilder2;
 import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.geometry.ParallelTrapezoid2;
 import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.transform.ParallelTrapezoidTransform;
-import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.transform.birth.parallelTrapezoid.MoveParallelRightTrapezoid;
+import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.transformation.MoveParallelRightTrapezoid;
 import fr.ign.mpp.DirectRejectionSampler;
 import fr.ign.mpp.DirectSampler;
 import fr.ign.mpp.configuration.BirthDeathModification;
@@ -190,7 +190,7 @@ public class OptimisedParallelTrapezoidFinalDirectRejection extends DefaultSimPL
 		// maxdim, maxheight, Math.PI), builder, bpU.getpol2D());
 
 		if (samplingSurface == null) {
-			samplingSurface = bpU.getpol2D();
+			samplingSurface = bpU.getPol2D();
 		}
 
 		UniformBirth<ParallelTrapezoid2> birth = new UniformBirth<ParallelTrapezoid2>(rng,

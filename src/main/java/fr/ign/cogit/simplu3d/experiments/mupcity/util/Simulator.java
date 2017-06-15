@@ -11,8 +11,6 @@ import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
-import fr.ign.cogit.simplu3d.demo.DemoEnvironmentProvider;
-import fr.ign.cogit.simplu3d.experiments.iauidf.predicate.PredicateIAUIDF;
 import fr.ign.cogit.simplu3d.experiments.iauidf.regulation.Regulation;
 import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
@@ -127,10 +125,7 @@ public class Simulator {
 			//3m pour le premier étage et 2.5m pour les étages supérieurs. Je ne sais pas comment
 			//on utilise ce paramètre car il n'est pas en argument dans le predicate. 
 			//TODO utiliser cette hauteur 
-			double maximalhauteur = regle.getArt_102();
-			if (regle.getArt_10_top() == 1) {
-				maximalhauteur = regle.getArt_101() * 2.5 + 3;
-			}
+			double maximalhauteur = regle.getArt_10_m();
 
 			// Instantiation of the rule checker
 			SamplePredicate<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new SamplePredicate<>(bPU, distReculVoirie, distReculFond, distReculLat, distanceInterBati, maximalCES);

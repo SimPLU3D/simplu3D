@@ -6,11 +6,10 @@ import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
-import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
-import fr.ign.cogit.simplu3d.checker.CompositeChecker;
+import fr.ign.cogit.simplu3d.checker.model.CompositeChecker;
 import fr.ign.cogit.simplu3d.experiments.plu2plus.checker.CheckerGenerator;
 import fr.ign.cogit.simplu3d.experiments.plu2plus.context.SimulationcheckerContext;
 import fr.ign.cogit.simplu3d.experiments.plu2plus.predicate.CheckerPredicate;
@@ -44,7 +43,7 @@ public class Simulation {
 			
 	
 
-			if (featForbiddenZone.getGeom().intersects(bPU.getpol2D())) {
+			if (featForbiddenZone.getGeom().intersects(bPU.getPol2D())) {
 
 				featC.addAll(simulateBPU(env, p, bPU));
 			}

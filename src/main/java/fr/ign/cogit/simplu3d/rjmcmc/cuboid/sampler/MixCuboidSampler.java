@@ -3,8 +3,6 @@ package fr.ign.cogit.simplu3d.rjmcmc.cuboid.sampler;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.ParallelCuboid2;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.SimpleCuboid2;
 import fr.ign.mpp.kernel.ObjectBuilder;
 import fr.ign.mpp.kernel.ObjectSampler;
 import fr.ign.rjmcmc.kernel.Transform;
@@ -20,9 +18,11 @@ public class MixCuboidSampler implements ObjectSampler<Cuboid> {
 	Transform transformBand1;
 	ObjectBuilder<Cuboid> builder1;
 	ObjectBuilder<Cuboid> builder2;
+	Class<?> c1;
+	Class<?> c2;
 
 	public MixCuboidSampler(RandomGenerator e, double p_simple, Transform transformBand1, Transform transformBand2,
-			ObjectBuilder<Cuboid> builder1, ObjectBuilder<Cuboid> builder2) {
+			ObjectBuilder<Cuboid> builder1, ObjectBuilder<Cuboid> builder2, Class<?> c1, Class<?> c2) {
 		this.engine = e;
 		this.p_simple = p_simple;
 		this.transformBand2 = transformBand2;
@@ -30,6 +30,8 @@ public class MixCuboidSampler implements ObjectSampler<Cuboid> {
 		this.variate = new Variate(e);
 		this.builder1 = builder1;
 		this.builder2 = builder2;
+		this.c1 = c1;
+		this.c2 = c2;
 	}
 
 	@Override
@@ -54,7 +56,7 @@ public class MixCuboidSampler implements ObjectSampler<Cuboid> {
 
 	@Override
 	public double pdf(Cuboid t) {
-		if (SimpleCuboid2.class.isInstance(t) || ParallelCuboid2.class.isInstance(t)) {
+		if (c2 != null && c2.isInstance(t)) {
 			double[] val1 = new double[builder2.size()];
 			builder2.setCoordinates(t, val1);
 			double[] val0 = new double[builder2.size()];
@@ -62,6 +64,7 @@ public class MixCuboidSampler implements ObjectSampler<Cuboid> {
 			double pdf = this.variate.pdf(val0, 0);
 			return pdf * J10;
 		}
+
 		double[] val1 = new double[builder1.size()];
 		builder1.setCoordinates(t, val1);
 		double[] val0 = new double[builder1.size()];

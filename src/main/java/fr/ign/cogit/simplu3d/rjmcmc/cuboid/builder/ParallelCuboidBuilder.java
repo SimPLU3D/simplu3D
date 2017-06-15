@@ -79,5 +79,6 @@ public class ParallelCuboidBuilder implements ObjectBuilder<Cuboid>{
 		coordinates[1] = pc.centery;
 		coordinates[2] = pc.length;
 		coordinates[3] = pc.height;
+
 	}
 }

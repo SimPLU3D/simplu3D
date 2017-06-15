@@ -37,8 +37,7 @@ public class ParametersToPostGRES {
    * @throws Exception
    */
   public static void main(String[] args) throws Exception {
-    String folderName = BasicSimulator.class.getClassLoader()
-        .getResource("scenario/").getPath();
+    String folderName = BasicSimulator.class.getClassLoader().getResource("scenario/").getPath();
 
     String fileName = "building_parameters_project_expthese_3.xml";
 
@@ -62,20 +61,15 @@ public class ParametersToPostGRES {
         + p.getDouble("amplitudeHeight") + ", " + p.getDouble("amplitudeMove")
         + ", " + p.getDouble("amplitudeRotate") + ", " + p.getDouble("temp")
         + ", " + p.getDouble("deccoef") + ", "
-        + p.getBoolean("isAbsoluteNumber") + ", " + p.getInteger("nbiter")
-        + ", " + p.getDouble("delta") + ", " + p.getDouble("poisson") +
-
+        + p.getString("end_test_type") + ", " + p.getInteger("absolute_nb_iter")
+        + ", " + p.getInteger("relative_nb_iter") + ", " + p.getDouble("delta")
+        + ", " + p.getDouble("poisson") +
         ");";
 
     String url = "jdbc:postgresql://" + host + ":" + port + "/" + database;
-
     Connection conn = DriverManager.getConnection(url, user, pw);
-
     Statement s = conn.createStatement();
     s.execute(sql);
-
     conn.close();
-
   }
-
 }
