@@ -127,20 +127,39 @@ public class OptimisedLShapeDirectRejection extends DefaultSimPLU3DOptimizer<LBu
 		UnaryEnergy<LBuildingWithRoof> u3 = new MinusUnaryEnergy<LBuildingWithRoof>(energyCreation,
 				energyVolumePondere);
 
-		// Énergie constante : pondération de la différence
-		ConstantEnergy<LBuildingWithRoof, LBuildingWithRoof> ponderationDifference = new ConstantEnergy<LBuildingWithRoof, LBuildingWithRoof>(
-				p.getDouble("ponderation_difference_ext"));
-		// On ajoute l'énergie de différence : la zone en dehors de la parcelle
-		UnaryEnergy<LBuildingWithRoof> u4 = new DifferenceVolumeUnaryEnergy<LBuildingWithRoof>(geom);
-		UnaryEnergy<LBuildingWithRoof> u5 = new MultipliesUnaryEnergy<LBuildingWithRoof>(ponderationDifference, u4);
-		UnaryEnergy<LBuildingWithRoof> unaryEnergy = new PlusUnaryEnergy<LBuildingWithRoof>(u3, u5);
+		double pondDiffExt = p.getDouble("ponderation_difference_ext");
+		
+		
+		UnaryEnergy<LBuildingWithRoof> unaryEnergy = null;
+		
+		if(pondDiffExt!=0){
+			// Énergie constante : pondération de la différence
+			ConstantEnergy<LBuildingWithRoof, LBuildingWithRoof> ponderationDifference = new ConstantEnergy<LBuildingWithRoof, LBuildingWithRoof>(
+					pondDiffExt);
+			// On ajoute l'énergie de différence : la zone en dehors de la parcelle
+			UnaryEnergy<LBuildingWithRoof> u4 = new DifferenceVolumeUnaryEnergy<LBuildingWithRoof>(geom);
+			UnaryEnergy<LBuildingWithRoof> u5 = new MultipliesUnaryEnergy<LBuildingWithRoof>(ponderationDifference, u4);
+			unaryEnergy = new PlusUnaryEnergy<LBuildingWithRoof>(u3, u5);
+		}else{
+			unaryEnergy = u3;
+		}
+		
 
-		// Énergie binaire : intersection entre deux rectangles
-		ConstantEnergy<LBuildingWithRoof, LBuildingWithRoof> c3 = new ConstantEnergy<LBuildingWithRoof, LBuildingWithRoof>(
-				p.getDouble("ponderation_volume_inter"));
-		BinaryEnergy<LBuildingWithRoof, LBuildingWithRoof> b1 = new IntersectionVolumeBinaryEnergy<LBuildingWithRoof>();
-		BinaryEnergy<LBuildingWithRoof, LBuildingWithRoof> binaryEnergy = new MultipliesBinaryEnergy<LBuildingWithRoof, LBuildingWithRoof>(
-				c3, b1);
+		double pondInterVolume = p.getDouble("ponderation_volume_inter");
+		BinaryEnergy<LBuildingWithRoof, LBuildingWithRoof> binaryEnergy = null;
+		if(pondInterVolume!=0){
+
+			// Énergie binaire : intersection entre deux rectangles
+			ConstantEnergy<LBuildingWithRoof, LBuildingWithRoof> c3 = new ConstantEnergy<LBuildingWithRoof, LBuildingWithRoof>(
+					p.getDouble("ponderation_volume_inter"));
+			BinaryEnergy<LBuildingWithRoof, LBuildingWithRoof> b1 = new IntersectionVolumeBinaryEnergy<LBuildingWithRoof>();
+			 binaryEnergy = new MultipliesBinaryEnergy<LBuildingWithRoof, LBuildingWithRoof>(
+					c3, b1);
+		}else{
+			binaryEnergy = new ConstantEnergy<LBuildingWithRoof, LBuildingWithRoof>(0);
+		}
+		
+
 		// empty initial configuration*/
 		GraphConfiguration<LBuildingWithRoof> conf = new GraphConfiguration<>(unaryEnergy, binaryEnergy);
 		return conf;
@@ -265,7 +284,7 @@ public class OptimisedLShapeDirectRejection extends DefaultSimPLU3DOptimizer<LBu
 				new ChangeValue(amplitudeHeight, builder.size() + 1, 8), 0.2, "changeHeightGutter"));
 
 		kernels.add(factory.make_uniform_modification_kernel(rng, builder,
-				new ChangeValue(amplitudeHeight, builder.size() + 1, 9), 0.2, "changeShift"));
+				new ChangeValue(0.1, builder.size() + 1, 9), 0.2, "changeShift"));
 
 		// On instancie le sampler avec tous les objets.
 		Sampler<GraphConfiguration<LBuildingWithRoof>, BirthDeathModification<LBuildingWithRoof>> s = new GreenSamplerBlockTemperature<>(

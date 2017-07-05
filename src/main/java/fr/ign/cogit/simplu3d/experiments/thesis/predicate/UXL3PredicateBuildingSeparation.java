@@ -1,13 +1,17 @@
 package fr.ign.cogit.simplu3d.experiments.thesis.predicate;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
 
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
+import fr.ign.cogit.geoxygene.feature.AbstractFeature;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
+import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.ParcelBoundary;
@@ -17,14 +21,13 @@ import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
 
-
 /**
  * 
- *        This software is released under the licence CeCILL
+ * This software is released under the licence CeCILL
  * 
- *        see LICENSE.TXT
+ * see LICENSE.TXT
  * 
- *        see <http://www.cecill.info/ http://www.cecill.info/
+ * see <http://www.cecill.info/ http://www.cecill.info/
  * 
  * 
  * 
@@ -33,92 +36,175 @@ import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
  * @author Brasebin Mickaël
  * 
  * @version 1.7
- **/ 
+ **/
 public class UXL3PredicateBuildingSeparation<O extends AbstractSimpleBuilding, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>>
-    implements ConfigurationModificationPredicate<C, M> {
+		implements ConfigurationModificationPredicate<C, M> {
 
-  IMultiCurve<IOrientableCurve> curveS;
+	Geometry jtsCurveLimiteFondParcel = null;
+	Geometry jtsCurveLimiteFrontParcel = null;
+	Geometry jtsCurveLimiteLatParcel = null;
 
-  public UXL3PredicateBuildingSeparation(BasicPropertyUnit bPU) {
+	Geometry surface = null;
 
-    List<IOrientableCurve> lCurve = new ArrayList<>();
+	public UXL3PredicateBuildingSeparation(BasicPropertyUnit bPU) throws Exception {
 
-    for (CadastralParcel cP : bPU.getCadastralParcels()) {
-      // for (SubParcel sB : cP.getSubParcel()) {
-      for (ParcelBoundary sCB : cP.getBoundaries()) {
+		// Pour simplifier la vérification, on extrait les différentes bordures
+		// de
+		// parcelles
+		IMultiCurve<IOrientableCurve> curveLimiteFondParcel = new GM_MultiCurve<>();
+		IMultiCurve<IOrientableCurve> curveLimiteFrontParcel = new GM_MultiCurve<>();
+		IMultiCurve<IOrientableCurve> curveLimiteLatParcel = new GM_MultiCurve<>();
 
-        if (sCB.getType() != ParcelBoundaryType.INTRA) {
-          IGeometry geom = sCB.getGeom();
+		// On parcourt les parcelles du BasicPropertyUnit (un propriétaire peut
+		// avoir plusieurs parcelles)
+		for (CadastralParcel cP : bPU.getCadastralParcels()) {
 
-          if (geom instanceof IOrientableCurve) {
-            lCurve.add((IOrientableCurve) geom);
+			// On parcourt les limites séparaticves
+			for (ParcelBoundary sCB : cP.getBoundaries()) {
 
-          } else {
-            System.out
-                .println("Classe UXL3 : quelque chose n'est pas un ICurve");
-          }
+				// En fonction du type on ajoute à telle ou telle géométrie
+				IGeometry geom = sCB.getGeom();
 
-          // }
+				if (geom == null || geom.isEmpty() || geom.length() < 0.01) {
+					continue;
+				}
 
-        }
+				// Fond de parcel
+				if (sCB.getType() == ParcelBoundaryType.BOT) {
 
-      }
+					if (geom instanceof IOrientableCurve) {
+						curveLimiteFondParcel.add((IOrientableCurve) geom);
 
-    }
+					} else {
+						System.out.println(
+								"Classe SamplePredicate : quelque chose n'est pas un ICurve : " + geom.getClass());
+					}
 
-    curveS = new GM_MultiCurve<>(lCurve);
+				}
 
-  }
+				// Limite latérale
+				if (sCB.getType() == ParcelBoundaryType.LAT) {
 
-  @Override
-  public boolean check(C c, M m) {
+					if (geom instanceof IOrientableCurve) {
+						curveLimiteLatParcel.add((IOrientableCurve) geom);
 
-    List<O> lO = m.getBirth();
+					} else {
+						System.out.println(
+								"Classe SamplePredicate : quelque chose n'est pas un ICurve : " + geom.getClass());
+					}
 
-    O batDeath = null;
+				}
 
-    if (!m.getDeath().isEmpty()) {
+				// Limite front
+				if (sCB.getType() == ParcelBoundaryType.ROAD) {
 
-      batDeath = m.getDeath().get(0);
+					if (geom instanceof IOrientableCurve) {
+						curveLimiteFrontParcel.add((IOrientableCurve) geom);
 
-    }
+					} else {
+						System.out.println(
+								"Classe SamplePredicate : quelque chose n'est pas un ICurve : " + geom.getClass());
+					}
 
-    for (O ab : lO) {
-      // System.out.println("Oh une naissance");
+				}
 
-      Iterator<O> iTBat = c.iterator();
+			}
 
-      while (iTBat.hasNext()) {
+		}
 
-        O batTemp = iTBat.next();
+		GeometryFactory gf = new GeometryFactory();
 
-        if (batTemp == batDeath) {
-          continue;
-        }
+		this.surface = AdapterFactory.toGeometry(gf, bPU.getGeom());
 
-        if (batTemp.getFootprint().distance(ab.getFootprint()) < 5) {
-          return false;
-        }
+		if (!curveLimiteFondParcel.isEmpty()) {
+			this.jtsCurveLimiteFondParcel = AdapterFactory.toGeometry(gf, curveLimiteFondParcel);
+		}
 
-      }
+		if (!curveLimiteFrontParcel.isEmpty()) {
+			this.jtsCurveLimiteFrontParcel = AdapterFactory.toGeometry(gf, curveLimiteFrontParcel);
+		}
 
-      // Pas vérifié ?
+		if (!curveLimiteLatParcel.isEmpty()) {
+			this.jtsCurveLimiteLatParcel = AdapterFactory.toGeometry(gf, curveLimiteLatParcel);
+		}
 
-      boolean checked = true;
+	}
 
-      checked = ab.prospect(curveS, 0.5, 0);
-      if (!checked) {
-        return false;
-      }
+	@Override
+	public boolean check(C c, M m) {
 
-      checked = (ab.getFootprint().distance(curveS) > 5);
-      if (!checked) {
-        return false;
-      }
+		List<O> lO = m.getBirth();
 
-    }
+		O batDeath = null;
+		
+		
 
-    return true;
+		if (!m.getDeath().isEmpty()) {
 
-  }
+			batDeath = m.getDeath().get(0);
+
+		}
+
+		for (O ab : lO) {
+			// System.out.println("Oh une naissance");
+
+			Iterator<O> iTBat = c.iterator();
+
+			while (iTBat.hasNext()) {
+
+				O batTemp = iTBat.next();
+
+				if (batTemp == batDeath) {
+					continue;
+				}
+
+				if (batTemp.getFootprint().distance(ab.getFootprint()) < 5) {
+					return false;
+				}
+
+			}
+
+			// Pas vérifié ?
+
+			boolean checked = true;
+
+			
+			if(jtsCurveLimiteFondParcel != null){
+				checked = ab.prospectJTS(jtsCurveLimiteFondParcel, 0.5, 0);
+				if (!checked) {
+					return false;
+				}
+		
+			}
+		
+			
+			if(jtsCurveLimiteFrontParcel!=null){
+				checked = ab.prospectJTS(jtsCurveLimiteFrontParcel, 0.5, 0);
+				if (!checked) {
+					return false;
+				}
+				checked = (ab.toGeometry().distance(jtsCurveLimiteFrontParcel) > 5);
+			}
+
+		
+			if(jtsCurveLimiteLatParcel != null){
+				checked = ab.prospectJTS(jtsCurveLimiteLatParcel, 0.5, 0);
+				if (!checked) {
+					return false;
+				}
+			
+			}
+		
+
+
+
+			if (!checked) {
+				return false;
+			}
+
+		}
+
+		return true;
+
+	}
 }

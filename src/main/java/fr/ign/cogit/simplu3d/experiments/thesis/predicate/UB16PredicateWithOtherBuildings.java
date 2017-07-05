@@ -4,31 +4,34 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.ILineString;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.convert.FromGeomToSurface;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_LineString;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
+import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.model.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.ParcelBoundary;
 import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
+
 /**
  * 
- *        This software is released under the licence CeCILL
+ * This software is released under the licence CeCILL
  * 
- *        see LICENSE.TXT
+ * see LICENSE.TXT
  * 
- *        see <http://www.cecill.info/ http://www.cecill.info/
+ * see <http://www.cecill.info/ http://www.cecill.info/
  * 
  * 
  * 
@@ -37,392 +40,401 @@ import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
  * @author Brasebin Mickaël
  * 
  * @version 1.0
- **/ 
-public class UB16PredicateWithOtherBuildings<O extends Cuboid, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>> implements
-        ConfigurationModificationPredicate<C,M> {
+ **/
+public class UB16PredicateWithOtherBuildings<O extends AbstractSimpleBuilding, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>>
+		implements ConfigurationModificationPredicate<C, M> {
 
-    IMultiCurve<IOrientableCurve> curveVoirie;
-    IMultiCurve<IOrientableCurve> curveLatBot;
+	Geometry jtsCurveLimiteFondParcel = null;
+	Geometry jtsCurveLimiteFrontParcel = null;
+	Geometry jtsCurveLimiteLatParcel = null;
 
-    IGeometry bufferRoad;
-    IGeometry bufferLimLat;
+	Geometry bufferRoad = null;
+	Geometry buffer13 = null;
+	Geometry buffer20 = null;
+	Geometry buffer20more = null;
 
-    IGeometry buffer13, buffer20, buffer20more;
+	Geometry bufferLimLat = null;
 
-    BasicPropertyUnit bPU;
+	BasicPropertyUnit bPU;
 
-    double hIni, s;
+	double hIni, s;
 
-    public UB16PredicateWithOtherBuildings(BasicPropertyUnit bPU, double hIni,
-            double s) {
-        this.bPU = bPU;
-        
-        System.out.println(bPU.getBuildings().size());
+	GeometryFactory gf = new GeometryFactory();
 
-        this.hIni = hIni;
-        this.s = s;
+	public UB16PredicateWithOtherBuildings(BasicPropertyUnit bPU, double hIni, double s) throws Exception {
+		this.bPU = bPU;
 
-        List<IOrientableCurve> lCurveVoirie = new ArrayList<>();
+		System.out.println(bPU.getBuildings().size());
 
-        List<IOrientableCurve> lCurveLatBot = new ArrayList<>();
+		this.hIni = hIni;
+		this.s = s;
+		// Pour simplifier la vérification, on extrait les différentes bordures
+		// de
+		// parcelles
+		IMultiCurve<IOrientableCurve> curveLimiteFondParcel = new GM_MultiCurve<>();
+		IMultiCurve<IOrientableCurve> curveLimiteFrontParcel = new GM_MultiCurve<>();
+		IMultiCurve<IOrientableCurve> curveLimiteLatParcel = new GM_MultiCurve<>();
 
-        for (CadastralParcel cP : bPU.getCadastralParcels()) {
-            // for (SubParcel sB : cP.getSubParcel()) {
+		// On parcourt les parcelles du BasicPropertyUnit (un propriétaire peut
+		// avoir plusieurs parcelles)
+		for (CadastralParcel cP : bPU.getCadastralParcels()) {
 
-            for (ParcelBoundary sCB : cP.getBoundaries()) {
+			// On parcourt les limites séparaticves
+			for (ParcelBoundary sCB : cP.getBoundaries()) {
 
-                if (sCB.getType() == ParcelBoundaryType.ROAD) {
+				// En fonction du type on ajoute à telle ou telle géométrie
+				IGeometry geom = sCB.getGeom();
 
-                    IGeometry geom = sCB.getGeom();
+				if (geom == null || geom.isEmpty() || geom.length() < 0.01) {
+					continue;
+				}
 
-                    if (geom instanceof IOrientableCurve) {
+				// Fond de parcel
+				if (sCB.getType() == ParcelBoundaryType.BOT) {
 
-                        lCurveVoirie.add((IOrientableCurve) geom);
+					if (geom instanceof IOrientableCurve) {
+						curveLimiteFondParcel.add((IOrientableCurve) geom);
 
-                    } else {
-                        System.out
-                                .println("Classe UB14PredicateFull : quelque chose n'est pas un ICurve");
-                    }
+					} else {
+						System.out.println(
+								"Classe SamplePredicate : quelque chose n'est pas un ICurve : " + geom.getClass());
+					}
 
-                } else if (sCB.getType() != ParcelBoundaryType.INTRA) {
-                    IGeometry geom = sCB.getGeom();
+				}
 
-                    if (geom instanceof IOrientableCurve) {
+				// Limite latérale
+				if (sCB.getType() == ParcelBoundaryType.LAT) {
 
-                        lCurveLatBot.add((IOrientableCurve) geom);
+					if (geom instanceof IOrientableCurve) {
+						curveLimiteLatParcel.add((IOrientableCurve) geom);
 
-                    } else {
-                        System.out
-                                .println("Classe UB14PredicateFull : quelque chose n'est pas un ICurve");
-                    }
+					} else {
+						System.out.println(
+								"Classe SamplePredicate : quelque chose n'est pas un ICurve : " + geom.getClass());
+					}
 
-                }
+				}
 
-                // }
+				// Limite front
+				if (sCB.getType() == ParcelBoundaryType.ROAD) {
 
-            }
+					if (geom instanceof IOrientableCurve) {
+						curveLimiteFrontParcel.add((IOrientableCurve) geom);
 
-        }
+					} else {
+						System.out.println(
+								"Classe SamplePredicate : quelque chose n'est pas un ICurve : " + geom.getClass());
+					}
 
-        // System.out.println("NB voirie : " + lCurveVoirie.size());
+				}
 
-        // System.out.println("NB other : " + lCurveLatBot.size());
+			}
 
-        curveVoirie = new GM_MultiCurve<>(lCurveVoirie);
-        bufferRoad = curveVoirie.buffer(0.5);
-        curveLatBot = new GM_MultiCurve<>(lCurveLatBot);
-        bufferLimLat = curveLatBot.buffer(0.5);
+		}
 
-        buffer13 = curveVoirie.buffer(13);
-        buffer20 = curveVoirie.buffer(20).difference(buffer13);
+		if (!curveLimiteFondParcel.isEmpty()) {
+			this.jtsCurveLimiteFondParcel = AdapterFactory.toGeometry(gf, curveLimiteFondParcel);
+		}
 
-        buffer20more = FromGeomToSurface.convertMSGeom(bPU.getGeom()
-                .difference(curveVoirie.buffer(20)));
+		if (!curveLimiteFrontParcel.isEmpty()) {
+			this.jtsCurveLimiteFrontParcel = AdapterFactory.toGeometry(gf, curveLimiteFrontParcel);
+		}
 
-    }
+		if (!curveLimiteLatParcel.isEmpty()) {
+			this.jtsCurveLimiteLatParcel = AdapterFactory.toGeometry(gf, curveLimiteLatParcel);
+		}
 
-   
+		bufferRoad = jtsCurveLimiteFrontParcel.buffer(0.5);
 
-    @Override
-    public boolean check(C c, M m) {
+		bufferLimLat = jtsCurveLimiteLatParcel.buffer(0.5);
 
-        List<O> lO = m.getBirth();
+		buffer13 = jtsCurveLimiteFrontParcel.buffer(13);
+		buffer20 = jtsCurveLimiteFrontParcel.buffer(20).difference(buffer13);
 
-        // Règles concernant le nouveau bâtiment
+		 surface = AdapterFactory.toGeometry(gf, bPU.getGeom());
+		buffer20more = surface.difference(jtsCurveLimiteFrontParcel.buffer(20));
 
-        // Distance de 1,5 m à la rue ou alors longer la rue
+	}
+	
+	Geometry surface;
 
-        boolean checked = this.distanceToRoadRespected(lO, 1.5);
+	@Override
+	public boolean check(C c, M m) {
 
-        if (!checked) {
-            return false;
+		List<O> lO = m.getBirth();
 
-        }
+		if (lO.isEmpty()) {
+			return true;
+		}
+		
+		
+		
+		// Cas de l'implantation avec prospect
+		boolean co = checkDistanceToLimitAccordingToDistanceToRoad(lO, hIni, s);
 
-        O batDeath = null;
+		if (!co) {
+			return false;
+		}
+		
+	
+		
+	
 
-        if (!m.getDeath().isEmpty()) {
+		O batDeat = null;
 
-            batDeath = m.getDeath().get(0);
+		if (!m.getDeath().isEmpty()) {
+			batDeat = m.getDeath().get(0);
+		}
 
-        }
+		for (O ab : lO) {
+			// System.out.println("Oh une naissance");
+			
+			if(! surface.contains(ab.toGeometry())){
+				return false;
+			}
 
-        // On vérifie la distance entre groupes de batiments
-        // lBatIni la liste des bâtiments tels que la nouvelle config nous le
-        // dit
-        List<O> lBatIni = new ArrayList<>();
+			Iterator<O> iTBat = c.iterator();
 
-        Iterator<O> iTBat = c.iterator();
+			while (iTBat.hasNext()) {
 
-        while (iTBat.hasNext()) {
+				O batTemp = iTBat.next();
 
-            O batTemp = iTBat.next();
+				if (batTemp == batDeat) {
+					continue;
+				}
 
-            if (batTemp == batDeath) {
-                continue;
-            }
+				if (batTemp.getFootprint().distance(ab.getFootprint()) < 5) {
+					return false;
+				}
 
-            lBatIni.add(batTemp);
+			}
 
-        }
+		}
+		
+	
 
-        for (O ab : lO) {
+		// Règles concernant le nouveau bâtiment
 
-            lBatIni.add(ab);
+		// Distance de 1,5 m à la rue ou alors longer la rue
 
-        }
+		boolean checked = this.distanceToRoadRespected(lO, 1.5);
 
-        // Vérification du CSE
+		if (!checked) {
+			return false;
 
-    //  boolean bo = respectBuildArea(lBatIni);
+		}
 
-//      if (!bo) {
-    //      return false;
-        //}
 
-        /*
-         * List<List<O>> groupes = createGroupe(lBatIni);
-         * 
-         * if (groupes.size() == 0) { return true; }
-         * 
-         * int nbElem = groupes.size();
-         * 
-         * for (int i = 0; i < nbElem; i++) {
-         * 
-         * // if (groupes.get(i).size() > numberMaxOfBoxesInGroup) { // return
-         * false; // }
-         * 
-         * for (int j = i + 1; j < nbElem; j++) {
-         * 
-         * if (compareGroup(groupes.get(i), groupes.get(j)) < 5) { return false;
-         * }
-         * 
-         * } }
-         */
 
-        // Cas de l'implantation avec prospect
-        boolean co = checkProspectForBuilding(lO, hIni, s);
+		boolean co2 = checkProspectForBuilding2(lO);
 
-        if (!co) {
-            return false;
-        }
+		if (!co2) {
+			return false;
+		}
 
-        boolean co2 = checkProspectForBuilding2(lO);
+		return true;
 
-        if (!co2) {
-            return false;
-        }
-        
-        
+	}
 
-        /*
-         * 
-         * 
-         * 
-         * ///Règles concernant l'ensemble des bâtiments
-         * 
-         * // 2 implantation : soit l'implantation borde les limites séparatives
-         * soit // ce n'est pas le cas
-         * 
-         * 
-         * // Respect du CES
-         */
+	protected boolean respectBuildArea(List<O> lBatIni) {
 
-        return true;
+		if (lBatIni.isEmpty()) {
+			return true;
+		}
 
-    }
+		int nbElem = lBatIni.size();
 
+		IGeometry geom = lBatIni.get(0).getFootprint();
 
+		for (int i = 1; i < nbElem; i++) {
 
-    protected boolean respectBuildArea(List<O> lBatIni) {
+			geom = geom.union(lBatIni.get(i).getFootprint());
 
-        if (lBatIni.isEmpty()) {
-            return true;
-        }
+		}
 
-        int nbElem = lBatIni.size();
+		double aireBuilt = geom.area();
 
-        IGeometry geom = lBatIni.get(0).getFootprint();
+		for (AbstractBuilding ab : this.bPU.getBuildings()) {
+			aireBuilt = aireBuilt + ab.getFootprint().area();
 
-        for (int i = 1; i < nbElem; i++) {
+		}
 
-            geom = geom.union(lBatIni.get(i).getFootprint());
+		double airePAr = this.bPU.getCadastralParcels().get(0).getArea();
 
-        }
+		return ((aireBuilt / airePAr) <= 0.5);
+	}
 
-        double aireBuilt = geom.area();
+	private boolean checkProspectForBuilding2(List<O> lO) {
 
-        for (AbstractBuilding ab : this.bPU.getBuildings()) {
-            aireBuilt = aireBuilt + ab.getFootprint().area();
+		for (O ab : lO) {
 
-        }
+			for (AbstractBuilding ab2 : this.bPU.getBuildings()) {
 
-        double airePAr = this.bPU.getCadastralParcels().get(0).getArea();
+				
+				 boolean checked = ab.prospect(ab2.getFootprint(), 1, 1);
+				 
+				 if (!checked) { return false; }
+				 
 
-        return ((aireBuilt / airePAr) <= 0.5);
-    }
+				 checked = (ab.getFootprint().distance(ab2.getFootprint()) > 5);
+				if (!checked) {
+					return false;
+				}
+			}
 
-    private boolean checkProspectForBuilding2(List<O> lO) {
+		}
 
-        for (O ab : lO) {
+		return true;
 
-            for (AbstractBuilding ab2 : this.bPU.getBuildings()) {
+	}
 
-                boolean checked = ab.prospect(ab2.getFootprint(), 0.5, 1);
+	private boolean checkDistanceToLimitAccordingToDistanceToRoad(List<O> lO, double hIni, double s) {
 
-                if (!checked) {
-                    return false;
-                }
-                
-                
-                checked = (ab.getFootprint().distance(ab2.getFootprint())  > 5 );
-                if (!checked) {
-                    return false;
-                }
-            }
+		for (O ab : lO) {
 
-        }
+			boolean checked = ab.prospectJTS(bufferLimLat, s, hIni);
 
-        return true;
+			if (!checked) {
+				return false;
+			}
 
-    }
+			if (ab.toGeometry().intersects(buffer13)) {
 
-    private boolean checkProspectForBuilding(List<O> lO, double hIni, double s) {
+				
+				Geometry decoup = ab.toGeometry().intersection(buffer13);
 
-        for (O ab : lO) {
+				if(jtsCurveLimiteLatParcel != null){
+					double dist = decoup.distance(jtsCurveLimiteLatParcel);
 
-            boolean checked = ab.prospect(bufferLimLat, s, hIni);
+					if (dist < 1.9) {
+						return false;
+					}
+					
+				}
+			
+				
+				if(jtsCurveLimiteFondParcel != null){
+					double dist = decoup.distance(jtsCurveLimiteFondParcel);
 
-            if (!checked) {
-                return false;
-            }
+					if (dist < 1.9) {
+						return false;
+					}
+				}
 
-            if (ab.getFootprint().intersects(buffer13)) {
+				
 
-                IGeometry decoup = ab.getFootprint().intersection(buffer13);
+			}
 
-                double dist = decoup.distance(curveLatBot);
+			if (ab.toGeometry().intersects(buffer20)) {
 
-                if (dist < 1.9) {
-                    return false;
-                }
+				Geometry decoup = ab.toGeometry().intersection(buffer20);
+				
+				if(jtsCurveLimiteFondParcel != null){
+					double dist = decoup.distance(jtsCurveLimiteFondParcel);
 
-            }
+					if (dist < 3) {
+						return false;
+					}	
+				}
 
-            if (ab.getFootprint().intersects(buffer20)) {
+			
+	
 
-                IGeometry decoup = ab.getFootprint().intersection(buffer20);
+			}
 
-                double dist = decoup.distance(curveLatBot);
+			if (ab.toGeometry().intersects(buffer20more)) {
 
-                if (dist < 3) {
-                    return false;
-                }
+				Geometry decoup = ab.toGeometry().intersection(buffer20more);
 
-            }
+				if(jtsCurveLimiteFondParcel != null){
+					double dist = decoup.distance(jtsCurveLimiteFondParcel);
 
-            if (ab.getFootprint().intersects(buffer20more)) {
+					if (dist < 6) {
+						return false;
+					}	
+				}
 
-                IGeometry decoup = ab.getFootprint().intersection(buffer20more);
+				
+			}
 
-                double dist = decoup.distance(curveLatBot);
+		}
 
-                if (dist < 6) {
-                    return false;
-                }
+		return true;
 
-            }
+	}
 
-        }
+	protected boolean checkHeight(List<O> lO, double threshold) throws Exception {
 
-        return true;
+	 for (O ab : lO) {
 
-    }
+			List<Geometry> ls = createLineStringsFromPol(ab.getFootprint());
 
-    protected boolean checkHeight(List<O> lO, double threshold) {
+			for (Geometry l : ls) {
 
-        bouclebat: for (O ab : lO) {
+				// On se place à une distance de plus de 13 m
+				if (l.distance(jtsCurveLimiteFrontParcel) < 13) {
+					continue;
+				}
 
-            List<ILineString> ls = createLineStringsFromPol(ab.getFootprint());
+			
 
-            for (ILineString l : ls) {
+				if (l.getLength() > threshold && this.bufferLimLat.contains(l)) {
+					return false;
+				}
 
-                // On se place à une distance de plus de 13 m
-                if (l.distance(curveVoirie) < 13) {
-                    continue;
-                }
+			}
 
-                if (ab.height() <= 3.5) {
-                    continue bouclebat;
-                }
+		}
 
-                if (l.length() > threshold && this.bufferLimLat.contains(l)) {
-                    return false;
-                }
+		return true;
 
-            }
+	}
 
-        }
+	private boolean distanceToRoadRespected(List<O> lO, double dist) {
 
-        return true;
+		for (O ab : lO) {
 
-    }
+			if (ab.toGeometry().distance(this.jtsCurveLimiteFrontParcel) < 1.5) {
+				return false;
+			}
 
-    private boolean distanceToRoadRespected(List<O> lO, double dist) {
+		}
 
-        for (O ab : lO) {
+		return true;
 
-            if (ab.getFootprint().distance(this.curveVoirie) < 1.5) {
-                return false;
-            }
+	}
 
-        }
+	private List<Geometry> createLineStringsFromPol(IGeometry geom) throws Exception {
+		List<Geometry> ls = new ArrayList<>();
 
-        return true;
+		IDirectPositionList dpl1 = new DirectPositionList();
+		dpl1.add(geom.coord().get(0));
+		dpl1.add(geom.coord().get(1));
 
-    }
+		IDirectPositionList dpl2 = new DirectPositionList();
+		dpl1.add(geom.coord().get(1));
+		dpl1.add(geom.coord().get(2));
 
-    private List<ILineString> createLineStringsFromPol(IGeometry geom) {
-        List<ILineString> ls = new ArrayList<>();
+		IDirectPositionList dpl3 = new DirectPositionList();
+		dpl1.add(geom.coord().get(2));
+		dpl1.add(geom.coord().get(3));
 
-        IDirectPositionList dpl1 = new DirectPositionList();
-        dpl1.add(geom.coord().get(0));
-        dpl1.add(geom.coord().get(1));
+		IDirectPositionList dpl4 = new DirectPositionList();
+		dpl1.add(geom.coord().get(3));
+		dpl1.add(geom.coord().get(4));
 
-        IDirectPositionList dpl2 = new DirectPositionList();
-        dpl1.add(geom.coord().get(1));
-        dpl1.add(geom.coord().get(2));
+		Geometry ls1 = AdapterFactory.toGeometry(gf, new GM_LineString(dpl1));
+		Geometry ls2 = AdapterFactory.toGeometry(gf, new GM_LineString(dpl2));
+		Geometry ls3 = AdapterFactory.toGeometry(gf, new GM_LineString(dpl3));
+		Geometry ls4 = AdapterFactory.toGeometry(gf, new GM_LineString(dpl4));
 
-        IDirectPositionList dpl3 = new DirectPositionList();
-        dpl1.add(geom.coord().get(2));
-        dpl1.add(geom.coord().get(3));
+		ls.add(ls1);
 
-        IDirectPositionList dpl4 = new DirectPositionList();
-        dpl1.add(geom.coord().get(3));
-        dpl1.add(geom.coord().get(4));
+		ls.add(ls2);
+		ls.add(ls3);
+		ls.add(ls4);
 
-        ls.add(new GM_LineString(dpl1));
-        ls.add(new GM_LineString(dpl2));
-        ls.add(new GM_LineString(dpl3));
-        ls.add(new GM_LineString(dpl4));
+		return ls;
+	}
 
-        return ls;
-    }
-
-    protected double compareGroup(List<O> l1, List<O> l2) {
-
-        double min = Double.POSITIVE_INFINITY;
-
-        for (O o1 : l1) {
-            for (O o2 : l2) {
-
-                min = Math.min(o1.getFootprint().distance(o2.getFootprint()),
-                        min);
-
-            }
-        }
-        // System.out.println(min);
-        return min;
-
-    }
 }

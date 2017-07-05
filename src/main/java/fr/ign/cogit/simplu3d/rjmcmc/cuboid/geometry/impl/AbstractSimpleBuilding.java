@@ -10,11 +10,11 @@ import fr.ign.rjmcmc.kernel.SimpleObject;
 
 /**
  * 
- *        This software is released under the licence CeCILL
+ * This software is released under the licence CeCILL
  * 
- *        see LICENSE.TXT
+ * see LICENSE.TXT
  * 
- *        see <http://www.cecill.info/ http://www.cecill.info/
+ * see <http://www.cecill.info/ http://www.cecill.info/
  * 
  * 
  * 
@@ -25,28 +25,41 @@ import fr.ign.rjmcmc.kernel.SimpleObject;
  * @version 1.0
  **/
 public abstract class AbstractSimpleBuilding extends Building implements SimpleObject, ISimPLU3DPrimitive {
-	
+
 	public double centerx;
 	public double centery;
 	public double length;
 	public double width;
 	public double orientation = 0;
 	public double height;
-	
-	
-  public AbstractSimpleBuilding() {
-    super();
-  }
 
-  
-  
-  public abstract Polygon toGeometry();
-  
-  public abstract boolean prospectJTS(Geometry geom, double slope, double hIni);
-  
-  public abstract IGeometry generated3DGeom();
-  
-  
-  public abstract void setCoordinates(double[] val1);
+	public AbstractSimpleBuilding() {
+		super();
+	}
+
+	public abstract Polygon toGeometry();
+
+	public abstract boolean prospectJTS(Geometry geom, double slope, double hIni);
+
+	public abstract IGeometry generated3DGeom();
+
+	public abstract void setCoordinates(double[] val1);
+
+	@Override
+	public boolean equals(Object obj) {
+
+		if (this == obj) {
+			return true;
+		}
+
+		if (this.getClass() != obj.getClass()) {
+			return false;
+		}
+
+		double[] array1 = this.toArray();
+		double[] array2 = this.toArray();
+
+		return array1.equals(array2);
+	}
 
 }

@@ -33,7 +33,7 @@
 		
 		
 		<param key="heightgutterMin" value ="3" />
-		<param key="heightguterrMax" value="6" />
+		<param key="heightgutterMax" value="6" />
 			
 				
 		<param key="shiftMin" value ="0" />
