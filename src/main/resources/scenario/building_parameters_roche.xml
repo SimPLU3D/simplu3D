@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<parameters>
+        <!-- Dossier contenant l'environnement géond il contient bati.shp, parcelle.shp, route.shp, zonage.shp, PRESRIPTION_SURF.shp-->
+		<param key="folder" value="/home/mcolomb/informatique/workspace/simplu3d/simplu3D-rules/src/test/resources/roche/N5ba"/>
+        <!-- Paramètres relatifs à l'énergie -->
+        <!-- Énergie de création d'un cube dans une configuration m^3-->
+		<param key="energy" value="5" />
+        <!-- Pondération du critère de volume-->
+    	<param key="ponderation_volume" value="1" />
+        <!-- Pondération négative du volume dépassant de la parcelle-->
+        <param key="ponderation_difference_ext" value="5" />         
+        <!-- Pondération négative d'une boîte en intersectant une autre-->
+		<param key="ponderation_volume_inter" value="1" />         
+        
+        
+        <!--Distribution (équiprobable) des dimensions des boîtes-->
+        <!-- Largeur et longueur !-->
+        <param key="minlen" value="3" />
+		<param key="maxlen" value="20" />
+		
+		<param key="minwid" value="3" />
+		<param key="maxwid" value="20" />
+        <!-- Hauteur !-->
+		<param key="minheight" value ="2" />
+		<param key="maxheight" value="5" />
+
+        <!-- Probabilités !-->
+        <!-- Création/destruction d'une boîte !-->
+        <!-- Les autre smouvements sont équiprobables !-->
+		<param key="pbirth" value="0.2" />
+		<param key="pdeath" value="0.5" />
+         <!-- Déplacements !-->
+         <!-- Amplitude max d'un changement de dimension (m) !-->
+         <param key="amplitudeMaxDim" value="2" />
+         <!-- Amplitude max d'un changement de hauteur !-->
+         <param key="amplitudeHeight" value="2" />
+         <!-- Amplitude max d'un déplacement !-->
+         <param key="amplitudeMove" value="2" />
+         <!-- Amplitude max d'une rotation ° !-->
+         <param key="amplitudeRotate" value="180" />
+        
+        <!-- Paramètres de température (on considère une fonction temp * deccoef^it) !-->
+        <!-- Température initiale !-->
+		<param key="temp" value="10800" />
+        <!-- Température initiale !-->
+		<param key="deccoef" value="0.99999" />
+        
+        <!-- Reprise d'une configuration existante !-->
+        <!-- 0 = non 1 = oui !-->
+        <param key="load_existing_config" value="0" />
+        
+        <!-- Chemin de la configuration, cette configuraiton ne doit pas avoir subi de post tratement!-->
+        <param key="config_shape_file" value="" />
+        
+        
+        <!-- Nombre d'itération!-->
+        <!-- Indique si il s'agit d'un nombre absolu d'itérations true ou un nombre relatif 
+        à la non amélioration de la configuration-->
+        <param key="isAbsoluteNumber" value="false" />
+		<param key="nbiter" value="200000" />
+        <param key="delta" value="5" />
+        
+        <param key="poisson" value="20" />
+        
+        <!-- Paramètres relatifs aux visiteur!-->
+         <!-- Nombre d'itérations de dump!-->
+		<param key="nbdump" value="10000" />
+         <!-- Nombre d'itérations de save!-->
+		<param key="nbsave" value="10000" />
+        <!-- Visiteurs utilisés-->
+        <!-- Sortie console -->
+        <param key="outputstreamvisitor" value="true" />
+        <!-- Sortie viewer 3D -->
+        <param key="visitorviewer" value="false" />
+        <param key="showbackground" value="false" />
+        <param key="background_img" value="background3D.png" />
+		<param key="xminbg" value="1051042.85" />
+		<param key="xmaxbg" value="1051264.80" />
+		<param key="yminbg" value="6840539.08" />
+		<param key="ymaxbg" value="6840679.27" />
+        <param key="z" value="138" />
+
+        
+        <!-- Sortie ShapeFileWriter -->
+        <param key="shapefilewriter" value="false" />   
+        <!-- Sortie Statsvisitor -->
+        <param key="statsvisitor" value="false" />      
+        <!-- Sortie FilmVisitor -->
+        <param key="filmvisitor" value="false" />
+        <param key="filmvisitorx" value="1051180.7261527262" />
+        <param key="filmvisitory" value="6840750.337137596" />
+        <param key="filmvisitorz" value="160" />   
+        <param key="filmvisitorvectx" value="-15" />             
+        <param key="filmvisitorvecty" value="-20" />   
+        <param key="filmvisitorvectz" value="15" /> 
+        <param key="filmvisitorr" value="180" />             
+        <param key="filmvisitorg" value="180" />   
+        <param key="filmvisitorb" value="180" />  
+        
+       <!-- Sortie CSV -->
+       <param key="csvvisitor" value="false" />  
+       <param key="csvfilename" value="export.csv" />  
+       
+              <!-- Sortie CSVEnd -->
+       <param key="csvvisitorend" value="false" />  
+       <param key="csvfilenamend" value="exportEndStats.csv" />  
+        
+        <!-- Dossier des sorties des visiteur -->
+        <param key="result" value="/home/mcolomb/donnee/outsimplu/roche/" />           
+</parameters>

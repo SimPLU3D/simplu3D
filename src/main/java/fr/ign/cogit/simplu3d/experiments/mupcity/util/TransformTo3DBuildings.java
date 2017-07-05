@@ -17,9 +17,9 @@ import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 public class TransformTo3DBuildings {
 
 	public static void main(String[] args) {
-		String folder = "/home/mcolomb/informatique/workspace/simplu3d/simplu3D/src/main/resources/fr/ign/cogit/simplu3d/fontain/";
-		String fileIn = folder + "bati.shp";
-		String fileOut = folder + "bati3d.shp";
+		String folder = "/home/mcolomb/informatique/workspace/simplu3d/simplu3D/src/main/resources/fr/ign/cogit/simplu3d/roche/N5ba/";
+		String fileIn = folder + "batiment-old.shp";
+		String fileOut = folder + "batiment.shp";
 		export(fileIn, fileOut);
 		System.out.println("That is all");
 	}
