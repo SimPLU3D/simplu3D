@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 

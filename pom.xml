@@ -313,11 +313,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>twak</groupId>
-			<artifactId>campskeleton</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
 			<groupId>fr.ign.cogit</groupId>
 			<artifactId>simplu3d-rules</artifactId>
 			<version>1.2-SNAPSHOT</version>
@@ -347,11 +342,6 @@
 			<groupId>fr.ign</groupId>
 			<artifactId>librjmcmc4j-geometry</artifactId>
 			<version>${librjmcmc4j.version}</version>
-		</dependency>
-		<dependency>
-			<artifactId>geoxygene-sig3d-appli</artifactId>
-			<groupId>fr.ign.cogit</groupId>
-			<version>${geoxygene.version}</version>
 		</dependency>
 	</dependencies>
 	<distributionManagement>

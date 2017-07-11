@@ -2,8 +2,6 @@ package fr.ign.cogit.simplu3d.rjmcmc.paramshp.geometry.impl;
 
 import java.util.List;
 
-import fr.ign.cogit.simplu3d.rjmcmc.paramshp.geometry.impl.CuboidRoofed;
-
 public abstract class AbstractParallelCuboidRoofed extends CuboidRoofed {
 
   public AbstractParallelCuboidRoofed(double centerx, double centery,
