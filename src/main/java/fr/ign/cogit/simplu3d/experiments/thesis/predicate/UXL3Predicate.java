@@ -69,8 +69,13 @@ public class UXL3Predicate<O extends AbstractSimpleBuilding, C extends AbstractG
 
   }
 
+  
+  double nbIteration = 0;
+  double nbSuccess = 0;
   @Override
   public boolean check(C c, M m) {
+	  
+	  nbIteration++;
 
     List<O> lO = m.getBirth();
 
@@ -96,7 +101,14 @@ public class UXL3Predicate<O extends AbstractSimpleBuilding, C extends AbstractG
 
     }
 
+    nbSuccess++;
     return true;
 
   }
+  
+  
+  public double getSucessRatio(){
+	  return nbSuccess/nbIteration;
+  }
+  
 }

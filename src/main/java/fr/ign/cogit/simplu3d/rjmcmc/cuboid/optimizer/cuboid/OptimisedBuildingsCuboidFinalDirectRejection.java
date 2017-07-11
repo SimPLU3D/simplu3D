@@ -51,11 +51,24 @@ public class OptimisedBuildingsCuboidFinalDirectRejection extends BasicCuboidOpt
 }
 	
 	
+	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, IGeometry geom, Parameters p, Environnement env, int id,
+			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred) {
+	return this.process(bpu, geom, p, env, id, pred, new ArrayList<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>>());
+}
+	
 
 	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, Parameters p, Environnement env, int id,
 			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred, List<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> lSupplementaryVisitors) {
 		// Géométrie de l'unité foncière sur laquelle porte la génération
 		IGeometry geom = bpu.generateGeom().buffer(1);
+		return this.process(bpu,geom, p, env, id, pred,lSupplementaryVisitors);
+		
+	}
+	
+	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, IGeometry geom, Parameters p, Environnement env, int id,
+			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred, List<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> lSupplementaryVisitors) {
+		// Géométrie de l'unité foncière sur laquelle porte la génération
+	
 
 		// Définition de la fonction d'optimisation (on optimise en décroissant)
 		// relative au volume
