@@ -99,7 +99,7 @@ public static void main(String[] args) throws Exception {
 	// WARNING : 'out' parameter from configuration file have to be change
 	ShapefileWriter.write(iFeatC, p.get("result").toString() + "out.shp");
 
-	System.out.println("That's all folks");
+	System.out.println("-----End-----");
 
 }
 
