@@ -75,13 +75,13 @@ public class OptimisedBuildingsCuboidFinalDirectRejection extends BasicCuboidOpt
 		GraphConfiguration<Cuboid> conf = null;
 
 		try {
-			conf = create_configuration(p, AdapterFactory.toGeometry(new GeometryFactory(), geom), bpu);
+			conf = create_configuration(p, AdapterFactory.toGeometry(new GeometryFactory(), bpu.getGeom()),bpu);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		// Création de l'échantilloneur
 		Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> samp = create_sampler(Random.random(), p,
-				bpu, pred);
+				bpu, pred, geom);
 		// Température
 		Schedule<SimpleTemperature> sch = create_schedule(p);
 
@@ -102,7 +102,7 @@ public class OptimisedBuildingsCuboidFinalDirectRejection extends BasicCuboidOpt
 		// Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> end =
 		// create_end_test(p);
 
-		EndTest end = create_end_test(p);
+		 end = create_end_test(p);
 
 		PrepareVisitors<Cuboid> pv = new PrepareVisitors<>(env,lSupplementaryVisitors);
 		CompositeVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> mVisitor = pv.prepare(p, id);
@@ -114,5 +114,12 @@ public class OptimisedBuildingsCuboidFinalDirectRejection extends BasicCuboidOpt
 		SimulatedAnnealing.optimize(Random.random(), conf, samp, sch, end, mVisitor);
 		return conf;
 	}
+	
+	private EndTest end;
+	
+	public EndTest getEndTest(){
+	  return end;
+	}
+	
 
 }

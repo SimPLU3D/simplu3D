@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
+import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.demo.DemoEnvironmentProvider;
 import fr.ign.cogit.simplu3d.exec.BasicSimulator;
 import fr.ign.cogit.simplu3d.experiments.thesis.predicate.UXL3Predicate;
@@ -17,71 +18,87 @@ import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid.OptimisedBuildingsCuboidFinalDirectRejection;
+import fr.ign.cogit.simplu3d.util.convert.ExportAsFeatureCollection;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
+import fr.ign.simulatedannealing.endtest.EndTest;
+import fr.ign.simulatedannealing.endtest.StabilityEndTest;
 
 public class SimulationWithSpaceReduction {
 
-	public static void main(String[] args) throws Exception {
+  public static void main(String[] args) throws Exception {
 
-		int numberIteration = 1;
+    int numberIteration = 100;
+    boolean reduceSpace = false;
 
-		Path path = Paths.get("/tmp/out.csv");
-		BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
+    Path path = Paths.get("/home/mbrasebin/tmp/out1.csv");
+    BufferedWriter writer = Files.newBufferedWriter(path,
+        StandardCharsets.UTF_8, StandardOpenOption.CREATE);
 
-		writer.append("id;energy;iteration;number of boxes;percent success; time");
-		for (int i = 0; i < numberIteration; i++) {
-			
-		
+    writer.append("id;energy;iteration;number of boxes;percent success; time");
+    for (int i = 0; i < numberIteration; i++) {
 
-			boolean reduceSpace = true;
+      // Loading of configuration file that contains sampling space
+      // information and simulated annealing configuration
+      String folderName = BasicSimulator.class.getClassLoader()
+          .getResource("scenario/").getPath();
+      String fileName = "building_parameters_project_expthese_3.xml";
+      Parameters p = Parameters.unmarshall(new File(folderName + fileName));
 
-			// Loading of configuration file that contains sampling space
-			// information and simulated annealing configuration
-			String folderName = BasicSimulator.class.getClassLoader().getResource("scenario/").getPath();
-			String fileName = "building_parameters_project_expthese_3.xml";
-			Parameters p = Parameters.unmarshall(new File(folderName + fileName));
+      // Load default environment (data are in resource directory)
+      Environnement env = LoaderSHP
+          .loadNoDTM(new File(DemoEnvironmentProvider.class.getClassLoader()
+              .getResource("fr/ign/cogit/simplu3d/data2/").getPath()));
 
-			// Load default environment (data are in resource directory)
-			Environnement env = LoaderSHP.loadNoDTM(new File(DemoEnvironmentProvider.class.getClassLoader()
-					.getResource("fr/ign/cogit/simplu3d/data2/").getPath()));
+      // Select a parcel on which generation is proceeded
+      BasicPropertyUnit bPU = env.getBpU().get(1);
 
-			// Select a parcel on which generation is proceeded
-			BasicPropertyUnit bPU = env.getBpU().get(1);
+      // Instantiation of the sampler
+      OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();
 
-			// Instantiation of the sampler
-			OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();
+      UXL3Predicate<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new UXL3Predicate<>(
+          bPU);
 
-			UXL3Predicate<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new UXL3Predicate<>(
-					bPU);
+      IGeometry geom = bPU.getGeom();
 
-			IGeometry geom = bPU.getGeom();
+      if (reduceSpace) {
 
-			if (reduceSpace) {
+        geom = geom.buffer(-5 - p.getDouble("mindim") / 2);
 
-				geom = geom.buffer(-5 - p.getDouble("mindim") / 2);
+      }
+      
+      
+      
 
-			}
-			
-			
-			Long t = System.currentTimeMillis();
+      Long t = System.currentTimeMillis();
 
-			GraphConfiguration<Cuboid> cc = oCB.process(bPU, geom, p, env, 1, pred);
-			
-			Long diffT = System.currentTimeMillis() - t;
+      GraphConfiguration<Cuboid> cc = oCB.process(bPU, geom, p, env, 1, pred);
 
-			writer.newLine();
-			String s = i + ";"+ cc.getEnergy() +";" + 0 + ";" + cc.size() + ";" + pred.getSucessRatio()+";"+diffT;
-			writer.append(s);
-			writer.flush();
-		}
+      Long diffT = System.currentTimeMillis() - t;
 
-		writer.flush();
-		writer.close();
+      EndTest endTest = oCB.getEndTest();
+      int nbIterations = 0;
+      if (endTest instanceof StabilityEndTest<?>) {
+        nbIterations = ((StabilityEndTest) endTest).getIterations();
+      }
+      
+      ExportAsFeatureCollection export = new ExportAsFeatureCollection(cc);
+      
+      ShapefileWriter.write(export.getFeatureCollection(), "/home/mbrasebin/tmp/simul_"+reduceSpace+"_"+"_"+i+".shp");
 
-		// System.out.println("Number of cuboid : " + cc.size());
+      writer.newLine();
+      String s = i + ";" + cc.getEnergy() + ";" + nbIterations + ";" + cc.size()
+          + ";" + pred.getSucessRatio() + ";" + diffT;
+      writer.append(s);
+      writer.flush();
+    }
 
-	}
+    writer.flush();
+    writer.close();
+
+    // System.out.println("Number of cuboid : " + cc.size());
+
+  }
 
 }
