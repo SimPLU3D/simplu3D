@@ -93,6 +93,7 @@ public class UXL3Predicate<O extends AbstractSimpleBuilding, C extends AbstractG
       }
 
       checked = (ab.getFootprint().distance(curveS) > 5);
+      
       if (!checked) {
         return false;
       }

@@ -13,3 +13,4 @@ release.properties
 /simplu3d.iml
 **~
 log4j.log
+hs_err_pid*

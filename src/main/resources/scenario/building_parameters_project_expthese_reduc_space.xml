@@ -68,7 +68,7 @@
          <!-- Nombre d'itérations de save!-->
 		<param key="nbsave" value="10000" />
         <!-- Visiteurs utilisés-->
-        <!-- Sortie console -->true
+        <!-- Sortie console -->
         <param key="outputstreamvisitor" value="false" />
         <!-- Sortie viewer 3D -->
         <param key="visitorviewer" value="false" />

@@ -76,7 +76,7 @@ public class OBCFDRConstraintOptimisation extends BasicCuboidOptimizer<Cuboid> {
 		}
 		// Création de l'échantilloneur
 		Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> samp = create_sampler(Random.random(), p,
-				bpu, pred);
+				bpu, pred, bpu.getGeom());
 		// Température
 		Schedule<SimpleTemperature> sch = create_schedule(p);
 

@@ -79,8 +79,12 @@ public class BasicCuboidOptimizer<C extends Cuboid> extends DefaultSimPLU3DOptim
 		ObjectBuilder<Cuboid> builder = new CuboidBuilder();
 
 		
-		if (samplingSurface == null) {
+		if(geom != null){
 			samplingSurface = geom;
+		}
+		
+		if (samplingSurface == null) {
+			samplingSurface = bpU.getGeom();
 		}
 		
 		IEnvelope env = samplingSurface.getEnvelope();

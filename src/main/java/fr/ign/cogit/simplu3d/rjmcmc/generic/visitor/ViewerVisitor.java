@@ -1,6 +1,7 @@
 package fr.ign.cogit.simplu3d.rjmcmc.generic.visitor;
 
 import java.awt.Color;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -174,7 +175,7 @@ public class ViewerVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraph
 		mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
 		mW.getInterfaceMap3D().moveLight(-140, 3, 120, 1);
 
-		if (p.getBoolean("showbackground")) {
+		if (! p.getBoolean("showbackground")) {
 			return;
 		}
 
@@ -218,9 +219,10 @@ public class ViewerVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraph
 		// .textureLoading(folder + "Env3D_86.png"), dpUR.getX()-dpLL.getX(),
 		// dpUR.getY()-dpLL.getY()));
 
-		String background = p.getString("background_img").toString();
-
-		feat.setRepresentation(new TexturedSurface(feat, TextureManager.textureLoading(env.folder + background),
+		String backgroundTexture = env.getFolder() + File.separator+p.getString("background_img").toString();
+	
+		System.out.println(backgroundTexture);
+		feat.setRepresentation(new TexturedSurface(feat, TextureManager.textureLoading(backgroundTexture),
 				dpUR.getX() - dpLL.getX(), dpUR.getY() - dpLL.getY()));
 
 		mW.getInterfaceMap3D().getCurrent3DMap().addLayer(new VectorLayer(fc, "Fond"));

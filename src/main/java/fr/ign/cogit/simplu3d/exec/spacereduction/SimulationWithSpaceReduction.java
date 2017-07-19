@@ -30,9 +30,11 @@ public class SimulationWithSpaceReduction {
   public static void main(String[] args) throws Exception {
 
     int numberIteration = 100;
-    boolean reduceSpace = false;
+    boolean reduceSpace = true;
+    
+    String folder = "/home/mickael/temp/spacereduction/simul2/";
 
-    Path path = Paths.get("/home/mbrasebin/tmp/out1.csv");
+    Path path = Paths.get(folder + "out1.csv");
     BufferedWriter writer = Files.newBufferedWriter(path,
         StandardCharsets.UTF_8, StandardOpenOption.CREATE);
 
@@ -64,7 +66,7 @@ public class SimulationWithSpaceReduction {
 
       if (reduceSpace) {
 
-        geom = geom.buffer(-5 - p.getDouble("mindim") / 2);
+        geom = geom.buffer(-5 - p.getDouble("mindim") );
 
       }
       
@@ -85,7 +87,7 @@ public class SimulationWithSpaceReduction {
       
       ExportAsFeatureCollection export = new ExportAsFeatureCollection(cc);
       
-      ShapefileWriter.write(export.getFeatureCollection(), "/home/mbrasebin/tmp/simul_"+reduceSpace+"_"+"_"+i+".shp");
+      ShapefileWriter.write(export.getFeatureCollection(), folder+"/simul_"+reduceSpace+"_"+"_"+i+".shp");
 
       writer.newLine();
       String s = i + ";" + cc.getEnergy() + ";" + nbIterations + ";" + cc.size()
