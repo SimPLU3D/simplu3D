@@ -38,7 +38,7 @@ public class SimulationWithSpaceReduction {
     BufferedWriter writer = Files.newBufferedWriter(path,
         StandardCharsets.UTF_8, StandardOpenOption.CREATE);
 
-    writer.append("id;energy;iteration;number of boxes;percent success; time");
+    writer.append("id,energy,iteration;number of boxes,percent success, time");
     for (int i = 0; i < numberIteration; i++) {
 
       // Loading of configuration file that contains sampling space
@@ -66,7 +66,7 @@ public class SimulationWithSpaceReduction {
 
       if (reduceSpace) {
 
-        geom = geom.buffer(-5 - p.getDouble("mindim") );
+        geom = geom.buffer(-20 );
 
       }
       
@@ -90,8 +90,8 @@ public class SimulationWithSpaceReduction {
       ShapefileWriter.write(export.getFeatureCollection(), folder+"/simul_"+reduceSpace+"_"+"_"+i+".shp");
 
       writer.newLine();
-      String s = i + ";" + cc.getEnergy() + ";" + nbIterations + ";" + cc.size()
-          + ";" + pred.getSucessRatio() + ";" + diffT;
+      String s= i + "," + cc.getEnergy() + "," + nbIterations + "," + cc.size()
+          + "," + pred.getSucessRatio() + "," + diffT;
       writer.append(s);
       writer.flush();
     }
