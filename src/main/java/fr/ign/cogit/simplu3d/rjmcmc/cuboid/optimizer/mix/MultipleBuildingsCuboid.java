@@ -3,6 +3,7 @@ package fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.mix;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -111,8 +112,12 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		RandomGenerator random = new MersenneTwister(42);
+		
+		
 		// Création de l'échantilloneur
-		Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> samp = create_sampler(Random.random(), p, bpu, pred, r1, r2, bP);
+		Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> samp = create_sampler(random, p, bpu, pred, r1, r2, bP);
 		if (samp == null) {
 			return null;
 		}
