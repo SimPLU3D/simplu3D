@@ -32,7 +32,9 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 	private double distReculLat = 0.0;
 	private double distanceInterBati = 0.0;
 	private double maximalCES = 0.0;
-
+	private double maximalHauteur = 0.0;
+	private boolean singleBuild;
+	
 	// BasicPropertyUnit utilisée
 	private BasicPropertyUnit currentBPU;
 
@@ -58,6 +60,8 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 	 *            : CES maximum
 	 * @throws Exception
 	 */
+	
+	
 	public SamplePredicate(BasicPropertyUnit currentBPU, double distReculVoirie, double distReculFond,
 			double distReculLat, double distanceInterBati, double maximalCES) throws Exception {
 		// On appelle l'autre connstructeur qui renseigne un certain nombre de
@@ -69,6 +73,24 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 		this.distReculLat = distReculLat;
 		this.distanceInterBati = distanceInterBati;
 		this.maximalCES = maximalCES;
+		this.singleBuild = false;
+
+	}
+	
+	public SamplePredicate(BasicPropertyUnit currentBPU, double distReculVoirie, double distReculFond,
+			double distReculLat, double distanceInterBati, double maximalCES, double maximalhauteur, boolean singleBuild) throws Exception {
+		// On appelle l'autre connstructeur qui renseigne un certain nombre de
+		// géométries
+		this(currentBPU);
+		this.currentBPU = currentBPU;
+		this.distReculVoirie = distReculVoirie;
+		this.distReculFond = distReculFond;
+		this.distReculLat = distReculLat;
+		this.distanceInterBati = distanceInterBati;
+		this.maximalCES = maximalCES;
+		this.maximalHauteur=maximalhauteur;
+		this.singleBuild = singleBuild;
+
 	}
 
 	// On stocke la géométrie des différentes bordures de la parcelle courante
@@ -186,11 +208,15 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 		// Il s'agit des objets de la classe Cuboid
 		List<O> lO = m.getBirth();
 
-
 		// On vérifie les règles sur tous les pavés droits, dès qu'il y en a un
 		// qui
 		// ne respecte pas une règle, on rejette
 		// On traite les contraintes qui ne concernent que les nouveux bâtiments
+		
+		if (c.size()>=1 && singleBuild){
+			return false;
+		}
+		
 		for (O cuboid : lO) {
 
 			// On vérifie la contrainte de recul par rapport au fond de parcelle
@@ -248,6 +274,10 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 
 			// IMultiSurface<IOrientableSurface> mS = null; // à définir
 			// mS.contains(cuboid.footprint);
+			
+			if(cuboid.getHeight()>maximalHauteur){
+				return false;
+			}
 			
 			
 			if(! surface.contains(cuboid.toGeometry())){
