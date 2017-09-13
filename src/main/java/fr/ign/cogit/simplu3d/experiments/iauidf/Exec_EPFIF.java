@@ -72,11 +72,7 @@ public class Exec_EPFIF {
   public static List<IMultiSurface<IOrientableSurface>> debugSurface = new ArrayList<>();
   public static List<IMultiCurve<IOrientableCurve>> debugLine = new ArrayList<>();
 
-  // public final static String folder =
-  // "/home/mickael/data/mbrasebin/donnees/IAUIDF/Nouveaux_tests_comparatifs/Eval_EPF_2/";
-  // public final static String file_rules = folder + "rules.csv";
-  // public final static String out_folder =
-  // "/home/mickael/data/mbrasebin/donnees/IAUIDF/Nouveaux_tests_comparatifs/Eval_EPF_2/out/";
+
 
   public static final String outFolder = "outCapaBig/";
 
@@ -86,10 +82,6 @@ public class Exec_EPFIF {
   
   public final static String paramFile = "/home/mickael/data/mbrasebin/donnees/IAUIDF/data_grille/parameters_iauidf_real.xml";
 
-  // public final static String folder =
-  // "/home/mickael/data/mbrasebin/donnees/IAUIDF/Nouveaux_tests_comparatifs/Eval_EPF_2/";
-  // public final static String file_rules = folder + "rules.csv";
-  // public final static String out_folder = folder + "out/";
 
   public static void main(String[] args) throws Exception {
     // MultipleBuildingsCuboid.ALLOW_INTERSECTING_CUBOID = INTERSECTION;
@@ -452,12 +444,14 @@ public class Exec_EPFIF {
     // //////On découpe la parcelle en bande en fonction des règlements
     // ART_5 Superficie minimale 88= non renseignable, 99= non réglementé
     // Si ce n'est pas respecté on ne fait même pas de simulation
-    double r_art5 = r1.getArt_5();
+   // @DESACTIVATED
+    
+    /*double r_art5 = r1.getArt_5();
     if (r_art5 != 99) {
       if (bPU.getPol2D().area() < r_art5) {
         return featC;
       }
-    }
+    }*/
     // Processus découpant la zone dans laquelle on met les bâtiments à
     // partir des règles
     BandProduction bP = new BandProduction(bPU, r1, r2);
