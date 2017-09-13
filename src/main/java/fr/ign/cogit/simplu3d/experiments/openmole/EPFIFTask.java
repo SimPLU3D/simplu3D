@@ -47,19 +47,31 @@ import fr.ign.mpp.configuration.GraphVertex;
 import fr.ign.parameters.Parameters;
 
 
-
+/**
+ * Classe permettant la distribution de calculs dans le cadre de l'expérimentation avec l'IAUIDF
+ * 
+ * @author ilokhat
+ * @author mbrasebin
+ */
 public class EPFIFTask {
 
+	//Simulate with trapezoid
   public static boolean USE_DEMO_SAMPLER = false;
+  //Allow intersection between objects
   public static boolean INTERSECTION = false;
-  public static int FLOOR_SIZE = 3;
+  //FLOOR HEIGHT
+  public static int FLOOR_HEIGHT = 3;
+  //Maximal area to simulate a parcelle
   public static int MAX_PARCEL_AREA = 10000;
+  //Parcel file name
   public static String PARCEL_NAME = "parcelle.shp";
+  //List of idpar to simulate or not
   public static Set<String> exclusion_list = new HashSet<>();
   public static Set<String> inclusion_list = new HashSet<>();
-
+  //Allow debug mode : intermediary resultats are exported
   public static boolean DEBUG_MODE = false;
   public static List<IMultiSurface<IOrientableSurface>> lMS = new ArrayList<>();
+  //Debug geometries where simulator try to generate geometries
   public static List<IMultiSurface<IOrientableSurface>> debugSurface = new ArrayList<>();
   public static List<IMultiCurve<IOrientableCurve>> debugLine = new ArrayList<>();
 
@@ -67,14 +79,17 @@ public class EPFIFTask {
   public final static int CODE_SIMULATION_NOT_RUNNABLE = -2;
   public final static int CODE_PARCEL_TOO_BIG = -69;
   
-
+  //parcels with no rules
   private static List<String> idparWithNoRules = new ArrayList<>();
+  
+  //simulation not runnable
   private static List<String> idsimulationNotRunnable = new ArrayList<>();
 
   public static String run(File folder, String dirName, File folderOut, File parameterFile, long seed) throws Exception {
     init();
     MultipleBuildingsCuboid.ALLOW_INTERSECTING_CUBOID = INTERSECTION;
 
+    //Création du dossier qui contiendra les résultats simulés
     System.out.println("folder out = " + folderOut);
     if (!folderOut.exists()) {
       folderOut.mkdirs();
@@ -87,7 +102,8 @@ public class EPFIFTask {
     } else {
       System.out.println("We're all good!");
     }
-
+    
+    //Chargement de l'environnement
     Environnement env = LoaderSHP.loadNoDTM(folder);
 
     // Identifiant de l'imu courant

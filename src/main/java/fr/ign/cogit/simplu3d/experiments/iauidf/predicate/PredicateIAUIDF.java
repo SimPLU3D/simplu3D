@@ -353,7 +353,7 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
 
     // ART_14 Coefficient d'occupation du sol 88= non renseignable, 99= non
     // réglementé
-    // Normalement déssactivée, demande de l'IAU
+    // Normalement désactivée, demande de l'IAU
     /*
      * double reg14 = r.getArt_14();
      * 
@@ -650,6 +650,10 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
 
     // On ajoute tous les nouveaux objets
     lO.addAll(m.getBirth());
+    
+    if(lO.isEmpty()){
+    	return true;
+    }
 
     List<List<AbstractSimpleBuilding>> lGroupes = CuboidGroupCreation
         .createGroup(lO, 0);
@@ -688,7 +692,7 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
       for (int j = i + 1; j < lGroupes.size(); ++j) {
         double distanceGroupes = getGroupGeom(lGroupes.get(i))
             .distance(getGroupGeom(lGroupes.get(j)));
-        double d = Math.min(Math.max(heights[i], heights[j]) * 0.5,
+        double d = Math.max(Math.max(heights[i], heights[j]) * 0.5,
             distanceInterBati);
         // System.out.println("max(dist groupes, heights) : " + d
         // + "---- dit inter bati : " + distanceInterBati);
@@ -851,7 +855,7 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
 
         double distance = cI.getFootprint().distance(cJ.getFootprint());
 
-        if (distance < Math.min(hMax, distanceInterBati)) {
+        if (distance < Math.max(hMax, distanceInterBati)) {
           return false;
         }
 
