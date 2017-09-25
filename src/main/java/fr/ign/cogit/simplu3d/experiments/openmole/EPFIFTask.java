@@ -46,33 +46,50 @@ import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.mpp.configuration.GraphVertex;
 import fr.ign.parameters.Parameters;
 
+
+/**
+ * Classe permettant la distribution de calculs dans le cadre de l'expérimentation avec l'IAUIDF
+ * 
+ * @author ilokhat
+ * @author mbrasebin
+ */
 public class EPFIFTask {
 
+	//Simulate with trapezoid
   public static boolean USE_DEMO_SAMPLER = false;
+  //Allow intersection between objects
   public static boolean INTERSECTION = false;
-  public static int FLOOR_SIZE = 3;
+  //FLOOR HEIGHT
+  public static int FLOOR_HEIGHT = 3;
+  //Maximal area to simulate a parcelle
   public static int MAX_PARCEL_AREA = 10000;
+  //Parcel file name
   public static String PARCEL_NAME = "parcelle.shp";
+  //List of idpar to simulate or not
   public static Set<String> exclusion_list = new HashSet<>();
   public static Set<String> inclusion_list = new HashSet<>();
-
+  //Allow debug mode : intermediary resultats are exported
   public static boolean DEBUG_MODE = false;
   public static List<IMultiSurface<IOrientableSurface>> lMS = new ArrayList<>();
+  //Debug geometries where simulator try to generate geometries
   public static List<IMultiSurface<IOrientableSurface>> debugSurface = new ArrayList<>();
   public static List<IMultiCurve<IOrientableCurve>> debugLine = new ArrayList<>();
 
   public final static int CODE_PARCEL_NO_RULE = -1;
   public final static int CODE_SIMULATION_NOT_RUNNABLE = -2;
   public final static int CODE_PARCEL_TOO_BIG = -69;
-  public final static int CODE_MIN_PARCEL_TOO_BIG = -5;
-
+  
+  //parcels with no rules
   private static List<String> idparWithNoRules = new ArrayList<>();
+  
+  //simulation not runnable
   private static List<String> idsimulationNotRunnable = new ArrayList<>();
 
   public static String run(File folder, String dirName, File folderOut, File parameterFile, long seed) throws Exception {
     init();
     MultipleBuildingsCuboid.ALLOW_INTERSECTING_CUBOID = INTERSECTION;
 
+    //Création du dossier qui contiendra les résultats simulés
     System.out.println("folder out = " + folderOut);
     if (!folderOut.exists()) {
       folderOut.mkdirs();
@@ -85,12 +102,12 @@ public class EPFIFTask {
     } else {
       System.out.println("We're all good!");
     }
-
+    
+    //Chargement de l'environnement
     Environnement env = LoaderSHP.loadNoDTM(folder);
-    // String[] folderSplit =
-    // folder.getAbsolutePath().split(File.separator);
+
     // Identifiant de l'imu courant
-    String imu = dirName;// folderSplit[folderSplit.length - 1];
+    String imu = dirName;
     // Stocke les résultats en sorties
     Map<String, List<Regulation>> regulation = loadRules(new File(folder + "/" + PARCEL_NAME), Integer.parseInt(imu));
     IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
@@ -99,8 +116,7 @@ public class EPFIFTask {
     for (BasicPropertyUnit bPU : env.getBpU()) {
       String id = bPU.getCadastralParcels().get(0).getCode();
       System.out.println("idpar " + id);
-      // if (!id.equals("77249000AK0152"))
-      // continue;
+
       if (inclusion_list.size() > 0 && !inclusion_list.contains(id))
         continue;
       if (exclusion_list.size() > 0 && exclusion_list.contains(id))
@@ -114,12 +130,13 @@ public class EPFIFTask {
       if (lR != null && !lR.isEmpty()) {
         // ART_5 Superficie minimale 88= non renseignable, 99= non réglementé
         // Si ce n'est pas respecté on ne fait même pas de simulation
-        double r_art5 = lR.get(0).getArt_5();
+    	  //@DESACTIVATED
+    	  /*double r_art5 = lR.get(0).getArt_5();
         if (r_art5 != 99 || r_art5 != 88) {
           if (bPU.getPol2D().area() < r_art5) {
             result += imu + " ; " + id + " ; " + (CODE_MIN_PARCEL_TOO_BIG) + " ; " + (CODE_MIN_PARCEL_TOO_BIG) + "\n";
           }
-        }
+        }*/
         // On simule indépendemment chaque unité foncière
         IFeatureCollection<IFeature> feats = simulationForEachBPU(env, bPU, lR, Integer.parseInt(imu), parameterFile);
         if (!feats.isEmpty()) {
@@ -370,6 +387,7 @@ public class EPFIFTask {
     // ART_5 Superficie minimale 88= non renseignable, 99= non réglementé
     // Si ce n'est pas respecté on ne fait même pas de simulation
     // fait en amont pour récuperer l'info
+    // @DESCATIVATED
     // double r_art5 = r1.getArt_5();
     // if (r_art5 != 99) {
     // if (bPU.getPol2D().area() < r_art5) {

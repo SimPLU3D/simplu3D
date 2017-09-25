@@ -72,24 +72,16 @@ public class Exec_EPFIF {
   public static List<IMultiSurface<IOrientableSurface>> debugSurface = new ArrayList<>();
   public static List<IMultiCurve<IOrientableCurve>> debugLine = new ArrayList<>();
 
-  // public final static String folder =
-  // "/home/mickael/data/mbrasebin/donnees/IAUIDF/Nouveaux_tests_comparatifs/Eval_EPF_2/";
-  // public final static String file_rules = folder + "rules.csv";
-  // public final static String out_folder =
-  // "/home/mickael/data/mbrasebin/donnees/IAUIDF/Nouveaux_tests_comparatifs/Eval_EPF_2/out/";
 
-  public static final String outFolder = "outCapaBig/";
 
-  public final static String folder = "/home/mickael/data/mbrasebin/donnees/IAUIDF/Nouveaux_tests_comparatifs/Eval_EPF_2/";
-  public final static String file_rules = folder + "rules.csv";
-  public final static String out_folder = "/home/mickael/data/mbrasebin/donnees/IAUIDF/Nouveaux_tests_comparatifs/Eval_EPF_2/out/";
-  
-  public final static String paramFile = "/home/mickael/data/mbrasebin/donnees/IAUIDF/data_grille/parameters_iauidf_real.xml";
+  // public static String outFolder = "outCapaBig/";
 
-  // public final static String folder =
-  // "/home/mickael/data/mbrasebin/donnees/IAUIDF/Nouveaux_tests_comparatifs/Eval_EPF_2/";
-  // public final static String file_rules = folder + "rules.csv";
-  // public final static String out_folder = folder + "out/";
+  public static String folder = "/home/mickael/data/mbrasebin/donnees/IAUIDF/Nouveaux_tests_comparatifs/Eval_EPF_2/";
+  public static String file_rules = folder + "rules.csv";
+  public static String out_folder = "/home/mickael/data/mbrasebin/donnees/IAUIDF/Nouveaux_tests_comparatifs/Eval_EPF_2/out/";
+
+  public static String paramFile = "/home/mickael/data/mbrasebin/donnees/IAUIDF/data_grille/parameters_iauidf_real.xml";
+
 
   public static void main(String[] args) throws Exception {
     // MultipleBuildingsCuboid.ALLOW_INTERSECTING_CUBOID = INTERSECTION;
@@ -176,15 +168,14 @@ public class Exec_EPFIF {
       double art_8 = Double.parseDouble(newmap.get("ART_8").toString());
       double art_9 = Double.parseDouble(newmap.get("ART_9").toString());
       int art_10_top = Integer.parseInt(newmap.get("ART_10_TOP").toString());
-      int art_101 = Integer.parseInt(newmap.get("ART_10").toString()); //TODO : CHANGER
-      int art_102 = Integer.parseInt(newmap.get("ART_10").toString());
+      // int art_101 = Integer.parseInt(newmap.get("ART_10").toString()); // TODO : CHANGER
+      double art_101 = Double.parseDouble(newmap.get("ART_10").toString()); // changed to parse double
+      double art_102 = Double.parseDouble(newmap.get("ART_10").toString()); // idem
       double art_12 = Double.parseDouble(newmap.get("ART_12").toString());
       double art_13 = Double.parseDouble(newmap.get("ART_13").toString());
       double art_14 = Double.parseDouble(newmap.get("ART_14").toString());
-      Regulation r = new Regulation(code_imu, libelle_zone, insee,
-          date_approbation, libelle_de_base, libelle_de_dul, fonctions, top_zac,
-          zonage_coherent, correction_zonage, typ_bande, bande, art_5, art_6,
-          art_71, art_72, art_73, art_74, art_8, art_9, art_10_top, art_101,
+      Regulation r = new Regulation(code_imu, libelle_zone, insee, date_approbation, libelle_de_base, libelle_de_dul, fonctions, top_zac,
+          zonage_coherent, correction_zonage, typ_bande, bande, art_5, art_6, art_71, art_72, art_73, art_74, art_8, art_9, art_10_top, art_101,
           art_102, art_12, art_13, art_14);
       List<Regulation> lRegulation = new ArrayList<>();
       lRegulation.add(r);
@@ -206,12 +197,9 @@ public class Exec_EPFIF {
         double art_12_2 = Double.parseDouble(newmap.get("ART_12_2").toString());
         double art_13_2 = Double.parseDouble(newmap.get("ART_13_2").toString());
         double art_14_2 = Double.parseDouble(newmap.get("ART_14_2").toString());
-        Regulation r2 = new Regulation(code_imu, libelle_zone, insee,
-            date_approbation, libelle_de_base, libelle_de_dul, fonctions_2,
-            top_zac, zonage_coherent, correction_zonage, typ_bande, bande,
-            art_5_2, art_6_2, art_71_2, art_72_2, art_73_2, art_74_2, art_8_2,
-            art_9_2, art_10_top_2, art_101_2, art_102_2, art_12_2, art_13_2,
-            art_14_2);
+        Regulation r2 = new Regulation(code_imu, libelle_zone, insee, date_approbation, libelle_de_base, libelle_de_dul, fonctions_2, top_zac,
+            zonage_coherent, correction_zonage, typ_bande, bande, art_5_2, art_6_2, art_71_2, art_72_2, art_73_2, art_74_2, art_8_2, art_9_2,
+            art_10_top_2, art_101_2, art_102_2, art_12_2, art_13_2, art_14_2);
         System.out.println(r2.toString());
         lRegulation.add(r2);
       }
@@ -260,18 +248,15 @@ public class Exec_EPFIF {
     double sd = sdp.process(LoaderCuboid.loadFromCollection(featC));
     String s = "SDP : " + sd + "\n" + header;
     for (IFeature f : featC) {
-      s += imu + ";" + f.getAttribute("ID_PARC") + ";"
-          + f.getAttribute("Longueur") + ";" + f.getAttribute("Largeur") + ";"
-          + f.getAttribute("Hauteur") + ";" + f.getAttribute("Rotation") + ";"
-          + f.getAttribute("Aire") + ";" + f.getAttribute("Volume") + "\n";
+      s += imu + ";" + f.getAttribute("ID_PARC") + ";" + f.getAttribute("Longueur") + ";" + f.getAttribute("Largeur") + ";"
+          + f.getAttribute("Hauteur") + ";" + f.getAttribute("Rotation") + ";" + f.getAttribute("Aire") + ";" + f.getAttribute("Volume") + "\n";
     }
     writeCSV(fileName, s);
     return isOk;
   }
 
-  public static IFeatureCollection<IFeature> simulationForEachBPU(
-      Environnement env, BasicPropertyUnit bPU, List<Regulation> lRegulation,
-      int imu, File fParam) throws Exception {
+  public static IFeatureCollection<IFeature> simulationForEachBPU(Environnement env, BasicPropertyUnit bPU, List<Regulation> lRegulation, int imu,
+      File fParam) throws Exception {
     // Stocke les résultats
     IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
     // On ne simule pas sur les très petites parcelles qui peuvent être des
@@ -389,39 +374,31 @@ public class Exec_EPFIF {
     }
     System.out.println("Hauteur " + p.getDouble("minheight") + " " + p.getDouble("maxheight"));
     if (r2 != null) {
-      if ((r1.getArt_74() == 0) && (r2.getArt_74() == 0)
-          && (r2.getArt_14() != 99) && (r1.getArt_14() != 99)
-          && (p.getDouble("maxheight") != 99.0)) {
+      if ((r1.getArt_74() == 0) && (r2.getArt_74() == 0) && (r2.getArt_14() != 99) && (r1.getArt_14() != 99) && (p.getDouble("maxheight") != 99.0)) {
         p.set("minheight", p.getDouble("maxheight") - 0.1);
       }
     } else {
-      if ((r1.getArt_74() == 0) && (r1.getArt_14() != 99)
-          && (p.getDouble("maxheight") != 99.0)) {
+      if ((r1.getArt_74() == 0) && (r1.getArt_14() != 99) && (p.getDouble("maxheight") != 99.0)) {
         p.set("minheight", p.getDouble("maxheight") - 0.1);
       }
     }
     /*
      * double longueur1 = Double.NEGATIVE_INFINITY;
      * 
-     * if (r1.getGeomBande() != null && !r1.getGeomBande().isEmpty()) {
-     * OrientedBoundingBox oBB1 = new OrientedBoundingBox(r1.getGeomBande());
+     * if (r1.getGeomBande() != null && !r1.getGeomBande().isEmpty()) { OrientedBoundingBox oBB1 = new OrientedBoundingBox(r1.getGeomBande());
      * 
      * longueur1 = oBB1.getLength(); }
      * 
      * 
-     * if (r2 != null) { OrientedBoundingBox oBB2 = new
-     * OrientedBoundingBox(r2.getGeomBande());
+     * if (r2 != null) { OrientedBoundingBox oBB2 = new OrientedBoundingBox(r2.getGeomBande());
      * 
      * double longueur2 = oBB2.getLength();
      * 
-     * p.set("maxlen", Math.min(p.getDouble("maxlen"), Math.max(longueur1,
-     * longueur2)));
+     * p.set("maxlen", Math.min(p.getDouble("maxlen"), Math.max(longueur1, longueur2)));
      * 
-     * p.set("maxwid", Math.min(p.getDouble("maxwid"), Math.max(longueur1,
-     * longueur2)));
+     * p.set("maxwid", Math.min(p.getDouble("maxwid"), Math.max(longueur1, longueur2)));
      * 
-     * } else { p.set("maxlen", Math.min(p.getDouble("maxlen"), longueur1));
-     * p.set("maxwid", Math.min(p.getDouble("maxwid"), longueur1));
+     * } else { p.set("maxlen", Math.min(p.getDouble("maxlen"), longueur1)); p.set("maxwid", Math.min(p.getDouble("maxwid"), longueur1));
      * 
      * }
      */
@@ -444,20 +421,21 @@ public class Exec_EPFIF {
    * @return
    * @throws Exception
    */
-  public static IFeatureCollection<IFeature> simulRegulationByBasicPropertyUnit(
-      Environnement env, BasicPropertyUnit bPU, int imu, Regulation r1,
+  public static IFeatureCollection<IFeature> simulRegulationByBasicPropertyUnit(Environnement env, BasicPropertyUnit bPU, int imu, Regulation r1,
       Regulation r2, File fParam) throws Exception {
     // Stocke les résultats en sorties
     IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
     // //////On découpe la parcelle en bande en fonction des règlements
     // ART_5 Superficie minimale 88= non renseignable, 99= non réglementé
     // Si ce n'est pas respecté on ne fait même pas de simulation
-    double r_art5 = r1.getArt_5();
+   // @DESACTIVATED
+    
+    /*double r_art5 = r1.getArt_5();
     if (r_art5 != 99) {
       if (bPU.getPol2D().area() < r_art5) {
         return featC;
       }
-    }
+    }*/
     // Processus découpant la zone dans laquelle on met les bâtiments à
     // partir des règles
     BandProduction bP = new BandProduction(bPU, r1, r2);
@@ -489,9 +467,8 @@ public class Exec_EPFIF {
 
   //
 
-  private static IFeatureCollection<IFeature> simulRegulationByBasicPropertyUnitFinal(
-      Environnement env, BasicPropertyUnit bPU, int imu, Regulation r1,
-      Regulation r2, Parameters p, BandProduction bP) throws Exception {
+  private static IFeatureCollection<IFeature> simulRegulationByBasicPropertyUnitFinal(Environnement env, BasicPropertyUnit bPU, int imu,
+      Regulation r1, Regulation r2, Parameters p, BandProduction bP) throws Exception {
     IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
     // Création du Sampler (qui va générer les propositions de solutions)
     MultipleBuildingsCuboid oCB = new MultipleBuildingsCuboid();
@@ -533,9 +510,8 @@ public class Exec_EPFIF {
     return featC;
   }
 
-  private static IFeatureCollection<IFeature> simulRegulationByBasicPropertyUnitFinalTrapezoid(
-      Environnement env, BasicPropertyUnit bPU, int imu, Regulation r1,
-      Regulation r2, Parameters p, BandProduction bP) throws Exception {
+  private static IFeatureCollection<IFeature> simulRegulationByBasicPropertyUnitFinalTrapezoid(Environnement env, BasicPropertyUnit bPU, int imu,
+      Regulation r1, Regulation r2, Parameters p, BandProduction bP) throws Exception {
     IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
     // Création du Sampler (qui va générer les propositions de solutions)
     MultipleBuildingsTrapezoidCuboid oCB = new MultipleBuildingsTrapezoidCuboid();
