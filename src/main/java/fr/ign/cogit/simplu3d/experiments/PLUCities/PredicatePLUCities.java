@@ -1,17 +1,22 @@
-package fr.ign.cogit.simplu3d.rjmcmc.generic.predicate;
+package fr.ign.cogit.simplu3d.experiments.PLUCities;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
 
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
+import fr.ign.cogit.simplu3d.model.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Building;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
@@ -19,11 +24,12 @@ import fr.ign.cogit.simplu3d.model.ParcelBoundary;
 import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
+import fr.ign.cogit.simplu3d.util.CuboidGroupCreation;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
 
-public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>>
+public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>>
 		implements ConfigurationModificationPredicate<C, M> {
 
 	// Des valeurs pour les différentes contraintes
@@ -32,6 +38,8 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 	private double distReculLat = 0.0;
 	private double distanceInterBati = 0.0;
 	private double maximalCES = 0.0;
+	private double maximalHauteur = 0.0;
+	private boolean singleBuild;
 
 	// BasicPropertyUnit utilisée
 	private BasicPropertyUnit currentBPU;
@@ -58,7 +66,8 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 	 *            : CES maximum
 	 * @throws Exception
 	 */
-	public SamplePredicate(BasicPropertyUnit currentBPU, double distReculVoirie, double distReculFond,
+
+	public PredicatePLUCities(BasicPropertyUnit currentBPU, double distReculVoirie, double distReculFond,
 			double distReculLat, double distanceInterBati, double maximalCES) throws Exception {
 		// On appelle l'autre connstructeur qui renseigne un certain nombre de
 		// géométries
@@ -69,6 +78,25 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 		this.distReculLat = distReculLat;
 		this.distanceInterBati = distanceInterBati;
 		this.maximalCES = maximalCES;
+		this.singleBuild = false;
+
+	}
+
+	public PredicatePLUCities(BasicPropertyUnit currentBPU, double distReculVoirie, double distReculFond,
+			double distReculLat, double distanceInterBati, double maximalCES, double maximalhauteur,
+			boolean singleBuild) throws Exception {
+		// On appelle l'autre connstructeur qui renseigne un certain nombre de
+		// géométries
+		this(currentBPU);
+		this.currentBPU = currentBPU;
+		this.distReculVoirie = distReculVoirie;
+		this.distReculFond = distReculFond;
+		this.distReculLat = distReculLat;
+		this.distanceInterBati = distanceInterBati;
+		this.maximalCES = maximalCES;
+		this.maximalHauteur = maximalhauteur;
+		this.singleBuild = singleBuild;
+
 	}
 
 	// On stocke la géométrie des différentes bordures de la parcelle courante
@@ -78,6 +106,7 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 	Geometry jtsCurveLimiteLatParcel = null;
 
 	Geometry surface = null;
+
 	/**
 	 * Ce constructeur initialise les géométries curveLimiteFondParcel,
 	 * curveLimiteFrontParcel & curveLimiteLatParcel car elles seront utilisées
@@ -86,7 +115,7 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 	 * @param bPU
 	 * @throws Exception
 	 */
-	private SamplePredicate(BasicPropertyUnit bPU) throws Exception {
+	private PredicatePLUCities(BasicPropertyUnit bPU) throws Exception {
 		super();
 		this.currentBPU = bPU;
 
@@ -155,9 +184,8 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 		}
 
 		GeometryFactory gf = new GeometryFactory();
-		
-		
-		this.surface  = AdapterFactory.toGeometry(gf,bPU.getGeom());
+
+		this.surface = AdapterFactory.toGeometry(gf, bPU.getGeom());
 
 		if (!curveLimiteFondParcel.isEmpty()) {
 			this.jtsCurveLimiteFondParcel = AdapterFactory.toGeometry(gf, curveLimiteFondParcel);
@@ -186,11 +214,15 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 		// Il s'agit des objets de la classe Cuboid
 		List<O> lO = m.getBirth();
 
-
 		// On vérifie les règles sur tous les pavés droits, dès qu'il y en a un
 		// qui
 		// ne respecte pas une règle, on rejette
 		// On traite les contraintes qui ne concernent que les nouveux bâtiments
+
+		if (c.size() >= 1 && singleBuild) {
+			return false;
+		}
+
 		for (O cuboid : lO) {
 
 			// On vérifie la contrainte de recul par rapport au fond de parcelle
@@ -235,6 +267,15 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 				}
 
 			}
+			
+			//Distance between existig building and cuboid
+			for(Building b : currentBPU.getBuildings()){
+				
+				if(b.getFootprint().distance(cuboid.getFootprint()) < distanceInterBati){
+					return false;
+				}
+				
+			}
 
 			// Autres règles :
 
@@ -248,15 +289,17 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 
 			// IMultiSurface<IOrientableSurface> mS = null; // à définir
 			// mS.contains(cuboid.footprint);
-			
-			
-			if(! surface.contains(cuboid.toGeometry())){
-					return false;
+
+			if (cuboid.getHeight() > maximalHauteur) {
+				return false;
+			}
+
+			if (!surface.contains(cuboid.toGeometry())) {
+				return false;
 			}
 
 		}
 
-	
 		// Pour produire des boîtes séparées et vérifier que la distance inter
 		// bâtiment est respectée
 		try {
@@ -273,19 +316,48 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 			return false;
 		}
 
+		// if (MultipleBuildingsCuboid.ALLOW_INTERSECTING_CUBOID) {
+		if (!testWidthBuilding(c, m, 7.5, distanceInterBati)) {
+			return false;
+		}
+		// }
+
 		// On a réussi tous les tests, on renvoie vrai
 		return true;
 
 	}
 
-	/**
-	 * Code pour vérifier que la distance entre bâtiments est vérifiée
-	 * 
-	 * @param c
-	 * @param m
-	 * @return
-	 * @throws Exception
-	 */
+	private boolean checkDistanceInterGroups(List<List<AbstractSimpleBuilding>> lGroupes, double distanceInterBati) {
+		// si un seul groupe
+		if (lGroupes.size() < 2)
+			return true;
+		// on va stocker les hauteurs pour pas les recalculer
+		double[] heights = new double[lGroupes.size()];
+		for (int i = 0; i < lGroupes.size(); ++i) {
+			heights[i] = getGroupeHeight(lGroupes.get(i));
+		}
+		for (int i = 0; i < lGroupes.size() - 1; ++i) {
+			for (int j = i + 1; j < lGroupes.size(); ++j) {
+				double distanceGroupes = getGroupGeom(lGroupes.get(i)).distance(getGroupGeom(lGroupes.get(j)));
+				double d = Math.min(Math.max(heights[i], heights[j]) * 0.5, distanceInterBati);
+				// System.out.println("max(dist groupes, heights) : " + d
+				// + "---- dit inter bati : " + distanceInterBati);
+				if (distanceGroupes < d)
+					return false;
+			}
+		}
+		return true;
+	}
+
+	private double getGroupeHeight(List<AbstractSimpleBuilding> g) {
+		double max = -1;
+		for (AbstractBuilding b : g) {
+			if (((O) b).getHeight() > max)
+				max = ((O) b).getHeight();
+		}
+		return max;
+	}
+
 	private boolean checkDistanceInterBuildings(C c, M m) throws Exception {
 		GeometryFactory gf = new GeometryFactory();
 		// On récupère les objets ajoutées lors de la proposition
@@ -404,10 +476,11 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 		}
 
 		/*
-		List<List<AbstractSimpleBuilding>> groupes = CuboidGroupCreation.createGroup(lBatIni, 0.5);
-		if (groupes.size() > 1) {
-			return false;
-		}*/
+		 * List<List<AbstractSimpleBuilding>> groupes =
+		 * CuboidGroupCreation.createGroup(lBatIni, 0.5);
+		 * 
+		 * if (groupes.size() > 1) { return false; }
+		 */
 
 		// On récupère la superficie de la basic propertyUnit
 		double airePAr = 0;
@@ -416,5 +489,207 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 		}
 
 		return ((geom.getArea() / airePAr) <= maximalCES);
+	}
+
+	private boolean testWidthBuilding(C c, M m, double widthBuffer, double distanceInterBati) {
+		// On fait la liste de tous les objets après modification
+		List<O> lO = new ArrayList<>();
+
+		// On récupère la boîte (si elle existe) que l'on supprime lors de la
+		// modification
+		O cuboidDead = null;
+
+		if (!m.getDeath().isEmpty()) {
+			cuboidDead = m.getDeath().get(0);
+		}
+
+		Iterator<O> iTBat = c.iterator();
+
+		while (iTBat.hasNext()) {
+
+			O batTemp = iTBat.next();
+
+			if (batTemp == cuboidDead) {
+				continue;
+			}
+
+			lO.add(batTemp);
+
+		}
+
+		// On ajoute tous les nouveaux objets
+		lO.addAll(m.getBirth());
+
+		List<List<AbstractSimpleBuilding>> lGroupes = CuboidGroupCreation.createGroup(lO, 0);
+
+		// System.out.println("nb groupes " + lGroupes.size());
+		for (List<AbstractSimpleBuilding> lAb : lGroupes) {
+			// System.out.println("groupe x : " + lAb.size() + " batiments");
+			if (!checkWidth(lAb, widthBuffer)) {
+				return false;
+			}
+
+		}
+
+		// Calculer la distance entre groupes
+		// 1 - par rapport à distanceInterBati
+		// 2 - par rapport à la moitié de la hauteur du plus haut cuboid
+		if (!checkDistanceInterGroups(lGroupes, distanceInterBati))
+			return false;
+
+		// System.out.println("-------------------nb groupes " +
+		// lGroupes.size());
+		return true;
+	}
+
+	private Geometry getGroupGeom(List<AbstractSimpleBuilding> g) {
+		Collection<Geometry> collGeom = new ArrayList<>();
+		for (AbstractSimpleBuilding o : g) {
+			collGeom.add(o.toGeometry()/* .buffer(0.4) */);
+		}
+		Geometry union = null;
+		try {
+			union = CascadedPolygonUnion.union(collGeom);
+		} catch (Exception e) {
+			return null;
+		}
+		/* union = TopologyPreservingSimplifier.simplify(union, 0.4); */
+		return union;
+	}
+
+	private GeometryFactory gf = new GeometryFactory();
+	private long c = 0;
+
+	private boolean checkWidth(List<AbstractSimpleBuilding> lO, double widthBuffer) {
+
+		if (lO.size() < 2)
+			return true;
+		Geometry union = getGroupGeom(lO);
+		if (union == null)
+			return false;
+		// Récupérer le polygone sans le trou
+		// will that do it ?
+		// System.out.println(union.getClass());
+		if (union instanceof Polygon) {
+			// union = gf
+			// .createPolygon(((Polygon)
+			// union).getExteriorRing().getCoordinates())
+			// .buffer(5).buffer(-5);
+			union = union.buffer(5).buffer(-5);
+		}
+		boolean multi = false;
+		if (union instanceof MultiPolygon) {
+			// System.out.println("multi " + union);
+			return false;
+			// System.out.println("multi " + union);
+			// union = union.buffer(5).buffer(-5);
+			// // if it is still a multipolygon we test if we can remove too
+			// small
+			// ones!
+			// if (union instanceof MultiPolygon) {
+			// MultiPolygon mp = ((MultiPolygon) union);
+			// int nbOfSmallOnes = 0;
+			// int bigOneindice = -1;
+			// for (int i = 0; i < mp.getNumGeometries(); ++i) {
+			// if (mp.getGeometryN(i).getArea() < 5)
+			// nbOfSmallOnes++;
+			// else
+			// bigOneindice = i;
+			// }
+			// if (mp.getNumGeometries() - nbOfSmallOnes > 1)
+			// return false;
+			// union = mp.getGeometryN(bigOneindice);
+			// }
+			// union = gf
+			// .createPolygon(((Polygon)
+			// union).getExteriorRing().getCoordinates());
+			// System.out.println("multibuffered " + union);
+			// multi = true;
+			// au final on peut court circuiter ?
+			// return false;
+		}
+
+		Geometry negativeBuffer = union.buffer(-widthBuffer);
+
+		if (negativeBuffer.isEmpty() || negativeBuffer.getArea() < 0.001) {
+			++c;
+			if (c % 10000 == 0 || multi) {
+				// System.out.println("**** " + multi);
+				// System.out.println("**** " + union);
+				// System.out.println("good width "
+				// + (negativeBuffer.isEmpty() ? "empty" : negativeBuffer));
+				// System.out.println("group size " + lO.size());
+			}
+			return true;
+		}
+		// System.out.println("too big");
+		// System.out.println(union);
+		// System.out.println(negativeBuffer);
+		// System.out.println("---------------------");
+		return false;
+
+	}
+
+	private boolean checkDistanceInterBuildings(C c, M m, double distanceInterBati) {
+
+		// On fait la liste de tous les objets après modification
+		List<O> lO = new ArrayList<>();
+
+		// On récupère la boîte (si elle existe) que l'on supprime lors de la
+		// modification
+		O cuboidDead = null;
+
+		if (!m.getDeath().isEmpty()) {
+			cuboidDead = m.getDeath().get(0);
+		}
+
+		Iterator<O> iTBat = c.iterator();
+
+		while (iTBat.hasNext()) {
+
+			O batTemp = iTBat.next();
+
+			if (batTemp == cuboidDead) {
+				continue;
+			}
+
+			lO.add(batTemp);
+
+		}
+
+		// On ajoute tous les nouveaux objets
+		lO.addAll(m.getBirth());
+
+		// EXTRA RULE : la distance entre deux bâtiments sur une même parcelle
+		// est égale à la hauteur divisée par deux du bâtiment le plus haut
+
+		int nbCuboid = lO.size();
+
+		double hMax = -1;
+
+		for (O o : lO) {
+			hMax = Math.max(hMax, o.getHeight());
+		}
+
+		// on divise par 2 le hMax
+		hMax = hMax * 0.5;
+
+		for (int i = 0; i < nbCuboid; i++) {
+			AbstractSimpleBuilding cI = lO.get(i);
+
+			for (int j = i + 1; j < nbCuboid; j++) {
+				AbstractSimpleBuilding cJ = lO.get(j);
+
+				double distance = cI.getFootprint().distance(cJ.getFootprint());
+
+				if (distance < Math.min(hMax, distanceInterBati)) {
+					return false;
+				}
+
+			}
+		}
+
+		return true;
+
 	}
 }
