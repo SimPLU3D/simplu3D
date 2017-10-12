@@ -1,7 +1,7 @@
-[![Build Status](https://travis-ci.org/IGNF/simplu3D.svg?branch=master)](https://travis-ci.org/IGNF/simplu3D)
-
 Simplu3D
 ============
+
+[![Build Status](https://travis-ci.org/IGNF/simplu3D.svg?branch=master)](https://travis-ci.org/IGNF/simplu3D)
 
 A library to automatically general built configuration that respect urban regulations and optimize a utility function.
 
@@ -9,9 +9,9 @@ A library to automatically general built configuration that respect urban regula
 Introduction
 ---------------------
 
-This research library is developed as part of [COGIT team](http://recherche.ign.fr/labos/cogit/accueilCOGIT.php) researches concerning processing of urban regulation. 
+This research library is developed as part of [COGIT team](http://recherche.ign.fr/labos/cogit/accueilCOGIT.php) researches concerning processing of urban regulation.
 
-It provides an implementation of multi-dimensionnal simulated annealing algorithm to produce built configuration from a set of boxes constrained by urban regulation that optimizes a utility function. 
+It provides an implementation of multi-dimensionnal simulated annealing algorithm to produce built configuration from a set of boxes constrained by urban regulation that optimizes a utility function.
 
 The project is developed over 3D GIS Open-Source library [GeOxygene](https://github.com/IGNF/geoxygene) concerning geometric operators and 3D visualization, [librjmcmc4j](https://github.com/IGNF/librjmcmc4j) for simulated annealing implementation and [simplu3d-rules](https://github.com/IGNF/simplu3d-rules) for geographical model and regulation management.
 
@@ -117,10 +117,12 @@ Contact for feedbacks
 [COGIT Laboratory](http://recherche.ign.fr/labos/cogit/accueilCOGIT.php)
 
 
-Users
+Users and demo
 --------------------
 + [IAUIDF for land price assessment : Note de conjecture ORF](http://www.orf.asso.fr/uploads/attachements/orf_nc7_ok_lg.pdf)
++ [OpenMole - SimPLU3D](https://simplu2.openmole.org/) a demonstrator designed to help for the determination of regulation parameters value.
 + [PLU++ : for the simplification of public participation during PLU elaboration](http://ignf.github.io/PLU2PLUS/)
++ [Building permit cheking](https://demo-simplu3d.ign.fr/#/) a demonstrator to help for building permit instructions by checking a set of rules on a projected construction.
 + [DECODURBA : a tool dedicated to assist citizens for the construction of personnal house](http://www.logement.gouv.fr/hackurba-premier-hackathon-dedie-a-l-urbanisme-durable-recompense-tetricite). SimPLU3D was integrated to the solution proposed during the [Hackurba hackhathon](http://hackurba.strikingly.com/) and was awarded the price of National Urban Planning Portal by the French Ministery of Environment.
 
 
@@ -133,4 +135,3 @@ Région in the context of [e-PLU projet](www.e-PLU.fr)
 + Mickaël Borne for improvements in the code and for refactoring
 + Imran Lokhat for tests and improvements about imrpoving the pipeline of simulation
 + [ISC-PIF](https://iscpif.fr/) - Paul Chapron and Romain Reuillon for proposing methods dedicated to model exploration and simulation distribution
-
