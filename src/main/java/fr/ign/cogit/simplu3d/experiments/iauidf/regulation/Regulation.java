@@ -21,7 +21,7 @@ import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 
 public class Regulation {
 
-	private final static String CSV_SEPARATOR = ";";
+	private final static String CSV_SEPARATOR = ",";
 
 	private static Logger log = Logger.getLogger(Regulation.class);
 

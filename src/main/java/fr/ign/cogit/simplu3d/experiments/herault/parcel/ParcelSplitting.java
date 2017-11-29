@@ -1,5 +1,7 @@
 package fr.ign.cogit.simplu3d.experiments.herault.parcel;
 
+import java.io.File;
+
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
@@ -13,23 +15,25 @@ import fr.ign.random.Random;
 public class ParcelSplitting {
 
 	public static void main(String[] args) throws Exception {
-		// Chemin vers le fichier contenant les parcelles
-		String file = "/home/mickael/Bureau/Parcel_div/test/parcelle.shp";
-		String fileOut = "/home/mickael/Bureau/Parcel_div/test/parcelle_transformed.shp";
+		parcelSplit(new File("/home/mcolomb/tmp/test/parcelle2.shp"),new File("/home/mcolomb/tmp/test/parcDiv4.shp"),10000,50,0.5,5);
+	}
+	
+	/**
+	 * 
+	 * @param fileIn : input file
+	 * @param fileOut : output file
+	 * @param maximalArea : Maximal area of a parcel
+	 * @param maximalWidth : Maximal road access
+	 * @param raodEpsilon : Likness to develop road access [0, 1]
+	 * @param noise : Variation of parcel size
+	 * @return shapefile of the splited parcels
+	 * @throws Exception
+	 */
+	public static File parcelSplit(File fileIn, File fileOut, double maximalArea, double maximalWidth, double roadEpsilon, double noise ) throws Exception{
 
 		String attNameToTransform = "SPLIT";
 
-		// Maximal area of a parcel
-		double maximalArea = 100;
-		// Maximal road access
-		double maximalWidth = 50;
-
-		// Likness to develop road access [0, 1]
-		double epsilon = 0;
-		// Variation of parcel size
-		double noise = 10;
-
-		IFeatureCollection<IFeature> ifeatColl = ShapefileReader.read(file);
+		IFeatureCollection<IFeature> ifeatColl = ShapefileReader.read(fileIn.toString());
 		IFeatureCollection<IFeature> ifeatCollOut = new FT_FeatureCollection<>();
 
 		for (IFeature feat : ifeatColl) {
@@ -39,16 +43,14 @@ public class ParcelSplitting {
 				ifeatCollOut.add(feat);
 				continue;
 			}
-
 			if (Integer.parseInt(o.toString()) != 1) {
 				ifeatCollOut.add(feat);
 				continue;
 			}
-
 			IPolygon pol = (IPolygon) FromGeomToSurface.convertGeom(feat.getGeom()).get(0);
 
 			OBBBlockDecomposition obb = new OBBBlockDecomposition(pol, maximalArea, maximalWidth, Random.random(),
-					epsilon, noise);
+					roadEpsilon, noise);
 
 			IFeatureCollection<IFeature> featCollTemp = obb.decompParcel();
 
@@ -57,11 +59,8 @@ public class ParcelSplitting {
 				featTemp.setGeom(featNew.getGeom());
 				ifeatCollOut.add(featTemp);
 			}
-
 		}
-
-		ShapefileWriter.write(ifeatCollOut, fileOut);
-
+		ShapefileWriter.write(ifeatCollOut, fileOut.toString());
+		return fileOut;
 	}
-
 }
