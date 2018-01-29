@@ -48,7 +48,7 @@ public class BasicSimulator {
 
 	// [building_footprint_rectangle_cli_main
 	public static void main(String[] args) throws Exception {
-
+	 
 		// Loading of configuration file that contains sampling space
 		// information and simulated annealing configuration
 		String folderName = BasicSimulator.class.getClassLoader().getResource("scenario/").getPath();
@@ -106,9 +106,8 @@ public class BasicSimulator {
 		// A shapefile is written as output
 		// WARNING : 'out' parameter from configuration file have to be change
 		ShapefileWriter.write(iFeatC, p.get("result").toString() + "out.shp");
-
 		System.out.println("That's all folks");
-
+		
 	}
 
 }
