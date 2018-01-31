@@ -161,6 +161,8 @@ public class EntropyCalculation {
         "Entropie des hauteurs de "+ surroundingFabric.size() + " batiments environnants : "+ surroundEntropy);
 
     
+    
+    
     System.exit(0);
     
   }
