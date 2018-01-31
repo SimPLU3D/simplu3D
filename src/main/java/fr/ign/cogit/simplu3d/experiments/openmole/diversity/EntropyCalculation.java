@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import javax.media.j3d.Sound;
+
 import java.util.HashMap;
 
 
@@ -33,20 +36,24 @@ public class EntropyCalculation {
 
 
   public Double getHeightEntropy() {
+    return getHeightEntropy(1);
+  }
+  
+  
+  public Double getHeightEntropy(Integer binwidth) {
     HashMap<Double, Integer> histoHeights = new HashMap<Double, Integer>();
 
 
     // populate hashmap according to rounded height 
     for(Cuboid cucube : cuboids) {
       Double height = cucube.getHeight();
-      Double  hInt =  (double) Math.round(height) ;
-
-      if (histoHeights.containsKey(hInt)) {
-        Integer nouvVal =  histoHeights.get(hInt) + 1 ;
-        histoHeights.put(hInt, nouvVal);          
+      Double  binarizedHeight =  (double)  Math.rint(height / binwidth) * binwidth;
+      
+      if (histoHeights.containsKey(binarizedHeight)) {
+        histoHeights.put(binarizedHeight, histoHeights.get(binarizedHeight) + 1);          
       }
       else {
-        histoHeights.put(hInt, 1);
+        histoHeights.put(binarizedHeight, 1);
       }
     }
 
@@ -59,22 +66,20 @@ public class EntropyCalculation {
    
     
     //shannon entropy is -sum (pi log2(pi))
-    
     // probability of having an height h equal to H = number of H in hashmap / number of heights 
     Double shannonE = 0.0 ;
     for (Double k  : histoHeights.keySet()) {
       Double probaHeight = (double)histoHeights.get(k) / (double)nbHeights ;
-        System.out.println("proba de la hauteur :"+k +" :" + probaHeight);
+      //  System.out.println("proba de la hauteur :"+k +" :" + probaHeight);
       shannonE += shannonE + (probaHeight * Math.log10(probaHeight)/Math.log10(2));
     }
 
     shannonE *= -1 ; 
     
 
-    //TODO faire un try cvatch propre ?
     if (cuboids.isEmpty()) {
       System.out.println("Empty list of cuboids ! ");
-      return -99.9 ;
+      return -999.999 ;
     }
     else {
       return shannonE ;  
@@ -84,16 +89,26 @@ public class EntropyCalculation {
 
   
   public static void main(String[] args) {
-
-    //List<Cuboid> lC = LoaderCuboid.loadFromShapeFile("/home/paulchapron/dev/simplu3D-openmole/visuPSE/PSEshp/run_-2085940094869048084out.shp");
-    List<Cuboid> lC = LoaderCuboid.loadFromShapeFile("/home/paulchapron/dev/simplu3D-openmole/visuPSE/config.shp");
+System.out.println("load config");
+    List<Cuboid> lC = LoaderCuboid.loadFromShapeFile("/home/paulchapron/dev/simplu3D-openmole/visuPSE/PSEshp/run_-2085940094869048084out.shp");
+  //  List<Cuboid> lC = LoaderCuboid.loadFromShapeFile("/home/paulchapron/dev/simplu3D-openmole/visuPSE/config.shp");
+    System.out.println("load surrounding buildings");
+    List<Cuboid> surroundingFabric = LoaderCuboid.loadFromShapeFile("/home/paulchapron/dev/visuPSEPremium/scriptQGIS_genThree.js/Bati_zone/batiment.shp");
+     
+    
+    
     
     System.out.println("calcul de l'entropie des hauteurs de la config");
     EntropyCalculation eC = new EntropyCalculation(lC);
+    double configEntropy = eC.getHeightEntropy(2);
 
-    double heightEntropy = eC.getHeightEntropy();
-
-    System.out.println("Entropie des hauteurs: " + heightEntropy);
+    EntropyCalculation ecSurround = new EntropyCalculation(surroundingFabric) ;
+    Double surroundEntropy = ecSurround.getHeightEntropy();
+    
+    System.out.println("Entropie des hauteurs de la config: " + configEntropy);
+    System.out.println("Entropie des hauteurs du tissu envirronant: " + surroundEntropy);
+    
+    
   }
 
 }
