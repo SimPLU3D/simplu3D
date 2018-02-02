@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.media.j3d.Sound;
 
+import org.apache.commons.math3.stat.descriptive.moment.Mean;
+
 import java.util.HashMap;
 
 import java.lang.Math;
@@ -23,122 +25,141 @@ import fr.ign.mpp.configuration.GraphConfiguration;
 import javassist.bytecode.analysis.Subroutine;
 
 public class EntropyCalculation {
-
-  List<Cuboid> individualsCuboids;
-  List<IFeature> individualsFeatures;
-
-  public EntropyCalculation(List<Cuboid> lCuboids) {
-    individualsCuboids = lCuboids;
+   
+  
+  
+  public static Double ShannonEntropyCuboidsHeight(List<Cuboid> lC ) {
+    return ShannonEntropyCuboidsHeight(1, lC);
   }
-
-  public EntropyCalculation(GraphConfiguration<Cuboid> graphCuboid) {
-    individualsCuboids = new ArrayList<>();
-    for (Cuboid cc : graphCuboid) {
-      individualsCuboids.add(cc);
+  
+  public static Double ShannonEntropyCuboidsHeight(Integer binwidth, List<Cuboid> lC )  {
+    List<Double> heights = new ArrayList<>();
+    for (Cuboid cc : lC) {
+      heights.add(cc.getHeight());
     }
+    return shannonEntropy(binwidth, heights);
   }
-
-  public EntropyCalculation(FT_FeatureCollection<IFeature> featColl) {
-    individualsFeatures = new ArrayList<>();
-    for (IFeature f : featColl) {
-      individualsFeatures.add(f);
-    }
-
+ 
+  
+  public static Double ShannonEntropyFeaturesHeight(FT_FeatureCollection<IFeature> lF) {
+    return ShannonEntropyFeaturesHeight(1, lF);
   }
-
-  public Double ShannonEntropyCuboidsHeight() {
-    return ShannonEntropyCuboidsHeight(1);
-  }
-
-  public Double ShannonEntropyCuboidsHeight(Integer binwidth) {
-    HashMap<Double, Integer> histoHeights = new HashMap<Double, Integer>();
-
-    // populate hashmap according to rounded height
-    for (Cuboid cucube : individualsCuboids) {
-      Double height = cucube.getHeight();
-      Double binarizedHeight = (double) Math.rint(height / binwidth) * binwidth;
-
-      if (histoHeights.containsKey(binarizedHeight)) {
-        histoHeights.put(binarizedHeight,
-            histoHeights.get(binarizedHeight) + 1);
-      } else {
-        histoHeights.put(binarizedHeight, 1);
-      }
-    }
-
-    // number of heights to consider = number of cuboids
-    int nbHeights = individualsCuboids.size();
-    // number of distinct heights = number of key in the hahmap
-    int nbDistinctHeights = histoHeights.keySet().size();
-
-    // shannon entropy is -sum (pi log2(pi))
-    // probability of having an height h equal to H = number of H in hashmap /
-    // number of heights
-    Double shannonE = 0.0;
-    for (Double k : histoHeights.keySet()) {
-      Double probaHeight = (double) histoHeights.get(k) / (double) nbHeights;
-      shannonE += (probaHeight * (Math.log(probaHeight) / Math.log(2)));
-    }
-
-    shannonE *= -1;
-
-    if (individualsCuboids.isEmpty()) {
-      System.out.println("Empty list of cuboids ! ");
-      return -999.999;
-    } else {
-      return shannonE;
-    }
-
-  }
-
-  public Double ShannonEntropyFeaturesHeight() {
-    return ShannonEntropyFeaturesHeight(1);
-  }
-
-  public Double ShannonEntropyFeaturesHeight(Integer binwidth) {
-    HashMap<Double, Integer> histoHeights = new HashMap<Double, Integer>();
-
-    // populate hashmap according to rounded height
-    for (IFeature batiment : individualsFeatures) {
+  
+  public static Double ShannonEntropyFeaturesHeight(Integer binwidth, FT_FeatureCollection<IFeature> lF) {
+   List<Double> heights = new ArrayList<>();
+        for (IFeature batiment : lF) {
       Double height = ((Long) batiment.getAttribute("hauteur")).doubleValue();
+      heights.add(height);
+    }
+    return shannonEntropy(binwidth, heights);
+   }
+  
+  
+  // return shannon entropy of a list of dimension values e.g. heights
+  public static Double shannonEntropy(Integer binwidth, List<Double> dims) {
 
-      Double binarizedHeight = (double) Math.rint(height / binwidth) * binwidth;
-      if (histoHeights.containsKey(binarizedHeight)) {
-        histoHeights.put(binarizedHeight,
-            histoHeights.get(binarizedHeight) + 1);
+    HashMap<Double, Integer> histoDims = new HashMap<Double, Integer>();
+    for (Double dim : dims) {
+
+      Double binarizedDim = (double) Math.rint(dim / binwidth) * binwidth;
+      if (histoDims.containsKey(binarizedDim)) {
+        histoDims.put(binarizedDim, histoDims.get(binarizedDim) + 1);
       } else {
-        histoHeights.put(binarizedHeight, 1);
+        histoDims.put(binarizedDim, 1);
       }
     }
-
-    // number of heights to consider = number of cuboids
-    int nbHeights = individualsFeatures.size();
-
     // shannon entropy is -sum (pi log2(pi))
     // probability of having an height h equal to H = number of H in hashmap /
     // number of heights
     Double shannonE = 0.0;
-    for (Double k : histoHeights.keySet()) {
-      Double probaHeight = (double) histoHeights.get(k) / (double) nbHeights;
-
+    for (Double k : histoDims.keySet()) {
+      Double probaHeight = (double) histoDims.get(k) / (double) dims.size();
       shannonE += probaHeight * (Math.log(probaHeight) / Math.log(2));
     }
 
-    shannonE *= -1;
-    //System.out.println(histoHeights.keySet().size() + "hauteurs distinctes");
-
-    if (individualsFeatures.isEmpty()) {
-      System.out.println("Empty list of cuboids ! ");
-      return -999.999;
-    } else {
-      return shannonE;
-    }
-
+    return -shannonE;
   }
 
+
+  
+  public static Double binarize(Double d, Integer binwidth) {
+      return (double) Math.rint(d / binwidth) * binwidth;
+  }
+  
+  //compute the joint entropy measure
+  public static Double jointEntropyIndepVars(List<Double> X, List<Double> Y) {
+    Double jointE = 0.0;    
+    HashMap<Double, Integer> mapX = new HashMap<Double, Integer>();
+    HashMap<Double, Integer> mapY = new HashMap<Double, Integer>();
+    
+    
+    for (Double x : X) {
+      if (mapX.containsKey(x)) {
+        mapX.put(x, mapX.get(x) + 1);
+      } else {
+        mapX.put(x, 1);
+      }
+    }
+
+    for (Double y : Y) {
+      if (mapY.containsKey(y)) {
+        mapY.put(y, mapY.get(y) + 1);
+      } else {
+        mapY.put(y, 1);
+      }
+    }
+    
+    //calcul de la proba jointe X,Y : px* py ???
+    // entropyE = - sum x sum y p(x,y)log(p(x,y))
+    for (Double x: mapX.keySet()) {
+      Double px = (double) mapX.get(x) / (double) X.size();
+      for(Double y : mapY.keySet()) {
+        Double py = (double) mapY.get(y) / (double) Y.size();
+        jointE +=  - py*px* (Math.log(py*px)/Math.log(2));
+      }
+          
+    }
+    
+   
+    
+    
+    return jointE ;
+  }
+  
+  
+  
+  
+  public static List<Double> dimsExtractor(FT_FeatureCollection<IFeature> collFeat, String dimName){
+    List<Double> dims= new ArrayList<>();
+    for (IFeature feat : collFeat) {
+      dims.add((double)feat.getAttribute(dimName));
+    }
+    return dims;
+  }
+  
+  public static List<Double> dimsExtractor(List<Cuboid> cuboids, String dimName){
+    List<Double> dims = new ArrayList<>();
+    for (Cuboid cc : cuboids) {
+      switch (dimName) {
+        case "hauteur":
+          dims.add(cc.getHeight());
+          break;
+
+        default:
+          break;
+      }
+    }
+  
+  return dims;
+  }
+  
+  
+  
+  
+  
   public static void main(String[] args) {
     System.out.println("load config");
-    List<Cuboid> lC = LoaderCuboid.loadFromShapeFile(
+    List<Cuboid> config = LoaderCuboid.loadFromShapeFile(
         "/home/paulchapron/dev/simplu3D-openmole/visuPSE/PSEshp/run_-2085940094869048084out.shp");
     // List<Cuboid> lC =
     // LoaderCuboid.loadFromShapeFile("/home/paulchapron/dev/simplu3D-openmole/visuPSE/config.shp");
@@ -149,17 +170,45 @@ public class EntropyCalculation {
             "/home/paulchapron/dev/visuPSEPremium/scriptQGIS_genThree.js/Bati_zone/batiment.shp",
             "", "hauteur", true);
 
-    EntropyCalculation eC = new EntropyCalculation(lC);
-    double configEntropy = eC.ShannonEntropyCuboidsHeight();
+    double configEntropy = ShannonEntropyCuboidsHeight(1,config);
     System.out.println("Entropie des hauteurs de la config: " + configEntropy);
 
-    EntropyCalculation ecSurround = new EntropyCalculation(surroundingFabric);
-    Double surroundEntropy = ecSurround.ShannonEntropyFeaturesHeight();
+    Double surroundEntropy = ShannonEntropyFeaturesHeight(1,surroundingFabric );
 
     System.out.println(surroundingFabric.size() + " batiments environnants");
     System.out.println(
         "Entropie des hauteurs de "+ surroundingFabric.size() + " batiments environnants : "+ surroundEntropy);
 
+    
+    
+    System.out.println("#####entropie jointe####");
+    
+    
+    List<Double> surroundingHeights = new ArrayList<>();
+    for (IFeature batiment : surroundingFabric) {
+      Double height = ((Long) batiment.getAttribute("hauteur")).doubleValue();
+      surroundingHeights.add(binarize(height,1));
+     }
+    System.out.println(surroundingHeights.size() +" hauteurs pour Y");
+    
+    
+    
+    List<Double> configHeights = new ArrayList<>();
+    for (Cuboid cc : config) {
+      configHeights.add(binarize(cc.getHeight(),1));
+    }
+    System.out.println(configHeights.size() +" hauteurs pour Y");
+    
+    
+    
+    Double jj = jointEntropy(configHeights, surroundingHeights) ;
+    
+    
+    
+    System.out.println("joint entropy "+  jointEntropy(configHeights, surroundingHeights));
+   
+    System.out.println("entropie conjointe <= somme des entropies ? " + (jj <=(configEntropy + surroundEntropy)  ));
+    
     
     
     
