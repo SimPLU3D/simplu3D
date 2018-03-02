@@ -1,7 +1,7 @@
 Simplu3D
 ============
 
-[![Build Status](https://travis-ci.org/IGNF/simplu3D.svg?branch=master)](https://travis-ci.org/IGNF/simplu3D)
+[![Build Status](https://travis-ci.org/IGNF/simplu3D.svg?branch=master)](https://travis-ci.org/SimPLU3D/simplu3D)
 
 A library to automatically general built configuration that respect urban regulations and optimize a utility function.
 
@@ -13,7 +13,7 @@ This research library is developed as part of [COGIT team](http://recherche.ign.
 
 It provides an implementation of multi-dimensionnal simulated annealing algorithm to produce built configuration from a set of boxes constrained by urban regulation that optimizes a utility function.
 
-The project is developed over 3D GIS Open-Source library [GeOxygene](https://github.com/IGNF/geoxygene) concerning geometric operators and 3D visualization, [librjmcmc4j](https://github.com/IGNF/librjmcmc4j) for simulated annealing implementation and [simplu3d-rules](https://github.com/IGNF/simplu3d-rules) for geographical model and regulation management.
+The project is developed over 3D GIS Open-Source library [GeOxygene](https://github.com/IGNF/geoxygene) concerning geometric operators and 3D visualization, [librjmcmc4j](https://github.com/IGNF/librjmcmc4j) for simulated annealing implementation and [simplu3d-rules](https://github.com/SimPLU3D/simplu3d-rules) for geographical model and regulation management.
 
 Conditions for use
 ---------------------
@@ -31,7 +31,7 @@ Vidéo and illustration
 
 [Generating n buildings with 1 box](https://www.youtube.com/watch?v=LwsPW0rcB44)
 
-![Different generations with various parcels](https://github.com/IGNF/simplu3D/blob/master/readme_images/simParc.png)
+![Different generations with various parcels](https://github.com/SimPLU3D/simplu3D/blob/master/readme_images/simParc.png)
 
 Test class
 ---------------------
