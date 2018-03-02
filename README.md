@@ -1,7 +1,7 @@
 Simplu3D
 ============
 
-[![Build Status](https://travis-ci.org/IGNF/simplu3D.svg?branch=master)](https://travis-ci.org/SimPLU3D/simplu3D)
+[![Build Status](https://travis-ci.org/SimPLU3D/simplu3D.svg?branch=master)](https://travis-ci.org/SimPLU3D/simplu3D)
 
 A library to automatically general built configuration that respect urban regulations and optimize a utility function.
 
