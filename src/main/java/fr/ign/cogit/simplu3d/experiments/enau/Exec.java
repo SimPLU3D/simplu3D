@@ -3,8 +3,8 @@ package fr.ign.cogit.simplu3d.experiments.enau;
 import java.io.File;
 
 import fr.ign.cogit.simplu3d.experiments.enau.optimizer.OBCFDRConstraintOptimisation;
-import fr.ign.cogit.simplu3d.io.SaveGeneratedObjects;
 import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
+import fr.ign.cogit.simplu3d.io.shapefile.SaveGeneratedObjects;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;

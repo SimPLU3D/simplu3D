@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.io;
+package fr.ign.cogit.simplu3d.io.shapefile;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
