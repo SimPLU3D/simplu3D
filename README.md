@@ -120,7 +120,7 @@ Contact for feedbacks
 Users and demo
 --------------------
 + [IAUIDF for land price assessment : Note de conjecture ORF](http://www.orf.asso.fr/uploads/attachements/orf_nc7_ok_lg.pdf)
-+ [OpenMole - SimPLU3D](https://simplu2.openmole.org/) a demonstrator designed to help for the determination of regulation parameters value.
++ [OpenMole - SimPLU3D](https://simplu.openmole.org/) a demonstrator designed to help for the determination of regulation parameters value.
 + [PLU++ : for the simplification of public participation during PLU elaboration](http://ignf.github.io/PLU2PLUS/)
 + [Building permit cheking](https://demo-simplu3d.ign.fr/#/) a demonstrator to help for building permit instructions by checking a set of rules on a projected construction.
 + [DECODURBA : a tool dedicated to assist citizens for the construction of personnal house](http://www.logement.gouv.fr/hackurba-premier-hackathon-dedie-a-l-urbanisme-durable-recompense-tetricite). SimPLU3D was integrated to the solution proposed during the [Hackurba hackhathon](http://hackurba.strikingly.com/) and was awarded the price of National Urban Planning Portal by the French Ministery of Environment.
