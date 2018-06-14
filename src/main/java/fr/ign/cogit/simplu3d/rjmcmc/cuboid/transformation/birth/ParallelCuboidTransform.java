@@ -10,6 +10,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
+import fr.ign.cogit.simplu3d.rjmcmc.generic.transform.SimplePolygonTransform;
 import fr.ign.geometry.transform.PolygonTransform;
 import fr.ign.rjmcmc.kernel.Transform;
 
@@ -71,6 +72,12 @@ public class ParallelCuboidTransform implements Transform {
         isValid = this.polygonTransform.isValid();
     }
     
+	if (!isValid) {
+		this.polygonTransform = new SimplePolygonTransform(pp);
+		this.isValid = polygonTransform.isValid();
+
+	}
+	
     if(isValid) {
         this.absJacobian = new double[2];
         this.absJacobian[0] = Math.abs(determinant) * this.polygonTransform.getAbsJacobian(true);
