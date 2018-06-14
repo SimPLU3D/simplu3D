@@ -1,5 +1,8 @@
 package fr.ign.cogit.simplu3d.rjmcmc.trapezoid.transform;
 
+import java.util.Arrays;
+import java.util.Iterator;
+
 import org.apache.log4j.Logger;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -32,6 +35,8 @@ public class ParallelTrapezoidTransform implements Transform {
   private PolygonTransform polygonTransform;
 //  private MultiLineString limits;
   private GeometryFactory factory = new GeometryFactory();
+  
+  private boolean isValid = false;
 
   private double deltaLength;
   private double deltaHeight;
@@ -62,9 +67,26 @@ public class ParallelTrapezoidTransform implements Transform {
 //    this.limits = factory.createMultiLineString(lineStrings);
     Geometry pp = AdapterFactory.toGeometry(factory, polygon);
     this.polygonTransform = new PolygonTransform(pp, 0.1);
-    this.absJacobian = new double[2];
-    this.absJacobian[0] = Math.abs(determinant) * this.polygonTransform.getAbsJacobian(true);
-    this.absJacobian[1] = Math.abs(1 / determinant) * this.polygonTransform.getAbsJacobian(false);
+    
+    Iterator<Double> testedSnapping = Arrays.asList(0.1,0.001,0.0).iterator();
+    
+    while(testedSnapping.hasNext() && ! isValid) {
+        this.polygonTransform = new PolygonTransform(pp, testedSnapping.next());
+        isValid = this.polygonTransform.isValid();
+    }
+    
+    if(isValid) {
+        this.absJacobian = new double[2];
+        this.absJacobian[0] = Math.abs(determinant) * this.polygonTransform.getAbsJacobian(true);
+        this.absJacobian[1] = Math.abs(1 / determinant) * this.polygonTransform.getAbsJacobian(false);
+    }  }
+  
+  /**
+   * Indicate if the transform is valid (i.e: that the triangulation in the PolygonTransform is ok)
+   * @return
+   */
+  public boolean isValid(){  
+	  return isValid;
   }
 
   @Override

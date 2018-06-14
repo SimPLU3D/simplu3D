@@ -1,5 +1,8 @@
 package fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth;
 
+import java.util.Arrays;
+import java.util.Iterator;
+
 import org.apache.log4j.Logger;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -38,7 +41,7 @@ public class ParallelPolygonTransform implements Transform {
   private double rangeLength;
   private double rangeHeight;
   
-  private boolean isValid = true;
+  private boolean isValid = false;
 
   public ParallelPolygonTransform(double[] d, double[] v, IGeometry polygon)
       throws Exception {
@@ -53,15 +56,20 @@ public class ParallelPolygonTransform implements Transform {
 //    }
 //    this.limits = factory.createMultiLineString(lineStrings);
     Geometry pp = AdapterFactory.toGeometry(factory, polygon);
-    this.polygonTransform = new PolygonTransform(pp, 0.1);
     
+    Iterator<Double> testedSnapping = Arrays.asList(0.1,0.001,0.0).iterator();
     
-    isValid = this.polygonTransform.isValid();
+    while(testedSnapping.hasNext() && ! isValid) {
+        this.polygonTransform = new PolygonTransform(pp, testedSnapping.next());
+        isValid = this.polygonTransform.isValid();
+    }
     
-    
-    this.absJacobian = new double[2];
-    this.absJacobian[0] = Math.abs(determinant) * this.polygonTransform.getAbsJacobian(true);
-    this.absJacobian[1] = Math.abs(1 / determinant) * this.polygonTransform.getAbsJacobian(false);
+    if(isValid) {
+        this.absJacobian = new double[2];
+        this.absJacobian[0] = Math.abs(determinant) * this.polygonTransform.getAbsJacobian(true);
+        this.absJacobian[1] = Math.abs(1 / determinant) * this.polygonTransform.getAbsJacobian(false);
+    }
+
   }
   
   /**
