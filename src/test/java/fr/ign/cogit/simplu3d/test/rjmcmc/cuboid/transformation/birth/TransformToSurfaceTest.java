@@ -32,6 +32,11 @@ import fr.ign.random.Random;
 public class TransformToSurfaceTest {
   TransformToSurface t;
 
+  public static void main(String[] args) throws Exception {
+	  TransformToSurfaceTest test = new TransformToSurfaceTest();
+	  test.setUp();
+	  test.testApply();
+  }
   @Before
   public void setUp() throws Exception {
     IPolygon polygon = (IPolygon) WktGeOxygene
