@@ -26,6 +26,7 @@ import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
+import fr.ign.cogit.simplu3d.experiments.iauidf.IAUIDFSimulationResults;
 import fr.ign.cogit.simplu3d.experiments.iauidf.predicate.PredicateIAUIDF;
 import fr.ign.cogit.simplu3d.experiments.iauidf.regulation.Regulation;
 import fr.ign.cogit.simplu3d.experiments.iauidf.tool.BandProduction;
@@ -108,21 +109,19 @@ public class EPFIFTask {
 			System.out.println("We're all good!");
 		}
 
-		int imu ;//= dirName; 
+		int imu;// = dirName;
 		try {
 			imu = Integer.parseInt(dirName);
-		}
-		catch(Exception e) {
+		} catch (Exception e) {
 			throw new Exception("imu dirname is not a number");
 		}
 		// Chargement de l'environnement
 		Environnement env = LoaderSHP.loadNoDTM(folder);
 		System.out.println(" env size " + env.getBpU().size());
 		// Identifiant de l'imu courant
-		
+
 		// Stocke les résultats en sorties
-		Map<String, List<Regulation>> regulation = loadRules(new File(folder + "/" + PARCEL_NAME),
-				imu);
+		Map<String, List<Regulation>> regulation = loadRules(new File(folder + "/" + PARCEL_NAME), imu);
 		IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
 		String result = "";
 		SDPCalc sdp = new SDPCalc();
@@ -156,16 +155,19 @@ public class EPFIFTask {
 				 * (CODE_MIN_PARCEL_TOO_BIG) + " ; " + (CODE_MIN_PARCEL_TOO_BIG) + "\n"; } }
 				 */
 				// On simule indépendemment chaque unité foncière
-				IFeatureCollection<IFeature> feats = simulationForEachBPU(env, bPU, lR, imu,
-						parameterFile);
+				IAUIDFSimulationResults bpuReslts = simulationForEachBPU(env, bPU, lR, imu, parameterFile);
+
+				IFeatureCollection<IFeature> feats = bpuReslts.getFeatResults();
+
 				if (!feats.isEmpty()) {
 					for (int i = 0; i < feats.size(); ++i) {
-						AttributeManager.addAttribute(feats.get(i), "imu_dir", imu, "String");
+						AttributeManager.addAttribute(feats.get(i), "idblock", imu, "String");
 						AttributeManager.addAttribute(feats.get(i), "idpar", id, "String");
 					}
 					featC.addAll(feats);
 					double sd = sdp.process(LoaderCuboid.loadFromCollection(feats));
-					result += imu + " ; " + id + " ; " + feats.size() + " ; " + sd + "\n";
+					result += imu + " ; " + id + " ; " + feats.size() + ";" + bpuReslts.getNbIteration() + " ; " + sd
+							+ "\n";
 				} else {
 					if (!idparWithNoRules.contains(bPU.getCadastralParcels().get(0).getCode())) {
 						if (!idsimulationNotRunnable.contains(bPU.getCadastralParcels().get(0).getCode())) {
@@ -359,7 +361,7 @@ public class EPFIFTask {
 		return map;
 	}
 
-	public static IFeatureCollection<IFeature> simulationForEachBPU(Environnement env, BasicPropertyUnit bPU,
+	public static IAUIDFSimulationResults simulationForEachBPU(Environnement env, BasicPropertyUnit bPU,
 			List<Regulation> lRegulation, int imu, File fParam) throws Exception {
 
 		// Stocke les résultats
@@ -369,7 +371,7 @@ public class EPFIFTask {
 		// erreurs dus à la carte topo
 		if (bPU.getCadastralParcels().get(0).getArea() < 5) {
 			System.out.println("Probablement une erreur de carte topologique.");
-			return featC;
+			return new IAUIDFSimulationResults(featC, 0, 0);
 		}
 
 		// Il y a 1 ou 2 réglementaiton par parcelle
@@ -388,6 +390,7 @@ public class EPFIFTask {
 
 		}
 
+		IAUIDFSimulationResults results;
 		// Somme nous dans le cas où les bâtiments doivent être accolé aux
 		// limites latérales ?
 		if (r1 != null && r1.getArt_71() == 2 || r2 != null && r2.getArt_71() == 2) {
@@ -400,23 +403,19 @@ public class EPFIFTask {
 
 			PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = ParcelBoundarySide.RIGHT;
 
-			IFeatureCollection<IFeature> featC1 = new FT_FeatureCollection<>();
-
-			featC1.addAll(simulRegulationByBasicPropertyUnit(env, bPU, imu, r1, r2, fParam));
+			IAUIDFSimulationResults results1 = simulRegulationByBasicPropertyUnit(env, bPU, imu, r1, r2, fParam);
 
 			PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = ParcelBoundarySide.LEFT;
 
-			IFeatureCollection<IFeature> featC2 = new FT_FeatureCollection<>();
+			IAUIDFSimulationResults results2 = simulRegulationByBasicPropertyUnit(env, bPU, imu, r1, r2, fParam);
 
-			featC2.addAll(simulRegulationByBasicPropertyUnit(env, bPU, imu, r1, r2, fParam));
-
-			featC.addAll(fusionne(featC1, featC2));
+			results = fusionne(results1, results2);
 
 		} else {
-			featC.addAll(simulRegulationByBasicPropertyUnit(env, bPU, imu, r1, r2, fParam));
+			results = simulRegulationByBasicPropertyUnit(env, bPU, imu, r1, r2, fParam);
 
 		}
-		return featC;
+		return results;
 	}
 
 	/**
@@ -427,8 +426,8 @@ public class EPFIFTask {
 	 * @return
 	 * @throws Exception
 	 */
-	public static IFeatureCollection<IFeature> simulRegulationByBasicPropertyUnit(Environnement env,
-			BasicPropertyUnit bPU, int imu, Regulation r1, Regulation r2, File fParam) throws Exception {
+	public static IAUIDFSimulationResults simulRegulationByBasicPropertyUnit(Environnement env, BasicPropertyUnit bPU,
+			int imu, Regulation r1, Regulation r2, File fParam) throws Exception {
 		// Stocke les résultats en sorties
 		IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
 		// //////On découpe la parcelle en bande en fonction des règlements
@@ -467,104 +466,108 @@ public class EPFIFTask {
 		Parameters p = initiateSimulationParamters(r1, r2, fParam);
 		// initialisation des paramètres de simulation
 		if (p == null) {
-			return featC;
+			return new IAUIDFSimulationResults(featC, 0, 0);
 		}
+
+		IAUIDFSimulationResults results;
 
 		if (USE_DEMO_SAMPLER) {
 
-			featC.addAll(simulRegulationByBasicPropertyUnitFinalTrapezoid(env, bPU, imu, r1, r2, p, bP));
+			results = simulRegulationByBasicPropertyUnitFinalTrapezoid(env, bPU, imu, r1, r2, p, bP);
 
 		} else {
 
-			featC.addAll(simulRegulationByBasicPropertyUnitFinal(env, bPU, imu, r1, r2, p, bP));
+			results = simulRegulationByBasicPropertyUnitFinal(env, bPU, imu, r1, r2, p, bP);
 		}
 
-		return featC;
+		return results;
 	}
 
-	private static IFeatureCollection<IFeature> fusionne(IFeatureCollection<IFeature> featC1,
-			IFeatureCollection<IFeature> featC2) {
+	private static IAUIDFSimulationResults fusionne(IAUIDFSimulationResults results1,
+			IAUIDFSimulationResults results2) {
 
-		IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
-
-		while (!(featC1.isEmpty()) && !featC2.isEmpty()) {
-
-			IFeature featTemp = featC1.get(0);
-			featC1.remove(0);
-
-			int currentID = Integer.parseInt(featTemp.getAttribute("ID_PARC").toString());
-
-			List<IFeature> lF1 = new ArrayList<>();
-			lF1.add(featTemp);
-
-			int nbElem = featC1.size();
-
-			for (int i = 0; i < nbElem; i++) {
-
-				featTemp = featC1.get(i);
-
-				if (Integer.parseInt(featTemp.getAttribute("ID_PARC").toString()) == currentID) {
-
-					lF1.add(featTemp);
-					featC1.remove(i);
-					i--;
-					nbElem--;
-				}
-
-			}
-
-			List<IFeature> lF2 = new ArrayList<>();
-			int nbElem2 = featC2.size();
-
-			for (int i = 0; i < nbElem2; i++) {
-
-				featTemp = featC2.get(i);
-
-				if (Integer.parseInt(featTemp.getAttribute("ID_PARC").toString()) == currentID) {
-
-					lF2.add(featTemp);
-					featC2.remove(i);
-					i--;
-					nbElem2--;
-				}
-
-			}
-
-			double contrib1 = 0;
-			for (IFeature feat : lF1) {
-				contrib1 = contrib1
-						+ feat.getGeom().area() * Double.parseDouble(feat.getAttribute("Hauteur").toString());
-			}
-
-			double contrib2 = 0;
-			for (IFeature feat : lF2) {
-				contrib2 = contrib2
-						+ feat.getGeom().area() * Double.parseDouble(feat.getAttribute("Hauteur").toString());
-			}
-
-			if (contrib1 > contrib2) {
-
-				featC.addAll(lF1);
-
-			} else {
-
-				featC.addAll(lF2);
-
-			}
-
-			if (featC1.isEmpty()) {
-
-				featC.addAll(featC2);
-				featC2.clear();
-
-			}
-
+		if (results1.getEnergy() > results2.getEnergy()) {
+			return results1;
 		}
+		return results2;
 
-		return featC;
 	}
 
-	private static IFeatureCollection<IFeature> simulRegulationByBasicPropertyUnitFinal(Environnement env,
+	/*
+	 * 
+	 * private static IFeatureCollection<IFeature> fusionne(IAUIDFSimulationResults
+	 * results1, IAUIDFSimulationResults results2) {
+	 * 
+	 * IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
+	 * 
+	 * IFeatureCollection<IFeature> featC1 = results1.getFeatResults();
+	 * IFeatureCollection<IFeature> featC2 = results2.getFeatResults();
+	 * 
+	 * while (!(featC1.isEmpty()) && !featC2.isEmpty()) {
+	 * 
+	 * IFeature featTemp = featC1.get(0); featC1.remove(0);
+	 * 
+	 * int currentID =
+	 * Integer.parseInt(featTemp.getAttribute("ID_PARC").toString());
+	 * 
+	 * List<IFeature> lF1 = new ArrayList<>(); lF1.add(featTemp);
+	 * 
+	 * int nbElem = featC1.size();
+	 * 
+	 * for (int i = 0; i < nbElem; i++) {
+	 * 
+	 * featTemp = featC1.get(i);
+	 * 
+	 * if (Integer.parseInt(featTemp.getAttribute("ID_PARC").toString()) ==
+	 * currentID) {
+	 * 
+	 * lF1.add(featTemp); featC1.remove(i); i--; nbElem--; }
+	 * 
+	 * }
+	 * 
+	 * List<IFeature> lF2 = new ArrayList<>(); int nbElem2 = featC2.size();
+	 * 
+	 * for (int i = 0; i < nbElem2; i++) {
+	 * 
+	 * featTemp = featC2.get(i);
+	 * 
+	 * if (Integer.parseInt(featTemp.getAttribute("ID_PARC").toString()) ==
+	 * currentID) {
+	 * 
+	 * lF2.add(featTemp); featC2.remove(i); i--; nbElem2--; }
+	 * 
+	 * }
+	 * 
+	 * double contrib1 = 0; for (IFeature feat : lF1) { contrib1 = contrib1 +
+	 * feat.getGeom().area() *
+	 * Double.parseDouble(feat.getAttribute("Hauteur").toString()); }
+	 * 
+	 * double contrib2 = 0; for (IFeature feat : lF2) { contrib2 = contrib2 +
+	 * feat.getGeom().area() *
+	 * Double.parseDouble(feat.getAttribute("Hauteur").toString()); }
+	 * 
+	 * if (contrib1 > contrib2) {
+	 * 
+	 * featC.addAll(lF1);
+	 * 
+	 * } else {
+	 * 
+	 * featC.addAll(lF2);
+	 * 
+	 * }
+	 * 
+	 * if (featC1.isEmpty()) {
+	 * 
+	 * featC.addAll(featC2); featC2.clear();
+	 * 
+	 * }
+	 * 
+	 * }
+	 * 
+	 * return featC; }
+	 */
+
+	private static IAUIDFSimulationResults simulRegulationByBasicPropertyUnitFinal(Environnement env,
 			BasicPropertyUnit bPU, int imu, Regulation r1, Regulation r2, Parameters p, BandProduction bP)
 			throws Exception {
 
@@ -582,6 +585,9 @@ public class EPFIFTask {
 		// environnement, id et prédicat
 
 		GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, pred, r1, r2, bP);
+
+		int nbIteration = oCB.getCount();
+
 		if (cc == null) {
 
 			if (!oCB.isValid()) {
@@ -591,8 +597,10 @@ public class EPFIFTask {
 				}
 
 			}
-			return featC;
+			return new IAUIDFSimulationResults(featC, nbIteration, 0);
 		}
+
+		double energy = Math.abs(cc.getEnergy());
 
 		// On liste les boîtes simulées et on ajoute les attributs nécessaires
 		for (GraphVertex<Cuboid> v : cc.getGraph().vertexSet()) {
@@ -615,11 +623,12 @@ public class EPFIFTask {
 			AttributeManager.addAttribute(feat, "Volume", volume, "Double");
 			featC.add(feat);
 		}
-		return featC;
+
+		return new IAUIDFSimulationResults(featC, nbIteration, energy);
 
 	}
 
-	private static IFeatureCollection<IFeature> simulRegulationByBasicPropertyUnitFinalTrapezoid(Environnement env,
+	private static IAUIDFSimulationResults simulRegulationByBasicPropertyUnitFinalTrapezoid(Environnement env,
 			BasicPropertyUnit bPU, int imu, Regulation r1, Regulation r2, Parameters p, BandProduction bP)
 			throws Exception {
 
@@ -637,10 +646,14 @@ public class EPFIFTask {
 		// environnement, id et prédicat
 
 		GraphConfiguration<AbstractSimpleBuilding> cc = oCB.process(bPU, p, env, pred, r1, r2, bP);
+		int nbIteration = oCB.getCount();
+
 		if (cc == null) {
 			idsimulationNotRunnable.add(bPU.getCadastralParcels().get(0).getCode());
-			return featC;
+			return new IAUIDFSimulationResults(featC, nbIteration, 0);
 		}
+
+		double energy = Math.abs(cc.getEnergy());
 
 		// On liste les boîtes simulées et on ajoute les attributs nécessaires
 		for (GraphVertex<AbstractSimpleBuilding> v : cc.getGraph().vertexSet()) {
@@ -667,7 +680,7 @@ public class EPFIFTask {
 
 			featC.add(feat);
 		}
-		return featC;
+		return new IAUIDFSimulationResults(featC, nbIteration, energy);
 
 	}
 

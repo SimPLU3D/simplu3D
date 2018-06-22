@@ -135,10 +135,18 @@ public class BandProduction {
     }
 
     // Idem s'il y a un règlement de deuxième bande
-    if (r2 != null && !iMSRoad.isEmpty()) {
-      IGeometry g = simplifiyGeom(iMSRoad, DOUGLAS_PEUCKER_PRECISION);
-      // iMSBande2 = FromGeomToSurface.convertMSGeom(pol_BPU.difference(iMSRoad.buffer(profBande)));
-      iMSBande2 = FromGeomToSurface.convertMSGeom(pol_BPU.difference(g.buffer(profBande)));
+    if (r2 != null && profBande !=0  ) {
+       
+    	
+    	if( !iMSRoad.isEmpty()) {
+    	      IGeometry g = simplifiyGeom(iMSRoad, DOUGLAS_PEUCKER_PRECISION);
+    	      // iMSBande2 = FromGeomToSurface.convertMSGeom(pol_BPU.difference(iMSRoad.buffer(profBande)));
+    	      iMSBande2 = FromGeomToSurface.convertMSGeom(pol_BPU.difference(g.buffer(profBande)));
+    		
+    	}else {
+    		 iMSBande2 = FromGeomToSurface.convertMSGeom(pol_BPU);
+    	}
+
       // idem pour r2
       double r2_art6 = r2.getArt_6();
       if (r2_art6 != 88.0 && r2_art6 != 99.0 && r2_art6 != 0.0 && iMSBande2 != null && !iMSBande2.isEmpty()) {
