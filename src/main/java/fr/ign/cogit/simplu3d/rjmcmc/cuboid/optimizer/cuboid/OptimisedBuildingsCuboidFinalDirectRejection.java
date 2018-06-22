@@ -11,6 +11,7 @@ import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid;
+import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.CountVisitor;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.PrepareVisitors;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
@@ -106,7 +107,7 @@ public class OptimisedBuildingsCuboidFinalDirectRejection extends BasicCuboidOpt
 
 		PrepareVisitors<Cuboid> pv = new PrepareVisitors<>(env,lSupplementaryVisitors);
 		CompositeVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> mVisitor = pv.prepare(p, id);
-
+		countV = pv.getCountV();
 		/*
 		 * < This is the way to launch the optimization process. Here, the magic
 		 * happen... >
@@ -121,5 +122,10 @@ public class OptimisedBuildingsCuboidFinalDirectRejection extends BasicCuboidOpt
 	  return end;
 	}
 	
+	public int getCount() {
+		return countV.getCount();
+	}
+
+	protected CountVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> countV = null;
 
 }

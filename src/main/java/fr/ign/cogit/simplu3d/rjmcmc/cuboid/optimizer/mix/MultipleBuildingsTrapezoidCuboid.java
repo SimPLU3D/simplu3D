@@ -42,6 +42,7 @@ import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.IntersectionVolumeBinaryEnerg
 import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.VolumeUnaryEnergy;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.optimizer.DefaultSimPLU3DOptimizer;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.sampler.GreenSamplerBlockTemperature;
+import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.CountVisitor;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.PrepareVisitors;
 import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.geometry.ParallelTrapezoid2;
 import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.transform.ParallelTrapezoidTransform;
@@ -96,6 +97,12 @@ public class MultipleBuildingsTrapezoidCuboid extends DefaultSimPLU3DOptimizer<A
 
 	public static boolean ALLOW_INTERSECTING_AbstractSimpleBuilding = false;
 
+	public int getCount() {
+		return this.countV.getCount();
+	}
+
+	protected CountVisitor<GraphConfiguration<AbstractSimpleBuilding>, BirthDeathModification<AbstractSimpleBuilding>> countV = null;
+
 	public GraphConfiguration<AbstractSimpleBuilding> process(BasicPropertyUnit bpu, Parameters p, Environnement env,
 			PredicateIAUIDF<AbstractSimpleBuilding, GraphConfiguration<AbstractSimpleBuilding>, BirthDeathModification<AbstractSimpleBuilding>> pred,
 			Regulation r1, Regulation r2, BandProduction bP) throws Exception {
@@ -132,6 +139,7 @@ public class MultipleBuildingsTrapezoidCuboid extends DefaultSimPLU3DOptimizer<A
 		PrepareVisitors<AbstractSimpleBuilding> pv = new PrepareVisitors<>(env);
 		CompositeVisitor<GraphConfiguration<AbstractSimpleBuilding>, BirthDeathModification<AbstractSimpleBuilding>> mVisitor = pv
 				.prepare(p, bpu.getId());
+		countV = pv.getCountV();
 		/*
 		 * < This is the way to launch the optimization process. Here, the magic
 		 * happen... >
@@ -260,7 +268,7 @@ public class MultipleBuildingsTrapezoidCuboid extends DefaultSimPLU3DOptimizer<A
 		// boîtes dans la première bande
 		double[] v = new double[] { env.minX(), env.minY(), minlen, minwid, minheight, 0. };
 		double[] v2 = new double[] { env.minX(), env.minY(), minlen, minwid, minheight, 0. };
-		
+
 		// On regarde si la contrainte de hauteur ne permet pas de réduire
 		// l'intervallle des hauteurs
 		if (r1 != null && r1.getArt_10_m() != 99) {
@@ -319,8 +327,8 @@ public class MultipleBuildingsTrapezoidCuboid extends DefaultSimPLU3DOptimizer<A
 					}
 
 				}
-				v2[2] = v2[2]/2;
-				d2[2] = d2[2]/2 + v2[2];
+				v2[2] = v2[2] / 2;
+				d2[2] = d2[2] / 2 + v2[2];
 				d2[5] = 1;
 				// The center is included in a band equals to half of max
 				// allowed width according to alignment line
@@ -448,7 +456,6 @@ public class MultipleBuildingsTrapezoidCuboid extends DefaultSimPLU3DOptimizer<A
 			p_simple = 0; // pas de transform on ne sera jamais dans la bande 2
 		}
 
-
 		// Si on ne peut pas construire dans la deuxième bande ni dans la
 		// première ça sert à rien de continue
 		if (kernels.isEmpty()) {
@@ -495,8 +502,8 @@ public class MultipleBuildingsTrapezoidCuboid extends DefaultSimPLU3DOptimizer<A
 			double amplitudeMove = p.getDouble("amplitudeMove");
 
 			Kernel<GraphConfiguration<AbstractSimpleBuilding>, BirthDeathModification<AbstractSimpleBuilding>> simpleMovekernel = new Kernel<>(
-					pView, pView, variate, variate, new MoveParallelRightTrapezoid(amplitudeMove), 0.2,
-					1.0, "SimpleMove");
+					pView, pView, variate, variate, new MoveParallelRightTrapezoid(amplitudeMove), 0.2, 1.0,
+					"SimpleMove");
 			kernels.add(simpleMovekernel);
 
 			double amplitudeMaxDim = p.getDouble("amplitudeMaxDim");
