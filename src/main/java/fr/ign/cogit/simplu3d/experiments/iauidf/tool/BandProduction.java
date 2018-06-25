@@ -62,6 +62,9 @@ public class BandProduction {
     }
     return geom;
   }
+  
+  
+  public static double SHIFT_BAND = 0.0;
 
   @SuppressWarnings("unchecked")
   public BandProduction(BasicPropertyUnit bPU, Regulation r1, Regulation r2) {
@@ -87,7 +90,7 @@ public class BandProduction {
     } else {
       // iMSBande1 = FromGeomToSurface.convertMSGeom(pol_BPU.intersection(iMSRoad.buffer(profBande)));
       IGeometry g = simplifiyGeom(iMSRoad, DOUGLAS_PEUCKER_PRECISION);
-      iMSBande1 = FromGeomToSurface.convertMSGeom(pol_BPU.intersection(g.buffer(profBande)));
+      iMSBande1 = FromGeomToSurface.convertMSGeom(pol_BPU.intersection(g.buffer(profBande + SHIFT_BAND)));
     }
 
     IMultiSurface<IOrientableSurface> iMSBande2 = null;
@@ -141,7 +144,7 @@ public class BandProduction {
     	if( !iMSRoad.isEmpty()) {
     	      IGeometry g = simplifiyGeom(iMSRoad, DOUGLAS_PEUCKER_PRECISION);
     	      // iMSBande2 = FromGeomToSurface.convertMSGeom(pol_BPU.difference(iMSRoad.buffer(profBande)));
-    	      iMSBande2 = FromGeomToSurface.convertMSGeom(pol_BPU.difference(g.buffer(profBande)));
+    	      iMSBande2 = FromGeomToSurface.convertMSGeom(pol_BPU.difference(g.buffer(profBande-SHIFT_BAND)));
     		
     	}else {
     		 iMSBande2 = FromGeomToSurface.convertMSGeom(pol_BPU);

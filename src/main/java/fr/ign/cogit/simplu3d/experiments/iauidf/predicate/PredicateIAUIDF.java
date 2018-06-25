@@ -189,7 +189,7 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
 	  
     double distanceInterBati = r1.getArt_8();
     
-    if(distanceInterBati == 88.0|distanceInterBati == 99.0) {
+    if(distanceInterBati == 88.0||distanceInterBati == 99.0) {
     	distanceInterBati = DEFAULT_DIST_BUILDING;
     }
     
@@ -348,7 +348,7 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
     double reg9 = r.getArt_9();
     if (reg9 != 99 & reg9 != 88) {
       if ((areaBuilt / areaBPU) > reg9) {
-        return false;
+    	return false;
       }
     }
 
@@ -740,7 +740,7 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
     return union;
   }
 
-  private GeometryFactory gf = new GeometryFactory();
+
   private long c = 0;
 
   // check width of group of cuboids
