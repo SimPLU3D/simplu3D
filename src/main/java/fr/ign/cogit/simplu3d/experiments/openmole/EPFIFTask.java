@@ -586,7 +586,7 @@ public class EPFIFTask {
 
 		GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, pred, r1, r2, bP);
 
-		int nbIteration = oCB.getCount();
+
 
 		if (cc == null) {
 
@@ -597,8 +597,11 @@ public class EPFIFTask {
 				}
 
 			}
-			return new IAUIDFSimulationResults(featC, nbIteration, 0);
+			return new IAUIDFSimulationResults(featC, 0, 0);
 		}
+		
+		
+		int nbIteration = oCB.getCount();
 
 		double energy = Math.abs(cc.getEnergy());
 
@@ -646,12 +649,14 @@ public class EPFIFTask {
 		// environnement, id et prédicat
 
 		GraphConfiguration<AbstractSimpleBuilding> cc = oCB.process(bPU, p, env, pred, r1, r2, bP);
-		int nbIteration = oCB.getCount();
+	
 
 		if (cc == null) {
 			idsimulationNotRunnable.add(bPU.getCadastralParcels().get(0).getCode());
-			return new IAUIDFSimulationResults(featC, nbIteration, 0);
+			return new IAUIDFSimulationResults(featC, 0, 0);
 		}
+		
+		int nbIteration = oCB.getCount();
 
 		double energy = Math.abs(cc.getEnergy());
 
