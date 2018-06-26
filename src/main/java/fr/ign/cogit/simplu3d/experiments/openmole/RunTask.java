@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
+import fr.ign.cogit.simplu3d.util.SimpluParametersJSON;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.geotools.factory.GeoTools;
@@ -120,7 +122,7 @@ public class RunTask {
     // On charge l'environnement
     Environnement env = LoaderSHP.loadNoDTM(folder);
     // On charge le fichier de parametre
-    Parameters p = Parameters.unmarshall(parameterFile);
+    SimpluParameters p = new SimpluParametersJSON(parameterFile);
     // On récupère la parcelle sur laquelle on effectue la simulation
     BasicPropertyUnit bPU = null;
     for (BasicPropertyUnit bPUTemp : env.getBpU()) {
@@ -193,9 +195,7 @@ public class RunTask {
     // On charge l'environnement
     Environnement env = LoaderSHP.loadNoDTM(folder);
     // On charge le fichier de parametre
-    Parameters p = Parameters.unmarshall(parameterFile);
-
-
+    SimpluParameters p = new SimpluParametersJSON(parameterFile);
 
     ArrayList<Double> energy_parcels = new ArrayList<Double>(env.getBpU().size()); 
 

@@ -3,6 +3,7 @@ package fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.mix;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 
@@ -52,7 +53,6 @@ import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.mpp.kernel.ObjectBuilder;
 import fr.ign.mpp.kernel.UniformTypeView;
-import fr.ign.parameters.Parameters;
 import fr.ign.random.Random;
 import fr.ign.rjmcmc.acceptance.Acceptance;
 import fr.ign.rjmcmc.acceptance.MetropolisAcceptance;
@@ -96,7 +96,8 @@ public class MultipleBuildingsTrapezoidCuboid extends DefaultSimPLU3DOptimizer<A
 
 	public static boolean ALLOW_INTERSECTING_AbstractSimpleBuilding = false;
 
-	public GraphConfiguration<AbstractSimpleBuilding> process(BasicPropertyUnit bpu, Parameters p, Environnement env,
+	public GraphConfiguration<AbstractSimpleBuilding> process(
+			BasicPropertyUnit bpu, SimpluParameters p, Environnement env,
 			PredicateIAUIDF<AbstractSimpleBuilding, GraphConfiguration<AbstractSimpleBuilding>, BirthDeathModification<AbstractSimpleBuilding>> pred,
 			Regulation r1, Regulation r2, BandProduction bP) throws Exception {
 
@@ -140,7 +141,7 @@ public class MultipleBuildingsTrapezoidCuboid extends DefaultSimPLU3DOptimizer<A
 		return conf;
 	}
 
-	public GraphConfiguration<AbstractSimpleBuilding> create_configuration(Parameters p, IGeometry geom,
+	public GraphConfiguration<AbstractSimpleBuilding> create_configuration(SimpluParameters p, IGeometry geom,
 			BasicPropertyUnit bpu) throws Exception {
 		return this.create_configuration(p, AdapterFactory.toGeometry(new GeometryFactory(), geom), bpu);
 	}
@@ -154,7 +155,7 @@ public class MultipleBuildingsTrapezoidCuboid extends DefaultSimPLU3DOptimizer<A
 	 * @return la configuration chargée, c'est à dire la formulation énergétique
 	 *         prise en compte
 	 */
-	public GraphConfiguration<AbstractSimpleBuilding> create_configuration(Parameters p, Geometry geom,
+	public GraphConfiguration<AbstractSimpleBuilding> create_configuration(SimpluParameters p, Geometry geom,
 			BasicPropertyUnit bpu) {
 
 		if (ALLOW_INTERSECTING_AbstractSimpleBuilding) {
@@ -165,7 +166,7 @@ public class MultipleBuildingsTrapezoidCuboid extends DefaultSimPLU3DOptimizer<A
 
 	}
 
-	private GraphConfiguration<AbstractSimpleBuilding> create_configuration_intersection(Parameters p, Geometry geom,
+	private GraphConfiguration<AbstractSimpleBuilding> create_configuration_intersection(SimpluParameters p, Geometry geom,
 			BasicPropertyUnit bpu) {
 		// Énergie constante : à la création d'un nouvel objet
 		ConstantEnergy<AbstractSimpleBuilding, AbstractSimpleBuilding> energyCreation = new ConstantEnergy<AbstractSimpleBuilding, AbstractSimpleBuilding>(
@@ -194,7 +195,7 @@ public class MultipleBuildingsTrapezoidCuboid extends DefaultSimPLU3DOptimizer<A
 		return conf;
 	}
 
-	private GraphConfiguration<AbstractSimpleBuilding> create_configuration_no_inter(Parameters p, Geometry geom,
+	private GraphConfiguration<AbstractSimpleBuilding> create_configuration_no_inter(SimpluParameters p, Geometry geom,
 			BasicPropertyUnit bpu) {
 		// Énergie constante : à la création d'un nouvel objet
 		double energyCrea = p.getDouble("energy");
@@ -222,13 +223,12 @@ public class MultipleBuildingsTrapezoidCuboid extends DefaultSimPLU3DOptimizer<A
 	 * 
 	 * @param p
 	 *            les paramètres chargés depuis le fichier xml
-	 * @param r
 	 *            l'enveloppe dans laquelle on génère les positions
 	 * @return
 	 * @throws Exception
 	 */
 	public static Sampler<GraphConfiguration<AbstractSimpleBuilding>, BirthDeathModification<AbstractSimpleBuilding>> create_sampler(
-			RandomGenerator rng, Parameters p, BasicPropertyUnit bpU,
+			RandomGenerator rng, SimpluParameters p, BasicPropertyUnit bpU,
 			ConfigurationModificationPredicate<GraphConfiguration<AbstractSimpleBuilding>, BirthDeathModification<AbstractSimpleBuilding>> pred,
 			Regulation r1, Regulation r2, BandProduction bP) throws Exception {
 		////////////////////////
@@ -478,7 +478,7 @@ public class MultipleBuildingsTrapezoidCuboid extends DefaultSimPLU3DOptimizer<A
 	private static List<Kernel<GraphConfiguration<AbstractSimpleBuilding>, BirthDeathModification<AbstractSimpleBuilding>>> getBande1Kernels(
 			Variate variate,
 			NullView<GraphConfiguration<AbstractSimpleBuilding>, BirthDeathModification<AbstractSimpleBuilding>> nullView,
-			Parameters p, Transform transform, ObjectBuilder<AbstractSimpleBuilding> pbuilder, boolean parallel) {
+			SimpluParameters p, Transform transform, ObjectBuilder<AbstractSimpleBuilding> pbuilder, boolean parallel) {
 		List<Kernel<GraphConfiguration<AbstractSimpleBuilding>, BirthDeathModification<AbstractSimpleBuilding>>> kernels = new ArrayList<>();
 		// Kernel de naissance
 		// TODO Use a KernelProposalRatio to propose only birth when size is 0
@@ -566,7 +566,7 @@ public class MultipleBuildingsTrapezoidCuboid extends DefaultSimPLU3DOptimizer<A
 	private static List<Kernel<GraphConfiguration<AbstractSimpleBuilding>, BirthDeathModification<AbstractSimpleBuilding>>> getBande2Kernels(
 			Variate variate,
 			NullView<GraphConfiguration<AbstractSimpleBuilding>, BirthDeathModification<AbstractSimpleBuilding>> nullView,
-			Parameters p, Transform transformSimple, ObjectBuilder<AbstractSimpleBuilding> sbuilder, boolean parallel) {
+			SimpluParameters p, Transform transformSimple, ObjectBuilder<AbstractSimpleBuilding> sbuilder, boolean parallel) {
 
 		List<Kernel<GraphConfiguration<AbstractSimpleBuilding>, BirthDeathModification<AbstractSimpleBuilding>>> kernels = new ArrayList<>();
 

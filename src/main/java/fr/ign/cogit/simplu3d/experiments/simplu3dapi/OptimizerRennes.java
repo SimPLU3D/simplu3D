@@ -31,10 +31,10 @@ import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.model.ZoneRegulation;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid.OptimisedBuildingsCuboidFinalDirectRejection;
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.mpp.configuration.GraphVertex;
-import fr.ign.parameters.Parameters;
 
 /**
  * 
@@ -45,7 +45,7 @@ import fr.ign.parameters.Parameters;
  */
 public class OptimizerRennes {
 
-	public static List<ParametricCuboid> simulate(Environnement env, BasicPropertyUnit bpToSimulate , ZoneRegulation rules, Parameters p) throws Exception {
+	public static List<ParametricCuboid> simulate(Environnement env, BasicPropertyUnit bpToSimulate , ZoneRegulation rules, SimpluParameters p) throws Exception {
 
 		if (bpToSimulate == null) {
 			return null;

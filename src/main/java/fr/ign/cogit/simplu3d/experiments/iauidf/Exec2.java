@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
+import fr.ign.cogit.simplu3d.util.SimpluParametersJSON;
 import org.apache.log4j.Logger;
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
@@ -44,7 +46,7 @@ public class Exec2 {
 
 	public static boolean DEBUG_MODE = true;
 	private static Logger log = Logger.getLogger(Exec2.class);
-	public static Parameters p;
+	public static SimpluParameters p;
 	public static List<IMultiSurface<IOrientableSurface>> lMS = new ArrayList<>();
 	public static List<IMultiSurface<IOrientableSurface>> debugSurface = new ArrayList<>();
 	public static List<IMultiCurve<IOrientableCurve>> debugLine = new ArrayList<>();
@@ -99,7 +101,7 @@ public class Exec2 {
 	 * Simulations portant sur chaque zone IMU
 	 * 
 	 * @param imu
-	 * @param lReg
+	 * @param folderImu
 	 * @return
 	 * @throws Exception
 	 */
@@ -300,7 +302,7 @@ public class Exec2 {
 		// Chargement du fichier de configuration
 		String folderName = BasicSimulator.class.getClassLoader().getResource("scenario/").getPath();
 		String fileName = "parameters_iauidf.xml";
-		p = Parameters.unmarshall(new File(folderName + fileName));
+		p = new SimpluParametersJSON(new File(folderName + fileName));
 
 		if (r2 != null) {
 
@@ -375,7 +377,6 @@ public class Exec2 {
 	 * 
 	 * @param bPU
 	 * @param imu
-	 * @param lReg
 	 * @return
 	 * @throws Exception
 	 */

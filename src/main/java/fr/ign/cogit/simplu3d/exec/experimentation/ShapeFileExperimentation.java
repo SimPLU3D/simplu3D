@@ -2,6 +2,8 @@ package fr.ign.cogit.simplu3d.exec.experimentation;
 
 import java.io.File;
 
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
+import fr.ign.cogit.simplu3d.util.SimpluParametersJSON;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 
@@ -51,7 +53,7 @@ public class ShapeFileExperimentation {
         .getResource("scenario/").getPath();
     String fileName = "building_parameters_project_expthese_3.xml";
 
-    Parameters p = Parameters.unmarshall(new File(folderName + fileName));
+    SimpluParameters p = new SimpluParametersJSON(new File(folderName + fileName));
     String folderSave = p.getString("result");
 
     int nbRun = 1;
@@ -130,7 +132,7 @@ public class ShapeFileExperimentation {
 
   }
 
-  public static void run(Parameters p, String folderSave,
+  public static void run(SimpluParameters p, String folderSave,
       BasicPropertyUnit bPU, Environnement env, double distReculVoirie,
       double distReculFond, double distReculLat, double maximalCES,
       double hIniRoad, double slopeRoad, double hauteurMax, long seed) {

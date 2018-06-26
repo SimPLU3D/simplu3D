@@ -9,9 +9,9 @@ import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
-import fr.ign.parameters.Parameters;
 import fr.ign.simulatedannealing.visitor.CompositeVisitor;
 import fr.ign.simulatedannealing.visitor.OutputStreamVisitor;
 import fr.ign.simulatedannealing.visitor.Visitor;
@@ -31,7 +31,7 @@ public class PrepareVisitors<C extends ISimPLU3DPrimitive> {
 		this.lSupplementaryVisitors = lSupplementaryVisitors;
 	}
 
-	public CompositeVisitor<GraphConfiguration<C>, BirthDeathModification<C>> prepare(Parameters p, int id) {
+	public CompositeVisitor<GraphConfiguration<C>, BirthDeathModification<C>> prepare(SimpluParameters p, int id) {
 		List<Visitor<GraphConfiguration<C>, BirthDeathModification<C>>> list = new ArrayList<>();
 		
 			list.addAll(lSupplementaryVisitors);
@@ -99,7 +99,7 @@ public class PrepareVisitors<C extends ISimPLU3DPrimitive> {
 	// Initialisation des visiteurs
 	// nbdump => affichage dans la console
 	// nbsave => sauvegarde en shapefile
-	void init_visitor(Parameters p, Visitor<GraphConfiguration<C>, BirthDeathModification<C>> v) {
+	void init_visitor(SimpluParameters p, Visitor<GraphConfiguration<C>, BirthDeathModification<C>> v) {
 		v.init(p.getInteger("nbdump"), p.getInteger("nbsave"));
 	}
 }

@@ -18,6 +18,8 @@ import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid.OptimisedBuildingsCuboidFinalDirectRejection;
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
+import fr.ign.cogit.simplu3d.util.SimpluParametersJSON;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.mpp.configuration.GraphVertex;
@@ -33,7 +35,7 @@ public class Simulation {
 
 		IFeature featForbiddenZone = ShapefileReader.read(pathEmprise).get(0);
 
-		Parameters p = Parameters.unmarshall(new File(paramFile));
+		SimpluParameters p = new SimpluParametersJSON(new File(paramFile));
 
 		Environnement env = LoaderSHP.loadNoDTM(new File(folderName));
 
@@ -54,7 +56,7 @@ public class Simulation {
 
 	}
 
-	public static IFeatureCollection<IFeature> simulateBPU(Environnement env, Parameters p, BasicPropertyUnit bPU) {
+	public static IFeatureCollection<IFeature> simulateBPU(Environnement env, SimpluParameters p, BasicPropertyUnit bPU) {
 
 		// Instantiation of the sampler
 		OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();

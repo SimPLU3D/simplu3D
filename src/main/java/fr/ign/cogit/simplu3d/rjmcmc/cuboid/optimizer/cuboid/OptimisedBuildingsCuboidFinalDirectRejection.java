@@ -12,6 +12,7 @@ import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.PrepareVisitors;
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
@@ -45,19 +46,19 @@ public class OptimisedBuildingsCuboidFinalDirectRejection extends BasicCuboidOpt
 	
 	
 
-	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, Parameters p, Environnement env, int id,
-			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred) {
+	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, SimpluParameters p, Environnement env, int id,
+											  ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred) {
 	return this.process(bpu, p, env, id, pred, new ArrayList<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>>());
 }
 	
 	
-	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, IGeometry geom, Parameters p, Environnement env, int id,
+	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, IGeometry geom, SimpluParameters p, Environnement env, int id,
 			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred) {
 	return this.process(bpu, geom, p, env, id, pred, new ArrayList<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>>());
 }
 	
 
-	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, Parameters p, Environnement env, int id,
+	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, SimpluParameters p, Environnement env, int id,
 			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred, List<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> lSupplementaryVisitors) {
 		// Géométrie de l'unité foncière sur laquelle porte la génération
 		IGeometry geom = bpu.generateGeom().buffer(1);
@@ -65,7 +66,7 @@ public class OptimisedBuildingsCuboidFinalDirectRejection extends BasicCuboidOpt
 		
 	}
 	
-	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, IGeometry geom, Parameters p, Environnement env, int id,
+	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, IGeometry geom, SimpluParameters p, Environnement env, int id,
 			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred, List<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> lSupplementaryVisitors) {
 		// Géométrie de l'unité foncière sur laquelle porte la génération
 	

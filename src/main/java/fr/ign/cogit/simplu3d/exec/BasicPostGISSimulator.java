@@ -1,20 +1,19 @@
 package fr.ign.cogit.simplu3d.exec;
 
-import org.apache.commons.math3.random.MersenneTwister;
-import org.apache.commons.math3.random.RandomGenerator;
-
 import fr.ign.cogit.simplu3d.experiments.thesis.predicate.UB16PredicateWithParameters;
 import fr.ign.cogit.simplu3d.io.nonStructDatabase.postgis.LoadPostGIS;
 import fr.ign.cogit.simplu3d.io.postgis.ExperimentationPostGIS;
-import fr.ign.cogit.simplu3d.io.postgis.ParametersPostgis;
 import fr.ign.cogit.simplu3d.io.postgis.SaveEnergyPostGIS;
 import fr.ign.cogit.simplu3d.io.shapefile.SaveGeneratedObjects;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid.OptimisedBuildingsCuboidDirectRejectionNoVisitor;
+import fr.ign.cogit.simplu3d.util.SimpluParametersPostgis;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
+import org.apache.commons.math3.random.MersenneTwister;
+import org.apache.commons.math3.random.RandomGenerator;
 
 /**
  * 
@@ -35,7 +34,6 @@ import fr.ign.mpp.configuration.GraphConfiguration;
 public class BasicPostGISSimulator {
 
   /**
-   * @param args
    * @throws Exception
    */
 
@@ -71,7 +69,7 @@ public class BasicPostGISSimulator {
         Environnement env = lP.loadNoOCLRules();
 
         // Chargement des paramètres de simulation
-        ParametersPostgis p = new ParametersPostgis(host, port, database, user, pw,
+        SimpluParametersPostgis p = new SimpluParametersPostgis(host, port, database, user, pw,
             exp.getInteger(ExperimentationPostGIS.EXPERIMENTATION_ID_PARAM));
 
         for (BasicPropertyUnit bPU : env.getBpU()) {

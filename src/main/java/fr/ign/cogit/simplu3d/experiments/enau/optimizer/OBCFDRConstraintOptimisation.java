@@ -21,6 +21,7 @@ import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.DifferenceVolumeUnaryEnergy;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.IntersectionVolumeBinaryEnergy;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.VolumeUnaryEnergy;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.PrepareVisitors;
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
@@ -57,7 +58,7 @@ import fr.ign.simulatedannealing.temperature.SimpleTemperature;
  **/
 public class OBCFDRConstraintOptimisation extends BasicCuboidOptimizer<Cuboid> {
 
-	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, Parameters p, Environnement env, int id,
+	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, SimpluParameters p, Environnement env, int id,
 			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred,
 			double distReculVoirie, double slope, double hIni, double hMax, double distReculLimi, double slopeProspect,
 			double maximalCES) {
@@ -109,7 +110,8 @@ public class OBCFDRConstraintOptimisation extends BasicCuboidOptimizer<Cuboid> {
 		return conf;
 	}
 
-	public GraphConfiguration<Cuboid> create_configuration(Parameters p, IGeometry geom, BasicPropertyUnit bpu,
+	public GraphConfiguration<Cuboid> create_configuration(
+			SimpluParameters p, IGeometry geom, BasicPropertyUnit bpu,
 			double distReculVoirie, double slope, double hIni, double hMax, double distReculLimi, double slopeProspect,
 			double maximalCES) throws Exception {
 
@@ -127,7 +129,7 @@ public class OBCFDRConstraintOptimisation extends BasicCuboidOptimizer<Cuboid> {
 	 * @return la configuration chargée, c'est à dire la formulation énergétique
 	 *         prise en compte
 	 */
-	public GraphConfiguration<Cuboid> create_configuration(Parameters p, Geometry geom, BasicPropertyUnit bpu,
+	public GraphConfiguration<Cuboid> create_configuration(SimpluParameters p, Geometry geom, BasicPropertyUnit bpu,
 			double distReculVoirie, double slope, double hIni, double hMax, double distReculLimi, double slopeProspect,
 			double maximalCES) {
 		// Énergie constante : à la création d'un nouvel objet

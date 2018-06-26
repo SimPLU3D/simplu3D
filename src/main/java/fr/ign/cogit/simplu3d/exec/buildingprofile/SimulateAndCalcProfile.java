@@ -19,6 +19,8 @@ import fr.ign.cogit.simplu3d.model.Road;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid.OptimisedBuildingsCuboidFinalDirectRejection;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.predicate.SamplePredicate;
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
+import fr.ign.cogit.simplu3d.util.SimpluParametersJSON;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.mpp.configuration.GraphVertex;
@@ -32,7 +34,7 @@ public class SimulateAndCalcProfile {
 		// information and simulated annealing configuration
 		String folderName = BasicSimulator.class.getClassLoader().getResource("scenario/").getPath();
 		String fileName = "building_parameters_project_expthese_3.xml";
-		Parameters p = Parameters.unmarshall(new File(folderName + fileName));
+		SimpluParameters p = new SimpluParametersJSON(new File(folderName + fileName));
 
 		// Load default environment (data are in resource directory)
 		Environnement env = LoaderSHP.loadNoDTM(new File(

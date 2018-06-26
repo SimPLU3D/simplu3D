@@ -9,6 +9,8 @@ import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.util.AssignZ;
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
+import fr.ign.cogit.simplu3d.util.SimpluParametersJSON;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
@@ -25,7 +27,7 @@ public class Exec {
 		//CadastralParcelLoader.ATT_ID_PARC = "id_parcell";
 		AssignZ.DEFAULT_Z = 0;
 
-		Parameters p = Parameters.unmarshall(new File(folderName + fileName));
+		SimpluParameters p = new SimpluParametersJSON(new File(folderName + fileName));
 
 		// Chargement de l'environnement
 		Environnement env = LoaderSHP.loadNoDTM(new File(folderName));

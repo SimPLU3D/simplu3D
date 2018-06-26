@@ -3,6 +3,7 @@ package fr.ign.cogit.simplu3d.experiments.enau.optimizer;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -80,7 +81,8 @@ import fr.ign.simulatedannealing.temperature.SimpleTemperature;
 
 public class DeformedOptimizer extends DefaultSimPLU3DOptimizer<Cuboid> {
 
-	public GraphConfiguration<DeformedCuboid> process(BasicPropertyUnit bpu, Parameters p, Environnement env, int id,
+	public GraphConfiguration<DeformedCuboid> process(
+			BasicPropertyUnit bpu, SimpluParameters p, Environnement env, int id,
 			ConfigurationModificationPredicate<GraphConfiguration<DeformedCuboid>, BirthDeathModification<DeformedCuboid>> pred,
 			double distReculVoirie, double slope, double hIni, double hMax, double distReculLimi, double slopeProspect,
 			double maximalCES, int pos) throws Exception {
@@ -116,7 +118,7 @@ public class DeformedOptimizer extends DefaultSimPLU3DOptimizer<Cuboid> {
 		return conf;
 	}
 
-	public GraphConfiguration<DeformedCuboid> create_configuration(Parameters p, IGeometry geom, BasicPropertyUnit bpu,
+	public GraphConfiguration<DeformedCuboid> create_configuration(SimpluParameters p, IGeometry geom, BasicPropertyUnit bpu,
 			double distReculVoirie, double slope, double hIni, double hMax, double distReculLimi, double slopeProspect,
 			double maximalCES) throws Exception {
 
@@ -134,7 +136,7 @@ public class DeformedOptimizer extends DefaultSimPLU3DOptimizer<Cuboid> {
 	 * @return la configuration chargée, c'est à dire la formulation énergétique
 	 *         prise en compte
 	 */
-	public GraphConfiguration<DeformedCuboid> create_configuration(Parameters p, Geometry geom, BasicPropertyUnit bpu,
+	public GraphConfiguration<DeformedCuboid> create_configuration(SimpluParameters p, Geometry geom, BasicPropertyUnit bpu,
 			double distReculVoirie, double slope, double hIni, double hMax, double distReculLimi, double slopeProspect,
 			double maximalCES) {
 		// Énergie constante : à la création d'un nouvel objet
@@ -216,13 +218,12 @@ public class DeformedOptimizer extends DefaultSimPLU3DOptimizer<Cuboid> {
 	 * 
 	 * @param p
 	 *            les paramètres chargés depuis le fichier xml
-	 * @param r
 	 *            l'enveloppe dans laquelle on génère les positions
 	 * @return
 	 * @throws Exception
 	 */
 	public Sampler<GraphConfiguration<DeformedCuboid>, BirthDeathModification<DeformedCuboid>> create_sampler(
-			RandomGenerator rng, Parameters p, BasicPropertyUnit bpU,
+			RandomGenerator rng, SimpluParameters p, BasicPropertyUnit bpU,
 			ConfigurationModificationPredicate<GraphConfiguration<DeformedCuboid>, BirthDeathModification<DeformedCuboid>> pred,
 			int pos) throws Exception {
 
@@ -318,7 +319,7 @@ public class DeformedOptimizer extends DefaultSimPLU3DOptimizer<Cuboid> {
 	public final static int DEVANT = 4;
 
 	public Sampler<GraphConfiguration<DeformedCuboid>, BirthDeathModification<DeformedCuboid>> determinedPos(
-			RandomGenerator rng, Parameters p, BasicPropertyUnit bpU,
+			RandomGenerator rng, SimpluParameters p, BasicPropertyUnit bpU,
 			ConfigurationModificationPredicate<GraphConfiguration<DeformedCuboid>, BirthDeathModification<DeformedCuboid>> pred,
 			IMultiCurve<IOrientableCurve> ims) throws Exception {
 
@@ -421,7 +422,7 @@ public class DeformedOptimizer extends DefaultSimPLU3DOptimizer<Cuboid> {
 	}
 
 	public Sampler<GraphConfiguration<DeformedCuboid>, BirthDeathModification<DeformedCuboid>> undeterminedSampler(
-			RandomGenerator rng, Parameters p, BasicPropertyUnit bpU,
+			RandomGenerator rng, SimpluParameters p, BasicPropertyUnit bpU,
 			ConfigurationModificationPredicate<GraphConfiguration<DeformedCuboid>, BirthDeathModification<DeformedCuboid>> pred) {
 
 		// Un vecteur ?????

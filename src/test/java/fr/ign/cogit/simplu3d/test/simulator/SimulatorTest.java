@@ -2,6 +2,8 @@ package fr.ign.cogit.simplu3d.test.simulator;
 
 import java.io.File;
 
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
+import fr.ign.cogit.simplu3d.util.SimpluParametersJSON;
 import org.junit.Test;
 
 import fr.ign.cogit.simplu3d.demo.DemoEnvironmentProvider;
@@ -39,7 +41,7 @@ public class SimulatorTest {
 
     String fileName = "scenariotest.xml";
 
-    Parameters p = Parameters.unmarshall(new File(folderName + fileName));
+    SimpluParameters p = new SimpluParametersJSON(new File(folderName + fileName));
 
     Environnement env = DemoEnvironmentProvider.getDefaultEnvironment();
 

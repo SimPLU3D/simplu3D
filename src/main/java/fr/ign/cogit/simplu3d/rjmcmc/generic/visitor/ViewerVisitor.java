@@ -26,6 +26,7 @@ import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement.Theme;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
 import fr.ign.mpp.configuration.GraphVertex;
@@ -64,7 +65,7 @@ public class ViewerVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraph
 	private C bestConfig = null;
 	private double bestValue = Double.POSITIVE_INFINITY;
 
-	public ViewerVisitor(Environnement env, String prefixe, Parameters p) {
+	public ViewerVisitor(Environnement env, String prefixe, SimpluParameters p) {
 		prefix = prefixe;
 		if (mW == null) {
 			mW = new MainWindow();
@@ -145,7 +146,7 @@ public class ViewerVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraph
 
 	}
 
-	private static void represent(Environnement env, MainWindow mW, Parameters p) {
+	private static void represent(Environnement env, MainWindow mW, SimpluParameters p) {
 		List<Theme> lTheme = new ArrayList<RepEnvironnement.Theme>();
 		lTheme.add(Theme.TOIT_BATIMENT);
 		lTheme.add(Theme.FACADE_BATIMENT);

@@ -3,6 +3,7 @@ package fr.ign.cogit.simplu3d.rjmcmc.paramshp.optimizer;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -51,7 +52,7 @@ import fr.ign.simulatedannealing.temperature.SimpleTemperature;
 public class OptimisedRCuboidDirectRejection
     extends DefaultSimPLU3DOptimizer<CuboidRoofed> {
   public GraphConfiguration<CuboidRoofed> process(RandomGenerator rG,
-      BasicPropertyUnit bpu, Parameters p, Environnement env, int id,
+      BasicPropertyUnit bpu, SimpluParameters p, Environnement env, int id,
       ConfigurationModificationPredicate<GraphConfiguration<CuboidRoofed>, BirthDeathModification<CuboidRoofed>> pred,
       IGeometry polygon) {
     // Géométrie de l'unité foncière sur laquelle porte la génération
@@ -80,7 +81,7 @@ public class OptimisedRCuboidDirectRejection
     return conf;
   }
 
-  public GraphConfiguration<CuboidRoofed> create_configuration(Parameters p,
+  public GraphConfiguration<CuboidRoofed> create_configuration(SimpluParameters p,
       IGeometry geom, BasicPropertyUnit bpu) throws Exception {
 
     return this.create_configuration(p,
@@ -88,7 +89,7 @@ public class OptimisedRCuboidDirectRejection
 
   }
 
-  public GraphConfiguration<CuboidRoofed> create_configuration(Parameters p,
+  public GraphConfiguration<CuboidRoofed> create_configuration(SimpluParameters p,
       Geometry geom, BasicPropertyUnit bpu) {
     // Énergie constante : à la création d'un nouvel objet
 
@@ -138,11 +139,11 @@ public class OptimisedRCuboidDirectRejection
    * Sampler
    * 
    * @param p les paramètres chargés depuis le fichier xmlg
-   * @param r l'enveloppe dans laquelle on génère les positions
+   *  l'enveloppe dans laquelle on génère les positions
    * @return
    */
   public Sampler<GraphConfiguration<CuboidRoofed>, BirthDeathModification<CuboidRoofed>> create_sampler(
-      RandomGenerator rng, Parameters p, BasicPropertyUnit bpU,
+      RandomGenerator rng, SimpluParameters p, BasicPropertyUnit bpU,
       ConfigurationModificationPredicate<GraphConfiguration<CuboidRoofed>, BirthDeathModification<CuboidRoofed>> pred,
       IGeometry polygon) {
 

@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
+import fr.ign.cogit.simplu3d.util.SimpluParametersJSON;
 import org.apache.log4j.Logger;
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
@@ -43,7 +45,7 @@ public class Exec {
 	public static boolean DEBUG_MODE = true;
 	private static Logger log = Logger.getLogger(Exec.class);
 	public final static String nomDTM = "MNT_BD3D.asc";
-	public static Parameters p;
+	public static SimpluParameters p;
 	public static List<IMultiSurface<IOrientableSurface>> lMS = new ArrayList<>();
 	public static List<IMultiSurface<IOrientableSurface>> debugSurface = new ArrayList<>();
 	public static List<IMultiCurve<IOrientableCurve>> debugLine = new ArrayList<>();
@@ -286,7 +288,7 @@ public class Exec {
 		// Chargement du fichier de configuration
 		String folderName = BasicSimulator.class.getClassLoader().getResource("scenario/").getPath();
 		String fileName = "parameters_iauidf.xml";
-		p = Parameters.unmarshall(new File(folderName + fileName));
+		p = new SimpluParametersJSON(new File(folderName + fileName));
 
 		if (r2 != null) {
 
@@ -361,7 +363,6 @@ public class Exec {
 	 * 
 	 * @param bPU
 	 * @param imu
-	 * @param lReg
 	 * @return
 	 * @throws Exception
 	 */

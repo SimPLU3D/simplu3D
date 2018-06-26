@@ -3,6 +3,8 @@ package fr.ign.cogit.simplu3d.exec.paraShpe;
 import java.io.File;
 import java.util.List;
 
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
+import fr.ign.cogit.simplu3d.util.SimpluParametersJSON;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
@@ -107,7 +109,7 @@ public class BasicParametricShapeSimulator {
 				DemoEnvironmentProvider.class.getClassLoader().getResource("fr/ign/cogit/simplu3d/data/").getPath()));
 
 		// Fichier de paramètre qui va dépendre du type d'objet simulé
-		Parameters p = null;
+		SimpluParameters p = null;
 
 		for (BasicPropertyUnit bPU : env.getBpU().getElements()) {
 			// L'optimizer
@@ -125,7 +127,7 @@ public class BasicParametricShapeSimulator {
 
 				String fileName = "building_parameters_project_trapezoid_4.xml";
 
-				p = Parameters.unmarshall(new File(folderName + fileName));
+				p = new SimpluParametersJSON(new File(folderName + fileName));
 
 				optimizer = new ParallelCuboidOptimizer();
 
@@ -146,7 +148,7 @@ public class BasicParametricShapeSimulator {
 				// existant)
 				String fileName2 = "building_parameters_project_lshape.xml";
 				// On charge le fichier de configuration
-				p = Parameters.unmarshall(new File(folderName + fileName2));
+				p = new SimpluParametersJSON(new File(folderName + fileName2));
 				// On instancie le prédicat (vérification des règles,
 				// normalement,
 				// rien à faire)
@@ -163,7 +165,7 @@ public class BasicParametricShapeSimulator {
 
 				String fileName3 = "building_parameters_project_trapezoid_4.xml";
 
-				p = Parameters.unmarshall(new File(folderName + fileName3));
+				p = new SimpluParametersJSON(new File(folderName + fileName3));
 
 				SamplePredicate<ParallelTrapezoid2, GraphConfiguration<ParallelTrapezoid2>, BirthDeathModification<ParallelTrapezoid2>> pred2 = null;
 
@@ -184,7 +186,7 @@ public class BasicParametricShapeSimulator {
 				// existant)
 				String fileName4 = "building_parameters_project_rcuboid.xml";
 				// On charge le fichier de configuration
-				p = Parameters.unmarshall(new File(folderName + fileName4));
+				p = new SimpluParametersJSON(new File(folderName + fileName4));
 				// On instancie le prédicat (vérification des règles,
 				// normalement,
 				// rien à faire)

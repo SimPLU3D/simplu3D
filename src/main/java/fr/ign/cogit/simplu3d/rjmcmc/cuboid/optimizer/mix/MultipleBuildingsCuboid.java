@@ -3,6 +3,7 @@ package fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.mix;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 
@@ -50,7 +51,6 @@ import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.mpp.kernel.ObjectBuilder;
 import fr.ign.mpp.kernel.UniformTypeView;
-import fr.ign.parameters.Parameters;
 import fr.ign.random.Random;
 import fr.ign.rjmcmc.acceptance.Acceptance;
 import fr.ign.rjmcmc.acceptance.MetropolisAcceptance;
@@ -100,9 +100,9 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 		return isValid;
 	}
 
-	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, Parameters p, Environnement env,
-			PredicateIAUIDF<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred, Regulation r1,
-			Regulation r2, BandProduction bP) throws Exception {
+	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, SimpluParameters p, Environnement env,
+											  PredicateIAUIDF<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred, Regulation r1,
+											  Regulation r2, BandProduction bP) throws Exception {
 		// Géométrie de l'unité foncière sur laquelle porte la génération (on se permet de faire un petit buffer)
 		IGeometry geom = bpu.getPol2D().buffer(1);
 		// Définition de la fonction d'optimisation (on optimise en décroissant) relative au volume
@@ -134,7 +134,7 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 		return conf;
 	}
 
-	public GraphConfiguration<Cuboid> create_configuration(Parameters p, IGeometry geom, BasicPropertyUnit bpu) throws Exception {
+	public GraphConfiguration<Cuboid> create_configuration(SimpluParameters p, IGeometry geom, BasicPropertyUnit bpu) throws Exception {
 		return this.create_configuration(p, AdapterFactory.toGeometry(new GeometryFactory(), geom), bpu);
 	}
 
@@ -148,14 +148,14 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 	 *         prise en compte
 	 */
 	@Override
-	public GraphConfiguration<Cuboid> create_configuration(Parameters p, Geometry geom, BasicPropertyUnit bpu) {
+	public GraphConfiguration<Cuboid> create_configuration(SimpluParameters p, Geometry geom, BasicPropertyUnit bpu) {
 		if (ALLOW_INTERSECTING_CUBOID) {
 			return create_configuration_intersection(p, geom, bpu);
 		}
 		return create_configuration_no_inter(p, geom, bpu);
 	}
 
-	private GraphConfiguration<Cuboid> create_configuration_intersection(Parameters p, Geometry geom, BasicPropertyUnit bpu) {
+	private GraphConfiguration<Cuboid> create_configuration_intersection(SimpluParameters p, Geometry geom, BasicPropertyUnit bpu) {
 		// Énergie constante : à la création d'un nouvel objet
 		ConstantEnergy<Cuboid, Cuboid> energyCreation = new ConstantEnergy<Cuboid, Cuboid>(p.getDouble("energy"));
 		// Énergie constante : pondération de l'intersection
@@ -174,7 +174,7 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 		return new GraphConfiguration<>(u3, binaryEnergy);
 	}
 
-	private GraphConfiguration<Cuboid> create_configuration_no_inter(Parameters p, Geometry geom,
+	private GraphConfiguration<Cuboid> create_configuration_no_inter(SimpluParameters p, Geometry geom,
 			BasicPropertyUnit bpu) {
 		// Énergie constante : à la création d'un nouvel objet
 		double energyCrea = p.getDouble("energy");
@@ -198,13 +198,13 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 	 * 
 	 * @param p
 	 *            les paramètres chargés depuis le fichier xml
-	 * @param r
 	 *            l'enveloppe dans laquelle on génère les positions
 	 * @return
 	 * @throws Exception
 	 */
-	public Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> create_sampler(RandomGenerator rng,
-			Parameters p, BasicPropertyUnit bpU,
+	public Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> create_sampler(
+			RandomGenerator rng,
+			SimpluParameters p, BasicPropertyUnit bpU,
 			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred,
 			Regulation r1, Regulation r2, BandProduction bP) throws Exception {
 		////////////////////////
@@ -430,7 +430,7 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 
 	private static List<Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> getBande1Kernels(
 			Variate variate, NullView<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> nullView,
-			Parameters p, Transform transform, ObjectBuilder<Cuboid> pbuilder, boolean parallel) {
+			SimpluParameters p, Transform transform, ObjectBuilder<Cuboid> pbuilder, boolean parallel) {
 		List<Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> kernels = new ArrayList<>();
 		// Kernel de naissance
 		// TODO Use a KernelProposalRatio to propose only birth when size is 0
@@ -484,7 +484,7 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 
 	private static List<Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> getBande2Kernels(
 			Variate variate, NullView<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> nullView,
-			Parameters p, Transform transformSimple, ObjectBuilder<Cuboid> sbuilder, boolean parallel) {
+			SimpluParameters p, Transform transformSimple, ObjectBuilder<Cuboid> sbuilder, boolean parallel) {
 		List<Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> kernels = new ArrayList<>();
 		if (parallel) {
 			UniformTypeView<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pView = new UniformTypeView<>(

@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
+import fr.ign.cogit.simplu3d.util.SimpluParametersJSON;
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -44,7 +46,6 @@ import fr.ign.cogit.simplu3d.util.SDPCalc;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.mpp.configuration.GraphVertex;
-import fr.ign.parameters.Parameters;
 
 /**
  * Classe permettant la distribution de calculs dans le cadre de
@@ -66,19 +67,18 @@ public class EPFIFTask {
 	// Parcel file name
 	public static String PARCEL_NAME = "parcelle.shp";
 	// List of idpar to simulate or not
-	public static Set<String> exclusion_list = new HashSet<>();
-	public static Set<String> inclusion_list = new HashSet<>();
+	private static Set<String> exclusion_list = new HashSet<>();
+	private static Set<String> inclusion_list = new HashSet<>();
 	// Allow debug mode : intermediary resultats are exported
-	public static boolean DEBUG_MODE = false;
-	public static List<IMultiSurface<IOrientableSurface>> lMS = new ArrayList<>();
+	private static boolean DEBUG_MODE = false;
 	// Debug geometries where simulator try to generate geometries
-	public static List<IMultiSurface<IOrientableSurface>> debugSurface = new ArrayList<>();
-	public static List<IMultiCurve<IOrientableCurve>> debugLine = new ArrayList<>();
+	private static List<IMultiSurface<IOrientableSurface>> debugSurface = new ArrayList<>();
+	private static List<IMultiCurve<IOrientableCurve>> debugLine = new ArrayList<>();
 
-	public final static int CODE_PARCEL_NO_RULE = -1;
-	public final static int CODE_SIMULATION_NOT_RUNNABLE = -2;
-	public final static int CODE_PARCEL_TOO_BIG = -88;
-	public final static int CODE_SIMUL_ZERO = -42;
+	private final static int CODE_PARCEL_NO_RULE = -1;
+	private final static int CODE_SIMULATION_NOT_RUNNABLE = -2;
+	private final static int CODE_PARCEL_TOO_BIG = -88;
+	private final static int CODE_SIMUL_ZERO = -42;
 
 	// parcels with no rules
 	private static List<String> idparWithNoRules = new ArrayList<>();
@@ -124,7 +124,7 @@ public class EPFIFTask {
 		Map<String, List<Regulation>> regulation = loadRules(new File(folder + "/" + PARCEL_NAME),
 				imu);
 		IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
-		String result = "";
+		StringBuilder result = new StringBuilder();
 		SDPCalc sdp = new SDPCalc();
 		for (BasicPropertyUnit bPU : env.getBpU()) {
 			String id = bPU.getCadastralParcels().get(0).getCode();
@@ -136,13 +136,13 @@ public class EPFIFTask {
 				continue;
 
 			if (idparSimulIsZero.size() > 0 && idparSimulIsZero.contains(id)) {
-				result += imu + " ; " + id + " ; " + (CODE_SIMUL_ZERO) + " ; " + (CODE_SIMUL_ZERO) + "\n";
+				result.append(imu).append(" ; ").append(id).append(" ; ").append(CODE_SIMUL_ZERO).append(" ; ").append(CODE_SIMUL_ZERO).append("\n");
 				continue;
 			}
 
 			List<Regulation> lR = regulation.get(id);
 			if (bPU.getArea() > MAX_PARCEL_AREA) {
-				result += imu + " ; " + id + " ; " + (CODE_PARCEL_TOO_BIG) + " ; " + (CODE_PARCEL_TOO_BIG) + "\n";
+				result.append(imu).append(" ; ").append(id).append(" ; ").append(CODE_PARCEL_TOO_BIG).append(" ; ").append(CODE_PARCEL_TOO_BIG).append("\n");
 				continue;
 			}
 
@@ -165,11 +165,11 @@ public class EPFIFTask {
 					}
 					featC.addAll(feats);
 					double sd = sdp.process(LoaderCuboid.loadFromCollection(feats));
-					result += imu + " ; " + id + " ; " + feats.size() + " ; " + sd + "\n";
+					result.append(imu).append(" ; ").append(id).append(" ; ").append(feats.size()).append(" ; ").append(sd).append("\n");
 				} else {
 					if (!idparWithNoRules.contains(bPU.getCadastralParcels().get(0).getCode())) {
 						if (!idsimulationNotRunnable.contains(bPU.getCadastralParcels().get(0).getCode())) {
-							result += imu + " ; " + id + " ; " + 0 + " ; " + 0 + "\n";
+							result.append(imu).append(" ; ").append(id).append(" ; ").append(0).append(" ; ").append(0).append("\n");
 						}
 					}
 				}
@@ -205,28 +205,27 @@ public class EPFIFTask {
 
 		if (idparWithNoRules.size() > 0) {
 			for (String id : idparWithNoRules)
-				result += imu + " ; " + id + " ; " + (CODE_PARCEL_NO_RULE) + " ; " + (CODE_PARCEL_NO_RULE) + "\n";
+				result.append(imu).append(" ; ").append(id).append(" ; ").append(CODE_PARCEL_NO_RULE).append(" ; ").append(CODE_PARCEL_NO_RULE).append("\n");
 
 		}
 
 		if (idsimulationNotRunnable.size() > 0) {
 			for (String id : idsimulationNotRunnable) {
-				result += imu + " ; " + id + " ; " + (CODE_SIMULATION_NOT_RUNNABLE) + " ; "
-						+ (CODE_SIMULATION_NOT_RUNNABLE) + "\n";
+				result.append(imu).append(" ; ").append(id).append(" ; ").append(CODE_SIMULATION_NOT_RUNNABLE).append(" ; ").append(CODE_SIMULATION_NOT_RUNNABLE).append("\n");
 
 				System.out.println(id + "  " + imu + "   " + CODE_SIMULATION_NOT_RUNNABLE);
 
 			}
 		}
-		result += "\n";
+		result.append("\n");
 		System.out.println("res " + result);
-		writeCSV(folderOut + "/simul_" + imu + "_" + INTERSECTION + "_" + uds + ".csv", result);
-		return result;
+		writeCSV(folderOut + "/simul_" + imu + "_" + INTERSECTION + "_" + uds + ".csv", result.toString());
+		return result.toString();
 	}
 
 	// Initialisation des attributs différents du schéma de base
 	// et le fichier de paramètre commun à toutes les simulations
-	public static void init() throws Exception {
+	public static void init() {
 		CadastralParcelLoader.TYPE_ANNOTATION = 2;
 		PredicateIAUIDF.RIGHT_OF_LEFT_FOR_ART_71 = ParcelBoundarySide.LEFT;
 	}
@@ -242,7 +241,7 @@ public class EPFIFTask {
 
 			String id = feat.getAttribute(ParcelAttributeTransfert.PARCELLE_ID).toString();
 			// System.out.println("id " + id);
-			int code_imu = imu; /// l'imu n'est pas dans le .csv
+			//			int code_imu = imu; /// l'imu n'est pas dans le .csv
 			/// Integer.parseInt(newmap.get(att_imu).toString());
 
 			int simul = Integer.parseInt(feat.getAttribute("SIMUL").toString());
@@ -307,7 +306,7 @@ public class EPFIFTask {
 			double art_13 = Double.parseDouble(feat.getAttribute(ParcelAttributeTransfert.att_art_13).toString());
 			double art_14 = Double.parseDouble(feat.getAttribute(ParcelAttributeTransfert.att_art_14).toString());
 
-			Regulation r = new Regulation(code_imu, libelle_zone, insee, date_approbation, libelle_de_base,
+			Regulation r = new Regulation(imu, libelle_zone, insee, date_approbation, libelle_de_base,
 					libelle_de_dul, fonctions, top_zac, zonage_coherent, correction_zonage, typ_bande, bande, art_5,
 					art_6, art_71, art_72, art_73, art_74, art_8, art_9, art_10_top, art_10, art_10_m, art_12, art_13,
 					art_14);
@@ -345,7 +344,7 @@ public class EPFIFTask {
 				double art_14_2 = Double
 						.parseDouble(feat.getAttribute(ParcelAttributeTransfert.att_art_14_2).toString());
 
-				Regulation r2 = new Regulation(code_imu, libelle_zone, insee, date_approbation, libelle_de_base,
+				Regulation r2 = new Regulation(imu, libelle_zone, insee, date_approbation, libelle_de_base,
 						libelle_de_dul, fonctions_2, top_zac, zonage_coherent, correction_zonage, typ_bande, bande,
 						art_5_2, art_6_2, art_71_2, art_72_2, art_73_2, art_74_2, art_8_2, art_9_2, art_10_top_2,
 						art_10_2, art_10_m_2, art_12_2, art_13_2, art_14_2);
@@ -359,7 +358,7 @@ public class EPFIFTask {
 		return map;
 	}
 
-	public static IFeatureCollection<IFeature> simulationForEachBPU(Environnement env, BasicPropertyUnit bPU,
+	private static IFeatureCollection<IFeature> simulationForEachBPU(Environnement env, BasicPropertyUnit bPU,
 			List<Regulation> lRegulation, int imu, File fParam) throws Exception {
 
 		// Stocke les résultats
@@ -423,7 +422,6 @@ public class EPFIFTask {
 	 * 
 	 * @param bPU
 	 * @param imu
-	 * @param lReg
 	 * @return
 	 * @throws Exception
 	 */
@@ -464,7 +462,7 @@ public class EPFIFTask {
 			debugLine.add(bP.getLineRoad());
 		}
 
-		Parameters p = initiateSimulationParamters(r1, r2, fParam);
+		SimpluParameters p = initiateSimulationParamters(r1, r2, fParam);
 		// initialisation des paramètres de simulation
 		if (p == null) {
 			return featC;
@@ -565,7 +563,7 @@ public class EPFIFTask {
 	}
 
 	private static IFeatureCollection<IFeature> simulRegulationByBasicPropertyUnitFinal(Environnement env,
-			BasicPropertyUnit bPU, int imu, Regulation r1, Regulation r2, Parameters p, BandProduction bP)
+			BasicPropertyUnit bPU, int imu, Regulation r1, Regulation r2, SimpluParameters p, BandProduction bP)
 			throws Exception {
 
 		IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
@@ -620,7 +618,7 @@ public class EPFIFTask {
 	}
 
 	private static IFeatureCollection<IFeature> simulRegulationByBasicPropertyUnitFinalTrapezoid(Environnement env,
-			BasicPropertyUnit bPU, int imu, Regulation r1, Regulation r2, Parameters p, BandProduction bP)
+			BasicPropertyUnit bPU, int imu, Regulation r1, Regulation r2, SimpluParameters p, BandProduction bP)
 			throws Exception {
 
 		IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
@@ -671,10 +669,11 @@ public class EPFIFTask {
 
 	}
 
-	private static Parameters initiateSimulationParamters(Regulation r1, Regulation r2, File f) throws Exception {
+	private static SimpluParameters initiateSimulationParamters(Regulation r1, Regulation r2, File f) {
 		// Chargement du fichier de configuration
 
-		Parameters p = Parameters.unmarshall(f);
+		//Parameters p = Parameters.unmarshall(f);
+		SimpluParameters p = new SimpluParametersJSON(f);
 
 		if (r2 != null) {
 
@@ -758,7 +757,7 @@ public class EPFIFTask {
 		System.out.println("csv file " + fileName + " written");
 	}
 
-	private static void saveShapeTest(String folderImu) throws NoSuchAuthorityCodeException, FactoryException {
+	private static void saveShapeTest(String folderImu) throws FactoryException {
 		IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
 		// Petit script pour sauvegarder les bandes pour vérification
 		// Le fichier généré se trouve dans le dossier imu

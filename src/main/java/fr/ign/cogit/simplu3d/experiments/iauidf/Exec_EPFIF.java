@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
+import fr.ign.cogit.simplu3d.util.SimpluParametersJSON;
 import org.apache.log4j.Logger;
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
@@ -213,7 +215,7 @@ public class Exec_EPFIF {
    * Simulations portant sur chaque zone IMU.
    * 
    * @param imu
-   * @param lReg
+   * @param folderImu
    * @return
    * @throws Exception
    */
@@ -356,9 +358,9 @@ public class Exec_EPFIF {
     return featC;
   }
 
-  private static Parameters initiateSimulationParamters(Regulation r1, Regulation r2, File f) throws Exception {
+  private static SimpluParameters initiateSimulationParamters(Regulation r1, Regulation r2, File f) throws Exception {
     // Chargement du fichier de configuration
-    Parameters p = Parameters.unmarshall(f);
+    SimpluParameters p = new SimpluParametersJSON(f);
     if (r2 != null) {
       double newHeightMax = Math.max(r1.getArt_10_m(), r2.getArt_10_m());
       if (newHeightMax != 99.0) {
@@ -417,7 +419,7 @@ public class Exec_EPFIF {
    * 
    * @param bPU
    * @param imu
-   * @param lReg
+   * @param fParam
    * @return
    * @throws Exception
    */
@@ -443,7 +445,7 @@ public class Exec_EPFIF {
       r2 = null;
       System.out.println("Une seule bande");
     }
-    Parameters p = initiateSimulationParamters(r1, r2, fParam);
+    SimpluParameters p = initiateSimulationParamters(r1, r2, fParam);
     // initialisation des paramètres de simulation
     if (p == null) {
       return featC;
@@ -467,8 +469,9 @@ public class Exec_EPFIF {
 
   //
 
-  private static IFeatureCollection<IFeature> simulRegulationByBasicPropertyUnitFinal(Environnement env, BasicPropertyUnit bPU, int imu,
-      Regulation r1, Regulation r2, Parameters p, BandProduction bP) throws Exception {
+  private static IFeatureCollection<IFeature> simulRegulationByBasicPropertyUnitFinal(
+          Environnement env, BasicPropertyUnit bPU, int imu,
+          Regulation r1, Regulation r2, SimpluParameters p, BandProduction bP) throws Exception {
     IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
     // Création du Sampler (qui va générer les propositions de solutions)
     MultipleBuildingsCuboid oCB = new MultipleBuildingsCuboid();
@@ -511,7 +514,7 @@ public class Exec_EPFIF {
   }
 
   private static IFeatureCollection<IFeature> simulRegulationByBasicPropertyUnitFinalTrapezoid(Environnement env, BasicPropertyUnit bPU, int imu,
-      Regulation r1, Regulation r2, Parameters p, BandProduction bP) throws Exception {
+      Regulation r1, Regulation r2, SimpluParameters p, BandProduction bP) throws Exception {
     IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
     // Création du Sampler (qui va générer les propositions de solutions)
     MultipleBuildingsTrapezoidCuboid oCB = new MultipleBuildingsTrapezoidCuboid();

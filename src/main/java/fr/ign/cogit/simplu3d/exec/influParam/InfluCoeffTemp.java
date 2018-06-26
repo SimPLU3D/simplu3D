@@ -15,10 +15,11 @@ import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid.OptimisedBuildingsCuboidFinalDirectRejection;
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
+import fr.ign.cogit.simplu3d.util.SimpluParametersJSON;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.mpp.configuration.GraphVertex;
-import fr.ign.parameters.Parameters;
 
 /**
  * 
@@ -31,7 +32,7 @@ import fr.ign.parameters.Parameters;
  * 
  * 
  * @copyright IGN
- * 
+ *
  * @author Brasebin Mickaël
  * 
  * @version 1.0
@@ -49,7 +50,7 @@ public class InfluCoeffTemp {
 
 		String fileName = "building_parameters_project_expthese_1.xml";
 
-		Parameters p = Parameters.unmarshall(new File(folderName + fileName));
+		SimpluParameters p = new SimpluParametersJSON(new File(folderName + fileName));
 
 		int nbIt = 1;
 		int nbInter = 5;

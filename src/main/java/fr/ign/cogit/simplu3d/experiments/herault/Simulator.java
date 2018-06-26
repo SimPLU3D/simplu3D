@@ -15,10 +15,11 @@ import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid.OptimisedBuildingsCuboidFinalDirectRejection;
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
+import fr.ign.cogit.simplu3d.util.SimpluParametersJSON;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.mpp.configuration.GraphVertex;
-import fr.ign.parameters.Parameters;
 
 public class Simulator {
 
@@ -33,7 +34,7 @@ public class Simulator {
 
 		// On charge le fichier de configuration (cf regarder à l'intérieur)
 		String fileName = "parameters.xml";
-		Parameters p = Parameters.unmarshall(new File(folder + fileName));
+		SimpluParameters p = new SimpluParametersJSON(new File(folder + fileName));
 
 		// On charge l'environnement géographique
 		Environnement env = LoaderSHP.loadNoDTM(new File(folder));

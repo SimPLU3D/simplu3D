@@ -4,9 +4,9 @@ import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.CountVisitor;
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
-import fr.ign.parameters.Parameters;
 import fr.ign.simulatedannealing.endtest.CompositeEndTest;
 import fr.ign.simulatedannealing.endtest.EndTest;
 import fr.ign.simulatedannealing.endtest.MaxIterationEndTest;
@@ -58,7 +58,7 @@ public abstract class DefaultSimPLU3DOptimizer<C extends ISimPLU3DPrimitive> imp
     this.deltaConf = deltaConf;
   }
 
-  public EndTest create_end_test(Parameters p) {
+  public EndTest create_end_test(SimpluParameters p) {
   	double loc_deltaconf = Double.isNaN(this.deltaConf) ? p.getDouble("delta") : this.deltaConf;
   	String option =  p.getString("end_test_type").toLowerCase();
     switch (option) {
@@ -79,7 +79,7 @@ public abstract class DefaultSimPLU3DOptimizer<C extends ISimPLU3DPrimitive> imp
     return countV.getCount();
   }
 
-  public Schedule<SimpleTemperature> create_schedule(Parameters p) {
+  public Schedule<SimpleTemperature> create_schedule(SimpluParameters p) {
     double coefDef = (Double.isNaN(this.coeffDec)) ? p.getDouble("deccoef") : this.coeffDec;
     return new GeometricSchedule<SimpleTemperature>(new SimpleTemperature(p.getDouble("temp")), coefDef);
   }
