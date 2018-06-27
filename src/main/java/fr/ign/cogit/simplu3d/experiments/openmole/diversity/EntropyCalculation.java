@@ -201,11 +201,11 @@ public class EntropyCalculation {
     
     
     
-    Double jj = jointEntropy(configHeights, surroundingHeights) ;
+    Double jj = jointEntropyIndepVars(configHeights, surroundingHeights) ;
     
     
     
-    System.out.println("joint entropy "+  jointEntropy(configHeights, surroundingHeights));
+    System.out.println("joint entropy "+  jointEntropyIndepVars(configHeights, surroundingHeights));
    
     System.out.println("entropie conjointe <= somme des entropies ? " + (jj <=(configEntropy + surroundEntropy)  ));
     
