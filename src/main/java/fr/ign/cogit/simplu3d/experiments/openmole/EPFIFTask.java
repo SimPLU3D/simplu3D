@@ -166,12 +166,12 @@ public class EPFIFTask {
 					}
 					featC.addAll(feats);
 					double sd = sdp.process(LoaderCuboid.loadFromCollection(feats));
-					result += imu + " ; " + id + " ; " + feats.size() + " ; " + sd + ";" + bpuReslts.getNbIteration()
+					result += imu + " ; " + id + " ; " + feats.size() + " ; " + sd + " ; " + bpuReslts.getNbIteration()
 							+ "\n";
 				} else {
 					if (!idparWithNoRules.contains(bPU.getCadastralParcels().get(0).getCode())) {
 						if (!idsimulationNotRunnable.contains(bPU.getCadastralParcels().get(0).getCode())) {
-							result += imu + " ; " + id + " ; " + 0 + " ; " + 0 + ";" +0+ "\n";
+							result += imu + " ; " + id + " ; " + 0 + " ; " + 0 + " ; " +0+ "\n";
 						}
 					}
 				}
