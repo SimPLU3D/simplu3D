@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.experiments.openmole.paris;
+package fr.ign.cogit.simplu3d.experiments.openmole.paris.simulation;
 
 import java.io.File;
 
@@ -38,17 +38,33 @@ public class ParisSimulator {
 		// Load default environment (data are in resource directory)
 		Environnement env = LoaderSHP.loadNoDTM(new File(folderName));
 
-		// Instantiation of the sampler
-		OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();
-
+		
 		// Writting the output
 		IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
 		for (BasicPropertyUnit bPU : env.getBpU()) {
+			
+			
 
 			if (!bPU.getCadastralParcels().get(0).hasToBeSimulated()) {
 				continue;
 			}
 
+			
+			/*
+			//Limits the number of simulation by IDPAR attribute
+			if(! bPU.getCadastralParcels().get(0).getCode().equalsIgnoreCase("75056000BN0008")) {
+				continue;
+			}
+			*/
+		
+			
+			
+			
+			// Instantiation of the sampler
+			OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();
+
+			
+			
 			ParisPredicate<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new ParisPredicate<>(
 					bPU);
 

@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.experiments.openmole.paris;
+package fr.ign.cogit.simplu3d.experiments.openmole.paris.simulation;
 
 import java.util.List;
 
@@ -79,6 +79,9 @@ implements ConfigurationModificationPredicate<C, M> {
 	    }
 
 	    
+	    if(!bandeE.contains(birth.getFootprint())) {
+	    	return false;
+	    }
 	 
 	    ////Test de la hauteur
 	    if(birth.getHeight() >  this.p_value + 4 + 3) {
@@ -90,20 +93,17 @@ implements ConfigurationModificationPredicate<C, M> {
 				System.out.println(this.bP.getCadastralParcels().get(0).getId());
 				continue;
 			}
-	        if (birth.prospect(bP.getGeom(), 0.5,  this.p_value + 4)){
+	        if (! birth.prospect(bP.getGeom(), 0.5,  this.p_value + 4)){
 	        	return false;
 	        }
 	    }
-	
+	 
 	 	    
 	    if(! this.bP.getPol2D().contains(birth.getFootprint())) {
 	    	return false;
 	    }
-	    
-	    
-	    if(!bandeE.contains(birth.getFootprint())) {
-	    	return false;
-	    }
+	   
+
 
 	    
 	    
