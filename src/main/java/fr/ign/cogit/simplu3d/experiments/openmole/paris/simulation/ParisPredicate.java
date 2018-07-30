@@ -1,6 +1,7 @@
 package fr.ign.cogit.simplu3d.experiments.openmole.paris.simulation;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
@@ -15,7 +16,6 @@ import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
 
-
 //Règles instanciées :
 // Parcelles sans bordure : 
 // http://pluenligne.paris.fr/plu/sites-plu/site_statique_38/documents/796_Plan_Local_d_Urbanisme_de_P/802_Reglement/809_Atlas_general___Planches_au/C_D_10-V04.pdf
@@ -29,114 +29,106 @@ import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
 // http://pluenligne.paris.fr/plu/sites-plu/site_statique_37/documents/772_Plan_Local_d_Urbanisme_de_P/778_Reglement/780_Tome_1___Reglements_par_zon/C_REG1UG-V13.pdf
 // Construction à l'alignement
 
+public class ParisPredicate<O extends AbstractSimpleBuilding, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>>
+		implements ConfigurationModificationPredicate<C, M> {
 
-public class ParisPredicate <O extends AbstractSimpleBuilding, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>>
-implements ConfigurationModificationPredicate<C, M> {
-	
-	
-	
-	
+	// Distance to the opposite parcel limits
 	public double p_value = 0;
+	// Constructibility band
 	IGeometry bandeE;
-	
+	// The parcel = BasicPropertyUnit where the simulate is running
 	BasicPropertyUnit bP;
+
 	public ParisPredicate(BasicPropertyUnit bP) {
 		super();
 		this.bP = bP;
+		// Determine the p_value value
 		this.determineP();
+		// generate bandeE
 		this.generateBandeE();
-		System.out.println("P VAlue : " + p_value);
+		// System.out.println("P VAlue : " + p_value);
 	}
-	
-	
-	
 
 	private void generateBandeE() {
-		List<ParcelBoundary> lLimitesFront = this.bP.getCadastralParcels().get(0).getBoundariesByType(ParcelBoundaryType.ROAD);
 		
-		IMultiSurface<IOrientableSurface> bandeETemp = new GM_MultiSurface<>();
-		
-		for(ParcelBoundary limit : lLimitesFront) {
-			bandeETemp.addAll(FromGeomToSurface.convertGeom(limit.getGeom().buffer(15)));
+		IMultiSurface<IOrientableSurface> bandeETemp = new GM_MultiSurface<>();		
+		for(List<IOrientableSurface> lIOs : this.bP.getCadastralParcels().get(0).getBoundariesByType(ParcelBoundaryType.ROAD).parallelStream().map(x -> (List<IOrientableSurface>) FromGeomToSurface.convertGeom(x.getGeom().buffer(15))).collect(Collectors.toList())) {
+			bandeETemp.addAll(lIOs);
 		}
+
+
+		//A little buffer to merge the geometries
 		bandeE = bandeETemp.buffer(0.5);
 		
 	}
 
-
-
-
 	@Override
 	public boolean check(C c, M m) {
-	    O birth = null;
+		O birth = null;
 
-	    if (!m.getBirth().isEmpty()) {
-	      birth = m.getBirth().get(0);
-	    }
-	    
-	    if(birth == null) {
-	    	return true;
-	    }
+		if (!m.getBirth().isEmpty()) {
+			birth = m.getBirth().get(0);
+		}
 
-	    
-	    if(!bandeE.contains(birth.getFootprint())) {
-	    	return false;
-	    }
-	 
-	    ////Test de la hauteur
-	    if(birth.getHeight() >  this.p_value + 4 + 3) {
-	    	return false;
-	    }
-	    
-	    for(ParcelBoundary bP  : this.bP.getCadastralParcels().get(0).getBoundariesByType(ParcelBoundaryType.ROAD)) {
-			if(bP.getGeom() == null) {
+		if (birth == null) {
+			return true;
+		}
+
+		if (!bandeE.contains(birth.getFootprint())) {
+			return false;
+		}
+
+		//// Test de la hauteur
+		if (birth.getHeight() > this.p_value + 4 + 3) {
+			return false;
+		}
+
+		for (ParcelBoundary bP : this.bP.getCadastralParcels().get(0).getBoundariesByType(ParcelBoundaryType.ROAD)) {
+			if (bP.getGeom() == null) {
 				System.out.println(this.bP.getCadastralParcels().get(0).getId());
 				continue;
 			}
-	        if (! birth.prospect(bP.getGeom(), 0.5,  this.p_value + 4)){
-	        	return false;
-	        }
-	    }
-	 
-	 	    
-	    if(! this.bP.getPol2D().contains(birth.getFootprint())) {
-	    	return false;
-	    }
-	   
+			if (!birth.prospect(bP.getGeom(), 0.5, this.p_value + 4)) {
+				return false;
+			}
+		}
 
+		if (!this.bP.getPol2D().contains(birth.getFootprint())) {
+			return false;
+		}
 
-	    
-	    
 		return true;
 	}
 
 	private void determineP() {
-		List<ParcelBoundary> lLimitesFront = this.bP.getCadastralParcels().get(0).getBoundariesByType(ParcelBoundaryType.ROAD);
 		
+	
+		p_value = this.bP.getCadastralParcels().get(0).getBoundaries().parallelStream().
+				filter(x -> x.getType() == ParcelBoundaryType.ROAD).
+				filter(x -> x.getOppositeBoundary() != null && x.getOppositeBoundary().getGeom() != null).
+				map(x -> (double) x.getGeom().distance( x.getOppositeBoundary().getGeom())).
+				min((x1, x2) -> Double.compare(x1, x2)).orElse(Double.POSITIVE_INFINITY);
+		
+		/*
+		List<ParcelBoundary> lLimitesFront = this.bP.getCadastralParcels().get(0)
+				.getBoundariesByType(ParcelBoundaryType.ROAD);
+
 		double currentP = Double.POSITIVE_INFINITY;
+
 		
-		for(ParcelBoundary bP : lLimitesFront) {
+		
+		for (ParcelBoundary bP : lLimitesFront) {
 			ParcelBoundary bPBoundary = bP.getOppositeBoundary();
-			
-			if(bPBoundary==null||bPBoundary.getGeom() == null ) {
+
+			if (bPBoundary == null || bPBoundary.getGeom() == null) {
 				System.out.println(this.bP.getCadastralParcels().get(0).getId());
 				continue;
 			}
-			
-			currentP = Math.min(bP.getGeom().distance(bPBoundary.getGeom()), currentP);
-		}
-		
-		p_value = currentP;
-	}
-	
-	
-	
-	
-	
-	
-	
 
-	
-	
+			currentP = Math.min(bP.getGeom().distance(bPBoundary.getGeom()), currentP);
+		}*/
+
+
+	}
 
 }
