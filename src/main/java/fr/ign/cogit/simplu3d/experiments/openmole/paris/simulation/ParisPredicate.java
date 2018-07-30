@@ -108,25 +108,6 @@ public class ParisPredicate<O extends AbstractSimpleBuilding, C extends Abstract
 				filter(x -> x.getOppositeBoundary() != null && x.getOppositeBoundary().getGeom() != null).
 				map(x -> (double) x.getGeom().distance( x.getOppositeBoundary().getGeom())).
 				min((x1, x2) -> Double.compare(x1, x2)).orElse(Double.POSITIVE_INFINITY);
-		
-		/*
-		List<ParcelBoundary> lLimitesFront = this.bP.getCadastralParcels().get(0)
-				.getBoundariesByType(ParcelBoundaryType.ROAD);
-
-		double currentP = Double.POSITIVE_INFINITY;
-
-		
-		
-		for (ParcelBoundary bP : lLimitesFront) {
-			ParcelBoundary bPBoundary = bP.getOppositeBoundary();
-
-			if (bPBoundary == null || bPBoundary.getGeom() == null) {
-				System.out.println(this.bP.getCadastralParcels().get(0).getId());
-				continue;
-			}
-
-			currentP = Math.min(bP.getGeom().distance(bPBoundary.getGeom()), currentP);
-		}*/
 
 
 	}
