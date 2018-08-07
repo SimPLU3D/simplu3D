@@ -25,6 +25,7 @@ import fr.ign.cogit.geoxygene.util.conversion.JtsGeOxygene;
 import fr.ign.cogit.simplu3d.model.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.Environnement;
+import fr.ign.cogit.simplu3d.util.AssignZ;
 import fr.ign.geometry.IntersectionArea;
 import fr.ign.geometry.Primitive;
 import fr.ign.geometry.Rectangle2D;
@@ -195,8 +196,8 @@ public class Cuboid extends AbstractSimpleBuilding {
 			if (env != null && env.getTerrain() != null) {
 				zMin = env.getTerrain().castCoordinate(this.centerx, this.centery).z;
 			} else {
-				logger.warn("No terrain Cuboid ZMin set to 0");
-				zMin = 0;
+				logger.warn("No terrain Cuboid ZMin set to AssignZ.DEFAULT_Z");
+				zMin = AssignZ.DEFAULT_Z;
 			}
 
 		}

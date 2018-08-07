@@ -53,7 +53,7 @@ public class AfficheEnvironnementExec {
 
 		ConstantRepresentation.backGroundColor = new Color(156, 180, 193);
 
-		String folderName = "/home/mickael/data/mbrasebin/donnees/Strasbourg/GTRU/ProjectT3/";
+		String folderName =  "/home/mbrasebin/Documents/Donnees/Exp/Eugene_Million/";
 
 		Environnement env = LoaderSHP.loadNoDTM(new File(folderName));
 

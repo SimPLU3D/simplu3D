@@ -173,6 +173,9 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
 
   }
 
+  
+  public static double DEFAULT_DIST_BUILDING = 0;
+  
   @Override
   public boolean check(C c, M m) {
 
@@ -181,8 +184,15 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
     // ART_8 Distance minimale des constructions par rapport aux autres sur
     // une même propriété imposée en mètre 88= non renseignable, 99= non
     // réglementé
-
+	  
+	  
+	  
     double distanceInterBati = r1.getArt_8();
+    
+    if(distanceInterBati == 88.0||distanceInterBati == 99.0) {
+    	distanceInterBati = DEFAULT_DIST_BUILDING;
+    }
+    
     if ((!MultipleBuildingsCuboid.ALLOW_INTERSECTING_CUBOID)
         && (!checkDistanceInterBuildings(c, m, distanceInterBati))) { // r1.getArt_8()
       return false;
@@ -193,6 +203,7 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
         return false;
       }
     }
+    
 
     O birth = null;
 
@@ -337,7 +348,7 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
     double reg9 = r.getArt_9();
     if (reg9 != 99 & reg9 != 88) {
       if ((areaBuilt / areaBPU) > reg9) {
-        return false;
+    	return false;
       }
     }
 
@@ -345,9 +356,10 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
     // par rapport à la surface totale de la parcelle Valeur comprise de 0 à
     // 1, 88 si non renseignable, 99 si non règlementé
     double reg13 = r.getArt_13();
+ 
     if (reg13 != 99 & reg13 != 88) {
       if ((areaBuilt / areaBPU) > (1 - reg13)) {
-        return false;
+    	  return false;
       }
     }
 
@@ -728,7 +740,7 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
     return union;
   }
 
-  private GeometryFactory gf = new GeometryFactory();
+
   private long c = 0;
 
   // check width of group of cuboids

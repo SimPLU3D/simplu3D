@@ -9,6 +9,7 @@ import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
+import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.contrib.geometrie.Angle;
 import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
 import fr.ign.cogit.geoxygene.convert.FromGeomToSurface;
@@ -35,6 +36,7 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 public class LoaderCuboid {
 
   public static List<Cuboid> loadFromShapeFile(String shapeFile) {
+    
     return loadFromCollection(ShapefileReader.read(shapeFile));
   }
 
@@ -57,9 +59,8 @@ public class LoaderCuboid {
         .convertMSGeom(feat.getGeom());
 
     OrientedBoundingBox oBB = new OrientedBoundingBox(iMS);
-
+    
     IPolygon poly = oBB.getPoly();
-
     ApproximatedPlanEquation ap = new ApproximatedPlanEquation(poly);
 
     if (ap.getNormale().getZ() < 0) {

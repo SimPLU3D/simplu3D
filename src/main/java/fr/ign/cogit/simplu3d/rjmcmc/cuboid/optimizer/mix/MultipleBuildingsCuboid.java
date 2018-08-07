@@ -42,7 +42,9 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth.TransformToSurfa
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.parallelCuboid.MoveParallelCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.IntersectionVolumeBinaryEnergy;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.VolumeUnaryEnergy;
+import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.sampler.GreenSamplerBlockTemperature;
+import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.CountVisitor;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.PrepareVisitors;
 import fr.ign.mpp.DirectRejectionSampler;
 import fr.ign.mpp.DirectSampler;
@@ -125,13 +127,23 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 		Schedule<SimpleTemperature> sch = create_schedule(p);
 		EndTest end = create_end_test(p);
 		System.out.println("*************** " + end.getClass() + " ********************");
+		
+		
+		
 		PrepareVisitors<Cuboid> pv = new PrepareVisitors<>(env);
 		CompositeVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> mVisitor = pv.prepare(p, bpu.getId());
+		this.countV = pv.getCountV();
+		
 		/*
 		 * < This is the way to launch the optimization process. Here, the magic happens... >
 		 */
 		SimulatedAnnealing.optimize(Random.random(), conf, samp, sch, end, mVisitor);
 		return conf;
+	}
+
+
+	public  int getCount() {
+		return this.countV.getCount();
 	}
 
 	public GraphConfiguration<Cuboid> create_configuration(Parameters p, IGeometry geom, BasicPropertyUnit bpu) throws Exception {
@@ -154,6 +166,10 @@ public class MultipleBuildingsCuboid extends BasicCuboidOptimizer<Cuboid> {
 		}
 		return create_configuration_no_inter(p, geom, bpu);
 	}
+
+	
+	protected CountVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> countV = null;
+
 
 	private GraphConfiguration<Cuboid> create_configuration_intersection(Parameters p, Geometry geom, BasicPropertyUnit bpu) {
 		// Énergie constante : à la création d'un nouvel objet
