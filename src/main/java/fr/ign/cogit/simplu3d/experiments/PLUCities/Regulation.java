@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.experiments.iauidf.regulation;
+package fr.ign.cogit.simplu3d.experiments.PLUCities;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,7 +20,6 @@ import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 
 public class Regulation {
-
 	private final static String CSV_SEPARATOR = ",";
 
 	private static Logger log = Logger.getLogger(Regulation.class);
@@ -251,8 +250,9 @@ public class Regulation {
 		return art_5;
 	}
 
-	// ART_6 Distance minimale des constructions par rapport à la voirie imposée en mètre 
-	// 88= non renseignable, 99= non réglementé
+	//TODO programmer si le batiment doit être alligné, si il n'y a pas d'allignement then utiliser une valeur (se renseigner si c'est déjà fait)
+	// ART_6 Distance minimale des constructions par rapport à la voirie imposée
+	// en mètre 88= non renseignable, 99= non réglementé
 	public double getArt_6() {
 		return art_6;
 	}
@@ -401,5 +401,4 @@ public class Regulation {
 		}
 		return jtsGeometry;
 	}
-
 }
