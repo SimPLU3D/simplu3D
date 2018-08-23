@@ -83,14 +83,14 @@ public class TestCuboidePar {
 		filePrescLin = new File(rootFile, "PRESCRIPTION_LIN.shp");
 		filePrescSurf = new File(rootFile, "PRESCRIPTION_SURF.shp");
 		zoningFile = new File("/home/mcolomb/donnee/couplage/pluZoning/ Zonage_CAGB_INSEE_25495.shp");
-		Environnement env = LoaderSHP.load(simuFile, codeFile, zoningFile, parcelFile, roadFile, buildFile, filePrescPonct, filePrescLin, filePrescSurf, null);
+		Environnement env = LoaderSHP.load(simuFile, codeFile, zoningFile, parcelFile, roadFile, buildFile,
+				filePrescPonct, filePrescLin, filePrescSurf, null);
 
 		p = Parameters.unmarshall(paramFile);
-		
+
 		HashMap<String, SamplePredicate<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> catalog = new HashMap<String, SamplePredicate<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>>();
 		BasicPropertyUnit bPU = env.getBpU().get(0);
-		
-		
+
 		// parralel stuff
 
 		IFeatureCollection<Prescription> presc = env.getPrescriptions();
@@ -100,7 +100,7 @@ public class TestCuboidePar {
 		for (Prescription p : presc) {
 
 			List<IOrientableCurve> lsTemp = FromGeomToLineString.convert(p.getGeom());
-System.out.println(p.getGeom());
+			System.out.println(p.getGeom());
 			if (lsTemp != null) {
 				lS.addAll(lS);
 			}
@@ -110,21 +110,19 @@ System.out.println(p.getGeom());
 		geomTab = lS.toArray(geomTab);
 
 		ParallelCuboidBuilder pcb = new ParallelCuboidBuilder(geomTab, 1);
-		
-		
-		
+
 		System.out.println(pcb);
-	
+
 		// Instantiation of the sampler
 		OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();
-		
-		
+
 		String typez = new String();
 
 		// Rules parameters
 
 		Regulation regle = null;
-		Map<Integer, List<Regulation>> regles = Regulation.loadRegulationSet("/home/mcolomb/donnee/couplage/pluZoning/codes/predicate.csv");
+		Map<Integer, List<Regulation>> regles = Regulation
+				.loadRegulationSet("/home/mcolomb/donnee/couplage/pluZoning/codes/predicate.csv");
 		for (UrbaZone zone : env.getUrbaZones()) {
 			if (zone.getGeom().contains(bPU.getGeom())) {
 				typez = zone.getLibelle();
@@ -134,7 +132,7 @@ System.out.println(p.getGeom());
 
 		for (int imu : regles.keySet()) {
 			for (Regulation reg : regles.get(imu)) {
-				if (reg.getLibelle_de_dul().equals(typez) &&  reg.getInsee()==25495) {
+				if (reg.getLibelle_de_dul().equals(typez) && reg.getInsee() == 25495) {
 					regle = reg;
 					System.out.println("j'ai bien retrouvé la ligne. son type est " + typez);
 				}
@@ -147,13 +145,14 @@ System.out.println(p.getGeom());
 		}
 
 		double distReculVoirie = regle.getArt_6();
-		boolean align=false;
+		boolean align = false;
 		if (distReculVoirie == 77) {
 			distReculVoirie = 0;
 			align = true;
 		}
 		double distReculFond = regle.getArt_73();
-		// regle.getArt_74()) devrait prendre le minimum de la valeur fixe et du rapport à la hauteur du batiment à coté ::à développer yo
+		// regle.getArt_74()) devrait prendre le minimum de la valeur fixe et du rapport
+		// à la hauteur du batiment à coté ::à développer yo
 		double distReculLat = regle.getArt_72();
 
 		double distanceInterBati = regle.getArt_8();
@@ -167,14 +166,17 @@ System.out.println(p.getGeom());
 			maximalCES = 0;
 		}
 
-		// définition de la hauteur. Si elle est exprimé en nombre d'étage, on comptera 3m pour le premier étage et 2.5m pour les étages supérieurs. Je ne sais pas comment on
+		// définition de la hauteur. Si elle est exprimé en nombre d'étage, on comptera
+		// 3m pour le premier étage et 2.5m pour les étages supérieurs. Je ne sais pas
+		// comment on
 		// utilise ce paramètre car il n'est pas en argument dans le predicate.
 		// TODO utiliser cette hauteur
 		double maximalhauteur = regle.getArt_10_m();
 
 		// Instantiation of the rule checker
-		PredicatePLUCities<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new PredicatePLUCities<>(bPU, distReculVoirie,align, distReculFond, distReculLat,
-				distanceInterBati, maximalCES, maximalhauteur, true,presc);
+		PredicatePLUCities<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new PredicatePLUCities<>(
+				bPU, distReculVoirie, align, distReculFond, distReculLat, distanceInterBati, maximalCES, maximalhauteur,
+				true, p.getInteger("nbCuboid"), presc);
 		// PredicateDensification<Cuboid, GraphConfiguration<Cuboid>,
 		// BirthDeathModification<Cuboid>> pred = new PredicateIAUIDF();
 		Double areaParcels = 0.0;
@@ -183,8 +185,7 @@ System.out.println(p.getGeom());
 		}
 
 		// Run of the optimisation on a parcel with the predicate
-		
-		
+
 		GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred);
 
 		// Witting the output
@@ -201,7 +202,8 @@ System.out.println(p.getGeom());
 
 			// We write some attributes
 
-			AttributeManager.addAttribute(feat, "Longueur", Math.max(v.getValue().length, v.getValue().width), "Double");
+			AttributeManager.addAttribute(feat, "Longueur", Math.max(v.getValue().length, v.getValue().width),
+					"Double");
 			AttributeManager.addAttribute(feat, "Largeur", Math.min(v.getValue().length, v.getValue().width), "Double");
 			AttributeManager.addAttribute(feat, "Hauteur", v.getValue().height, "Double");
 			AttributeManager.addAttribute(feat, "Rotation", v.getValue().orientation, "Double");

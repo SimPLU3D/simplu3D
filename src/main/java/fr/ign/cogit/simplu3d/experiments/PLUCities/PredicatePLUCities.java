@@ -26,6 +26,7 @@ import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
 import fr.ign.cogit.simplu3d.model.Prescription;
 import fr.ign.cogit.simplu3d.model.PrescriptionType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.mix.MultipleBuildingsCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
 import fr.ign.cogit.simplu3d.util.CuboidGroupCreation;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
@@ -44,6 +45,7 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 	private double maximalCES = 0.0;
 	private double maximalHauteur = 0.0;
 	private boolean singleBuild = false;
+	private int nbCuboid=0;
 	private IFeatureCollection<Prescription> prescriptions;
 
 	// BasicPropertyUnit utilisée
@@ -52,23 +54,24 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 	/**
 	 * Constructeur de la classe
 	 * 
-	 * @param currentBPU
-	 *            : l'unité foncière sur laquelle on construit (généralement : 1 parcelle, ça peut être utile pour accélérer les traitements, mais ce n'est pas fait ici)
-	 * @param distReculVoirie
-	 *            : distance de recul par rapport à la voirie (la référence ici est la limite séparative donnant sur la rue annotée comme ROAD)
-	 * @param distReculFond
-	 *            : distance de recul par rapport aux bordures annotées comme fond de parcelle annotée comme BOT
-	 * @param distReculLat
-	 *            : distance de recul par rapport aux bordures annotée comme LAT
-	 * @param distanceInterBati
-	 *            : distance entre 2 boîtes
-	 * @param maximalCES
-	 *            : CES maximum
+	 * @param currentBPU        : l'unité foncière sur laquelle on construit
+	 *                          (généralement : 1 parcelle, ça peut être utile pour
+	 *                          accélérer les traitements, mais ce n'est pas fait
+	 *                          ici)
+	 * @param distReculVoirie   : distance de recul par rapport à la voirie (la
+	 *                          référence ici est la limite séparative donnant sur
+	 *                          la rue annotée comme ROAD)
+	 * @param distReculFond     : distance de recul par rapport aux bordures
+	 *                          annotées comme fond de parcelle annotée comme BOT
+	 * @param distReculLat      : distance de recul par rapport aux bordures annotée
+	 *                          comme LAT
+	 * @param distanceInterBati : distance entre 2 boîtes
+	 * @param maximalCES        : CES maximum
 	 * @throws Exception
 	 */
 
-	public PredicatePLUCities(BasicPropertyUnit currentBPU, double distReculVoirie, double distReculFond, double distReculLat, double distanceInterBati, double maximalCES, double maximalhauteur)
-			throws Exception {
+	public PredicatePLUCities(BasicPropertyUnit currentBPU, double distReculVoirie, double distReculFond,
+			double distReculLat, double distanceInterBati, double maximalCES, double maximalhauteur, int nbcuboid) throws Exception {
 		// On appelle l'autre constructeur qui renseigne un certain nombre de
 		// géométries
 		this(currentBPU);
@@ -79,10 +82,12 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 		this.distanceInterBati = distanceInterBati;
 		this.maximalCES = maximalCES;
 		this.maximalHauteur = maximalhauteur;
+		this.nbCuboid = nbcuboid;
 	}
 
-	public PredicatePLUCities(BasicPropertyUnit currentBPU, double distReculVoirie, boolean align, double distReculFond, double distReculLat, double distanceInterBati,
-			double maximalCES, double maximalhauteur, boolean singleBuild, IFeatureCollection<Prescription> presc) throws Exception {
+	public PredicatePLUCities(BasicPropertyUnit currentBPU, double distReculVoirie, boolean align, double distReculFond,
+			double distReculLat, double distanceInterBati, double maximalCES, double maximalhauteur,
+			boolean singleBuild, int nbcuboid, IFeatureCollection<Prescription> presc) throws Exception {
 		// On appelle l'autre constructeur qui renseigne un certain nombre de
 		// géométries
 		this(currentBPU);
@@ -96,6 +101,7 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 		this.singleBuild = singleBuild;
 		this.prescriptions = presc;
 		this.align = align;
+		this.nbCuboid = nbcuboid;
 	}
 
 	// On stocke la géométrie des différentes bordures de la parcelle courante
@@ -107,7 +113,9 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 	Geometry surface = null;
 
 	/**
-	 * Ce constructeur initialise les géométries curveLimiteFondParcel, curveLimiteFrontParcel & curveLimiteLatParcel car elles seront utilisées pour exprimer certaines contraintes
+	 * Ce constructeur initialise les géométries curveLimiteFondParcel,
+	 * curveLimiteFrontParcel & curveLimiteLatParcel car elles seront utilisées pour
+	 * exprimer certaines contraintes
 	 * 
 	 * @param bPU
 	 * @throws Exception
@@ -116,7 +124,8 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 		super();
 		this.currentBPU = bPU;
 
-		// Pour simplifier la vérification, on extrait les différentes bordures de parcelles
+		// Pour simplifier la vérification, on extrait les différentes bordures de
+		// parcelles
 		IMultiCurve<IOrientableCurve> curveLimiteFondParcel = new GM_MultiCurve<>();
 		IMultiCurve<IOrientableCurve> curveLimiteFrontParcel = new GM_MultiCurve<>();
 		IMultiCurve<IOrientableCurve> curveLimiteLatParcel = new GM_MultiCurve<>();
@@ -142,7 +151,8 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 						curveLimiteFondParcel.add((IOrientableCurve) geom);
 
 					} else {
-						System.out.println("Classe SamplePredicate : quelque chose n'est pas un ICurve : " + geom.getClass());
+						System.out.println(
+								"Classe SamplePredicate : quelque chose n'est pas un ICurve : " + geom.getClass());
 					}
 
 				}
@@ -154,7 +164,8 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 						curveLimiteLatParcel.add((IOrientableCurve) geom);
 
 					} else {
-						System.out.println("Classe SamplePredicate : quelque chose n'est pas un ICurve : " + geom.getClass());
+						System.out.println(
+								"Classe SamplePredicate : quelque chose n'est pas un ICurve : " + geom.getClass());
 					}
 
 				}
@@ -166,7 +177,8 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 						curveLimiteFrontParcel.add((IOrientableCurve) geom);
 
 					} else {
-						System.out.println("Classe SamplePredicate : quelque chose n'est pas un ICurve : " + geom.getClass());
+						System.out.println(
+								"Classe SamplePredicate : quelque chose n'est pas un ICurve : " + geom.getClass());
 					}
 
 				}
@@ -193,9 +205,12 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 	}
 
 	/**
-	 * Cette méthode est executée à chaque fois que le système suggère une nouvelle proposition. C => contient la configuration courante (en termes de cuboids proposés) M => les
-	 * modifications que l'on souhaite apporter à la configuration courante. Normalement, il n'y a jamais plus d'une naissance ou d'une mort dans M, mais là dans le code on fait
-	 * comme si c'était possible, mais ça peut être simplifié
+	 * Cette méthode est executée à chaque fois que le système suggère une nouvelle
+	 * proposition. C => contient la configuration courante (en termes de cuboids
+	 * proposés) M => les modifications que l'on souhaite apporter à la
+	 * configuration courante. Normalement, il n'y a jamais plus d'une naissance ou
+	 * d'une mort dans M, mais là dans le code on fait comme si c'était possible,
+	 * mais ça peut être simplifié
 	 */
 	@Override
 	public boolean check(C c, M m) {
@@ -203,13 +218,18 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 		// Il s'agit des objets de la classe Cuboid
 		List<O> lO = m.getBirth();
 
-		// On vérifie les règles sur tous les pavés droits, dès qu'il y en a un qui ne respecte pas une règle, on rejette
+		// On vérifie les règles sur tous les pavés droits, dès qu'il y en a un qui ne
+		// respecte pas une règle, on rejette
 		// On traite les contraintes qui ne concernent que les nouveux bâtiments
 
-		if (c.size() >= 1 && singleBuild) {
+		if (c.size() > 1 && singleBuild) {
+			System.out.println("too much fuck no");
 			return false;
 		}
-
+		if (c.size() > nbCuboid) {
+			return false;
+		}
+		
 		for (O cuboid : lO) {
 
 			// On vérifie que le batiment est compris dans la zone d'alignement (surfacique)
@@ -217,14 +237,14 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 			if (prescriptions != null && align == true) {
 				for (Prescription prescription : prescriptions) {
 					if (prescription.type == PrescriptionType.FACADE_ALIGNMENT) {
-						if (prescription.getGeom().isMultiSurface()&& !cuboid.toGeometry().touches(jtsCurveLimiteFrontParcel)) {
+						if (prescription.getGeom().isMultiSurface()
+								&& !cuboid.toGeometry().touches(jtsCurveLimiteFrontParcel)) {
 							return false;
 						}
-					
-						}
+
 					}
 				}
-			
+			}
 
 			// On vérifie la contrainte de recul par rapport au fond de parcelle
 			// Existe t il ?
@@ -241,9 +261,7 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 				}
 
 			}
-			// On vérifie la contrainte de recul par rapport au front de
-			// parcelle
-			// (voirie)
+			// On vérifie la contrainte de recul par rapport au front de parcelle (voirie).
 			// Existe t il ?
 			if (this.jtsCurveLimiteFrontParcel != null) {
 				// On vérifie la distance
@@ -253,8 +271,7 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 				}
 			}
 
-			// On vérifie la contrainte de recul par rapport aux bordures de la
-			// parcelle
+			// On vérifie la contrainte de recul par rapport aux bordures de la parcelle
 			// Existe t il ?
 			if (jtsCurveLimiteLatParcel != null) {
 				// On vérifie la distance
@@ -314,7 +331,9 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 			return false;
 		}
 
-		// if (MultipleBuildingsCuboid.ALLOW_INTERSECTING_CUBOID) {
+//		if (!MultipleBuildingsCuboid.ALLOW_INTERSECTING_CUBOID) {
+//			return false;
+//		}
 		if (!testWidthBuilding(c, m, 7.5, distanceInterBati)) {
 			return false;
 		}
@@ -474,7 +493,8 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 		}
 
 		/*
-		 * List<List<AbstractSimpleBuilding>> groupes = CuboidGroupCreation.createGroup(lBatIni, 0.5);
+		 * List<List<AbstractSimpleBuilding>> groupes =
+		 * CuboidGroupCreation.createGroup(lBatIni, 0.5);
 		 * 
 		 * if (groupes.size() > 1) { return false; }
 		 */
