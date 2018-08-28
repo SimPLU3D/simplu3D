@@ -71,7 +71,7 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 	 */
 
 	public PredicatePLUCities(BasicPropertyUnit currentBPU, double distReculVoirie, double distReculFond,
-			double distReculLat, double distanceInterBati, double maximalCES, double maximalhauteur, int nbcuboid) throws Exception {
+			double distReculLat, double distanceInterBati, double maximalCES, double maximalhauteur, int nbcuboid,boolean singleBati) throws Exception {
 		// On appelle l'autre constructeur qui renseigne un certain nombre de
 		// géométries
 		this(currentBPU);
@@ -83,6 +83,7 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 		this.maximalCES = maximalCES;
 		this.maximalHauteur = maximalhauteur;
 		this.nbCuboid = nbcuboid;
+		this.singleBuild = singleBati;
 	}
 
 	public PredicatePLUCities(BasicPropertyUnit currentBPU, double distReculVoirie, boolean align, double distReculFond,
@@ -222,10 +223,14 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 		// respecte pas une règle, on rejette
 		// On traite les contraintes qui ne concernent que les nouveux bâtiments
 
+		
+		
 		if (c.size() > 1 && singleBuild) {
-			System.out.println("too much fuck no");
 			return false;
 		}
+
+//		System.out.println("taille présumé de notre collec    "+c.size());
+		
 		if (c.size() > nbCuboid) {
 			return false;
 		}
