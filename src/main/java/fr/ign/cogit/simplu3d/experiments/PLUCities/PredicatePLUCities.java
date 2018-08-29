@@ -230,8 +230,8 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 		}
 
 //		System.out.println("taille présumé de notre collec    "+c.size());
-		
-		if (c.size() > nbCuboid) {
+		int nbAdded = m.getBirth().size() - m.getDeath().size();
+		if (c.size() + nbAdded > nbCuboid) {
 			return false;
 		}
 		
