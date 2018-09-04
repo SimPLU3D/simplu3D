@@ -25,6 +25,7 @@ import fr.ign.cogit.simplu3d.model.ParcelBoundary;
 import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
 import fr.ign.cogit.simplu3d.model.Prescription;
 import fr.ign.cogit.simplu3d.model.PrescriptionType;
+import fr.ign.cogit.simplu3d.model.SubParcel;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.mix.MultipleBuildingsCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
@@ -224,13 +225,13 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 		// On traite les contraintes qui ne concernent que les nouveux bâtiments
 
 		
-		
-		if (c.size() > 1 && singleBuild) {
+		int nbAdded = m.getBirth().size() - m.getDeath().size();
+		if (c.size() + nbAdded  > 1 && singleBuild) {
 			return false;
 		}
 
 //		System.out.println("taille présumé de notre collec    "+c.size());
-		int nbAdded = m.getBirth().size() - m.getDeath().size();
+
 		if (c.size() + nbAdded > nbCuboid) {
 			return false;
 		}
@@ -287,7 +288,18 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 				}
 
 			}
+		    
+		    if ((!MultipleBuildingsCuboid.ALLOW_INTERSECTING_CUBOID)
+		        && (!checkDistanceInterBuildings(c, m, distanceInterBati))) {
+		      return false;
+		    }
 
+		    if (MultipleBuildingsCuboid.ALLOW_INTERSECTING_CUBOID) {
+		      if (!testWidthBuilding(c, m, 7.5, distanceInterBati)) {
+		        return false;
+		      }
+		    }
+		    
 			// Distance between existig building and cuboid
 			for (Building b : currentBPU.getBuildings()) {
 
@@ -336,13 +348,7 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 			return false;
 		}
 
-//		if (!MultipleBuildingsCuboid.ALLOW_INTERSECTING_CUBOID) {
-//			return false;
-//		}
-		if (!testWidthBuilding(c, m, 7.5, distanceInterBati)) {
-			return false;
-		}
-		// }
+
 
 		// On a réussi tous les tests, on renvoie vrai
 		return true;
