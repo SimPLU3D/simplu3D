@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.experiments.PLUCities;
+package fr.ign.cogit.simplu3d.experiments.artiscales;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -173,10 +173,11 @@ public class TestCuboidePar {
 		// TODO utiliser cette hauteur
 		double maximalhauteur = regle.getArt_10_m();
 
+			
 		// Instantiation of the rule checker
 		PredicatePLUCities<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new PredicatePLUCities<>(
-				bPU, distReculVoirie, align, distReculFond, distReculLat, distanceInterBati, maximalCES, maximalhauteur,
-				true, p.getInteger("nbCuboid"), presc);
+				bPU,  align, distReculVoirie, distReculFond, distReculLat, distanceInterBati, maximalCES, maximalhauteur,
+				 p.getInteger("nbCuboid"), true, presc);
 		// PredicateDensification<Cuboid, GraphConfiguration<Cuboid>,
 		// BirthDeathModification<Cuboid>> pred = new PredicateIAUIDF();
 		Double areaParcels = 0.0;

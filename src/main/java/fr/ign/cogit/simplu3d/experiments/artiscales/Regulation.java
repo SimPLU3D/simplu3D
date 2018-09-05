@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.experiments.PLUCities;
+package fr.ign.cogit.simplu3d.experiments.artiscales;
 
 import java.io.BufferedReader;
 import java.io.File;

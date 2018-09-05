@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.experiments.PLUCities;
+package fr.ign.cogit.simplu3d.experiments.artiscales;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,6 +52,13 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 
 	// BasicPropertyUnit utilisée
 	private BasicPropertyUnit currentBPU;
+	
+	
+	private boolean canBeSimulated = true;
+
+	public boolean isCanBeSimulated() {
+		return canBeSimulated;
+	}
 
 	/**
 	 * Constructeur de la classe
@@ -105,13 +112,17 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 		GeometryFactory gf = new GeometryFactory();
 
 		//adapt geometries
-		this.surface = AdapterFactory.toGeometry(gf, currentBPU.getGeom());
+
 		if (geomForbidden != null&&!geomForbidden.isEmpty()) {
-			this.forbbidenZone = AdapterFactory.toGeometry(gf, geomForbidden);
+			this.forbiddenZone = AdapterFactory.toGeometry(gf, geomForbidden);
 		}
 		
 		this.align = align;
 		this.nbCuboid = nbcuboid;
+		
+		if(geomForbidden != null&&geomForbidden.contains(currentBPU.getGeom())) {
+			canBeSimulated = false;
+		}
 	}
 
 	// On stocke la géométrie des différentes bordures de la parcelle courante
@@ -120,9 +131,7 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 	Geometry jtsCurveLimiteFrontParcel = null;
 	Geometry jtsCurveLimiteLatParcel = null;
 
-	Geometry surface = null;
-
-	Geometry forbbidenZone = null;
+	Geometry forbiddenZone = null;
 
 	/**
 	 * Ce constructeur initialise les géométries curveLimiteFondParcel, curveLimiteFrontParcel & curveLimiteLatParcel car elles seront utilisées pour exprimer certaines contraintes
@@ -297,8 +306,9 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 
 			}
 
-			if (forbbidenZone != null) {
-				if (cuboid.toGeometry().intersects(forbbidenZone)) {
+	
+			if (forbiddenZone != null) {
+				if (cuboid.toGeometry().intersects(forbiddenZone)) {
 					return false;
 				}
 			}
@@ -320,9 +330,8 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 				return false;
 			}
 
-			if (!surface.contains(cuboid.toGeometry())) {
-				return false;
-			}
+			
+		
 
 		}
 
@@ -342,6 +351,7 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 			return false;
 		}
 
+	
 		// On a réussi tous les tests, on renvoie vrai
 		return true;
 
