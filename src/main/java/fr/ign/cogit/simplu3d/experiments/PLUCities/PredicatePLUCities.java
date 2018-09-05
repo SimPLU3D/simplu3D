@@ -300,10 +300,11 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 		      }
 		    }
 		    
+
 			// Distance between existig building and cuboid
 			for (Building b : currentBPU.getBuildings()) {
 
-				if (b.getFootprint().distance(cuboid.getFootprint()) < distanceInterBati) {
+				if (b.getFootprint().distance(cuboid.getFootprint()) <= distanceInterBati) {
 					return false;
 				}
 
