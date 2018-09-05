@@ -274,6 +274,7 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 
 			}
 
+
 			// On vérifie la contrainte de recul par rapport au prescriptions graphiques
 
 			if ((!MultipleBuildingsCuboid.ALLOW_INTERSECTING_CUBOID) && (!checkDistanceInterBuildings(c, m, distanceInterBati))) {
@@ -286,10 +287,11 @@ public class PredicatePLUCities<O extends AbstractSimpleBuilding, C extends Abst
 				}
 			}
 
+
 			// Distance between existig building and cuboid
 			for (Building b : currentBPU.getBuildings()) {
 
-				if (b.getFootprint().distance(cuboid.getFootprint()) < distanceInterBati) {
+				if (b.getFootprint().distance(cuboid.getFootprint()) <= distanceInterBati) {
 					return false;
 				}
 
