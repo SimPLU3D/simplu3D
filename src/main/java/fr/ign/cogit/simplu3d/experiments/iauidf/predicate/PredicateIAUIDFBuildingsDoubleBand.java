@@ -518,7 +518,8 @@ public class PredicateIAUIDFBuildingsDoubleBand<O extends AbstractSimpleBuilding
 		// On ajoute tous les nouveaux objets
 		lO.addAll(m.getBirth());
 
-		List<List<AbstractSimpleBuilding>> lGroupes = CuboidGroupCreation.createGroup(lO, 0);
+	    CuboidGroupCreation<AbstractSimpleBuilding> cGC = new  CuboidGroupCreation<AbstractSimpleBuilding>();
+		List<List<AbstractSimpleBuilding>> lGroupes = cGC.createGroup(lO, 0);
 
 		// System.out.println("nb groupes " + lGroupes.size());
 		for (List<AbstractSimpleBuilding> lAb : lGroupes) {

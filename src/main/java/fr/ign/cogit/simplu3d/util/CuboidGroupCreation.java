@@ -9,10 +9,10 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
 
-import fr.ign.cogit.simplu3d.model.AbstractBuilding;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 
-public class CuboidGroupCreation {
+public class CuboidGroupCreation<C extends AbstractSimpleBuilding> {
+
 	/**
 	 * The create group function that separates cuboid into list of near cuboid
 	 * 
@@ -20,23 +20,22 @@ public class CuboidGroupCreation {
 	 * @param connexionDistance : minimal distance to consider 2 boxes as connected
 	 * @return
 	 */
-	public static List<List<AbstractSimpleBuilding>> createGroup(List<? extends AbstractSimpleBuilding> lBatIn,
-			double connexionDistance) {
+	public List<List<C>> createGroup(List<? extends C> lBatIn, double connexionDistance) {
 
-		List<List<AbstractSimpleBuilding>> listGroup = new ArrayList<>();
+		List<List<C>> listGroup = new ArrayList<>();
 
 		while (!lBatIn.isEmpty()) {
 
-			AbstractSimpleBuilding batIni = lBatIn.remove(0);
+			C batIni = lBatIn.remove(0);
 
-			List<AbstractSimpleBuilding> currentGroup = new ArrayList<>();
+			List<C> currentGroup = new ArrayList<>();
 			currentGroup.add(batIni);
 
 			int nbElem = lBatIn.size();
 
 			bouclei: for (int i = 0; i < nbElem; i++) {
 
-				for (AbstractSimpleBuilding batTemp : currentGroup) {
+				for (C batTemp : currentGroup) {
 
 					if (lBatIn.get(i).getFootprint().distance(batTemp.getFootprint()) <= connexionDistance) {
 
@@ -67,7 +66,7 @@ public class CuboidGroupCreation {
 	 * @param widthBuffer
 	 * @return
 	 */
-	public static boolean checkWidth(List<? extends AbstractSimpleBuilding> lO, double widthBuffer) {
+	public boolean checkWidth(List<? extends C> lO, double widthBuffer) {
 		c = 0;
 		if (lO.size() < 2)
 			return true;
@@ -111,9 +110,9 @@ public class CuboidGroupCreation {
 	 * @param g
 	 * @return
 	 */
-	private static Geometry getGroupGeom(List<? extends AbstractSimpleBuilding> g) {
+	private Geometry getGroupGeom(List<? extends C> g) {
 		Collection<Geometry> collGeom = new ArrayList<>();
-		for (AbstractSimpleBuilding o : g) {
+		for (C o : g) {
 			collGeom.add(o.toGeometry()/* .buffer(0.4) */);
 		}
 		Geometry union = null;
@@ -126,8 +125,7 @@ public class CuboidGroupCreation {
 		return union;
 	}
 
-
-	public static boolean checkDistanceInterGroups(List<List<AbstractSimpleBuilding>> lGroupes, double distanceInterBati) {
+	public boolean checkDistanceInterGroups(List<List<C>> lGroupes, List<Double> distanceInterBati) {
 		// si un seul groupe
 		if (lGroupes.size() < 2)
 			return true;
@@ -139,7 +137,13 @@ public class CuboidGroupCreation {
 		for (int i = 0; i < lGroupes.size() - 1; ++i) {
 			for (int j = i + 1; j < lGroupes.size(); ++j) {
 				double distanceGroupes = getGroupGeom(lGroupes.get(i)).distance(getGroupGeom(lGroupes.get(j)));
-				double d = Math.max(Math.max(heights[i], heights[j]) * 0.5, distanceInterBati);
+
+				// If there is only one distance we use it or we use the max of the distance
+				// constraints of the groups
+				double distInterBatiCalculated = (distanceInterBati.size() == 1) ? distanceInterBati.get(0)
+						: Math.min(distanceInterBati.get(i), distanceInterBati.get(j));
+
+				double d = Math.max(Math.max(heights[i], heights[j]) * 0.5, distInterBatiCalculated);
 				// System.out.println("max(dist groupes, heights) : " + d
 				// + "---- dit inter bati : " + distanceInterBati);
 				if (distanceGroupes < d)
@@ -148,12 +152,12 @@ public class CuboidGroupCreation {
 		}
 		return true;
 	}
-	
-	private static double getGroupeHeight(List<? extends AbstractSimpleBuilding> g) {
+
+	private double getGroupeHeight(List<? extends C> g) {
 		double max = -1;
-		for (AbstractBuilding b : g) {
-			if (((AbstractSimpleBuilding) b).getHeight() > max)
-				max = ((AbstractSimpleBuilding) b).getHeight();
+		for (C b : g) {
+			if ((b).getHeight() > max)
+				max = ((C) b).getHeight();
 		}
 		return max;
 	}

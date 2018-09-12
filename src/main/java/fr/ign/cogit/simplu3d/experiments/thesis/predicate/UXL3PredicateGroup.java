@@ -127,7 +127,9 @@ public class UXL3PredicateGroup<O extends Cuboid, C extends AbstractGraphConfigu
 
 		}
 
-		List<List<AbstractSimpleBuilding>> groupes = CuboidGroupCreation.createGroup(lBatIni, 0.5);
+	    CuboidGroupCreation<AbstractSimpleBuilding> cGR = new CuboidGroupCreation<AbstractSimpleBuilding>();
+
+		List<List<AbstractSimpleBuilding>> groupes = cGR.createGroup(lBatIni, 0.5);
 
 		int nbElem = groupes.size();
 

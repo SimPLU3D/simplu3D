@@ -200,8 +200,10 @@ public class UB14PredicateFull<O extends Cuboid, C extends AbstractGraphConfigur
    // if(lBatIni.size() > 2){
     //    return false;
     //}
+    
+    CuboidGroupCreation<AbstractSimpleBuilding> cGR = new CuboidGroupCreation<AbstractSimpleBuilding>();
 
-    List<List<AbstractSimpleBuilding>> groupes = CuboidGroupCreation.createGroup(lBatIni, 0.5);
+    List<List<AbstractSimpleBuilding>> groupes = cGR.createGroup(lBatIni, 0.5);
 
     if (groupes.size() > 1) {
       return false;

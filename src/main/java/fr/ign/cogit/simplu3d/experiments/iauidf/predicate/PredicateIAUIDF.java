@@ -667,8 +667,8 @@ public class PredicateIAUIDF<O extends AbstractSimpleBuilding, C extends Abstrac
     	return true;
     }
 
-    List<List<AbstractSimpleBuilding>> lGroupes = CuboidGroupCreation
-        .createGroup(lO, 0);
+    CuboidGroupCreation<AbstractSimpleBuilding> cGC = new  CuboidGroupCreation<AbstractSimpleBuilding>();
+    List<List<AbstractSimpleBuilding>> lGroupes = cGC.createGroup(lO, 0);
 
     // System.out.println("nb groupes " + lGroupes.size());
     for (List<AbstractSimpleBuilding> lAb : lGroupes) {
