@@ -5,11 +5,11 @@ import java.io.File;
 import org.junit.Test;
 
 import fr.ign.cogit.simplu3d.demo.DemoEnvironmentProvider;
-import fr.ign.cogit.simplu3d.experiments.thesis.predicate.UXL3Predicate;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid.OptimisedBuildingsCuboidFinalDirectRejection;
+import fr.ign.cogit.simplu3d.rjmcmc.generic.predicate.SamplePredicate;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
@@ -48,7 +48,22 @@ public class SimulatorTest {
 
     OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();
 
-    UXL3Predicate<Cuboid,GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new UXL3Predicate<>(env.getBpU().get(1));
+	// Rules parameters.8
+	// Distance to road
+	double distReculVoirie = 2;
+	// Distance to bottom of the parcel
+	double distReculFond = 0;
+	// Distance to lateral parcel limits
+	double distReculLat = 4;
+	// Distance between two buildings of a parcel
+	double distanceInterBati = 0;
+	// Maximal ratio built area
+	double maximalCES = 0.5;
+
+	// Instantiation of the rule checker
+	SamplePredicate<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new SamplePredicate<>(
+			bPU, distReculVoirie, distReculFond, distReculLat, distanceInterBati, maximalCES);
+
 
     oCB.process(bPU, p, env, 1, pred);
   }

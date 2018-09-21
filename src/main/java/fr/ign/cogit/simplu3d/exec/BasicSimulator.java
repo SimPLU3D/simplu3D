@@ -47,7 +47,7 @@ public class BasicSimulator {
 	 * @param args
 	 */
 
-	// [building_footprint_rectangle_cli_main
+	// [buildin-g_footprint_rectangle_cli_main
 	public static void main(String[] args) throws Exception {
 	 
 		// Loading of configuration file that contains sampling space

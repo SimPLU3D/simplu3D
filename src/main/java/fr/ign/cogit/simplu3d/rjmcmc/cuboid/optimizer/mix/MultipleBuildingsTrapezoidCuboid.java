@@ -16,7 +16,6 @@ import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.convert.FromGeomToLineString;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
-import fr.ign.cogit.simplu3d.experiments.enau.transformation.RotateCuboid;
 import fr.ign.cogit.simplu3d.experiments.iauidf.predicate.PredicateIAUIDF;
 import fr.ign.cogit.simplu3d.experiments.iauidf.regulation.Regulation;
 import fr.ign.cogit.simplu3d.experiments.iauidf.tool.BandProduction;
@@ -47,6 +46,7 @@ import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.PrepareVisitors;
 import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.geometry.ParallelTrapezoid2;
 import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.transform.ParallelTrapezoidTransform;
 import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.transformation.MoveParallelRightTrapezoid;
+import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.transformation.RotateTrapezoid;
 import fr.ign.mpp.DirectRejectionSampler;
 import fr.ign.mpp.DirectSampler;
 import fr.ign.mpp.configuration.BirthDeathModification;
@@ -543,7 +543,7 @@ public class MultipleBuildingsTrapezoidCuboid extends DefaultSimPLU3DOptimizer<A
 			kernels.add(simpleMovekernel);
 
 			Kernel<GraphConfiguration<AbstractSimpleBuilding>, BirthDeathModification<AbstractSimpleBuilding>> simpleRotatekernel = new Kernel<>(
-					pView, pView, variate, variate, new RotateCuboid(p.getDouble("amplitudeRotate") * Math.PI / 180),
+					pView, pView, variate, variate, new RotateTrapezoid(p.getDouble("amplitudeRotate") * Math.PI / 180),
 					0.2, 1.0, "RotateS");
 			kernels.add(simpleRotatekernel);
 
@@ -622,7 +622,7 @@ public class MultipleBuildingsTrapezoidCuboid extends DefaultSimPLU3DOptimizer<A
 			kernels.add(simpleMovekernel);
 
 			Kernel<GraphConfiguration<AbstractSimpleBuilding>, BirthDeathModification<AbstractSimpleBuilding>> simpleRotatekernel = new Kernel<>(
-					sView, sView, variate, variate, new RotateCuboid(p.getDouble("amplitudeRotate") * Math.PI / 180),
+					sView, sView, variate, variate, new RotateTrapezoid(p.getDouble("amplitudeRotate") * Math.PI / 180),
 					0.2, 1.0, "RotateS");
 			kernels.add(simpleRotatekernel);
 
