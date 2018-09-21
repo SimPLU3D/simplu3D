@@ -24,7 +24,7 @@ public class SimpluParametersJSON implements SimpluParameters{
             e.printStackTrace();
         }
     }
-
+    
     public Object get(String name) {
         return this.jsonObject.get(name);
     }
