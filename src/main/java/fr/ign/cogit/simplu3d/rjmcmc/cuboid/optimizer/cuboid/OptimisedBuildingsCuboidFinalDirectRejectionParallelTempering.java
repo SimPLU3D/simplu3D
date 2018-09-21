@@ -11,6 +11,7 @@ import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.PrepareVisitors;
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.parameters.Parameters;
@@ -52,8 +53,8 @@ public class OptimisedBuildingsCuboidFinalDirectRejectionParallelTempering exten
 		this.tempMax = tempMax;
 	}
 
-	public void process(BasicPropertyUnit bpu, Parameters p, Environnement env, int id,
-			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred) {
+	public void process(BasicPropertyUnit bpu, SimpluParameters p, Environnement env, int id,
+						ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred) {
 		// Géométrie de l'unité foncière sur laquelle porte la génération
 		IGeometry geom = bpu.generateGeom().buffer(1);
 

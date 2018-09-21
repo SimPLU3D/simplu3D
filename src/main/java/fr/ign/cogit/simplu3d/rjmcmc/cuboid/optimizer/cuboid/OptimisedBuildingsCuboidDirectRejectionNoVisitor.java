@@ -3,6 +3,7 @@ package fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -46,7 +47,7 @@ import fr.ign.simulatedannealing.visitor.Visitor;
  */
 public class OptimisedBuildingsCuboidDirectRejectionNoVisitor extends BasicCuboidOptimizer<Cuboid> {
 
-	public GraphConfiguration<Cuboid> process(RandomGenerator rng, BasicPropertyUnit bpu, Parameters p,
+	public GraphConfiguration<Cuboid> process(RandomGenerator rng, BasicPropertyUnit bpu, SimpluParameters p,
 			Environnement env,
 			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred) {
 		// Géométrie de l'unité foncière sur laquelle porte la génération

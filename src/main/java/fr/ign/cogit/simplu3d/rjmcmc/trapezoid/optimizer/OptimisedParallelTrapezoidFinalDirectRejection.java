@@ -3,6 +3,7 @@ package fr.ign.cogit.simplu3d.rjmcmc.trapezoid.optimizer;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -71,7 +72,7 @@ public class OptimisedParallelTrapezoidFinalDirectRejection extends DefaultSimPL
 	public OptimisedParallelTrapezoidFinalDirectRejection() {
 	}
 
-	public GraphConfiguration<ParallelTrapezoid2> process(RandomGenerator rG, BasicPropertyUnit bpu, Parameters p,
+	public GraphConfiguration<ParallelTrapezoid2> process(RandomGenerator rG, BasicPropertyUnit bpu, SimpluParameters p,
 			Environnement env, int id,
 			ConfigurationModificationPredicate<GraphConfiguration<ParallelTrapezoid2>, BirthDeathModification<ParallelTrapezoid2>> pred,
 			IGeometry[] limits, IGeometry polygon) {
@@ -100,14 +101,14 @@ public class OptimisedParallelTrapezoidFinalDirectRejection extends DefaultSimPL
 		return conf;
 	}
 
-	public GraphConfiguration<ParallelTrapezoid2> create_configuration(Parameters p, IGeometry geom,
+	public GraphConfiguration<ParallelTrapezoid2> create_configuration(SimpluParameters p, IGeometry geom,
 			BasicPropertyUnit bpu) throws Exception {
 
 		return this.create_configuration(p, AdapterFactory.toGeometry(new GeometryFactory(), geom), bpu);
 
 	}
 
-	public GraphConfiguration<ParallelTrapezoid2> create_configuration(Parameters p, Geometry geom,
+	public GraphConfiguration<ParallelTrapezoid2> create_configuration(SimpluParameters p, Geometry geom,
 			BasicPropertyUnit bpu) {
 		// Énergie constante : à la création d'un nouvel objet
 
@@ -153,12 +154,11 @@ public class OptimisedParallelTrapezoidFinalDirectRejection extends DefaultSimPL
 	 * 
 	 * @param p
 	 *            les paramètres chargés depuis le fichier xml
-	 * @param r
 	 *            l'enveloppe dans laquelle on génère les positions
 	 * @return
 	 */
 	public Sampler<GraphConfiguration<ParallelTrapezoid2>, BirthDeathModification<ParallelTrapezoid2>> create_sampler(
-			RandomGenerator rng, Parameters p, BasicPropertyUnit bpU,
+			RandomGenerator rng, SimpluParameters p, BasicPropertyUnit bpU,
 			ConfigurationModificationPredicate<GraphConfiguration<ParallelTrapezoid2>, BirthDeathModification<ParallelTrapezoid2>> pred,
 			IGeometry[] limits, IGeometry polygon) {
 		// Un vecteur ?????

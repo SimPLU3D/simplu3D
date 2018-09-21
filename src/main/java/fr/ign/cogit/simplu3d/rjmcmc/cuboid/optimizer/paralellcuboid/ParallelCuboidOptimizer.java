@@ -3,6 +3,7 @@ package fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.paralellcuboid;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -56,7 +57,7 @@ import fr.ign.simulatedannealing.temperature.SimpleTemperature;
 //@TODO : does not work, I have to correct it
 public class ParallelCuboidOptimizer extends DefaultSimPLU3DOptimizer<ISimPLU3DPrimitive> {
 
-	public GraphConfiguration<Cuboid> process(RandomGenerator rng, BasicPropertyUnit bpu, Parameters p,
+	public GraphConfiguration<Cuboid> process(RandomGenerator rng, BasicPropertyUnit bpu, SimpluParameters p,
 			Environnement env, int id,
 			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred,
 			IGeometry[] limits, IGeometry polygon) throws Exception {
@@ -84,14 +85,14 @@ public class ParallelCuboidOptimizer extends DefaultSimPLU3DOptimizer<ISimPLU3DP
 		return conf;
 	}
 
-	public GraphConfiguration<Cuboid> create_configuration(Parameters p, IGeometry geom, BasicPropertyUnit bpu)
+	public GraphConfiguration<Cuboid> create_configuration(SimpluParameters p, IGeometry geom, BasicPropertyUnit bpu)
 			throws Exception {
 
 		return this.create_configuration(p, AdapterFactory.toGeometry(new GeometryFactory(), geom), bpu);
 
 	}
 
-	public GraphConfiguration<Cuboid> create_configuration(Parameters p, Geometry geom, BasicPropertyUnit bpu) {
+	public GraphConfiguration<Cuboid> create_configuration(SimpluParameters p, Geometry geom, BasicPropertyUnit bpu) {
 		// Énergie constante : à la création d'un nouvel objet
 
 		double energyCrea = Double.isNaN(this.energyCreation) ? p.getDouble("energy") : this.energyCreation;
@@ -127,7 +128,7 @@ public class ParallelCuboidOptimizer extends DefaultSimPLU3DOptimizer<ISimPLU3DP
 	}
 
 	public static Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> create_sampler(
-			RandomGenerator rng, Parameters p, BasicPropertyUnit bpU,
+			RandomGenerator rng, SimpluParameters p, BasicPropertyUnit bpU,
 			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred,
 			IGeometry pol, IGeometry[] lines) throws Exception {
 

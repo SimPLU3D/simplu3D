@@ -3,6 +3,7 @@ package fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -48,9 +49,9 @@ import fr.ign.simulatedannealing.temperature.SimpleTemperature;
 
 public class BasicCuboidOptimizer<C extends Cuboid> extends DefaultSimPLU3DOptimizer<ISimPLU3DPrimitive> {
 
-  public Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> create_sampler(RandomGenerator rng,
-      Parameters p, BasicPropertyUnit bpU,
-      ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred) {
+  public Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> create_sampler(
+  		RandomGenerator rng, SimpluParameters p, BasicPropertyUnit bpU,
+      	ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred) {
     return create_sampler(rng, p, bpU, pred, bpU.getGeom());
   }
 	/**
@@ -58,12 +59,11 @@ public class BasicCuboidOptimizer<C extends Cuboid> extends DefaultSimPLU3DOptim
 	 * 
 	 * @param p
 	 *            les paramètres chargés depuis le fichier xml
-	 * @param r
 	 *            l'enveloppe dans laquelle on génère les positions
 	 * @return
 	 */
-	public Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> create_sampler(RandomGenerator rng,
-			Parameters p, BasicPropertyUnit bpU,
+	public Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> create_sampler(
+			RandomGenerator rng, SimpluParameters p, BasicPropertyUnit bpU,
 			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred, IGeometry geom) {
 		// Un vecteur ?????
 		double minlen = Double.isNaN(this.minLengthBox) ? p.getDouble("minlen") : this.minLengthBox;
@@ -88,7 +88,7 @@ public class BasicCuboidOptimizer<C extends Cuboid> extends DefaultSimPLU3DOptim
 		}
 		
 		IEnvelope env = samplingSurface.getEnvelope();
-		
+		System.out.println(env);
 		UniformBirth<Cuboid> birth = new UniformBirth<Cuboid>(rng,
 				new Cuboid(env.minX(), env.minY(), minlen, minwid, minheight, 0),
 				new Cuboid(env.maxX(), env.maxY(), maxlen, maxwid, maxheight, Math.PI), builder,
@@ -134,7 +134,7 @@ public class BasicCuboidOptimizer<C extends Cuboid> extends DefaultSimPLU3DOptim
 	 * @return la configuration chargée, c'est à dire la formulation énergétique
 	 *         prise en compte
 	 */
-	public GraphConfiguration<Cuboid> create_configuration(Parameters p, Geometry geom,BasicPropertyUnit bpu) {
+	public GraphConfiguration<Cuboid> create_configuration(SimpluParameters p, Geometry geom, BasicPropertyUnit bpu) {
 		// Énergie constante : à la création d'un nouvel objet
 		ConstantEnergy<Cuboid, Cuboid> energyCreation = new ConstantEnergy<Cuboid, Cuboid>(p.getDouble("energy"));
 		// Énergie constante : pondération de l'intersection

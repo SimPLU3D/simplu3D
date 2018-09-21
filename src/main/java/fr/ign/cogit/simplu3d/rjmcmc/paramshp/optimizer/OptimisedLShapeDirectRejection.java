@@ -3,6 +3,7 @@ package fr.ign.cogit.simplu3d.rjmcmc.paramshp.optimizer;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -69,7 +70,7 @@ public class OptimisedLShapeDirectRejection extends DefaultSimPLU3DOptimizer<LBu
 	public OptimisedLShapeDirectRejection() {
 	}
 
-	public GraphConfiguration<LBuildingWithRoof> process(RandomGenerator rG, BasicPropertyUnit bpu, Parameters p,
+	public GraphConfiguration<LBuildingWithRoof> process(RandomGenerator rG, BasicPropertyUnit bpu, SimpluParameters p,
 			Environnement env, int id,
 			ConfigurationModificationPredicate<GraphConfiguration<LBuildingWithRoof>, BirthDeathModification<LBuildingWithRoof>> pred,
 			IGeometry polygon) {
@@ -98,14 +99,14 @@ public class OptimisedLShapeDirectRejection extends DefaultSimPLU3DOptimizer<LBu
 		return conf;
 	}
 
-	public GraphConfiguration<LBuildingWithRoof> create_configuration(Parameters p, IGeometry geom,
+	public GraphConfiguration<LBuildingWithRoof> create_configuration(SimpluParameters p, IGeometry geom,
 			BasicPropertyUnit bpu) throws Exception {
 
 		return this.create_configuration(p, AdapterFactory.toGeometry(new GeometryFactory(), geom), bpu);
 
 	}
 
-	public GraphConfiguration<LBuildingWithRoof> create_configuration(Parameters p, Geometry geom,
+	public GraphConfiguration<LBuildingWithRoof> create_configuration(SimpluParameters p, Geometry geom,
 			BasicPropertyUnit bpu) {
 		// Énergie constante : à la création d'un nouvel objet
 
@@ -170,12 +171,11 @@ public class OptimisedLShapeDirectRejection extends DefaultSimPLU3DOptimizer<LBu
 	 * 
 	 * @param p
 	 *            les paramètres chargés depuis le fichier xmlg
-	 * @param r
 	 *            l'enveloppe dans laquelle on génère les positions
 	 * @return
 	 */
 	public Sampler<GraphConfiguration<LBuildingWithRoof>, BirthDeathModification<LBuildingWithRoof>> create_sampler(
-			RandomGenerator rng, Parameters p, BasicPropertyUnit bpU,
+			RandomGenerator rng, SimpluParameters p, BasicPropertyUnit bpU,
 			ConfigurationModificationPredicate<GraphConfiguration<LBuildingWithRoof>, BirthDeathModification<LBuildingWithRoof>> pred,
 			IGeometry polygon) {
 

@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import org.jfree.chart.ChartPanel;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
@@ -61,7 +62,7 @@ import fr.ign.simulatedannealing.visitor.Visitor;
 public class FilmVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>>
 		implements Visitor<C, M> {
 
-	private MainWindow mW = null;
+	private MainWindow mW;
 	private int save;
 	private int iter;
 
@@ -78,7 +79,7 @@ public class FilmVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraphCo
 	private Color col;
 	
 
-	public FilmVisitor(IDirectPosition dp, Vecteur vectOrientation, String folder, Color col, Parameters p, Environnement env) {
+	public FilmVisitor(IDirectPosition dp, Vecteur vectOrientation, String folder, Color col, SimpluParameters p, Environnement env) {
 		mW = new MainWindow();
 		represent(env, mW, p);
 		this.dp = dp;
@@ -127,9 +128,7 @@ public class FilmVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraphCo
 
 		for (GraphVertex<O> v : config.getGraph().vertexSet()) {
 
-			IGeometry geom = null;
-
-			geom = v.getValue().generated3DGeom();
+			IGeometry geom = v.getValue().generated3DGeom();
 
 			if (geom == null) {
 				continue;
@@ -162,7 +161,6 @@ public class FilmVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraphCo
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -238,9 +236,9 @@ public class FilmVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraphCo
 		return false;
 	}
 
-	private static void represent(Environnement env, MainWindow mW, Parameters p) {
+	private static void represent(Environnement env, MainWindow mW, SimpluParameters p) {
 
-		List<Theme> lTheme = new ArrayList<RepEnvironnement.Theme>();
+		List<Theme> lTheme = new ArrayList<>();
 		// lTheme.add(Theme.TOIT_BATIMENT);
 		// lTheme.add(Theme.FACADE_BATIMENT);
 		// lTheme.add(Theme.FAITAGE);
@@ -291,7 +289,7 @@ public class FilmVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraphCo
 		dpl.add(dp4);
 		dpl.add(dpLL);
 
-		IFeatureCollection<IFeature> fc = new FT_FeatureCollection<IFeature>();
+		IFeatureCollection<IFeature> fc = new FT_FeatureCollection<>();
 
 		IFeature feat = new DefaultFeature(new GM_Polygon(new GM_LineString(dpl)));
 
@@ -301,7 +299,7 @@ public class FilmVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraphCo
 		// .textureLoading(folder + "Env3D_86.png"), dpUR.getX()-dpLL.getX(),
 		// dpUR.getY()-dpLL.getY()));
 
-		String background = p.getString("background_img").toString();
+		String background = p.getString("background_img");
 
 		feat.setRepresentation(new TexturedSurface(feat, TextureManager.textureLoading(env.folder + background),
 				dpUR.getX() - dpLL.getX(), dpUR.getY() - dpLL.getY()));
