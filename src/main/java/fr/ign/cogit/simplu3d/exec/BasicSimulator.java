@@ -10,6 +10,7 @@ import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.demo.DemoEnvironmentProvider;
 import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
+import fr.ign.cogit.simplu3d.io.shapefile.SaveGeneratedObjects;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
@@ -48,9 +49,9 @@ public class BasicSimulator {
 	 * @param args
 	 */
 
-	// [building_footprint_rectangle_cli_main
+	// [buildin-g_footprint_rectangle_cli_main
 	public static void main(String[] args) throws Exception {
-
+	 
 		// Loading of configuration file that contains sampling space
 		// information and simulated annealing configuration
 		String folderName = BasicSimulator.class.getClassLoader().getResource("scenario/").getPath();
@@ -85,32 +86,9 @@ public class BasicSimulator {
 
 		// Run of the optimisation on a parcel with the predicate
 		GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred);
-
-		// Witting the output
-		IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
-		// For all generated boxes
-		for (GraphVertex<Cuboid> v : cc.getGraph().vertexSet()) {
-
-			// Output feature with generated geometry
-			IFeature feat = new DefaultFeature(v.getValue().generated3DGeom());
-
-			// We write some attributes
-			AttributeManager.addAttribute(feat, "Longueur", Math.max(v.getValue().length, v.getValue().width),
-					"Double");
-			AttributeManager.addAttribute(feat, "Largeur", Math.min(v.getValue().length, v.getValue().width), "Double");
-			AttributeManager.addAttribute(feat, "Hauteur", v.getValue().height, "Double");
-			AttributeManager.addAttribute(feat, "Rotation", v.getValue().orientation, "Double");
-
-			iFeatC.add(feat);
-
-		}
-
-		// A shapefile is written as output
-		// WARNING : 'out' parameter from configuration file have to be change
-		ShapefileWriter.write(iFeatC, p.get("result").toString() + "out.shp");
-
-		System.out.println("That's all folks");
-
+		//Writting the output
+		SaveGeneratedObjects.saveShapefile( p.get("result").toString() + "out.shp", cc, bPU.getId(), 0);
+		
 	}
 
 }

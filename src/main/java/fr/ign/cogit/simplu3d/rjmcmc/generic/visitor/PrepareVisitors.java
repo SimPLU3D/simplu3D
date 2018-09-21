@@ -30,6 +30,13 @@ public class PrepareVisitors<C extends ISimPLU3DPrimitive> {
 		this(env);
 		this.lSupplementaryVisitors = lSupplementaryVisitors;
 	}
+	
+	
+	CountVisitor<GraphConfiguration<C>, BirthDeathModification<C>> countV;
+
+	public CountVisitor<GraphConfiguration<C>, BirthDeathModification<C>> getCountV() {
+		return countV;
+	}
 
 	public CompositeVisitor<GraphConfiguration<C>, BirthDeathModification<C>> prepare(SimpluParameters p, int id) {
 		List<Visitor<GraphConfiguration<C>, BirthDeathModification<C>>> list = new ArrayList<>();
@@ -87,8 +94,10 @@ public class PrepareVisitors<C extends ISimPLU3DPrimitive> {
 			list.add(statsViewer);
 		}
 
-		CountVisitor<GraphConfiguration<C>, BirthDeathModification<C>> countV = new CountVisitor<>();
+		countV = new CountVisitor<>();
 		list.add(countV);
+		
+		
 		CompositeVisitor<GraphConfiguration<C>, BirthDeathModification<C>> mVisitor = new CompositeVisitor<>(list);
 
 		init_visitor(p, mVisitor);

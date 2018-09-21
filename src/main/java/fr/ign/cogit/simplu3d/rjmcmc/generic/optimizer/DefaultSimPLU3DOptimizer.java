@@ -15,6 +15,7 @@ import fr.ign.simulatedannealing.schedule.GeometricSchedule;
 import fr.ign.simulatedannealing.schedule.Schedule;
 import fr.ign.simulatedannealing.temperature.SimpleTemperature;
 
+
 public abstract class DefaultSimPLU3DOptimizer<C extends ISimPLU3DPrimitive> implements ISimPLU3DOptimizer<ISimPLU3DPrimitive> {
 
   protected double coeffDec = Double.NaN;

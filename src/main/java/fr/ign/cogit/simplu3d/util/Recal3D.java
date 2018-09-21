@@ -175,8 +175,8 @@ public class Recal3D {
 
     // In order to speed up calculation the cuboid are separated into
     // connected sets of cuboid
-    List<List<AbstractSimpleBuilding>> lGroupe = CuboidGroupCreation
-        .createGroup(lAB, connexionDistance);
+    CuboidGroupCreation<AbstractSimpleBuilding> cGC = new CuboidGroupCreation<AbstractSimpleBuilding>();
+    List<List<AbstractSimpleBuilding>> lGroupe = cGC.createGroup(lAB, connexionDistance);
 
     int count = 0;
     for (List<AbstractSimpleBuilding> groupe : lGroupe) {

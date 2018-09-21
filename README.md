@@ -3,7 +3,7 @@ Simplu3D
 
 [![Build Status](https://travis-ci.org/SimPLU3D/simplu3D.svg?branch=master)](https://travis-ci.org/SimPLU3D/simplu3D)
 
-A library to automatically general built configuration that respect urban regulations and optimize a utility function.
+A library to automatically general built configurations that respect urban regulations and optimize a utility function.
 
 
 Introduction
@@ -75,29 +75,8 @@ public static void main(String[] args) throws Exception {
 	// Run of the optimisation on a parcel with the predicate
 	GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred);
 
-	// Witting the output
-	IFeatureCollection<IFeature> iFeatC = new FT_FeatureCollection<>();
-	// For all generated boxes
-	for (GraphVertex<Cuboid> v : cc.getGraph().vertexSet()) {
-
-
-		//Output feature with generated geometry
-		IFeature feat = new DefaultFeature(v.getValue().generated3DGeom());
-
-		// We write some attributes
-		AttributeManager.addAttribute(feat, "Longueur", Math.max(v.getValue().length, v.getValue().width),
-				"Double");
-		AttributeManager.addAttribute(feat, "Largeur", Math.min(v.getValue().length, v.getValue().width), "Double");
-		AttributeManager.addAttribute(feat, "Hauteur", v.getValue().height, "Double");
-		AttributeManager.addAttribute(feat, "Rotation", v.getValue().orientation, "Double");
-
-		iFeatC.add(feat);
-
-	}
-
-	// A shapefile is written as output
-	// WARNING : 'out' parameter from configuration file have to be change
-	ShapefileWriter.write(iFeatC, p.get("result").toString() + "out.shp");
+	// Exporting the output as shapefile
+	SaveGeneratedObjects.saveShapefile( p.get("result").toString() + "out.shp", cc, bPU.getId(), 0);
 
 	System.out.println("-----End-----");
 

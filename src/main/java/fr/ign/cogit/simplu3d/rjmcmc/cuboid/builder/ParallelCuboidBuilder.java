@@ -35,6 +35,9 @@ public class ParallelCuboidBuilder implements ObjectBuilder<Cuboid>{
 	MultiLineString limits;
 	int bandType;
 
+
+
+	
 	public ParallelCuboidBuilder(IGeometry[] limits, int bandType) throws Exception {
 		factory = new GeometryFactory();
 		LineString[] lineStrings = new LineString[limits.length];
@@ -61,9 +64,7 @@ public class ParallelCuboidBuilder implements ObjectBuilder<Cuboid>{
 		} else {
 			result = new ParallelCuboid2(coordinates[0], coordinates[1], coordinates[2], distance * 2,
 					coordinates[3], orientation + Math.PI / 2);
-
 		}
-
 		return result;
 	}
 
