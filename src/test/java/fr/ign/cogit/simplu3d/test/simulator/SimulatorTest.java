@@ -39,7 +39,7 @@ public class SimulatorTest {
     String folderName = SimulatorTest.class.getClassLoader()
         .getResource("scenario/").getPath();
 
-    String fileName = "scenariotest.xml";
+    String fileName = "scenariotest.json";
 
     SimpluParameters p = new SimpluParametersJSON(new File(folderName + fileName));
 

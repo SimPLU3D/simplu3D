@@ -2,12 +2,6 @@ package fr.ign.cogit.simplu3d.exec;
 
 import java.io.File;
 
-import fr.ign.cogit.geoxygene.api.feature.IFeature;
-import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
-import fr.ign.cogit.geoxygene.feature.DefaultFeature;
-import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
-import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
-import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.demo.DemoEnvironmentProvider;
 import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
 import fr.ign.cogit.simplu3d.io.shapefile.SaveGeneratedObjects;
@@ -20,8 +14,6 @@ import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import fr.ign.cogit.simplu3d.util.SimpluParametersJSON;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
-import fr.ign.mpp.configuration.GraphVertex;
-import fr.ign.parameters.Parameters;
 
 /**
  * 
@@ -51,11 +43,11 @@ public class BasicSimulator {
 
 	// [buildin-g_footprint_rectangle_cli_main
 	public static void main(String[] args) throws Exception {
-	 
+
 		// Loading of configuration file that contains sampling space
 		// information and simulated annealing configuration
 		String folderName = BasicSimulator.class.getClassLoader().getResource("scenario/").getPath();
-		String fileName = "building_parameters_project_expthese_3.xml";
+		String fileName = "building_parameters_project_expthese_3.json";
 		SimpluParameters p = new SimpluParametersJSON(new File(folderName + fileName));
 
 		// Load default environment (data are in resource directory)
@@ -86,9 +78,9 @@ public class BasicSimulator {
 
 		// Run of the optimisation on a parcel with the predicate
 		GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred);
-		//Writting the output
-		SaveGeneratedObjects.saveShapefile( p.get("result").toString() + "out.shp", cc, bPU.getId(), 0);
-		
+		// Writting the output
+		SaveGeneratedObjects.saveShapefile(p.get("result").toString() + "out.shp", cc, bPU.getId(), 0);
+
 	}
 
 }

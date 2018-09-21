@@ -6,6 +6,8 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 
 import fr.ign.cogit.simplu3d.exec.BasicSimulator;
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
+import fr.ign.cogit.simplu3d.util.SimpluParametersJSON;
 import fr.ign.parameters.Parameters;
 
 /**
@@ -39,9 +41,9 @@ public class ParametersToPostGRES {
   public static void main(String[] args) throws Exception {
     String folderName = BasicSimulator.class.getClassLoader().getResource("scenario/").getPath();
 
-    String fileName = "building_parameters_project_expthese_3.xml";
+    String fileName = "building_parameters_project_expthese_3.json";
 
-    Parameters p = Parameters.unmarshall(new File(folderName + fileName));
+    SimpluParameters p = new SimpluParametersJSON(new File(folderName + fileName));
 
     String host = "localhost";
     String port = "5432";
