@@ -43,30 +43,30 @@ public static void main(String[] args) throws Exception {
 	// Loading of configuration file that contains sampling space
 	// information and simulated annealing configuration
 	String folderName = BasicSimulator.class.getClassLoader().getResource("scenario/").getPath();
-	String fileName = "building_parameters_project_expthese_3.xml";
-	Parameters p = Parameters.unmarshall(new File(folderName + fileName));
+	String fileName = "building_parameters_project_expthese_3.json";
+	SimpluParameters p = new SimpluParametersJSON(new File(folderName + fileName));
 
-	// Load default environment (data are in resource directory)
-	Environnement env = LoaderSHP.load(new File(
-			LoadDefaultEnvironment.class.getClassLoader().getResource("fr/ign/cogit/simplu3d/data/").getPath()));
+	// Load default environment with no DTM (data are in resource directory)
+	Environnement env = LoaderSHP.loadNoDTM(new File(
+			DemoEnvironmentProvider.class.getClassLoader().getResource("fr/ign/cogit/simplu3d/data/").getPath()));
 
 	// Select a parcel on which generation is proceeded
-	BasicPropertyUnit bPU = env.getBpU().get(8);
+	BasicPropertyUnit bPU = env.getBpU().get(0);
 
 	// Instantiation of the sampler
 	OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();
 
-	// Rules parameters
+	// Rules parameters.8
 	// Distance to road
-	double distReculVoirie = 0.0;
+	double distReculVoirie = 2;
 	// Distance to bottom of the parcel
-	double distReculFond = 2;
+	double distReculFond = 0;
 	// Distance to lateral parcel limits
 	double distReculLat = 4;
 	// Distance between two buildings of a parcel
-	double distanceInterBati = 5;
+	double distanceInterBati = 0;
 	// Maximal ratio built area
-	double maximalCES = 2;
+	double maximalCES = 0.5;
 
 	// Instantiation of the rule checker
 	SamplePredicate<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new SamplePredicate<>(
@@ -74,12 +74,8 @@ public static void main(String[] args) throws Exception {
 
 	// Run of the optimisation on a parcel with the predicate
 	GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred);
-
-	// Exporting the output as shapefile
-	SaveGeneratedObjects.saveShapefile( p.get("result").toString() + "out.shp", cc, bPU.getId(), 0);
-
-	System.out.println("-----End-----");
-
+	// Writting the output
+	SaveGeneratedObjects.saveShapefile(p.get("result").toString() + "out.shp", cc, bPU.getId(), 0);
 }
 
 ```
