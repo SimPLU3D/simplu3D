@@ -106,7 +106,7 @@ public class OptimisedBuildingsCuboidFinalDirectRejectionParallelTempering exten
 
 			PrepareVisitors<Cuboid> pv = new PrepareVisitors<>(env);
 			CompositeVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> mVisitor = pv.prepare(p, id);
-
+			countV = pv.getCountV();
 			tabVisitor[i] = mVisitor;
 
 		}

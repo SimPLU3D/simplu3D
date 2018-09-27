@@ -74,7 +74,7 @@ public abstract class DefaultSimPLU3DOptimizer<C extends ISimPLU3DPrimitive> imp
     }
   }
 
-  CountVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> countV = null;
+  protected CountVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> countV = null;
 
   public int getCount() {
     return countV.getCount();
