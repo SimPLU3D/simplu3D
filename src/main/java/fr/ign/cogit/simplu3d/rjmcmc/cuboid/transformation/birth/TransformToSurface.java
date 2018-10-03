@@ -69,7 +69,7 @@ public class TransformToSurface implements Transform {
 				this.polygonTransform = new PolygonTransform(pp, testedSnapping.next());
 				isValid = this.polygonTransform.isValid();
 			} catch (Exception e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 
 		}

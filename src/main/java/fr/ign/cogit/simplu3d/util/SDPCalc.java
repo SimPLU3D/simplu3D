@@ -53,7 +53,20 @@ public class SDPCalc {
       return geom.getArea() * (Math.floor(height / FLOOR_HEIGHT));
     }
 
+
+  
+  public double surface() {
+      return geom.getArea();
+    }
   }
+
+
+  @Override
+	protected Object clone() throws CloneNotSupportedException {
+		// TODO Auto-generated method stub
+		return super.clone();
+	}
+  
 
   public double process(String shape) {
     List<Cuboid> lCuboid = LoaderCuboid.loadFromShapeFile(shape);
@@ -67,11 +80,35 @@ public class SDPCalc {
         .createGroup(cubes, 0);
     System.out.println("nb groupes formé " + lGroupes.size());
     for (List<Cuboid> g : lGroupes)
-      sdp += sdpGroup(g);
+      sdp += sdpGroup(g, true);
+    return sdp;
+  }
+  
+  
+
+  public double processSurface(String shape) {
+    List<Cuboid> lCuboid = LoaderCuboid.loadFromShapeFile(shape);
+    return process(lCuboid);
+  }
+
+  public double processSurface(List<Cuboid> cubes) {
+    double sdp = 0;
+    CuboidGroupCreation<Cuboid> cGC = new CuboidGroupCreation<Cuboid>();
+    List<List<Cuboid>> lGroupes = cGC
+        .createGroup(cubes, 0);
+    System.out.println("nb groupes formé " + lGroupes.size());
+    for (List<Cuboid> g : lGroupes)
+      sdp += sdpGroup(g, false);
     return sdp;
   }
 
-  private double sdpGroup(List<? extends AbstractSimpleBuilding> group) {
+  /**
+   * If true = sdp if false = surface 2D
+   * @param group
+   * @param sdp_or_surface
+   * @return
+   */
+  private double sdpGroup(List<? extends AbstractSimpleBuilding> group, boolean sdp_or_surface) {
     List<GeomHeightPair> aPrec = new ArrayList<>();
     System.out.println("processing group with size " + group.size());
     AbstractSimpleBuilding cuboid = group.remove(0);
@@ -94,7 +131,13 @@ public class SDPCalc {
     double sdp = 0;
     for (GeomHeightPair e : aPrec) {
       // System.out.println("sdp partiel " + e.sdp());
-      sdp += e.sdp();
+    	
+    	if(sdp_or_surface) {
+    		sdp += e.sdp();
+    	}else {
+    		sdp += e.surface();
+    	}
+      
       // System.out.println(e.height + " -- " + e.geom);
     }
     return sdp;
