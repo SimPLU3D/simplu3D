@@ -14,7 +14,6 @@ import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.PrepareVisitors;
 import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
-import fr.ign.parameters.Parameters;
 import fr.ign.random.Random;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
 import fr.ign.rjmcmc.sampler.Sampler;

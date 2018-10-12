@@ -9,7 +9,6 @@ import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.contrib.geometrie.Angle;
 import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
 import fr.ign.cogit.geoxygene.convert.FromGeomToSurface;

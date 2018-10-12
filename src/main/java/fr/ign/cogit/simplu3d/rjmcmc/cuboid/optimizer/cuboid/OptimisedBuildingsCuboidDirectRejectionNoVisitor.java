@@ -3,7 +3,6 @@ package fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -13,9 +12,9 @@ import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
-import fr.ign.parameters.Parameters;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.SimulatedAnnealing;

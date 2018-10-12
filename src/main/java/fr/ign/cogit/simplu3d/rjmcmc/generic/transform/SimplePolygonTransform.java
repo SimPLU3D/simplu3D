@@ -6,7 +6,6 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
-import fr.ign.cogit.geoxygene.sig3d.calculation.OrientedBoundingBox;
 import fr.ign.geometry.transform.PolygonTransform;
 
 public class SimplePolygonTransform extends PolygonTransform {

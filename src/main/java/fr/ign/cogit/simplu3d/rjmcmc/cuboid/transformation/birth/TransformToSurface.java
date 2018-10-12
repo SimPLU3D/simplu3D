@@ -2,25 +2,13 @@ package fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
-import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
-import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.contrib.cartetopo.Face;
-import fr.ign.cogit.geoxygene.contrib.delaunay.TriangulationJTS;
-import fr.ign.cogit.geoxygene.convert.FromGeomToSurface;
-import fr.ign.cogit.geoxygene.generalisation.Filtering;
-import fr.ign.cogit.geoxygene.sig3d.distribution.EquiSurfaceDistributionJTS;
-import fr.ign.cogit.geoxygene.sig3d.topology.TriangulationLoader;
-import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.transform.SimplePolygonTransform;
 import fr.ign.geometry.transform.PolygonTransform;

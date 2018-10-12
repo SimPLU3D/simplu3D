@@ -8,7 +8,6 @@ import java.sql.Statement;
 import fr.ign.cogit.simplu3d.exec.BasicSimulator;
 import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import fr.ign.cogit.simplu3d.util.SimpluParametersJSON;
-import fr.ign.parameters.Parameters;
 
 /**
  * 

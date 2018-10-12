@@ -30,7 +30,6 @@ import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
 import fr.ign.mpp.configuration.GraphVertex;
-import fr.ign.parameters.Parameters;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.Temperature;
 import fr.ign.simulatedannealing.visitor.Visitor;

@@ -1,14 +1,14 @@
 package fr.ign.cogit.simplu3d.util.convert;
 
-import fr.ign.parameters.Parameter;
-import fr.ign.parameters.ParameterComponent;
-import fr.ign.parameters.Parameters;
-import org.json.simple.JSONObject;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+
+import org.json.simple.JSONObject;
+
+import fr.ign.parameters.Parameter;
+import fr.ign.parameters.ParameterComponent;
+import fr.ign.parameters.Parameters;
 
 public class TransformXMLToJSON {
     public static void main(String[] args) throws Exception {

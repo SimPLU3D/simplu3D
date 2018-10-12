@@ -9,7 +9,6 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import org.jfree.chart.ChartPanel;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
@@ -35,10 +34,10 @@ import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement;
 import fr.ign.cogit.simplu3d.representation.RepEnvironnement.Theme;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
 import fr.ign.mpp.configuration.GraphVertex;
-import fr.ign.parameters.Parameters;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.Temperature;
 import fr.ign.simulatedannealing.visitor.Visitor;

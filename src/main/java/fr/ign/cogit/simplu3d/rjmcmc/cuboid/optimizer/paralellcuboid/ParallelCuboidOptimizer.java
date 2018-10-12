@@ -3,7 +3,6 @@ package fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.paralellcuboid;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -25,6 +24,7 @@ import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.optimizer.DefaultSimPLU3DOptimizer;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.sampler.GreenSamplerBlockTemperature;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.PrepareVisitors;
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import fr.ign.mpp.DirectRejectionSampler;
 import fr.ign.mpp.DirectSampler;
 import fr.ign.mpp.configuration.BirthDeathModification;
@@ -32,7 +32,6 @@ import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.mpp.kernel.ObjectBuilder;
 import fr.ign.mpp.kernel.UniformBirth;
 import fr.ign.mpp.kernel.UniformTypeView;
-import fr.ign.parameters.Parameters;
 import fr.ign.random.Random;
 import fr.ign.rjmcmc.acceptance.MetropolisAcceptance;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
@@ -140,22 +139,20 @@ public class ParallelCuboidOptimizer extends DefaultSimPLU3DOptimizer<ISimPLU3DP
 
 		double minheight = p.getDouble("minheight");
 		double maxheight = p.getDouble("maxheight");
-		double maxheight2 = p.getDouble("maxheight");
+
 		IEnvelope env = bpU.getGeom().envelope();
 		// in multi object situations, we need an object builder for each
 		// subtype and a sampler for the supertype (end of file)
 
-		double[] v = new double[] { env.minX(), env.minY(), minlen, minwid, minheight, 0. };
+		double[] v = new double[] { env.minX(), env.minY(), minlen,  minheight};
 
-		double[] d = new double[] { env.maxX(), env.maxY(), maxlen, maxwid, maxheight, Math.PI };
 
-		double[] d2 = new double[] { env.maxX(), env.maxY(), maxlen, maxwid, maxheight2, Math.PI };
 
-		for (int i = 0; i < d.length; i++) {
-			d[i] = d[i] - v[i];
-		}
+		double[] d2 = new double[] { env.maxX(), env.maxY(), maxlen, maxheight};
 
-		for (int i = 0; i < d.length; i++) {
+	
+
+		for (int i = 0; i < d2.length; i++) {
 			d2[i] = d2[i] - v[i];
 		}
 

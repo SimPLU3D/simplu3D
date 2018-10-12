@@ -1,7 +1,12 @@
 package fr.ign.cogit.simplu3d.util;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import org.apache.log4j.Logger;
-import java.sql.*;
 
 public class SimpluParametersPostgis implements SimpluParameters{
     private final static String PARAMETERS_TABLE = "parameters";

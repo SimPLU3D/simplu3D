@@ -3,7 +3,6 @@ package fr.ign.cogit.simplu3d.rjmcmc.paramshp.optimizer;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -24,13 +23,13 @@ import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.PrepareVisitors;
 import fr.ign.cogit.simplu3d.rjmcmc.paramshp.builder.LBuildingWithRoofBuilder;
 import fr.ign.cogit.simplu3d.rjmcmc.paramshp.geometry.impl.LBuildingWithRoof;
 import fr.ign.cogit.simplu3d.rjmcmc.paramshp.transform.MoveLShapeBuilding;
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import fr.ign.mpp.DirectRejectionSampler;
 import fr.ign.mpp.DirectSampler;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.mpp.kernel.KernelFactory;
 import fr.ign.mpp.kernel.UniformBirth;
-import fr.ign.parameters.Parameters;
 import fr.ign.rjmcmc.acceptance.MetropolisAcceptance;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
 import fr.ign.rjmcmc.distribution.PoissonDistribution;
