@@ -2,8 +2,6 @@ package fr.ign.cogit.simplu3d.test.simulator;
 
 import java.io.File;
 
-import fr.ign.cogit.simplu3d.util.SimpluParameters;
-import fr.ign.cogit.simplu3d.util.SimpluParametersJSON;
 import org.junit.Test;
 
 import fr.ign.cogit.simplu3d.demo.DemoEnvironmentProvider;
@@ -12,9 +10,10 @@ import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid.OptimisedBuildingsCuboidFinalDirectRejection;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.predicate.SamplePredicate;
+import fr.ign.cogit.simplu3d.util.SimpluParameters;
+import fr.ign.cogit.simplu3d.util.SimpluParametersJSON;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
-import fr.ign.parameters.Parameters;
 /**
  * 
  *        This software is released under the licence CeCILL
