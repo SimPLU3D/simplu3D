@@ -73,13 +73,13 @@ public class SDPCalc {
     return process(lCuboid);
   }
 
-  public double process(List<Cuboid> cubes) {
+  public double process(List<? extends AbstractSimpleBuilding> cubes) {
     double sdp = 0;
-    CuboidGroupCreation<Cuboid> cGC = new CuboidGroupCreation<Cuboid>();
-    List<List<Cuboid>> lGroupes = cGC
+    CuboidGroupCreation<AbstractSimpleBuilding> cGC = new CuboidGroupCreation<AbstractSimpleBuilding>();
+    List<List<AbstractSimpleBuilding>> lGroupes = cGC
         .createGroup(cubes, 0);
     System.out.println("nb groupes formé " + lGroupes.size());
-    for (List<Cuboid> g : lGroupes)
+    for (List<AbstractSimpleBuilding> g : lGroupes)
       sdp += sdpGroup(g, true);
     return sdp;
   }
