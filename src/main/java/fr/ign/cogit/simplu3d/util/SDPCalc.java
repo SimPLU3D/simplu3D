@@ -78,7 +78,7 @@ public class SDPCalc {
     CuboidGroupCreation<AbstractSimpleBuilding> cGC = new CuboidGroupCreation<AbstractSimpleBuilding>();
     List<List<AbstractSimpleBuilding>> lGroupes = cGC
         .createGroup(cubes, 0);
-    System.out.println("nb groupes formé " + lGroupes.size());
+    //System.out.println("nb groupes formé " + lGroupes.size());
     for (List<AbstractSimpleBuilding> g : lGroupes)
       sdp += sdpGroup(g, true);
     return sdp;
@@ -110,7 +110,7 @@ public class SDPCalc {
    */
   private double sdpGroup(List<? extends AbstractSimpleBuilding> group, boolean sdp_or_surface) {
     List<GeomHeightPair> aPrec = new ArrayList<>();
-    System.out.println("processing group with size " + group.size());
+    //System.out.println("processing group with size " + group.size());
     AbstractSimpleBuilding cuboid = group.remove(0);
     aPrec.add(new GeomHeightPair(cuboid.toGeometry(), cuboid.height));
     for (AbstractSimpleBuilding b : group) {
