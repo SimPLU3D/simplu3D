@@ -52,6 +52,18 @@ public class ZonePackager {
 	// Define the radius in which parcel are kepts for the context
 	public static double CONTEXT_AREA = 0.5;
 
+	
+	//ATTRIBUTES TO REGENERATE IDPAR
+	public static String ATT_DEPARTEMENT = "CODE_DEP";
+	public static String ATT_COMMUNE = "CODE_COM";
+	public static String ATT_PREFIXE = "CODE_ARR";
+	public static String ATT_SECTION = "SECTION";
+	public static String ATT_NUMERO = "NUMERO";
+	
+
+	
+
+	
 	/**
 	 * 
 	 * @param parcelles
@@ -416,14 +428,17 @@ public class ZonePackager {
 	 * @param x
 	 */
 	private static void generateMissingAttributes(IFeature x) {
-		String commune = x.getAttribute("commune").toString();
-		String prefix = x.getAttribute("prefixe").toString();
-		String section = x.getAttribute("section").toString();
-		String numero = x.getAttribute("numero").toString();
-		String contenance = x.getAttribute("contenance").toString();
-		String id = x.getAttribute("id").toString();
+		Object departement = x.getAttribute(ATT_DEPARTEMENT);
+		String commune = x.getAttribute(ATT_COMMUNE).toString();
+		String prefix = x.getAttribute(ATT_PREFIXE).toString();
+		String section = x.getAttribute(ATT_SECTION).toString();
+		String numero = x.getAttribute(ATT_NUMERO).toString();
 
-		String idFinal = commune + prefix + section + numero + contenance + id;
+		//Departement may be null when ATT_COMMUNE already contains the departement number
+		String strDepartement = (departement != null) ? departement.toString() : "";
+		
+
+		String idFinal = strDepartement +commune + prefix + section + numero;
 		AttributeManager.addAttribute(x, ZonePackager.ATTRIBUTE_NAME_ID, idFinal, "String");
 
 		AttributeManager.addAttribute(x, ZonePackager.ATTRIBUTE_NAME_BAND, 0, "Integer");
