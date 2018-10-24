@@ -357,7 +357,7 @@ public class ZonePackager {
 		File f = new File(path);
 		f.mkdirs();
 		try {
-			ShapefileWriter.write(features, path + "parcelle.shp", CRS.decode(DefaultFeatureDeserializer.SRID_END));
+			ShapefileWriter.write(features, path + "parcelle.shp", CRS.decode(ZonePackager.SRID_END));
 		} catch (NoSuchAuthorityCodeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
