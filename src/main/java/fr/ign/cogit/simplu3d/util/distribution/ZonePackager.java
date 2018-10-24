@@ -44,7 +44,7 @@ public class ZonePackager {
 	public static String ATTRIBUTE_NAME_BAND = "B1_T_BANDE";
 
 	// ATTRIBUTE USED TO DETERMINE IF A PARCEL HAS TO BE SIMULATED
-	public static String ATT_SIMUL = "simul";
+	public static String ATTRIBUTE_SIMUL = "simul";
 
 	// OUTPUT SRID
 	public static String SRID_END = "EPSG:2154";
@@ -54,11 +54,11 @@ public class ZonePackager {
 
 	
 	//ATTRIBUTES TO REGENERATE IDPAR
-	public static String ATT_DEPARTEMENT = "CODE_DEP";
-	public static String ATT_COMMUNE = "CODE_COM";
-	public static String ATT_PREFIXE = "CODE_ARR";
-	public static String ATT_SECTION = "SECTION";
-	public static String ATT_NUMERO = "NUMERO";
+	public static String ATTRIBUTE_DEPARTEMENT = "CODE_DEP";
+	public static String ATTRIBUTE_COMMUNE = "CODE_COM";
+	public static String ATTRIBUTE_PREFIXE = "CODE_ARR";
+	public static String ATTRIBUTE_SECTION = "SECTION";
+	public static String ATTRIBUTE_NUMERO = "NUMERO";
 	
 
 	
@@ -166,7 +166,7 @@ public class ZonePackager {
 		// value is
 		// true
 		long nbOfSimulatedParcel = featColl.getElements().stream().filter(feat -> (feat.getGeom().area() < areaMax))
-				.filter(feat -> (Boolean.parseBoolean(feat.getAttribute(ZonePackager.ATT_SIMUL).toString()))).count();
+				.filter(feat -> (Boolean.parseBoolean(feat.getAttribute(ZonePackager.ATTRIBUTE_SIMUL).toString()))).count();
 
 		if (nbOfSimulatedParcel <= numberMaxOfSimulatedParcel) {
 			results.add(determineSimulationBLock(featColl, featCollTotal));
@@ -221,7 +221,7 @@ public class ZonePackager {
 			// It is a new context feature we add a false attribute
 			AttributeManager.addAttribute(featureFakeClone, ZonePackager.ATTRIBUTE_NAME_ID,
 					feat.getAttribute(ZonePackager.ATTRIBUTE_NAME_ID), "String");
-			AttributeManager.addAttribute(featureFakeClone, ZonePackager.ATT_SIMUL, "false", "String");
+			AttributeManager.addAttribute(featureFakeClone, ZonePackager.ATTRIBUTE_SIMUL, "false", "String");
 			AttributeManager.addAttribute(featureFakeClone, ZonePackager.ATTRIBUTE_NAME_BAND, 0, "Integer");
 
 			finalFeatColl.add(featureFakeClone);
@@ -380,7 +380,7 @@ public class ZonePackager {
 		int nbElem = features.size();
 		for (int i = 0; i < nbElem; i++) {
 			IFeature feat = features.get(i);
-			if (Boolean.parseBoolean(feat.getAttribute(ZonePackager.ATT_SIMUL).toString())) {
+			if (Boolean.parseBoolean(feat.getAttribute(ZonePackager.ATTRIBUTE_SIMUL).toString())) {
 				features.remove(i);
 				features.getElements().add(0, feat);
 				break;
@@ -428,11 +428,11 @@ public class ZonePackager {
 	 * @param x
 	 */
 	private static void generateMissingAttributes(IFeature x) {
-		Object departement = x.getAttribute(ATT_DEPARTEMENT);
-		String commune = x.getAttribute(ATT_COMMUNE).toString();
-		String prefix = x.getAttribute(ATT_PREFIXE).toString();
-		String section = x.getAttribute(ATT_SECTION).toString();
-		String numero = x.getAttribute(ATT_NUMERO).toString();
+		Object departement = x.getAttribute(ATTRIBUTE_DEPARTEMENT);
+		String commune = x.getAttribute(ATTRIBUTE_COMMUNE).toString();
+		String prefix = x.getAttribute(ATTRIBUTE_PREFIXE).toString();
+		String section = x.getAttribute(ATTRIBUTE_SECTION).toString();
+		String numero = x.getAttribute(ATTRIBUTE_NUMERO).toString();
 
 		//Departement may be null when ATT_COMMUNE already contains the departement number
 		String strDepartement = (departement != null) ? departement.toString() : "";
