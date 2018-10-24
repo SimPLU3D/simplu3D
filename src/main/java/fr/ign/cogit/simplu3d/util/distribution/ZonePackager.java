@@ -24,6 +24,7 @@ import fr.ign.cogit.geoxygene.sig3d.calculation.parcelDecomposition.OBBBlockDeco
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiPoint;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
+import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.geoxygene.util.index.Tiling;
 
@@ -52,18 +53,107 @@ public class ZonePackager {
 	// Define the radius in which parcel are kepts for the context
 	public static double CONTEXT_AREA = 0.5;
 
-	
-	//ATTRIBUTES TO REGENERATE IDPAR
+	// ATTRIBUTES TO REGENERATE IDPAR
 	public static String ATTRIBUTE_DEPARTEMENT = "CODE_DEP";
 	public static String ATTRIBUTE_COMMUNE = "CODE_COM";
 	public static String ATTRIBUTE_PREFIXE = "CODE_ARR";
 	public static String ATTRIBUTE_SECTION = "SECTION";
 	public static String ATTRIBUTE_NUMERO = "NUMERO";
-	
 
-	
+	/**
+	 * Create parcel groups and export with a temporary export to avoid out of
+	 * memory error
+	 * 
+	 * @param parcelles
+	 *            the set of parcels to decompose
+	 * @param numberMaxOfSimulatedParcel
+	 *            the number of max parcels to simulated
+	 * @param areaMax
+	 *            the maximal area to consider a parcel as simulable
+	 * @param tempFolder
+	 *            temporary folder that can be cleaned after the simulation
+	 * @param folderOutPath
+	 *            the final result
+	 * @throws Exception
+	 */
+	public static void createParcelGroupsAndExport(IFeatureCollection<IFeature> parcelles,
+			int numberMaxOfSimulatedParcel, double areaMax, String tempFolder, String folderOutPath) throws Exception {
 
-	
+		// Initialisation of spatial index with updates
+		parcelles.initSpatialIndex(Tiling.class, true);
+
+		// Initializatino of ID attribut to -1
+		parcelles.stream().forEach(x -> setIDBlock(x, -1));
+		// Adding missin attributes ID and NAME_BAND set by ATTRIBUTE_NAME_ID
+		// and
+		// ATTRIBUTE_NAME_BAND attribute name
+		parcelles.stream().forEach(x -> generateMissingAttributes(x));
+
+		// Current group ID
+		File folderTemp = new File(tempFolder);
+		folderTemp.mkdirs();
+
+		int idCurrentGroup = 0;
+
+		while (!parcelles.isEmpty()) {
+			// We get the first parcel and removes it from the list
+			IFeature currentParcel = parcelles.get(0);
+			parcelles.remove(0);
+
+			// Step 1 : determining the parcel in the same block
+			// Collection that will contain a list of parcels in the same block
+			IFeatureCollection<IFeature> grapFeatures = new FT_FeatureCollection<>();
+			// Initializing the number of parcels
+			grapFeatures.add(currentParcel);
+
+			List<IFeature> candidateParcelles = Arrays.asList(currentParcel);
+
+			System.out.println("Generating new block - still " + parcelles.size() + "  elements left");
+
+			// Initialisation of the recursion method that affects ID neighbour
+			// by neighbour
+			selectByNeighbourdHood(candidateParcelles, parcelles, grapFeatures);
+
+			System.out.println("The block has : " + grapFeatures.size() + "  elements");
+
+			// We store the result in a current folder
+			createFolderAndExport(folderTemp.getAbsolutePath() + "/" + idCurrentGroup + "/", grapFeatures);
+			idCurrentGroup++;
+		}
+
+		// Current group ID
+		File folderOut = new File(folderOutPath);
+		folderOut.mkdirs();
+
+		System.out.println("Splitting group");
+		// Step 2 : cutting the block into bag of limited number of parcel
+		// In order to have more balanced bags and increase the distribution
+		// performances
+		idCurrentGroup = 0;
+		for (File f : folderTemp.listFiles()) {
+
+			IFeatureCollection<IFeature> grapFeatures = ShapefileReader
+					.read(f.getAbsolutePath() + "/" + "parcelle.shp");
+
+			List<IFeatureCollection<IFeature>> listOfCutUrbanBlocks = determineCutBlocks(grapFeatures, grapFeatures,
+					numberMaxOfSimulatedParcel, areaMax);
+
+			for (IFeatureCollection<IFeature> featCollCutUrbanBlock : listOfCutUrbanBlocks) {
+				System.out
+						.println("---- Group " + idCurrentGroup + " has " + featCollCutUrbanBlock.size() + " elements");
+				for (IFeature feat : featCollCutUrbanBlock) {
+					setIDBlock(feat, idCurrentGroup);
+				}
+
+				createFolderAndExport(folderOut + "/" + idCurrentGroup + "/", grapFeatures);
+
+				idCurrentGroup++;
+			}
+
+		}
+
+	}
+
 	/**
 	 * 
 	 * @param parcelles
@@ -166,7 +256,8 @@ public class ZonePackager {
 		// value is
 		// true
 		long nbOfSimulatedParcel = featColl.getElements().stream().filter(feat -> (feat.getGeom().area() < areaMax))
-				.filter(feat -> (Boolean.parseBoolean(feat.getAttribute(ZonePackager.ATTRIBUTE_SIMUL).toString()))).count();
+				.filter(feat -> (Boolean.parseBoolean(feat.getAttribute(ZonePackager.ATTRIBUTE_SIMUL).toString())))
+				.count();
 
 		if (nbOfSimulatedParcel <= numberMaxOfSimulatedParcel) {
 			results.add(determineSimulationBLock(featColl, featCollTotal));
@@ -434,11 +525,11 @@ public class ZonePackager {
 		String section = x.getAttribute(ATTRIBUTE_SECTION).toString();
 		String numero = x.getAttribute(ATTRIBUTE_NUMERO).toString();
 
-		//Departement may be null when ATT_COMMUNE already contains the departement number
+		// Departement may be null when ATT_COMMUNE already contains the
+		// departement number
 		String strDepartement = (departement != null) ? departement.toString() : "";
-		
 
-		String idFinal = strDepartement +commune + prefix + section + numero;
+		String idFinal = strDepartement + commune + prefix + section + numero;
 		AttributeManager.addAttribute(x, ZonePackager.ATTRIBUTE_NAME_ID, idFinal, "String");
 
 		AttributeManager.addAttribute(x, ZonePackager.ATTRIBUTE_NAME_BAND, 0, "Integer");
