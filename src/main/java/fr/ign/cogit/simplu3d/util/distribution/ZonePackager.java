@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.geotools.data.DefaultFeatureLockFactory;
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -20,6 +21,7 @@ import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
+import fr.ign.cogit.geoxygene.feature.Population;
 import fr.ign.cogit.geoxygene.sig3d.calculation.parcelDecomposition.OBBBlockDecomposition;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiPoint;
@@ -46,7 +48,10 @@ public class ZonePackager {
 
 	// ATTRIBUTE USED TO DETERMINE IF A PARCEL HAS TO BE SIMULATED
 	public static String ATTRIBUTE_SIMUL = "simul";
-
+	
+	// ATTRIBUTE FOR THE VALUE OF THE INSEREST OF URBANISATION
+	public static String EVAL = "eval";
+	
 	// OUTPUT SRID
 	public static String SRID_END = "EPSG:2154";
 
@@ -59,7 +64,6 @@ public class ZonePackager {
 	public static String ATTRIBUTE_PREFIXE = "CODE_ARR";
 	public static String ATTRIBUTE_SECTION = "SECTION";
 	public static String ATTRIBUTE_NUMERO = "NUMERO";
-
 	/**
 	 * Create parcel groups and export with a temporary export to avoid out of
 	 * memory error
@@ -74,17 +78,19 @@ public class ZonePackager {
 	 *            temporary folder that can be cleaned after the simulation
 	 * @param folderOutPath
 	 *            the final result
+	 * @return a temporary file containing the bbox surrounding the pack
 	 * @throws Exception
 	 */
 	public static void createParcelGroupsAndExport(IFeatureCollection<IFeature> parcelles,
 			int numberMaxOfSimulatedParcel, double areaMax, String tempFolder, String folderOutPath) throws Exception {
 
-		// Initialisation of spatial index with updates
+
+		// Initialization of spatial index with updates
 		parcelles.initSpatialIndex(Tiling.class, true);
 
-		// Initializatino of ID attribut to -1
+		// Initialization of ID attribut to -1
 		parcelles.stream().forEach(x -> setIDBlock(x, -1));
-		// Adding missin attributes ID and NAME_BAND set by ATTRIBUTE_NAME_ID
+		// Adding missing attributes ID and NAME_BAND set by ATTRIBUTE_NAME_ID
 		// and
 		// ATTRIBUTE_NAME_BAND attribute name
 		parcelles.stream().forEach(x -> generateMissingAttributes(x));
@@ -130,11 +136,12 @@ public class ZonePackager {
 		// In order to have more balanced bags and increase the distribution
 		// performances
 		idCurrentGroup = 0;
+		
 		for (File f : folderTemp.listFiles()) {
-
-			IFeatureCollection<IFeature> grapFeatures = ShapefileReader
-					.read(f.getAbsolutePath() + "/" + "parcelle.shp");
-
+			if(f.isDirectory()) {
+			
+			IFeatureCollection<IFeature> grapFeatures = ShapefileReader.read(new String(f+ "/parcelle.shp"));
+			System.out.println(grapFeatures.size());
 			List<IFeatureCollection<IFeature>> listOfCutUrbanBlocks = determineCutBlocks(grapFeatures, grapFeatures,
 					numberMaxOfSimulatedParcel, areaMax);
 
@@ -149,9 +156,9 @@ public class ZonePackager {
 
 				idCurrentGroup++;
 			}
-
+			}
 		}
-
+		
 	}
 
 	/**
@@ -176,7 +183,7 @@ public class ZonePackager {
 
 		// Initializatino of ID attribut to -1
 		parcelles.stream().forEach(x -> setIDBlock(x, -1));
-		// Adding missin attributes ID and NAME_BAND set by ATTRIBUTE_NAME_ID
+		// Adding missing attributes ID and NAME_BAND set by ATTRIBUTE_NAME_ID
 		// and
 		// ATTRIBUTE_NAME_BAND attribute name
 		parcelles.stream().forEach(x -> generateMissingAttributes(x));
@@ -273,7 +280,7 @@ public class ZonePackager {
 	}
 
 	/**
-	 * Determine the simulation block and get the context arrond the simulable
+	 * Determine the simulation block and get the context around the simulable
 	 * parcels (CONTEXT_AREA value determines the radisu)
 	 * 
 	 * @param featColl
@@ -323,7 +330,7 @@ public class ZonePackager {
 	}
 
 	/**
-	 * Determijne the splitting of a set of parcels into a subset of 2 set of
+	 * Determine the splitting of a set of parcels into a subset of 2 set of
 	 * parcels
 	 * 
 	 * @param featColl
@@ -481,7 +488,12 @@ public class ZonePackager {
 		File f = new File(path);
 		f.mkdirs();
 		try {
+			Population<DefaultFeature> pop = new Population<DefaultFeature>(false, "entrees", DefaultFeature.class, true);
+			//IFeatureCollection<IFeature> env;
+			DefaultFeature feat =  new DefaultFeature(features.getEnvelope().getGeom());
+			pop.add(feat);
 			ShapefileWriter.write(features, path + "parcelle.shp", CRS.decode(ZonePackager.SRID_END));
+			ShapefileWriter.write(pop, path + "bbox.shp", CRS.decode(ZonePackager.SRID_END));
 		} catch (NoSuchAuthorityCodeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
