@@ -342,22 +342,6 @@ public class Cuboid extends AbstractSimpleBuilding {
 		return new GM_MultiSurface<>(lOS);
 	}
 
-	// public static IMultiSurface<IOrientableSurface> generate(Cuboid c,
-	// double zMin) {
-	//
-	// IDirectPositionList dpl = c.getFootprint().coord();
-	//
-	// IDirectPosition dp1 = dpl.get(0);
-	// dp1.setZ(zMin + c.height);
-	// IDirectPosition dp2 = dpl.get(1);
-	// dp2.setZ(zMin + c.height);
-	// IDirectPosition dp3 = dpl.get(2);
-	// dp3.setZ(zMin + c.height);
-	// IDirectPosition dp4 = dpl.get(3);
-	// dp4.setZ(zMin + c.height);
-	//
-	// return createCube(dp1, dp2, dp3, dp4, zMin);
-	// }
 
 	private List<IDirectPositionList> pointsCube = null;
 
@@ -430,78 +414,8 @@ public class Cuboid extends AbstractSimpleBuilding {
 		return pointsCube;
 	}
 
-	// private static IMultiSurface<IOrientableSurface> createCube(
-	// IDirectPosition p1, IDirectPosition p2, IDirectPosition p3,
-	// IDirectPosition p4, double zmin) {
-	//
-	// // Polygone p1,p2,p3,p4 représente la face supérieure dans cet ordre
-	//
-	// List<IDirectPositionList> lDpl = new ArrayList<IDirectPositionList>();
-	//
-	// IDirectPositionList dpl1 = new DirectPositionList();
-	// dpl1.add(p1);
-	// dpl1.add(p2);
-	// dpl1.add(p3);
-	// dpl1.add(p4);
-	// dpl1.add(p1);
-	// lDpl.add(dpl1);
-	//
-	// IDirectPosition p1bas = new DirectPosition(p1.getX(), p1.getY(), zmin);
-	// IDirectPosition p2bas = new DirectPosition(p2.getX(), p2.getY(), zmin);
-	// IDirectPosition p3bas = new DirectPosition(p3.getX(), p3.getY(), zmin);
-	// IDirectPosition p4bas = new DirectPosition(p4.getX(), p4.getY(), zmin);
-	//
-	// IDirectPositionList dpl2 = new DirectPositionList();
-	// dpl2.add(p2);
-	// dpl2.add(p1);
-	// dpl2.add(p1bas);
-	// dpl2.add(p2bas);
-	// dpl2.add(p2);
-	// lDpl.add(dpl2);
-	//
-	// IDirectPositionList dpl3 = new DirectPositionList();
-	// dpl3.add(p3);
-	// dpl3.add(p2);
-	// dpl3.add(p2bas);
-	// dpl3.add(p3bas);
-	// dpl3.add(p3);
-	// lDpl.add(dpl3);
-	//
-	// IDirectPositionList dpl4 = new DirectPositionList();
-	// dpl4.add(p4);
-	// dpl4.add(p3);
-	// dpl4.add(p3bas);
-	// dpl4.add(p4bas);
-	// dpl4.add(p4);
-	// lDpl.add(dpl4);
-	//
-	// IDirectPositionList dpl5 = new DirectPositionList();
-	// dpl5.add(p1);
-	// dpl5.add(p4);
-	// dpl5.add(p4bas);
-	// dpl5.add(p1bas);
-	// dpl5.add(p1);
-	// lDpl.add(dpl5);
-	//
-	// IDirectPositionList dpl6 = new DirectPositionList();
-	// dpl6.add(p1bas);
-	// dpl6.add(p4bas);
-	// dpl6.add(p3bas);
-	// dpl6.add(p2bas);
-	// dpl6.add(p1bas);
-	// lDpl.add(dpl6);
-	//
-	// List<IOrientableSurface> lOS = new ArrayList<>();
-	// for (IDirectPositionList dpl : lDpl) {
-	//
-	// lOS.add(new GM_Polygon(new GM_LineString(dpl)));
-	//
-	// }
-	//
-	// return new GM_MultiSurface<>(lOS);
-	//
-	// }
 
+	
 	@Override
 	public double getHeight() {
 

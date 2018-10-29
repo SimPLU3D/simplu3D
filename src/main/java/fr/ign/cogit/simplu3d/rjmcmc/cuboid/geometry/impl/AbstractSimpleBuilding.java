@@ -62,4 +62,28 @@ public abstract class AbstractSimpleBuilding extends Building implements SimpleO
 		return array1.equals(array2);
 	}
 
+	public double getCenterx() {
+		return centerx;
+	}
+
+	public double getCentery() {
+		return centery;
+	}
+
+	public double getLength() {
+		return length;
+	}
+
+	public double getWidth() {
+		return width;
+	}
+
+	public double getOrientation() {
+		return orientation;
+	}
+
+	public double getHeight() {
+		return height;
+	}
+
 }
