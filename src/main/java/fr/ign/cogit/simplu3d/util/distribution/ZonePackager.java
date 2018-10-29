@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.geotools.data.DefaultFeatureLockFactory;
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -21,7 +20,6 @@ import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
-import fr.ign.cogit.geoxygene.feature.Population;
 import fr.ign.cogit.geoxygene.sig3d.calculation.parcelDecomposition.OBBBlockDecomposition;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiPoint;
@@ -48,14 +46,14 @@ public class ZonePackager {
 
 	// ATTRIBUTE USED TO DETERMINE IF A PARCEL HAS TO BE SIMULATED
 	public static String ATTRIBUTE_SIMUL = "simul";
-	
+
 	// ATTRIBUTE FOR THE VALUE OF THE INSEREST OF URBANISATION
 	public static String EVAL = "eval";
-	
+
 	// OUTPUT SRID
 	public static String SRID_END = "EPSG:2154";
 
-	// Define the radius in which parcel are kepts for the context
+	// Define the radius in which parcel are kept for the context
 	public static double CONTEXT_AREA = 0.5;
 
 	// ATTRIBUTES TO REGENERATE IDPAR
@@ -64,26 +62,25 @@ public class ZonePackager {
 	public static String ATTRIBUTE_PREFIXE = "CODE_ARR";
 	public static String ATTRIBUTE_SECTION = "SECTION";
 	public static String ATTRIBUTE_NUMERO = "NUMERO";
+
 	/**
 	 * Create parcel groups and export with a temporary export to avoid out of
 	 * memory error
 	 * 
-	 * @param parcelles
-	 *            the set of parcels to decompose
-	 * @param numberMaxOfSimulatedParcel
-	 *            the number of max parcels to simulated
-	 * @param areaMax
-	 *            the maximal area to consider a parcel as simulable
-	 * @param tempFolder
-	 *            temporary folder that can be cleaned after the simulation
-	 * @param folderOutPath
-	 *            the final result
-	 * @return a temporary file containing the bbox surrounding the pack
+	 * @param parcelles                  the set of parcels to decompose
+	 * @param numberMaxOfSimulatedParcel the number of max parcels to simulated
+	 * @param areaMax                    the maximal area to consider a parcel as
+	 *                                   simulable
+	 * @param tempFolder                 temporary folder that can be cleaned after
+	 *                                   the simulation
+	 * @param folderOutPath              the final result
+	 * @param debug                      if we want to export the current bounding
+	 *                                   box
 	 * @throws Exception
 	 */
 	public static void createParcelGroupsAndExport(IFeatureCollection<IFeature> parcelles,
-			int numberMaxOfSimulatedParcel, double areaMax, String tempFolder, String folderOutPath) throws Exception {
-
+			int numberMaxOfSimulatedParcel, double areaMax, String tempFolder, String folderOutPath, boolean debug)
+			throws Exception {
 
 		// Initialization of spatial index with updates
 		parcelles.initSpatialIndex(Tiling.class, true);
@@ -123,7 +120,7 @@ public class ZonePackager {
 			System.out.println("The block has : " + grapFeatures.size() + "  elements");
 
 			// We store the result in a current folder
-			createFolderAndExport(folderTemp.getAbsolutePath() + "/" + idCurrentGroup + "/", grapFeatures);
+			createFolderAndExport(folderTemp.getAbsolutePath() + "/" + idCurrentGroup + "/", grapFeatures, debug);
 			idCurrentGroup++;
 		}
 
@@ -136,39 +133,37 @@ public class ZonePackager {
 		// In order to have more balanced bags and increase the distribution
 		// performances
 		idCurrentGroup = 0;
-		
+
 		for (File f : folderTemp.listFiles()) {
-			if(f.isDirectory()) {
-			
-			IFeatureCollection<IFeature> grapFeatures = ShapefileReader.read(new String(f+ "/parcelle.shp"));
-			System.out.println(grapFeatures.size());
-			List<IFeatureCollection<IFeature>> listOfCutUrbanBlocks = determineCutBlocks(grapFeatures, grapFeatures,
-					numberMaxOfSimulatedParcel, areaMax);
+			if (f.isDirectory()) {
 
-			for (IFeatureCollection<IFeature> featCollCutUrbanBlock : listOfCutUrbanBlocks) {
-				System.out
-						.println("---- Group " + idCurrentGroup + " has " + featCollCutUrbanBlock.size() + " elements");
-				for (IFeature feat : featCollCutUrbanBlock) {
-					setIDBlock(feat, idCurrentGroup);
+				IFeatureCollection<IFeature> grapFeatures = ShapefileReader.read(new String(f + "/parcelle.shp"));
+				System.out.println(grapFeatures.size());
+				List<IFeatureCollection<IFeature>> listOfCutUrbanBlocks = determineCutBlocks(grapFeatures, grapFeatures,
+						numberMaxOfSimulatedParcel, areaMax);
+
+				for (IFeatureCollection<IFeature> featCollCutUrbanBlock : listOfCutUrbanBlocks) {
+					System.out.println(
+							"---- Group " + idCurrentGroup + " has " + featCollCutUrbanBlock.size() + " elements");
+					for (IFeature feat : featCollCutUrbanBlock) {
+						setIDBlock(feat, idCurrentGroup);
+					}
+
+					createFolderAndExport(folderOut + "/" + idCurrentGroup + "/", grapFeatures, debug);
+
+					idCurrentGroup++;
 				}
-
-				createFolderAndExport(folderOut + "/" + idCurrentGroup + "/", grapFeatures);
-
-				idCurrentGroup++;
-			}
 			}
 		}
-		
+
 	}
 
 	/**
 	 * 
-	 * @param parcelles
-	 *            the set of parcels to decompose
-	 * @param numberMaxOfSimulatedParcel
-	 *            the number of max parcels to simulated
-	 * @param areaMax
-	 *            the maximal area to consider a parcel as simulable
+	 * @param parcelles                  the set of parcels to decompose
+	 * @param numberMaxOfSimulatedParcel the number of max parcels to simulated
+	 * @param areaMax                    the maximal area to consider a parcel as
+	 *                                   simulable
 	 * @return
 	 * @throws Exception
 	 */
@@ -234,17 +229,14 @@ public class ZonePackager {
 	}
 
 	/**
-	 * This method is used to cut the collection of blocks into sub block and
-	 * check the number of simulable parcels. It is a recursive method
+	 * This method is used to cut the collection of blocks into sub block and check
+	 * the number of simulable parcels. It is a recursive method
 	 * 
-	 * @param featColl
-	 *            the considered set of parcels for a block
-	 * @param featCollTotal
-	 *            the collection that contains all the parcels
-	 * @param numberMaxOfSimulatedParcel
-	 *            the number of max parcels to simulated
-	 * @param areaMax
-	 *            the maximal area
+	 * @param featColl                   the considered set of parcels for a block
+	 * @param featCollTotal              the collection that contains all the
+	 *                                   parcels
+	 * @param numberMaxOfSimulatedParcel the number of max parcels to simulated
+	 * @param areaMax                    the maximal area
 	 * @return
 	 * @throws Exception
 	 */
@@ -330,8 +322,7 @@ public class ZonePackager {
 	}
 
 	/**
-	 * Determine the splitting of a set of parcels into a subset of 2 set of
-	 * parcels
+	 * Determine the splitting of a set of parcels into a subset of 2 set of parcels
 	 * 
 	 * @param featColl
 	 * @return
@@ -451,24 +442,27 @@ public class ZonePackager {
 	/**
 	 * Create a folder for each entry of the map
 	 * 
-	 * @param map
-	 * @param folderIn
+	 * 
+	 * 
+	 * @param map      the map to export
+	 * @param folderIn the folder where the map is exported
+	 * @param debug    do we want to export the corresponding bbox ?
 	 */
-	public static void exportFolder(Map<Integer, IFeatureCollection<IFeature>> map, String folderIn) {
+	public static void exportFolder(Map<Integer, IFeatureCollection<IFeature>> map, String folderIn, boolean debug) {
 
 		(new File(folderIn)).mkdirs();
 		// For each key we create a folder with associated features
-		map.keySet().parallelStream().forEach(x -> createFolderAndExport(folderIn + x + "/", map.get(x)));
+		map.keySet().parallelStream().forEach(x -> createFolderAndExport(folderIn + x + "/", map.get(x), debug));
 	}
 
 	/**
-	 * Create a folder for an entry of the map (the name parcelle.shp is used in
-	 * the simulator)
+	 * Create a folder for an entry of the map (the name parcelle.shp is used in the
+	 * simulator)
 	 * 
 	 * @param path
 	 * @param features
 	 */
-	private static void createFolderAndExport(String path, IFeatureCollection<IFeature> features) {
+	private static void createFolderAndExport(String path, IFeatureCollection<IFeature> features, boolean debug) {
 		// We create the folder and store the collection
 
 		// This hint is to ensure that the first item has rules
@@ -488,12 +482,17 @@ public class ZonePackager {
 		File f = new File(path);
 		f.mkdirs();
 		try {
-			Population<DefaultFeature> pop = new Population<DefaultFeature>(false, "entrees", DefaultFeature.class, true);
-			//IFeatureCollection<IFeature> env;
-			DefaultFeature feat =  new DefaultFeature(features.getEnvelope().getGeom());
-			pop.add(feat);
+
+			if (debug) {
+				// If we want to export the bounding boxes
+				IFeatureCollection<IFeature> pop = new FT_FeatureCollection<>();
+				IFeature feat = new DefaultFeature(features.getEnvelope().getGeom());
+				pop.add(feat);
+				ShapefileWriter.write(pop, path + "bbox.shp", CRS.decode(ZonePackager.SRID_END));
+			}
+
 			ShapefileWriter.write(features, path + "parcelle.shp", CRS.decode(ZonePackager.SRID_END));
-			ShapefileWriter.write(pop, path + "bbox.shp", CRS.decode(ZonePackager.SRID_END));
+
 		} catch (NoSuchAuthorityCodeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
