@@ -46,10 +46,7 @@ public class ZonePackager {
 
 	// ATTRIBUTE USED TO DETERMINE IF A PARCEL HAS TO BE SIMULATED
 	public static String ATTRIBUTE_SIMUL = "simul";
-
-	// ATTRIBUTE FOR THE VALUE OF THE INSEREST OF URBANISATION
-	public static String EVAL = "eval";
-
+	
 	// OUTPUT SRID
 	public static String SRID_END = "EPSG:2154";
 
@@ -74,13 +71,11 @@ public class ZonePackager {
 	 * @param tempFolder                 temporary folder that can be cleaned after
 	 *                                   the simulation
 	 * @param folderOutPath              the final result
-	 * @param debug                      if we want to export the current bounding
-	 *                                   box
+	 * @param debug 					 if we want to export the current bounding box
 	 * @throws Exception
 	 */
 	public static void createParcelGroupsAndExport(IFeatureCollection<IFeature> parcelles,
-			int numberMaxOfSimulatedParcel, double areaMax, String tempFolder, String folderOutPath, boolean debug)
-			throws Exception {
+			int numberMaxOfSimulatedParcel, double areaMax, String tempFolder, String folderOutPath, boolean debug) throws Exception {
 
 		// Initialization of spatial index with updates
 		parcelles.initSpatialIndex(Tiling.class, true);
@@ -138,6 +133,7 @@ public class ZonePackager {
 			if (f.isDirectory()) {
 
 				IFeatureCollection<IFeature> grapFeatures = ShapefileReader.read(new String(f + "/parcelle.shp"));
+				System.out.println(grapFeatures.size());
 				List<IFeatureCollection<IFeature>> listOfCutUrbanBlocks = determineCutBlocks(grapFeatures, grapFeatures,
 						numberMaxOfSimulatedParcel, areaMax);
 
@@ -483,7 +479,7 @@ public class ZonePackager {
 		try {
 
 			if (debug) {
-				// If we want to export the bounding boxes
+				//If we want to export the bounding boxes
 				IFeatureCollection<IFeature> pop = new FT_FeatureCollection<>();
 				IFeature feat = new DefaultFeature(features.getEnvelope().getGeom());
 				pop.add(feat);
@@ -491,7 +487,7 @@ public class ZonePackager {
 			}
 
 			ShapefileWriter.write(features, path + "parcelle.shp", CRS.decode(ZonePackager.SRID_END));
-
+			
 		} catch (NoSuchAuthorityCodeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
