@@ -489,10 +489,8 @@ public class ZonePackager {
 			ShapefileWriter.write(features, path + "parcelle.shp", CRS.decode(ZonePackager.SRID_END));
 			
 		} catch (NoSuchAuthorityCodeException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (FactoryException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
