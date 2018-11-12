@@ -76,6 +76,7 @@ public class FilmVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraphCo
 	private String folder;
 	private int count = 0;
 	private Color col;
+
 	
 
 	public FilmVisitor(IDirectPosition dp, Vecteur vectOrientation, String folder, Color col, SimpluParameters p, Environnement env) {
@@ -235,7 +236,7 @@ public class FilmVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraphCo
 		return false;
 	}
 
-	private static void represent(Environnement env, MainWindow mW, SimpluParameters p) {
+	private  void represent(Environnement env, MainWindow mW, SimpluParameters p) {
 
 		List<Theme> lTheme = new ArrayList<>();
 		// lTheme.add(Theme.TOIT_BATIMENT);
@@ -300,7 +301,7 @@ public class FilmVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraphCo
 
 		String background = p.getString("background_img");
 
-		feat.setRepresentation(new TexturedSurface(feat, TextureManager.textureLoading(env.folder + background),
+		feat.setRepresentation(new TexturedSurface(feat, TextureManager.textureLoading(folder + background),
 				dpUR.getX() - dpLL.getX(), dpUR.getY() - dpLL.getY()));
 
 		mW.getInterfaceMap3D().getCurrent3DMap().addLayer(new VectorLayer(fc, "Fond"));

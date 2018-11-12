@@ -53,7 +53,7 @@ public class LBuildingWithRoof extends AbstractSimpleBuilding {
 	public LBuildingWithRoof(double centerx, double centery, double l1, double l2, double h1, double h2, double height,
 			double orientation, double hgutter, double shift) {
 		super();
-		this.generated = true;
+		this.setNew(true);
 		this.centerx = centerx;
 		this.centery = centery;
 		this.h1 = h1;
@@ -90,8 +90,7 @@ public class LBuildingWithRoof extends AbstractSimpleBuilding {
 		this.orientation = list.get(7);
 		this.hgutter = list.get(8);
 		this.shift = list.get(9);
-
-		this.generated = true;
+		this.setNew(true);;
 
 	}
 

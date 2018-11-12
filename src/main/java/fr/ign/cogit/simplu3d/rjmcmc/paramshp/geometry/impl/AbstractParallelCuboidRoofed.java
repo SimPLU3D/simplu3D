@@ -72,7 +72,7 @@ public abstract class AbstractParallelCuboidRoofed extends CuboidRoofed {
     this.setHeightT(list.get(4));
     this.setDeltaFromSide(list.get(4));
     // this.orientation = list.get(5);
-    this.generated = true;
+	this.setNew(true);
   }
 
 }

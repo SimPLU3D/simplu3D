@@ -219,7 +219,7 @@ public class ViewerVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraph
 		// .textureLoading(folder + "Env3D_86.png"), dpUR.getX()-dpLL.getX(),
 		// dpUR.getY()-dpLL.getY()));
 
-		String backgroundTexture = env.getFolder() + File.separator+p.getString("background_img").toString();
+		String backgroundTexture =  p.getString("folderOut")+ File.separator+p.getString("background_img").toString();
 	
 		System.out.println(backgroundTexture);
 		feat.setRepresentation(new TexturedSurface(feat, TextureManager.textureLoading(backgroundTexture),

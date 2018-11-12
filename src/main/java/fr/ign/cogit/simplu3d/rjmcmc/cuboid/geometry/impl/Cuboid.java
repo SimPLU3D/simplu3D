@@ -49,7 +49,7 @@ public class Cuboid extends AbstractSimpleBuilding {
 
 	public Cuboid(double centerx, double centery, double length, double width, double height, double orientation) {
 		super();
-		this.generated = true;
+		this.setNew(true);
 		this.centerx = centerx;
 		this.centery = centery;
 		this.length = length;
@@ -329,7 +329,7 @@ public class Cuboid extends AbstractSimpleBuilding {
 		this.width = list.get(3);
 		this.height = list.get(4);
 		this.orientation = list.get(5);
-		this.generated = true;
+		this.setNew(true);
 	}
 
 	public IGeometry generated3DGeom() {

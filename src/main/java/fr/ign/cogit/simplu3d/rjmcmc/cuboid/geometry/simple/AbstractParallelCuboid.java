@@ -57,7 +57,7 @@ public abstract class AbstractParallelCuboid extends Cuboid {
 //	    this.width = list.get(3);
 	    this.height = list.get(3);
 //	    this.orientation = list.get(5);
-	    this.generated = true;
+		this.setNew(true);
 	  }
 	  
 
