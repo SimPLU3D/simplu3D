@@ -37,26 +37,17 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 	private BasicPropertyUnit currentBPU;
 
 	/**
-	 * Constructeur de la classe
 	 * 
-	 * @param currentBPU
-	 *            : l'unité foncière sur laquelle on construit (généralement : 1
-	 *            parcelle, ça peut être utile pour accélérer les traitements,
-	 *            mais ce n'est pas fait ici)
-	 * @param distReculVoirie
-	 *            : distance de recul par rapport à la voirie (la référence ici
-	 *            est la limite séparative donnant sur la rue annotée comme
-	 *            ROAD)
-	 * @param distReculFond
-	 *            : distance de recul par rapport aux bordures annotées comme
-	 *            fond de parcelle annotée comme BOT
-	 * @param distReculLat
-	 *            : distance de recul par rapport aux bordures annotée comme LAT
-	 * @param distanceInterBati
-	 *            : distance entre 2 boîtes
-	 * @param maximalCES
-	 *            : CES maximum
-	 * @throws Exception
+	 * @param currentBPU        The current basic property unit on which the built
+	 *                          configuration will be generated (generally a parcel)
+	 * @param distReculVoirie   Value of distance to road constraint
+	 * @param distReculFond     Value of distance to bottom parcel boundaries
+	 *                          constraint
+	 * @param distReculLat      Value of distance to lateral parcel boundaries
+	 *                          constraint
+	 * @param distanceInterBati Value of distance to building constraint
+	 * @param maximalCES        maximal coverage ratio (BuiltArea/ParcelArea)
+	 * @throws Exception an exception
 	 */
 	public SamplePredicate(BasicPropertyUnit currentBPU, double distReculVoirie, double distReculFond,
 			double distReculLat, double distanceInterBati, double maximalCES) throws Exception {
@@ -78,10 +69,11 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 	Geometry jtsCurveLimiteLatParcel = null;
 
 	Geometry surface = null;
+
 	/**
 	 * Ce constructeur initialise les géométries curveLimiteFondParcel,
-	 * curveLimiteFrontParcel & curveLimiteLatParcel car elles seront utilisées
-	 * pour exprimer certaines contraintes
+	 * curveLimiteFrontParcel & curveLimiteLatParcel car elles seront utilisées pour
+	 * exprimer certaines contraintes
 	 * 
 	 * @param bPU
 	 * @throws Exception
@@ -155,9 +147,8 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 		}
 
 		GeometryFactory gf = new GeometryFactory();
-		
-		
-		this.surface  = AdapterFactory.toGeometry(gf,bPU.getGeom());
+
+		this.surface = AdapterFactory.toGeometry(gf, bPU.getGeom());
 
 		if (!curveLimiteFondParcel.isEmpty()) {
 			this.jtsCurveLimiteFondParcel = AdapterFactory.toGeometry(gf, curveLimiteFondParcel);
@@ -172,20 +163,22 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 		}
 	}
 
+
 	/**
-	 * Cette méthode est executée à chaque fois que le système suggère une
-	 * nouvelle proposition. C => contient la configuration courante (en termes
-	 * de cuboids proposés) M => les modifications que l'on souhaite apporter à
-	 * la configuration courante. Normalement, il n'y a jamais plus d'une
-	 * naissance ou d'une mort dans M, mais là dans le code on fait comme si
-	 * c'était possible, mais ça peut être simplifié
+	 * This method is applied each time the system try a new modification
+	 * proposition
+	 * 
+	 * @param c contains the current configuration (basically a collection of
+	 *          cuboids)
+	 * @param m the modification that the sytem will try to apply. Normally, there
+	 *          is 0 or 1 birth and 0 or 1 death
+	 * @return Indicate if the rules are respected or not
 	 */
 	@Override
 	public boolean check(C c, M m) {
 
 		// Il s'agit des objets de la classe Cuboid
 		List<O> lO = m.getBirth();
-
 
 		// On vérifie les règles sur tous les pavés droits, dès qu'il y en a un
 		// qui
@@ -248,15 +241,13 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 
 			// IMultiSurface<IOrientableSurface> mS = null; // à définir
 			// mS.contains(cuboid.footprint);
-			
-			
-			if(! surface.contains(cuboid.toGeometry())){
-					return false;
+
+			if (!surface.contains(cuboid.toGeometry())) {
+				return false;
 			}
 
 		}
 
-	
 		// Pour produire des boîtes séparées et vérifier que la distance inter
 		// bâtiment est respectée
 		try {
@@ -404,10 +395,10 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 		}
 
 		/*
-		List<List<AbstractSimpleBuilding>> groupes = CuboidGroupCreation.createGroup(lBatIni, 0.5);
-		if (groupes.size() > 1) {
-			return false;
-		}*/
+		 * List<List<AbstractSimpleBuilding>> groupes =
+		 * CuboidGroupCreation.createGroup(lBatIni, 0.5); if (groupes.size() > 1) {
+		 * return false; }
+		 */
 
 		// On récupère la superficie de la basic propertyUnit
 		double airePAr = 0;

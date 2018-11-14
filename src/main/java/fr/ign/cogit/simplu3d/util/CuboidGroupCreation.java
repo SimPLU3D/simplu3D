@@ -14,33 +14,34 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 public class CuboidGroupCreation<C extends AbstractSimpleBuilding> {
 
 	/**
-	 * The create group function that separates cuboid into list of near cuboid
+	 * Create a group from cuboids
 	 * 
-	 * @param lBatIn
-	 * @param connexionDistance : minimal distance to consider 2 boxes as connected
-	 * @return
+	 * @param lCuboids          a list of cuboids
+	 * @param connexionDistance a connexion distance to determine if a cuboid
+	 *                          belongs to the group
+	 * @return a list of group of connected cuboids (a group is a list)
 	 */
-	public List<List<C>> createGroup(List<? extends C> lBatIn, double connexionDistance) {
+	public List<List<C>> createGroup(List<? extends C> lCuboids, double connexionDistance) {
 
 		List<List<C>> listGroup = new ArrayList<>();
 
-		while (!lBatIn.isEmpty()) {
+		while (!lCuboids.isEmpty()) {
 
-			C batIni = lBatIn.remove(0);
+			C batIni = lCuboids.remove(0);
 
 			List<C> currentGroup = new ArrayList<>();
 			currentGroup.add(batIni);
 
-			int nbElem = lBatIn.size();
+			int nbElem = lCuboids.size();
 
 			bouclei: for (int i = 0; i < nbElem; i++) {
 
 				for (C batTemp : currentGroup) {
 
-					if (lBatIn.get(i).getFootprint().distance(batTemp.getFootprint()) <= connexionDistance) {
+					if (lCuboids.get(i).getFootprint().distance(batTemp.getFootprint()) <= connexionDistance) {
 
-						currentGroup.add(lBatIn.get(i));
-						lBatIn.remove(i);
+						currentGroup.add(lCuboids.get(i));
+						lCuboids.remove(i);
 						i = -1;
 						nbElem--;
 						continue bouclei;
@@ -60,11 +61,11 @@ public class CuboidGroupCreation<C extends AbstractSimpleBuilding> {
 	private static long c = 0;
 
 	/**
-	 * Check the width of a group
+	 * Indicate if the wdth of a list of cuboid is less than a width value
 	 * 
-	 * @param lO
-	 * @param widthBuffer
-	 * @return
+	 * @param lO          the list of cuboids to test
+	 * @param widthBuffer the width to test
+	 * @return true if the width is less than the input value
 	 */
 	public boolean checkWidth(List<? extends C> lO, double widthBuffer) {
 		c = 0;

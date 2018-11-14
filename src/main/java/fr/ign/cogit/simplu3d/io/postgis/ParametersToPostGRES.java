@@ -15,11 +15,11 @@ import fr.ign.cogit.simplu3d.util.SimpluParametersJSON;
  * 
  *        see LICENSE.TXT
  * 
- *        see <http://www.cecill.info/ http://www.cecill.info/
+ *        see http://www.cecill.info/
  * 
  * 
  * 
- * @copyright IGN
+ * copyright IGN
  * 
  * @author Brasebin Mickaël
  * 
@@ -33,10 +33,12 @@ import fr.ign.cogit.simplu3d.util.SimpluParametersJSON;
  */
 public class ParametersToPostGRES {
 
-  /**
-   * @param args
-   * @throws Exception
-   */
+	
+	/**
+	 * Test the store of json parameters into a postgres database
+	 * @param args not used here
+	 * @throws Exception Exception in database connexion
+	 */
   public static void main(String[] args) throws Exception {
     String folderName = BasicSimulator.class.getClassLoader().getResource("scenario/").getPath();
 

@@ -48,11 +48,11 @@ import fr.ign.simulatedannealing.visitor.Visitor;
  * 
  * see LICENSE.TXT
  * 
- * see <http://www.cecill.info/ http://www.cecill.info/
+ * see  http://www.cecill.info/
  * 
  * 
  * 
- * @copyright IGN
+ * copyright IGN
  * 
  * @author Brasebin Mickaël
  * 
@@ -77,9 +77,8 @@ public class FilmVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraphCo
 	private int count = 0;
 	private Color col;
 
-	
-
-	public FilmVisitor(IDirectPosition dp, Vecteur vectOrientation, String folder, Color col, SimpluParameters p, Environnement env) {
+	public FilmVisitor(IDirectPosition dp, Vecteur vectOrientation, String folder, Color col, SimpluParameters p,
+			Environnement env) {
 		mW = new MainWindow();
 		represent(env, mW, p);
 		this.dp = dp;
@@ -172,15 +171,12 @@ public class FilmVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraphCo
 	}
 
 	/**
-	 * Permet d'enregistrer une image à partir de l'écran Ne fonctionne qu'avec
-	 * l'IHM actuel (Offset nécessaire) Ne prends pas compte de l'existance d'un
-	 * fichier de même nom
+	 * Record an image from the 3D Map of the gui. Erase existing file
 	 * 
-	 * @param path
-	 *            le dossier dans lequel l'impr ecran sera supprime
-	 * @param fileName
-	 *            le nom du fichier
-	 * @return indique si la capture s'est effectuée avec succès
+	 * @param path     path in which the screenshot will be sage
+	 * @param fileName name of the file
+	 * @param iMap3D   the GUI from which the screenshot will be saved
+	 * @return a boolean that indicates if the operation is a success
 	 */
 	public boolean screenCapture(String path, String fileName, InterfaceMap3D iMap3D) {
 
@@ -236,7 +232,7 @@ public class FilmVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraphCo
 		return false;
 	}
 
-	private  void represent(Environnement env, MainWindow mW, SimpluParameters p) {
+	private void represent(Environnement env, MainWindow mW, SimpluParameters p) {
 
 		List<Theme> lTheme = new ArrayList<>();
 		// lTheme.add(Theme.TOIT_BATIMENT);

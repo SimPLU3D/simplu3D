@@ -25,11 +25,11 @@ import fr.ign.simulatedannealing.temperature.Temperature;
  * 
  *        see LICENSE.TXT
  * 
- *        see <http://www.cecill.info/ http://www.cecill.info/
+ *        see  http://www.cecill.info/
  * 
  * 
  * 
- * @copyright IGN
+ * copyright IGN
  * 
  * @author Brasebin Mickaël
  * 
@@ -40,7 +40,7 @@ import fr.ign.simulatedannealing.temperature.Temperature;
  * vérifie pas les résutlats
  * 
  *
- * @param <O>
+ * @param <O> the class of object to sample
  */
 public class GreenSamplerBlockTemperature<O extends SimpleObject, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>>
 		implements Sampler<C, M> {

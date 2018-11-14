@@ -49,11 +49,11 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid;
  * 
  * see LICENSE.TXT
  * 
- * see <http://www.cecill.info/ http://www.cecill.info/
+ * see http://www.cecill.info/
  * 
  * 
  * 
- * @copyright IGN
+ * copyright IGN
  * 
  * @author Brasebin Mickaël
  * 
@@ -61,687 +61,654 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid;
  **/
 public class Recal3D {
 
-  private static Logger logger = Logger.getLogger(Recal3D.class);
+	private static Logger logger = Logger.getLogger(Recal3D.class);
 
-  public static double ZMIN = 139;
-  // public static IFeatureCollection<IFeature> DEBUG = new
-  // FT_FeatureCollection<>();
+	public static double ZMIN = 139;
+	// public static IFeatureCollection<IFeature> DEBUG = new
+	// FT_FeatureCollection<>();
 
-  /**
-   * @param args
-   * @throws CloneNotSupportedException
-   */
-  public static void main(String[] args) throws CloneNotSupportedException {
-    System.out.println("Debout");
-    // Paramters : Currently the DTM is not managed so it is necessary to
-    // set a Zmin
-    ZMIN = 0;// 139.;
-    double topologicalMapThreshold = 0.5;
-    double connexionDistance = 0;// 0.5;
-    double heightThreshold = 0;// 0.5;
-    // Folder in
-    String strShpOut = "/home/imran/testoss/EPFIF/outCapaBig/";
-    int imu = 91014805;
-    String shpeIn = strShpOut + "simul_" + imu + "_true_no_demo_sampler.shp";
+		
+	public static void main(String[] args) throws CloneNotSupportedException {
+		System.out.println("Debout");
+		// Paramters : Currently the DTM is not managed so it is necessary to
+		// set a Zmin
+		ZMIN = 0;// 139.;
+		double topologicalMapThreshold = 0.5;
+		double connexionDistance = 0;// 0.5;
+		double heightThreshold = 0;// 0.5;
+		// Folder in
+		String strShpOut = "/home/imran/testoss/EPFIF/outCapaBig/";
+		int imu = 91014805;
+		String shpeIn = strShpOut + "simul_" + imu + "_true_no_demo_sampler.shp";
 
-    // Load Cuboid from a generate ShapeFile (we can use date output from
-    // the optimization algorithm)
-    List<Cuboid> lCuboid = LoaderCuboid.loadFromShapeFile(shpeIn);
+		// Load Cuboid from a generate ShapeFile (we can use date output from
+		// the optimization algorithm)
+		List<Cuboid> lCuboid = LoaderCuboid.loadFromShapeFile(shpeIn);
 
-    // Do not forget to set the 3D geometry
-    for (Cuboid c : lCuboid) {
-      c.setGeom(c.generated3DGeom());
-    }
+		// Do not forget to set the 3D geometry
+		for (Cuboid c : lCuboid) {
+			c.setGeom(c.generated3DGeom());
+		}
 
-    // The output collection
-    IFeatureCollection<IFeature> featColl = new FT_FeatureCollection<>();
+		// The output collection
+		IFeatureCollection<IFeature> featColl = new FT_FeatureCollection<>();
 
-    // Fusionne geom fonction allow the fusion
-    featColl.addAll(fusionneGeom(lCuboid, ZMIN, connexionDistance,
-        topologicalMapThreshold, heightThreshold));
+		// Fusionne geom fonction allow the fusion
+		featColl.addAll(fusionneGeom(lCuboid, ZMIN, connexionDistance, topologicalMapThreshold, heightThreshold));
 
-    featColl = seperateRoof(featColl);
+		featColl = seperateRoof(featColl);
 
-    // Output shapefile
-    ShapefileWriter.write(featColl, strShpOut + imu + "_recal.shp");
+		// Output shapefile
+		ShapefileWriter.write(featColl, strShpOut + imu + "_recal.shp");
 
-    // ShapefileWriter.write(DEBUG, strShpOut + "debug.shp");
+		// ShapefileWriter.write(DEBUG, strShpOut + "debug.shp");
 
-  }
+	}
 
-  public static IFeatureCollection<IFeature> seperateRoof(
-      IFeatureCollection<IFeature> featC) {
+	public static IFeatureCollection<IFeature> seperateRoof(IFeatureCollection<IFeature> featC) {
 
-    IFeatureCollection<IFeature> featCOut = new FT_FeatureCollection<>();
+		IFeatureCollection<IFeature> featCOut = new FT_FeatureCollection<>();
 
-    int id = 0;
+		int id = 0;
 
-    for (IFeature feat : featC) {
+		for (IFeature feat : featC) {
 
-      id++;
+			id++;
 
-      IMultiSurface<IOrientableSurface> ims = FromGeomToSurface
-          .convertMSGeom(feat.getGeom());
-      IMultiSurface<IOrientableSurface> nonV = Util
-          .detectNonVertical(ims.getList(), 0.2);
-      IMultiSurface<IOrientableSurface> v = Util.detectVertical(ims.getList(),
-          0.2);
+			IMultiSurface<IOrientableSurface> ims = FromGeomToSurface.convertMSGeom(feat.getGeom());
+			IMultiSurface<IOrientableSurface> nonV = Util.detectNonVertical(ims.getList(), 0.2);
+			IMultiSurface<IOrientableSurface> v = Util.detectVertical(ims.getList(), 0.2);
 
-      IFeature feat1 = new DefaultFeature(v);
-      IFeature feat2 = new DefaultFeature(nonV);
+			IFeature feat1 = new DefaultFeature(v);
+			IFeature feat2 = new DefaultFeature(nonV);
 
-      AttributeManager.addAttribute(feat1, "ID", id, "Integer");
-      AttributeManager.addAttribute(feat2, "ID", id, "Integer");
+			AttributeManager.addAttribute(feat1, "ID", id, "Integer");
+			AttributeManager.addAttribute(feat2, "ID", id, "Integer");
 
-      if (feat2.getGeom() != null) {
-        AttributeManager.addAttribute(feat1, "Aire", feat2.getGeom().area(),
-            "Double");
-        AttributeManager.addAttribute(feat2, "Aire", feat2.getGeom().area(),
-            "Double");
+			if (feat2.getGeom() != null) {
+				AttributeManager.addAttribute(feat1, "Aire", feat2.getGeom().area(), "Double");
+				AttributeManager.addAttribute(feat2, "Aire", feat2.getGeom().area(), "Double");
 
-        OrientedBoundingBox oBB = new OrientedBoundingBox(feat.getGeom());
+				OrientedBoundingBox oBB = new OrientedBoundingBox(feat.getGeom());
 
-        double height = (oBB.getzMax() - oBB.getzMin());
-        AttributeManager.addAttribute(feat1, "Hauteur", height, "Double");
-        AttributeManager.addAttribute(feat2, "Hauteur", height, "Double");
+				double height = (oBB.getzMax() - oBB.getzMin());
+				AttributeManager.addAttribute(feat1, "Hauteur", height, "Double");
+				AttributeManager.addAttribute(feat2, "Hauteur", height, "Double");
 
-      }
+			}
 
-      AttributeManager.addAttribute(feat1, "Type", "Wall", "String");
-      AttributeManager.addAttribute(feat2, "Type", "Roof", "String");
+			AttributeManager.addAttribute(feat1, "Type", "Wall", "String");
+			AttributeManager.addAttribute(feat2, "Type", "Roof", "String");
 
-      featCOut.add(feat1);
-      featCOut.add(feat2);
-    }
+			featCOut.add(feat1);
+			featCOut.add(feat2);
+		}
 
-    return featCOut;
+		return featCOut;
 
-  }
+	}
 
-  /**
-   * Fusionne geom is the main function of this script, it uses a set of Cuboid
-   * and the zMin in order to give an inferior value to extrusoin
-   * 
-   * @param lAB
-   * @param zMini
-   * @return
-   */
-  public static IFeatureCollection<IFeature> fusionneGeom(
-      List<? extends AbstractSimpleBuilding> lAB, double zMini,
-      double connexionDistance, double topologicalMapThreshold,
-      double heightThreshold) {
-
-    IFeatureCollection<IFeature> featFus = new FT_FeatureCollection<>();
+	/**
+	 * Main method of the class : Merge the cuboid geometries.
+	 * 
+	 * @param lAB                     a list of cuboid to merge
+	 * @param zMini                   a minimal height that will be used for all
+	 *                                cuboid
+	 * @param connexionDistance       a distance to consider that two cuboids belong
+	 *                                to the same group
+	 * @param topologicalMapThreshold threeshold for topological map creation
+	 * @param heightThreshold         height threshold to consider that two
+	 *                                buildings have the same height (in order to
+	 *                                have a similar height when two values are
+	 *                                near)
+	 * @return a collection of merged built configurations
+	 */
+	public static IFeatureCollection<IFeature> fusionneGeom(List<? extends AbstractSimpleBuilding> lAB, double zMini,
+			double connexionDistance, double topologicalMapThreshold, double heightThreshold) {
 
-    // In order to speed up calculation the cuboid are separated into
-    // connected sets of cuboid
-    CuboidGroupCreation<AbstractSimpleBuilding> cGC = new CuboidGroupCreation<AbstractSimpleBuilding>();
-    List<List<AbstractSimpleBuilding>> lGroupe = cGC.createGroup(lAB, connexionDistance);
-
-    int count = 0;
-    for (List<AbstractSimpleBuilding> groupe : lGroupe) {
-
-      System.out.println("groupe " + (++count));
-      // The fusion is processed on each group
-      IFeatureCollection<IFeature> featCTemp = fusionneGeomByGroup(groupe,
-          zMini, topologicalMapThreshold, heightThreshold);
-
-      if (featCTemp != null) {
-        featFus.addAll(featCTemp);
-      }
+		IFeatureCollection<IFeature> featFus = new FT_FeatureCollection<>();
 
-    }
+		// In order to speed up calculation the cuboid are separated into
+		// connected sets of cuboid
+		CuboidGroupCreation<AbstractSimpleBuilding> cGC = new CuboidGroupCreation<AbstractSimpleBuilding>();
+		List<List<AbstractSimpleBuilding>> lGroupe = cGC.createGroup(lAB, connexionDistance);
 
-    return featFus;
+		int count = 0;
+		for (List<AbstractSimpleBuilding> groupe : lGroupe) {
 
-  }
+			System.out.println("groupe " + (++count));
+			// The fusion is processed on each group
+			IFeatureCollection<IFeature> featCTemp = fusionneGeomByGroup(groupe, zMini, topologicalMapThreshold,
+					heightThreshold);
 
-  private final static String ATT_TEMP = "TEMP";
+			if (featCTemp != null) {
+				featFus.addAll(featCTemp);
+			}
 
-  /**
-   * This class is used to cut the cuboid into a set of non-intersected polygons
-   * 
-   * @param lAB
-   * @param threshold
-   * @return
-   */
-  public static IFeatureCollection<IFeature> cutGeometry(
-      List<AbstractSimpleBuilding> lAB, double threshold) {
-    // We initialize the height and the footprints of this cuboid
-    List<IOrientableSurface> lOS = new ArrayList<>();
-    List<Double> lHeight = new ArrayList<>();
+		}
 
-    for (AbstractSimpleBuilding ab : lAB) {
+		return featFus;
 
-      lOS.add(ab.getFootprint());
-      lHeight.add(ab.height(0, 1));
-    }
+	}
 
-    boolean hasChange = true;
-    // We make a boucle until there is no new cut
-    booclewhile: while (hasChange) {
-      hasChange = false;
+	private final static String ATT_TEMP = "TEMP";
 
-      int nbElem = lOS.size();
 
-      for (int i = 0; i < nbElem; i++) {
+	private static IFeatureCollection<IFeature> cutGeometry(List<AbstractSimpleBuilding> lAB, double threshold) {
+		// We initialize the height and the footprints of this cuboid
+		List<IOrientableSurface> lOS = new ArrayList<>();
+		List<Double> lHeight = new ArrayList<>();
 
-        IOrientableSurface osi = lOS.get(i);
+		for (AbstractSimpleBuilding ab : lAB) {
 
-        for (int j = i + 1; j < nbElem; j++) {
+			lOS.add(ab.getFootprint());
+			lHeight.add(ab.height(0, 1));
+		}
 
-          IOrientableSurface osj = lOS.get(j);
+		boolean hasChange = true;
+		// We make a boucle until there is no new cut
+		booclewhile: while (hasChange) {
+			hasChange = false;
 
-          // If the geometries are not intersected we go on
-          if (!osi.intersects(osj) || (osi.intersection(osj) == null)
-              || (osi.intersection(osj).isEmpty())
-              || (osi.intersection(osj).area() < 0.2)) {
-            continue;
-          }
+			int nbElem = lOS.size();
 
-          // We get the height of the intersected geometries
-          double heighti = lHeight.get(i);
-          double heightj = lHeight.get(j);
+			for (int i = 0; i < nbElem; i++) {
 
-          // On met à jour la liste
-          if (i < j) {
-            lHeight.remove(j);
-            lHeight.remove(i);
-            lOS.remove(j);
-            lOS.remove(i);
+				IOrientableSurface osi = lOS.get(i);
 
-          } else {
-            lHeight.remove(i);
-            lHeight.remove(j);
-            lOS.remove(i);
-            lOS.remove(j);
-          }
+				for (int j = i + 1; j < nbElem; j++) {
 
-          // Same height (with a threshold) we make an union and
-          // affect the same height
-          if (Math.abs(heightj - heighti) < threshold) {
+					IOrientableSurface osj = lOS.get(j);
 
-            IGeometry geom = osi.union(osj);
+					// If the geometries are not intersected we go on
+					if (!osi.intersects(osj) || (osi.intersection(osj) == null) || (osi.intersection(osj).isEmpty())
+							|| (osi.intersection(osj).area() < 0.2)) {
+						continue;
+					}
 
-            List<IOrientableSurface> lOSTemp = FromGeomToSurface
-                .convertGeom(geom);
-            for (IOrientableSurface osTemp : lOSTemp) {
+					// We get the height of the intersected geometries
+					double heighti = lHeight.get(i);
+					double heightj = lHeight.get(j);
 
-              lOS.add(osTemp);
-              lHeight.add(heighti);
+					// On met à jour la liste
+					if (i < j) {
+						lHeight.remove(j);
+						lHeight.remove(i);
+						lOS.remove(j);
+						lOS.remove(i);
 
-            }
+					} else {
+						lHeight.remove(i);
+						lHeight.remove(j);
+						lOS.remove(i);
+						lOS.remove(j);
+					}
 
-            if (!lOSTemp.isEmpty()) {
-              hasChange = true;
-              continue booclewhile;
-            }
-          }
+					// Same height (with a threshold) we make an union and
+					// affect the same height
+					if (Math.abs(heightj - heighti) < threshold) {
 
-          // The height is different we remove a part of the geometry
-          // of the lowest polygon
-          if (heighti < heightj) {
+						IGeometry geom = osi.union(osj);
 
-            IGeometry geom = osi.difference(osj);
-            List<IOrientableSurface> lOSTemp = FromGeomToSurface
-                .convertGeom(geom);
+						List<IOrientableSurface> lOSTemp = FromGeomToSurface.convertGeom(geom);
+						for (IOrientableSurface osTemp : lOSTemp) {
 
-            for (IOrientableSurface osTemp : lOSTemp) {
+							lOS.add(osTemp);
+							lHeight.add(heighti);
 
-              lOS.add(osTemp);
-              lHeight.add(heighti);
+						}
 
-              lOS.add(osj);
-              lHeight.add(heightj);
+						if (!lOSTemp.isEmpty()) {
+							hasChange = true;
+							continue booclewhile;
+						}
+					}
 
-            }
+					// The height is different we remove a part of the geometry
+					// of the lowest polygon
+					if (heighti < heightj) {
 
-            if (!lOSTemp.isEmpty()) {
-              hasChange = true;
-              continue booclewhile;
-            }
+						IGeometry geom = osi.difference(osj);
+						List<IOrientableSurface> lOSTemp = FromGeomToSurface.convertGeom(geom);
 
-          }
+						for (IOrientableSurface osTemp : lOSTemp) {
 
-          IGeometry geom = osj.difference(osi);
-          List<IOrientableSurface> lOSTemp = FromGeomToSurface
-              .convertGeom(geom);
+							lOS.add(osTemp);
+							lHeight.add(heighti);
 
-          for (IOrientableSurface osTemp : lOSTemp) {
+							lOS.add(osj);
+							lHeight.add(heightj);
 
-            lOS.add(osTemp);
-            lHeight.add(heightj);
+						}
 
-            lOS.add(osi);
-            lHeight.add(heighti);
+						if (!lOSTemp.isEmpty()) {
+							hasChange = true;
+							continue booclewhile;
+						}
 
-          }
+					}
 
-          if (!lOSTemp.isEmpty()) {
-            hasChange = true;
-            continue booclewhile;
-          }
+					IGeometry geom = osj.difference(osi);
+					List<IOrientableSurface> lOSTemp = FromGeomToSurface.convertGeom(geom);
 
-        }
+					for (IOrientableSurface osTemp : lOSTemp) {
 
-      }
+						lOS.add(osTemp);
+						lHeight.add(heightj);
 
-    }
+						lOS.add(osi);
+						lHeight.add(heighti);
 
-    IFeatureCollection<IFeature> ifeatCollection = new FT_FeatureCollection<>();
-    int nbElem = lOS.size();
-    for (int i = 0; i < nbElem; i++) {
-      IFeature feat = new DefaultFeature(lOS.get(i));
-      AttributeManager.addAttribute(feat, ATT_TEMP, lHeight.get(i) + ZMIN,
-          "Double");
-      ifeatCollection.add(feat);
-    }
+					}
 
-    return ifeatCollection;
+					if (!lOSTemp.isEmpty()) {
+						hasChange = true;
+						continue booclewhile;
+					}
 
-  }
+				}
 
-  /**
-   * This funciton allow to make the fusion by groups of geometries
-   * 
-   * @param lAB
-   * @param zMini
-   * @param threshold : Topologic map threshold
-   * @return
-   */
-  public static IFeatureCollection<IFeature> fusionneGeomByGroup(
-      List<AbstractSimpleBuilding> lAB, double zMini, double thresholdTopoMap,
-      double heightThreshold) {
+			}
 
-    IFeatureCollection<IFeature> lOSIni = cutGeometry(lAB, heightThreshold);
+		}
 
-    // Preparation of topologic map faces
-    IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
+		IFeatureCollection<IFeature> ifeatCollection = new FT_FeatureCollection<>();
+		int nbElem = lOS.size();
+		for (int i = 0; i < nbElem; i++) {
+			IFeature feat = new DefaultFeature(lOS.get(i));
+			AttributeManager.addAttribute(feat, ATT_TEMP, lHeight.get(i) + ZMIN, "Double");
+			ifeatCollection.add(feat);
+		}
 
-    for (IFeature osTemp : lOSIni) {
+		return ifeatCollection;
 
-      Face f = new Face();
+	}
 
-      if (osTemp.getGeom() == null || osTemp.getGeom().isEmpty()) {
-        continue;
-      }
+	public static IFeatureCollection<IFeature> fusionneGeomByGroup(List<AbstractSimpleBuilding> lAB, double zMini,
+			double thresholdTopoMap, double heightThreshold) {
 
-      f.setGeometrie((IPolygon) (FromGeomToSurface.convertGeom(osTemp.getGeom())
-          .get(0).clone()));
+		IFeatureCollection<IFeature> lOSIni = cutGeometry(lAB, heightThreshold);
 
-      featC.add(f);
+		// Preparation of topologic map faces
+		IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
 
-    }
+		for (IFeature osTemp : lOSIni) {
 
-    // Creation of the topologic map
-    CarteTopo carteTopo = newCarteTopo("-aex90", featC, thresholdTopoMap);
+			Face f = new Face();
 
-    lOSIni.initSpatialIndex(Tiling.class, false);
+			if (osTemp.getGeom() == null || osTemp.getGeom().isEmpty()) {
+				continue;
+			}
 
-    Groupe gr = carteTopo.getPopGroupes().nouvelElement();
-    gr.setListeArcs(carteTopo.getListeArcs());
-    gr.setListeFaces(carteTopo.getListeFaces());
-    gr.setListeNoeuds(carteTopo.getListeNoeuds());
+			f.setGeometrie((IPolygon) (FromGeomToSurface.convertGeom(osTemp.getGeom()).get(0).clone()));
 
-    List<Groupe> lG = gr.decomposeConnexes();
+			featC.add(f);
 
-    IFeatureCollection<IFeature> featCollOut = new FT_FeatureCollection<>();
+		}
 
-    logger.info("NB Groupes : " + lG.size());
-    System.out.println("NB Groupes : " + lG.size());
+		// Creation of the topologic map
+		CarteTopo carteTopo = newCarteTopo("-aex90", featC, thresholdTopoMap);
 
-    // For each group the faces are treated (normally there is only one)
-    for (Groupe g : lG) {
+		lOSIni.initSpatialIndex(Tiling.class, false);
 
-      List<IOrientableSurface> lOS = new ArrayList<>();
+		Groupe gr = carteTopo.getPopGroupes().nouvelElement();
+		gr.setListeArcs(carteTopo.getListeArcs());
+		gr.setListeFaces(carteTopo.getListeFaces());
+		gr.setListeNoeuds(carteTopo.getListeNoeuds());
 
-      List<Face> lF = new ArrayList<>();
-      // We prepare the list of available faces
-      for (Arc a : g.getListeArcs()) {
+		List<Groupe> lG = gr.decomposeConnexes();
 
-        Face fg = a.getFaceDroite();
-        Face fd = a.getFaceGauche();
+		IFeatureCollection<IFeature> featCollOut = new FT_FeatureCollection<>();
 
-        if (fg != null) {
+		logger.info("NB Groupes : " + lG.size());
+		System.out.println("NB Groupes : " + lG.size());
 
-          if (!lF.contains(fg)) {
-            lF.add(fg);
-          }
+		// For each group the faces are treated (normally there is only one)
+		for (Groupe g : lG) {
 
-        }
+			List<IOrientableSurface> lOS = new ArrayList<>();
 
-        if (fd != null) {
+			List<Face> lF = new ArrayList<>();
+			// We prepare the list of available faces
+			for (Arc a : g.getListeArcs()) {
 
-          if (!lF.contains(fd)) {
-            lF.add(fd);
-          }
+				Face fg = a.getFaceDroite();
+				Face fd = a.getFaceGauche();
 
-        }
+				if (fg != null) {
 
-      }
+					if (!lF.contains(fg)) {
+						lF.add(fg);
+					}
 
-      // For each face we look at the maximal height
-      for (Face f : lF) {
+				}
 
-        if (f.isInfinite()) {
-          continue;
-        }
+				if (fd != null) {
 
-        IPoint p = new GM_Point(PointInPolygon.get(f.getGeometrie()));// f.getGeometrie().buffer(-0.05).coord().get(0));
+					if (!lF.contains(fd)) {
+						lF.add(fd);
+					}
 
-        if (!f.getGeometrie().contains(p)) {
-          logger.warn("Point not in polygon");
-        }
+				}
 
-        Collection<IFeature> featSelect = lOSIni.select(p);
+			}
 
-        double zMax = Double.NEGATIVE_INFINITY;
+			// For each face we look at the maximal height
+			for (Face f : lF) {
 
-        if (featSelect.isEmpty()) {
+				if (f.isInfinite()) {
+					continue;
+				}
 
-          zMax = zMini;
+				IPoint p = new GM_Point(PointInPolygon.get(f.getGeometrie()));// f.getGeometrie().buffer(-0.05).coord().get(0));
 
-          logger.info("New empty face detected");
-          // System.exit(666);
-        }
+				if (!f.getGeometrie().contains(p)) {
+					logger.warn("Point not in polygon");
+				}
 
-        for (IFeature feat : featSelect) {
-          System.out.println(feat.getAttribute(ATT_TEMP).toString());
-          zMax = Math.max(zMax,
-              Double.parseDouble(feat.getAttribute(ATT_TEMP).toString()));
-        }
+				Collection<IFeature> featSelect = lOSIni.select(p);
 
-        IPolygon poly = (IPolygon) f.getGeometrie().clone();
+				double zMax = Double.NEGATIVE_INFINITY;
 
-        f.setArcsIgnores(zMax + "");
+				if (featSelect.isEmpty()) {
 
-        // On affecte
-        // AttributeManager.addAttribute(f, attrzmax, zMax, "Double");
-        for (IDirectPosition dp : poly.coord()) {
-          dp.setZ(zMax);
-        }
+					zMax = zMini;
 
-        lOS.add(poly);
+					logger.info("New empty face detected");
+					// System.exit(666);
+				}
 
-      }
+				for (IFeature feat : featSelect) {
+					System.out.println(feat.getAttribute(ATT_TEMP).toString());
+					zMax = Math.max(zMax, Double.parseDouble(feat.getAttribute(ATT_TEMP).toString()));
+				}
 
-      // For each edges we determine the minimal and maximal height in
-      // order to generate vertical faces
+				IPolygon poly = (IPolygon) f.getGeometrie().clone();
 
-      for (Arc a : g.getListeArcs()) {
+				f.setArcsIgnores(zMax + "");
 
-        Face fd = a.getFaceDroite();
-        Face fg = a.getFaceGauche();
+				// On affecte
+				// AttributeManager.addAttribute(f, attrzmax, zMax, "Double");
+				for (IDirectPosition dp : poly.coord()) {
+					dp.setZ(zMax);
+				}
 
-        if (fd == null && fg == null) {
-          continue;
-        }
+				lOS.add(poly);
 
-        double z1 = 0;
-        double z2 = 0;
+			}
 
-        if (fd == null || fd.isInfinite()) {
+			// For each edges we determine the minimal and maximal height in
+			// order to generate vertical faces
 
-          System.out.println(fg.getArcsIgnores());
+			for (Arc a : g.getListeArcs()) {
 
-          z1 = Double.parseDouble(fg.getArcsIgnores());
-          z2 = zMini;
+				Face fd = a.getFaceDroite();
+				Face fg = a.getFaceGauche();
 
-        } else if (fg == null || fg.isInfinite()) {
+				if (fd == null && fg == null) {
+					continue;
+				}
 
-          z1 = Double.parseDouble(fd.getArcsIgnores());
-          z2 = zMini;
+				double z1 = 0;
+				double z2 = 0;
 
-        } else {
+				if (fd == null || fd.isInfinite()) {
 
-          z1 = Double.parseDouble(fg.getArcsIgnores());
-          z2 = Double.parseDouble(fd.getArcsIgnores());
+					System.out.println(fg.getArcsIgnores());
 
-        }
+					z1 = Double.parseDouble(fg.getArcsIgnores());
+					z2 = zMini;
 
-        double zMin = Math.min(z1, z2);
-        double zMax = Math.max(z1, z2);
+				} else if (fg == null || fg.isInfinite()) {
 
-        if (zMax == zMini) {
+					z1 = Double.parseDouble(fd.getArcsIgnores());
+					z2 = zMini;
 
-          continue;
-        }
+				} else {
 
-        // if(Double.isNaN(zMin) || Double.isNaN(zMax)){
+					z1 = Double.parseDouble(fg.getArcsIgnores());
+					z2 = Double.parseDouble(fd.getArcsIgnores());
 
-        // System.out.println("zMin : " + zMin + " zMAx " + zMax);
+				}
 
-        // }
+				double zMin = Math.min(z1, z2);
+				double zMax = Math.max(z1, z2);
 
-        // Extrusion of the geometry according to the considered height
-        IGeometry geom = Extrusion2DObject.convertFromLine(
-            (ILineString) a.getGeometrie().clone(), zMin, zMax);
+				if (zMax == zMini) {
 
-        lOS.addAll(FromGeomToSurface.convertGeom(geom));
+					continue;
+				}
 
-      }
+				// if(Double.isNaN(zMin) || Double.isNaN(zMax)){
 
-      /*
-       * for (IOrientableSurface os : lOS) { featCollOut.add(new
-       * DefaultFeature(os)); }
-       */
+				// System.out.println("zMin : " + zMin + " zMAx " + zMax);
 
-      featCollOut.add(new DefaultFeature(new GM_MultiSurface<>(lOS)));
+				// }
 
-    }
+				// Extrusion of the geometry according to the considered height
+				IGeometry geom = Extrusion2DObject.convertFromLine((ILineString) a.getGeometrie().clone(), zMin, zMax);
 
-    return featCollOut;
-  }
+				lOS.addAll(FromGeomToSurface.convertGeom(geom));
 
-  public static CarteTopo newCarteTopo(String name,
-      IFeatureCollection<? extends IFeature> collection, double threshold) {
+			}
 
-    try {
-      // Initialisation d'une nouvelle CarteTopo
-      CarteTopo carteTopo = new CarteTopo(name);
-      carteTopo.setBuildInfiniteFace(false);
-      // Récupération des arcs de la carteTopo
-      IPopulation<Arc> arcs = carteTopo.getPopArcs();
-      // Import des arcs de la collection dans la carteTopo
-      for (IFeature feature : collection) {
+			/*
+			 * for (IOrientableSurface os : lOS) { featCollOut.add(new DefaultFeature(os));
+			 * }
+			 */
 
-        List<ILineString> lLLS = FromPolygonToLineString
-            .convertPolToLineStrings((IPolygon) FromGeomToSurface
-                .convertGeom(feature.getGeom()).get(0));
+			featCollOut.add(new DefaultFeature(new GM_MultiSurface<>(lOS)));
 
-        for (ILineString ls : lLLS) {
+		}
 
-          // affectation de la géométrie de l'objet issu de la
-          // collection
-          // à l'arc de la carteTopo
-          for (int i = 0; i < ls.numPoints() - 1; i++) {
-            // création d'un nouvel élément
-            Arc arc = arcs.nouvelElement();
-            arc.setGeometrie(new GM_LineString(ls.getControlPoint(i),
-                ls.getControlPoint(i + 1)));
-            // instanciation de la relation entre l'arc créé et
-            // l'objet
-            // issu de la collection
-            arc.addCorrespondant(feature);
-          }
+		return featCollOut;
+	}
 
-        }
+	public static CarteTopo newCarteTopo(String name, IFeatureCollection<? extends IFeature> collection,
+			double threshold) {
 
-      }
-      if (!test(carteTopo)) {
-        logger.error("");
-        System.exit(0);
-      }
-      carteTopo.creeNoeudsManquants(0.01);
+		try {
+			// Initialisation d'une nouvelle CarteTopo
+			CarteTopo carteTopo = new CarteTopo(name);
+			carteTopo.setBuildInfiniteFace(false);
+			// Récupération des arcs de la carteTopo
+			IPopulation<Arc> arcs = carteTopo.getPopArcs();
+			// Import des arcs de la collection dans la carteTopo
+			for (IFeature feature : collection) {
 
-      if (!test(carteTopo)) {
-        logger.error("");
-        System.exit(0);
-      }
+				List<ILineString> lLLS = FromPolygonToLineString
+						.convertPolToLineStrings((IPolygon) FromGeomToSurface.convertGeom(feature.getGeom()).get(0));
 
-      carteTopo.fusionNoeuds(threshold);
+				for (ILineString ls : lLLS) {
 
-      if (!test(carteTopo)) {
-        logger.error("");
-        System.exit(0);
-      }
+					// affectation de la géométrie de l'objet issu de la
+					// collection
+					// à l'arc de la carteTopo
+					for (int i = 0; i < ls.numPoints() - 1; i++) {
+						// création d'un nouvel élément
+						Arc arc = arcs.nouvelElement();
+						arc.setGeometrie(new GM_LineString(ls.getControlPoint(i), ls.getControlPoint(i + 1)));
+						// instanciation de la relation entre l'arc créé et
+						// l'objet
+						// issu de la collection
+						arc.addCorrespondant(feature);
+					}
 
-      carteTopo.decoupeArcs(0.1);
-      carteTopo.splitEdgesWithPoints(0.1);
+				}
 
-      carteTopo.filtreArcsDoublons();
-      if (!test(carteTopo)) {
-        logger.error("");
-        System.exit(0);
-      }
+			}
+			if (!test(carteTopo)) {
+				logger.error("");
+				System.exit(0);
+			}
+			carteTopo.creeNoeudsManquants(0.01);
 
-      // Création de la topologie Arcs Noeuds
+			if (!test(carteTopo)) {
+				logger.error("");
+				System.exit(0);
+			}
 
-      carteTopo.creeTopologieArcsNoeuds(threshold);
-      // La carteTopo est rendue planaire
-      if (!test(carteTopo)) {
-        logger.error("");
-        System.exit(0);
-      }
-      /*
-       * carteTopo.rendPlanaire(threshold); if (!test(carteTopo)) {
-       * logger.error(""); System.exit(0); }
-       */
+			carteTopo.fusionNoeuds(threshold);
 
-      /*
-       * if (!test(carteTopo)) { System.out.println("Error 4"); }
-       * carteTopo.filtreArcsDoublons(); if (!test(carteTopo)) {
-       * System.out.println("Error 5"); }
-       * 
-       * 
-       * // DEBUG2.addAll(carteTopo.getListeArcs());
-       * 
-       * carteTopo.creeTopologieArcsNoeuds(threshold); if (!test(carteTopo)) {
-       * logger.error(""); System.exit(0); }
-       */
+			if (!test(carteTopo)) {
+				logger.error("");
+				System.exit(0);
+			}
 
-      /*
-       * if (!test(carteTopo)) { System.out.println("Error 6"); }
-       */
+			carteTopo.decoupeArcs(0.1);
+			carteTopo.splitEdgesWithPoints(0.1);
 
-      // carteTopo.creeTopologieFaces();
+			carteTopo.filtreArcsDoublons();
+			if (!test(carteTopo)) {
+				logger.error("");
+				System.exit(0);
+			}
 
-      // carteTopo.filtreNoeudsSimples();
-      // if (!test(carteTopo)) {
-      // logger.error("");
-      // System.exit(0);
-      // }
+			// Création de la topologie Arcs Noeuds
 
-      // DEBUG.addAll(carteTopo.getListeArcs());
-      // Création des faces de la carteTopo
-      carteTopo.creeTopologieFaces();
-      if (!test(carteTopo)) {
-        logger.error("");
-        System.out.println("Error 3");
-      }
+			carteTopo.creeTopologieArcsNoeuds(threshold);
+			// La carteTopo est rendue planaire
+			if (!test(carteTopo)) {
+				logger.error("");
+				System.exit(0);
+			}
+			/*
+			 * carteTopo.rendPlanaire(threshold); if (!test(carteTopo)) { logger.error("");
+			 * System.exit(0); }
+			 */
 
-      /*
-       * if (!test(carteTopo)) { System.out.println("Error 7"); }
-       */
+			/*
+			 * if (!test(carteTopo)) { System.out.println("Error 4"); }
+			 * carteTopo.filtreArcsDoublons(); if (!test(carteTopo)) {
+			 * System.out.println("Error 5"); }
+			 * 
+			 * 
+			 * // DEBUG2.addAll(carteTopo.getListeArcs());
+			 * 
+			 * carteTopo.creeTopologieArcsNoeuds(threshold); if (!test(carteTopo)) {
+			 * logger.error(""); System.exit(0); }
+			 */
 
-      return carteTopo;
+			/*
+			 * if (!test(carteTopo)) { System.out.println("Error 6"); }
+			 */
 
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+			// carteTopo.creeTopologieFaces();
 
-    return null;
-  }
+			// carteTopo.filtreNoeudsSimples();
+			// if (!test(carteTopo)) {
+			// logger.error("");
+			// System.exit(0);
+			// }
 
-  private static boolean test(CarteTopo ct) {
-    for (Arc a : ct.getPopArcs()) {
+			// DEBUG.addAll(carteTopo.getListeArcs());
+			// Création des faces de la carteTopo
+			carteTopo.creeTopologieFaces();
+			if (!test(carteTopo)) {
+				logger.error("");
+				System.out.println("Error 3");
+			}
 
-      if (a.getGeometrie().coord().size() < 2) {
-        return false;
-      }
+			/*
+			 * if (!test(carteTopo)) { System.out.println("Error 7"); }
+			 */
 
-    }
+			return carteTopo;
 
-    return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-  }
+		return null;
+	}
 
-  @SuppressWarnings("unused")
-  private static double getMoyGroup(List<AbstractBuilding> lAB) {
+	private static boolean test(CarteTopo ct) {
+		for (Arc a : ct.getPopArcs()) {
 
-    double moy = 0;
+			if (a.getGeometrie().coord().size() < 2) {
+				return false;
+			}
 
-    for (AbstractBuilding aB : lAB) {
+		}
 
-      moy = moy + getZMax(aB);
+		return true;
 
-    }
+	}
 
-    return moy / lAB.size();
+	@SuppressWarnings("unused")
+	private static double getMoyGroup(List<AbstractBuilding> lAB) {
 
-  }
+		double moy = 0;
 
-  public static AbstractBuilding changeGeomZMax(AbstractBuilding aBIni,
-      double zMaxNew) {
+		for (AbstractBuilding aB : lAB) {
 
-    AbstractBuilding aB = (AbstractBuilding) aBIni.clone();
+			moy = moy + getZMax(aB);
 
-    Box3D b = new Box3D(aBIni.getGeom());
+		}
 
-    double zMax = b.getURDP().getZ();
+		return moy / lAB.size();
 
-    IDirectPositionList dpl = aB.getGeom().coord();
+	}
 
-    for (IDirectPosition dp : dpl) {
+	public static AbstractBuilding changeGeomZMax(AbstractBuilding aBIni, double zMaxNew) {
 
-      if (dp.getZ() == zMax) {
+		AbstractBuilding aB = (AbstractBuilding) aBIni.clone();
 
-        dp.setZ(zMaxNew);
+		Box3D b = new Box3D(aBIni.getGeom());
 
-      }
+		double zMax = b.getURDP().getZ();
 
-    }
+		IDirectPositionList dpl = aB.getGeom().coord();
 
-    return aB;
+		for (IDirectPosition dp : dpl) {
 
-  }
+			if (dp.getZ() == zMax) {
 
-  public static double getZMax(AbstractBuilding aB) {
-    Box3D b1 = new Box3D(aB.getGeom());
+				dp.setZ(zMaxNew);
 
-    return b1.getURDP().getZ();
+			}
 
-  }
+		}
 
-  public static double getH(AbstractBuilding aB) {
-    Box3D b1 = new Box3D(aB.getGeom());
+		return aB;
 
-    return b1.getURDP().getZ() - b1.getLLDP().getZ();
+	}
 
-  }
+	public static double getZMax(AbstractBuilding aB) {
+		Box3D b1 = new Box3D(aB.getGeom());
 
-  public static AbstractBuilding changeGeomHMax(AbstractBuilding aBIni, Box3D b,
-      double currentH, double newH) {
+		return b1.getURDP().getZ();
 
-    AbstractBuilding aB = (AbstractBuilding) aBIni.clone();
+	}
 
-    double zMin = b.getLLDP().getZ();
-    double zMax = b.getURDP().getZ();
+	public static double getH(AbstractBuilding aB) {
+		Box3D b1 = new Box3D(aB.getGeom());
 
-    IDirectPositionList dpl = aB.getGeom().coord();
+		return b1.getURDP().getZ() - b1.getLLDP().getZ();
 
-    for (IDirectPosition dp : dpl) {
+	}
 
-      if (dp.getZ() == zMax) {
+	public static AbstractBuilding changeGeomHMax(AbstractBuilding aBIni, Box3D b, double currentH, double newH) {
 
-        dp.setZ(zMin + newH);
+		AbstractBuilding aB = (AbstractBuilding) aBIni.clone();
 
-      }
+		double zMin = b.getLLDP().getZ();
+		double zMax = b.getURDP().getZ();
 
-    }
+		IDirectPositionList dpl = aB.getGeom().coord();
 
-    return aB;
+		for (IDirectPosition dp : dpl) {
 
-  }
+			if (dp.getZ() == zMax) {
+
+				dp.setZ(zMin + newH);
+
+			}
+
+		}
+
+		return aB;
+
+	}
 
 }

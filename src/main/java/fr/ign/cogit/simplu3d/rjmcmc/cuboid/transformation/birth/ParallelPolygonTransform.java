@@ -20,9 +20,9 @@ import fr.ign.rjmcmc.kernel.Transform;
  * 
  * see LICENSE.TXT
  * 
- * see <http://www.cecill.info/ http://www.cecill.info/
+ * see http://www.cecill.info/
  * 
- * @copyright IGN
+ * copyright IGN
  * 
  * @version 1.0
  **/
@@ -88,7 +88,7 @@ public class ParallelPolygonTransform implements Transform {
 	 * Indicate if the transform is valid (i.e: that the triangulation in the
 	 * PolygonTransform is ok)
 	 * 
-	 * @return
+	 * @return indicate if the transform is valid
 	 */
 	public boolean isValid() {
 		return isValid;

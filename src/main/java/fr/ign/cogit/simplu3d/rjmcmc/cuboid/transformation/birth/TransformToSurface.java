@@ -15,11 +15,12 @@ import fr.ign.geometry.transform.PolygonTransform;
 import fr.ign.rjmcmc.kernel.Transform;
 
 /**
- * This software is released under the licence CeCILL see LICENSE.TXT see <http://www.cecill.info/
- * http://www.cecill.info/
+ * This software is released under the licence CeCILL see LICENSE.TXT 
  * 
- * @TODO Suppress constructor
- * @copyright IGN
+ * see http://www.cecill.info/
+ * 
+ *
+ * copyright IGN
  * @author Brasebin Mickaël
  * @version 1.0
  **/

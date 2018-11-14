@@ -21,7 +21,7 @@ import fr.ign.mpp.kernel.ObjectBuilder;
  * 
  *        see LICENSE.TXT
  * 
- *        see <http://www.cecill.info/ http://www.cecill.info/
+ *        seehttp://www.cecill.info/
  *        
  * Basic class for ParallelCuboid Sampler. Cuboid are parallel to limits linear geometries
  * 

@@ -19,11 +19,11 @@ import fr.ign.random.Random;
  * 
  * see LICENSE.TXT
  * 
- * see <http://www.cecill.info/ http://www.cecill.info/
+ * see  http://www.cecill.info/
  * 
  * 
  * 
- * @copyright IGN
+ * copyright IGN
  * 
  * @author Brasebin Mickaël
  * 

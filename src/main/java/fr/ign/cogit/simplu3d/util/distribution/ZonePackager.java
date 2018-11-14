@@ -72,7 +72,7 @@ public class ZonePackager {
 	 *                                   the simulation
 	 * @param folderOutPath              the final result
 	 * @param debug 					 if we want to export the current bounding box
-	 * @throws Exception
+	 * @throws Exception exeption
 	 */
 	public static void createParcelGroupsAndExport(IFeatureCollection<IFeature> parcelles,
 			int numberMaxOfSimulatedParcel, double areaMax, String tempFolder, String folderOutPath, boolean debug) throws Exception {
@@ -159,8 +159,8 @@ public class ZonePackager {
 	 * @param numberMaxOfSimulatedParcel the number of max parcels to simulated
 	 * @param areaMax                    the maximal area to consider a parcel as
 	 *                                   simulable
-	 * @return
-	 * @throws Exception
+	 * @return a map of group of parcels by urban blocks
+	 * @throws Exception exception
 	 */
 	public static Map<Integer, IFeatureCollection<IFeature>> createParcelGroups(IFeatureCollection<IFeature> parcelles,
 			int numberMaxOfSimulatedParcel, double areaMax) throws Exception {
@@ -396,6 +396,10 @@ public class ZonePackager {
 
 	}
 
+	
+	
+	
+	
 	/**
 	 * A method that determine the neighbour parcels from candidates
 	 * (featCandidates) and remove them from the general parcel collections
@@ -403,10 +407,9 @@ public class ZonePackager {
 	 * stored in grapFeatures that will be reused in the different uses of the
 	 * recursive method
 	 * 
-	 * @param featCandidates
-	 * @param parcelles
-	 * @param attributeCount
-	 * @param grapFeatures
+	 * @param featCandidates candidates parcels
+	 * @param parcelles  the collection that contains all parcels
+	 * @param grapFeatures an intermediary results stored for the recursive method
 	 */
 	public static void selectByNeighbourdHood(List<IFeature> featCandidates, IFeatureCollection<IFeature> parcelles,
 			IFeatureCollection<IFeature> grapFeatures) {
@@ -498,8 +501,8 @@ public class ZonePackager {
 	/**
 	 * Get IDBlock value for a feature
 	 * 
-	 * @param x
-	 * @return
+	 * @param x the feature
+	 * @return the ID value
 	 */
 	public static int getIDBlock(IFeature x) {
 		return Integer.parseInt(x.getAttribute(ZonePackager.ATTRIBUTE_NAME_GROUP).toString());
@@ -508,8 +511,8 @@ public class ZonePackager {
 	/**
 	 * Set IDBlock value for a feature
 	 * 
-	 * @param x
-	 * @param value
+	 * @param x the feature
+	 * @param value the ID to set
 	 */
 	public static void setIDBlock(IFeature x, int value) {
 		AttributeManager.addAttribute(x, ZonePackager.ATTRIBUTE_NAME_GROUP, value, "Integer");

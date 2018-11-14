@@ -9,7 +9,7 @@ import fr.ign.mpp.kernel.ObjectBuilder;
  * 
  *        see LICENSE.TXT
  * 
- *        see <http://www.cecill.info/ http://www.cecill.info/
+ *        see  http://www.cecill.info/
  *        
  *        
  * Basic class for Cuboid Sampler

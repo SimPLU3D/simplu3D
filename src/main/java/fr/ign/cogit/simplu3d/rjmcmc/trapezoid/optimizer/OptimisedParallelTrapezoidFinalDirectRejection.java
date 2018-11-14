@@ -56,11 +56,11 @@ import fr.ign.simulatedannealing.temperature.SimpleTemperature;
  * 
  * see LICENSE.TXT
  * 
- * see <http://www.cecill.info/ http://www.cecill.info/
+ * see http://www.cecill.info/
  * 
  * 
  * 
- * @copyright IGN
+ * copyright IGN
  * 
  * @author Brasebin Mickaël
  * 
@@ -149,12 +149,14 @@ public class OptimisedParallelTrapezoidFinalDirectRejection extends DefaultSimPL
 	}
 
 	/**
-	 * Sampler
 	 * 
-	 * @param p
-	 *            les paramètres chargés depuis le fichier xml
-	 *            l'enveloppe dans laquelle on génère les positions
-	 * @return
+	 * @param rng     a Random Generator
+	 * @param p       the parameters loaded from the json file
+	 * @param bpU     a basic property unit to simulate
+	 * @param pred    a predicate to check the rules
+	 * @param limits  the limits where the cuboid will be stuck
+	 * @param polygon the polygon that will include the cuboid
+	 * @return a sampler that will be used during the optimization process
 	 */
 	public Sampler<GraphConfiguration<ParallelTrapezoid2>, BirthDeathModification<ParallelTrapezoid2>> create_sampler(
 			RandomGenerator rng, SimpluParameters p, BasicPropertyUnit bpU,

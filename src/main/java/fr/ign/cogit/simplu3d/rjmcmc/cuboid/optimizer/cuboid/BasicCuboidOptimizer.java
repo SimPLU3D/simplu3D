@@ -48,22 +48,26 @@ import fr.ign.simulatedannealing.temperature.SimpleTemperature;
 
 public class BasicCuboidOptimizer<C extends Cuboid> extends DefaultSimPLU3DOptimizer<ISimPLU3DPrimitive> {
 
-  public Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> create_sampler(
-  		RandomGenerator rng, SimpluParameters p, BasicPropertyUnit bpU,
-      	ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred) {
-    return create_sampler(rng, p, bpU, pred, bpU.getGeom());
-  }
+	public Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> create_sampler(RandomGenerator rng,
+			SimpluParameters p, BasicPropertyUnit bpU,
+			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred) {
+		return create_sampler(rng, p, bpU, pred, bpU.getGeom());
+	}
+
+
 	/**
-	 * Sampler
 	 * 
-	 * @param p
-	 *            les paramètres chargés depuis le fichier xml
-	 *            l'enveloppe dans laquelle on génère les positions
-	 * @return
+	 * @param rng  a randome generator
+	 * @param p    the parameters loaded from the json file
+	 * @param bpU  the basic property unit on which the simulation will be proceeded
+	 * @param pred a predicate that will check the respect of the rules
+	 * @param geom a geometry that will contains all the cuboid
+	 * @return a sampler that will be used during the simulation process
 	 */
-	public Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> create_sampler(
-			RandomGenerator rng, SimpluParameters p, BasicPropertyUnit bpU,
-			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred, IGeometry geom) {
+	public Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> create_sampler(RandomGenerator rng,
+			SimpluParameters p, BasicPropertyUnit bpU,
+			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred,
+			IGeometry geom) {
 		// Un vecteur ?????
 		double minlen = Double.isNaN(this.minLengthBox) ? p.getDouble("minlen") : this.minLengthBox;
 		double maxlen = Double.isNaN(this.maxLengthBox) ? p.getDouble("maxlen") : this.maxLengthBox;
@@ -77,15 +81,14 @@ public class BasicCuboidOptimizer<C extends Cuboid> extends DefaultSimPLU3DOptim
 		// A priori on redéfini le constructeur de l'objet
 		ObjectBuilder<Cuboid> builder = new CuboidBuilder();
 
-		
-		if(geom != null){
+		if (geom != null) {
 			samplingSurface = geom;
 		}
-		
+
 		if (samplingSurface == null) {
 			samplingSurface = bpU.getGeom();
 		}
-		
+
 		IEnvelope env = samplingSurface.getEnvelope();
 		System.out.println(env);
 		UniformBirth<Cuboid> birth = new UniformBirth<Cuboid>(rng,
@@ -126,13 +129,14 @@ public class BasicCuboidOptimizer<C extends Cuboid> extends DefaultSimPLU3DOptim
 
 	// Création de la configuration
 	/**
-	 * @param p
-	 *            paramètres importés depuis le fichier XML
-	 * @param bpu
-	 *            l'unité foncière considérée
-	 * @return la configuration chargée, c'est à dire la formulation énergétique
-	 *         prise en compte
+	 * @param p    parameters from the json file
+	 * @param bpu  the basic property unit on which the optimization will be
+	 *             proceeded
+	 * @param geom the geometry that contains the cuboids
+	 * @return a new configuration that embeds the calculation of the optimization
+	 *         function
 	 */
+
 	public GraphConfiguration<Cuboid> create_configuration(SimpluParameters p, Geometry geom, BasicPropertyUnit bpu) {
 		// Énergie constante : à la création d'un nouvel objet
 		ConstantEnergy<Cuboid, Cuboid> energyCreation = new ConstantEnergy<Cuboid, Cuboid>(p.getDouble("energy"));
@@ -147,25 +151,22 @@ public class BasicCuboidOptimizer<C extends Cuboid> extends DefaultSimPLU3DOptim
 		// On retire de l'énergie de création, l'énergie de l'aire
 		UnaryEnergy<Cuboid> u3 = new MinusUnaryEnergy<Cuboid>(energyCreation, energyVolumePondere);
 
-		
-		double ponderationExt = 
-				p.getDouble("ponderation_difference_ext");
-		
-		
+		double ponderationExt = p.getDouble("ponderation_difference_ext");
+
 		UnaryEnergy<Cuboid> unaryEnergy;
-		
-		if(ponderationExt != 0){
+
+		if (ponderationExt != 0) {
 			// Énergie constante : pondération de la différence
 			ConstantEnergy<Cuboid, Cuboid> ponderationDifference = new ConstantEnergy<Cuboid, Cuboid>(
 					p.getDouble("ponderation_difference_ext"));
 			// On ajoute l'énergie de différence : la zone en dehors de la parcelle
 			UnaryEnergy<Cuboid> u4 = new DifferenceVolumeUnaryEnergy<Cuboid>(geom);
 			UnaryEnergy<Cuboid> u5 = new MultipliesUnaryEnergy<Cuboid>(ponderationDifference, u4);
-			 unaryEnergy = new PlusUnaryEnergy<Cuboid>(u3, u5);
-		}else{
+			unaryEnergy = new PlusUnaryEnergy<Cuboid>(u3, u5);
+		} else {
 			unaryEnergy = u3;
 		}
-		
+
 		// Énergie binaire : intersection entre deux rectangles
 		ConstantEnergy<Cuboid, Cuboid> c3 = new ConstantEnergy<Cuboid, Cuboid>(p.getDouble("ponderation_volume_inter"));
 		BinaryEnergy<Cuboid, Cuboid> b1 = new IntersectionVolumeBinaryEnergy<Cuboid>();

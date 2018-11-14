@@ -54,11 +54,11 @@ import fr.ign.simulatedannealing.temperature.SimpleTemperature;
  * 
  * see LICENSE.TXT
  * 
- * see <http://www.cecill.info/ http://www.cecill.info/
+ * see http://www.cecill.info/
  * 
  * 
  * 
- * @copyright IGN
+ * copyright IGN
  * 
  * @author Brasebin Mickaël
  * 
@@ -128,11 +128,10 @@ public class OptimisedLShapeDirectRejection extends DefaultSimPLU3DOptimizer<LBu
 				energyVolumePondere);
 
 		double pondDiffExt = p.getDouble("ponderation_difference_ext");
-		
-		
+
 		UnaryEnergy<LBuildingWithRoof> unaryEnergy = null;
-		
-		if(pondDiffExt!=0){
+
+		if (pondDiffExt != 0) {
 			// Énergie constante : pondération de la différence
 			ConstantEnergy<LBuildingWithRoof, LBuildingWithRoof> ponderationDifference = new ConstantEnergy<LBuildingWithRoof, LBuildingWithRoof>(
 					pondDiffExt);
@@ -140,38 +139,38 @@ public class OptimisedLShapeDirectRejection extends DefaultSimPLU3DOptimizer<LBu
 			UnaryEnergy<LBuildingWithRoof> u4 = new DifferenceVolumeUnaryEnergy<LBuildingWithRoof>(geom);
 			UnaryEnergy<LBuildingWithRoof> u5 = new MultipliesUnaryEnergy<LBuildingWithRoof>(ponderationDifference, u4);
 			unaryEnergy = new PlusUnaryEnergy<LBuildingWithRoof>(u3, u5);
-		}else{
+		} else {
 			unaryEnergy = u3;
 		}
-		
 
 		double pondInterVolume = p.getDouble("ponderation_volume_inter");
 		BinaryEnergy<LBuildingWithRoof, LBuildingWithRoof> binaryEnergy = null;
-		if(pondInterVolume!=0){
+		if (pondInterVolume != 0) {
 
 			// Énergie binaire : intersection entre deux rectangles
 			ConstantEnergy<LBuildingWithRoof, LBuildingWithRoof> c3 = new ConstantEnergy<LBuildingWithRoof, LBuildingWithRoof>(
 					p.getDouble("ponderation_volume_inter"));
 			BinaryEnergy<LBuildingWithRoof, LBuildingWithRoof> b1 = new IntersectionVolumeBinaryEnergy<LBuildingWithRoof>();
-			 binaryEnergy = new MultipliesBinaryEnergy<LBuildingWithRoof, LBuildingWithRoof>(
-					c3, b1);
-		}else{
+			binaryEnergy = new MultipliesBinaryEnergy<LBuildingWithRoof, LBuildingWithRoof>(c3, b1);
+		} else {
 			binaryEnergy = new ConstantEnergy<LBuildingWithRoof, LBuildingWithRoof>(0);
 		}
-		
 
 		// empty initial configuration*/
 		GraphConfiguration<LBuildingWithRoof> conf = new GraphConfiguration<>(unaryEnergy, binaryEnergy);
 		return conf;
 	}
 
+	
+
 	/**
-	 * Sampler
 	 * 
-	 * @param p
-	 *            les paramètres chargés depuis le fichier xmlg
-	 *            l'enveloppe dans laquelle on génère les positions
-	 * @return
+	 * @param rng     a random generator
+	 * @param p       a json parameter files
+	 * @param bpU     a basic property unit
+	 * @param pred    a predicate to check the rules
+	 * @param polygon a polygon that contains al the cuboid
+	 * @return a sampler for the optimization process
 	 */
 	public Sampler<GraphConfiguration<LBuildingWithRoof>, BirthDeathModification<LBuildingWithRoof>> create_sampler(
 			RandomGenerator rng, SimpluParameters p, BasicPropertyUnit bpU,
@@ -282,8 +281,8 @@ public class OptimisedLShapeDirectRejection extends DefaultSimPLU3DOptimizer<LBu
 		kernels.add(factory.make_uniform_modification_kernel(rng, builder,
 				new ChangeValue(amplitudeHeight, builder.size() + 1, 8), 0.2, "changeHeightGutter"));
 
-		kernels.add(factory.make_uniform_modification_kernel(rng, builder,
-				new ChangeValue(0.1, builder.size() + 1, 9), 0.2, "changeShift"));
+		kernels.add(factory.make_uniform_modification_kernel(rng, builder, new ChangeValue(0.1, builder.size() + 1, 9),
+				0.2, "changeShift"));
 
 		// On instancie le sampler avec tous les objets.
 		Sampler<GraphConfiguration<LBuildingWithRoof>, BirthDeathModification<LBuildingWithRoof>> s = new GreenSamplerBlockTemperature<>(

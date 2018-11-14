@@ -25,11 +25,11 @@ import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
  * 
  *        see LICENSE.TXT
  * 
- *        see <http://www.cecill.info/ http://www.cecill.info/
+ *        see http://www.cecill.info/
  * 
  * 
  * 
- * @copyright IGN
+ * copyright IGN
  * 
  * @author Brasebin Mickaël
  * 
@@ -37,10 +37,11 @@ import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
  **/
 public class InversionBirth {
 
-  /**
-   * @param args
-   * @throws Exception
-   */
+	/**
+	 * Class to test if the birth operation is reversible
+	 * @param args ont used
+	 * @throws Exception exception in sampler instanciation
+	 */
   public static void main(String[] args) throws Exception {
 
     int nbSample = 10000;

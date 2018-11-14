@@ -21,11 +21,11 @@ import fr.ign.mpp.configuration.GraphConfiguration;
  * 
  * see LICENSE.TXT
  * 
- * see <http://www.cecill.info/ http://www.cecill.info/
+ * see http://www.cecill.info/
  * 
  * 
  * 
- * @copyright IGN
+ * copyright IGN
  * 
  * @author Brasebin Mickaël
  * 
@@ -37,11 +37,7 @@ import fr.ign.mpp.configuration.GraphConfiguration;
  */
 public class BasicSimulator {
 
-	/**
-	 * @param args
-	 */
-
-	// [buildin-g_footprint_rectangle_cli_main
+	
 	public static void main(String[] args) throws Exception {
 
 		// Loading of configuration file that contains sampling space
