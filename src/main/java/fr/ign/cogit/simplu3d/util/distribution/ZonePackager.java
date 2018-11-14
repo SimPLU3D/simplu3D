@@ -133,7 +133,9 @@ public class ZonePackager {
 			if (f.isDirectory()) {
 
 				IFeatureCollection<IFeature> grapFeatures = ShapefileReader.read(new String(f + "/parcelle.shp"));
-				System.out.println(grapFeatures.size());
+				if(grapFeatures==null || grapFeatures.isEmpty()){
+					continue;
+				}
 				List<IFeatureCollection<IFeature>> listOfCutUrbanBlocks = determineCutBlocks(grapFeatures, grapFeatures,
 						numberMaxOfSimulatedParcel, areaMax);
 
