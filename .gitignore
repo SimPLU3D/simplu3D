@@ -15,3 +15,4 @@ release.properties
 log4j.log
 hs_err_pid*
 .Rhistory
+/bin/
