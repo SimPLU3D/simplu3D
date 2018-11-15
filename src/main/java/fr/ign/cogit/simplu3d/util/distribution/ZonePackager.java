@@ -46,7 +46,7 @@ public class ZonePackager {
 
 	// ATTRIBUTE USED TO DETERMINE IF A PARCEL HAS TO BE SIMULATED
 	public static String ATTRIBUTE_SIMUL = "simul";
-	
+
 	// OUTPUT SRID
 	public static String SRID_END = "EPSG:2154";
 
@@ -72,10 +72,11 @@ public class ZonePackager {
 	 *                                   the simulation
 	 * @param folderOutPath              the final result
 	 * @param debug 					 if we want to export the current bounding box
-	 * @throws Exception exeption
+	 * @throws Exception exception
 	 */
 	public static void createParcelGroupsAndExport(IFeatureCollection<IFeature> parcelles,
-			int numberMaxOfSimulatedParcel, double areaMax, String tempFolder, String folderOutPath, boolean debug) throws Exception {
+			int numberMaxOfSimulatedParcel, double areaMax, String tempFolder, String folderOutPath, boolean debug)
+			throws Exception {
 
 		// Initialization of spatial index with updates
 		parcelles.initSpatialIndex(Tiling.class, true);
@@ -133,7 +134,9 @@ public class ZonePackager {
 			if (f.isDirectory()) {
 
 				IFeatureCollection<IFeature> grapFeatures = ShapefileReader.read(new String(f + "/parcelle.shp"));
-				System.out.println(grapFeatures.size());
+				if (grapFeatures == null || grapFeatures.isEmpty()) {
+					continue;
+				}
 				List<IFeatureCollection<IFeature>> listOfCutUrbanBlocks = determineCutBlocks(grapFeatures, grapFeatures,
 						numberMaxOfSimulatedParcel, areaMax);
 
@@ -144,11 +147,12 @@ public class ZonePackager {
 						setIDBlock(feat, idCurrentGroup);
 					}
 
-					createFolderAndExport(folderOut + "/" + idCurrentGroup + "/", grapFeatures, debug);
+					createFolderAndExport(folderOut + "/" + idCurrentGroup + "/", featCollCutUrbanBlock, debug);
 
 					idCurrentGroup++;
 				}
 			}
+			
 		}
 
 	}
@@ -224,14 +228,17 @@ public class ZonePackager {
 	}
 
 	/**
-	 * This method is used to cut the collection of blocks into sub block and check
-	 * the number of simulable parcels. It is a recursive method
+	 * This method is used to cut the collection of blocks into sub block and
+	 * check the number of simulable parcels. It is a recursive method
 	 * 
-	 * @param featColl                   the considered set of parcels for a block
-	 * @param featCollTotal              the collection that contains all the
-	 *                                   parcels
-	 * @param numberMaxOfSimulatedParcel the number of max parcels to simulated
-	 * @param areaMax                    the maximal area
+	 * @param featColl
+	 *            the considered set of parcels for a block
+	 * @param featCollTotal
+	 *            the collection that contains all the parcels
+	 * @param numberMaxOfSimulatedParcel
+	 *            the number of max parcels to simulated
+	 * @param areaMax
+	 *            the maximal area
 	 * @return
 	 * @throws Exception
 	 */
@@ -250,7 +257,7 @@ public class ZonePackager {
 		// value is
 		// true
 		long nbOfSimulatedParcel = featColl.getElements().stream().filter(feat -> (feat.getGeom().area() < areaMax))
-				.filter(feat -> (Boolean.parseBoolean(feat.getAttribute(ZonePackager.ATTRIBUTE_SIMUL).toString())))
+				.filter(feat -> (hasToBeSimulated(feat)))
 				.count();
 
 		if (nbOfSimulatedParcel <= numberMaxOfSimulatedParcel) {
@@ -301,13 +308,14 @@ public class ZonePackager {
 				continue;
 			}
 
+	
 			DefaultFeature featureFakeClone = new DefaultFeature();
 			featureFakeClone.setGeom(feat.getGeom());
 			// It is a new context feature we add a false attribute
 			AttributeManager.addAttribute(featureFakeClone, ZonePackager.ATTRIBUTE_NAME_ID,
 					feat.getAttribute(ZonePackager.ATTRIBUTE_NAME_ID), "String");
 			AttributeManager.addAttribute(featureFakeClone, ZonePackager.ATTRIBUTE_SIMUL, "false", "String");
-			AttributeManager.addAttribute(featureFakeClone, ZonePackager.ATTRIBUTE_NAME_BAND, 0, "Integer");
+			AttributeManager.addAttribute(featureFakeClone, ZonePackager.ATTRIBUTE_NAME_BAND, 42, "Integer");
 
 			finalFeatColl.add(featureFakeClone);
 
@@ -317,7 +325,8 @@ public class ZonePackager {
 	}
 
 	/**
-	 * Determine the splitting of a set of parcels into a subset of 2 set of parcels
+	 * Determine the splitting of a set of parcels into a subset of 2 set of
+	 * parcels
 	 * 
 	 * @param featColl
 	 * @return
@@ -442,9 +451,12 @@ public class ZonePackager {
 	 * 
 	 * 
 	 * 
-	 * @param map      the map to export
-	 * @param folderIn the folder where the map is exported
-	 * @param debug    do we want to export the corresponding bbox ?
+	 * @param map
+	 *            the map to export
+	 * @param folderIn
+	 *            the folder where the map is exported
+	 * @param debug
+	 *            do we want to export the corresponding bbox ?
 	 */
 	public static void exportFolder(Map<Integer, IFeatureCollection<IFeature>> map, String folderIn, boolean debug) {
 
@@ -454,8 +466,8 @@ public class ZonePackager {
 	}
 
 	/**
-	 * Create a folder for an entry of the map (the name parcelle.shp is used in the
-	 * simulator)
+	 * Create a folder for an entry of the map (the name parcelle.shp is used in
+	 * the simulator)
 	 * 
 	 * @param path
 	 * @param features
@@ -470,7 +482,7 @@ public class ZonePackager {
 		int nbElem = features.size();
 		for (int i = 0; i < nbElem; i++) {
 			IFeature feat = features.get(i);
-			if (Boolean.parseBoolean(feat.getAttribute(ZonePackager.ATTRIBUTE_SIMUL).toString())) {
+			if (hasToBeSimulated(feat)) {
 				features.remove(i);
 				features.getElements().add(0, feat);
 				break;
@@ -482,7 +494,7 @@ public class ZonePackager {
 		try {
 
 			if (debug) {
-				//If we want to export the bounding boxes
+				// If we want to export the bounding boxes
 				IFeatureCollection<IFeature> pop = new FT_FeatureCollection<>();
 				IFeature feat = new DefaultFeature(features.getEnvelope().getGeom());
 				pop.add(feat);
@@ -490,7 +502,7 @@ public class ZonePackager {
 			}
 
 			ShapefileWriter.write(features, path + "parcelle.shp", CRS.decode(ZonePackager.SRID_END));
-			
+
 		} catch (NoSuchAuthorityCodeException e) {
 			e.printStackTrace();
 		} catch (FactoryException e) {
@@ -516,6 +528,32 @@ public class ZonePackager {
 	 */
 	public static void setIDBlock(IFeature x, int value) {
 		AttributeManager.addAttribute(x, ZonePackager.ATTRIBUTE_NAME_GROUP, value, "Integer");
+	}
+
+	private static boolean hasToBeSimulated(IFeature feat) {
+
+		Object o = feat.getAttribute(ATTRIBUTE_SIMUL);
+
+		if (o == null) {
+			return false;
+		}
+
+		String strO = o.toString();
+
+		try {
+			int str0ToInt = Integer.parseInt(strO);
+
+			return (str0ToInt == 1);
+		} catch (Exception e) {
+			try {
+				boolean str0ToBoolean = Boolean.parseBoolean(strO);
+				return str0ToBoolean;
+			} catch (Exception e2) {
+				e.printStackTrace();
+				return false;
+			}
+
+		}
 	}
 
 	/**
