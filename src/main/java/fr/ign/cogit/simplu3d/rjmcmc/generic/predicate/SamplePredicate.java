@@ -191,7 +191,7 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 			if (jtsCurveLimiteFondParcel != null) {
 				Geometry geom = cuboid.toGeometry();
 				if (geom == null) {
-					System.out.println("Nullll");
+					System.out.println("Null");
 				}
 				// On vérifie la distance (on récupère le foot
 				if (this.jtsCurveLimiteFondParcel.distance(geom) < this.distReculFond) {
@@ -323,7 +323,8 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 				// celles que
 				// l'on ajoute
 				// respecte la distance entre boîtes
-				if (batTemp.toGeometry().distance(ab.toGeometry()) < distanceInterBati) {
+				double distance = batTemp.toGeometry().distance(ab.toGeometry()) ;
+				if (distance < distanceInterBati) {
 					return false;
 				}
 

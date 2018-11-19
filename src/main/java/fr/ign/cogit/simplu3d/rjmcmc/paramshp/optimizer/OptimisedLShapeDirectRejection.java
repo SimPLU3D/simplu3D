@@ -30,6 +30,7 @@ import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.mpp.kernel.KernelFactory;
 import fr.ign.mpp.kernel.UniformBirth;
+import fr.ign.random.Random;
 import fr.ign.rjmcmc.acceptance.MetropolisAcceptance;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
 import fr.ign.rjmcmc.distribution.PoissonDistribution;
@@ -69,6 +70,13 @@ public class OptimisedLShapeDirectRejection extends DefaultSimPLU3DOptimizer<LBu
 	public OptimisedLShapeDirectRejection() {
 	}
 
+	public GraphConfiguration<LBuildingWithRoof> process(BasicPropertyUnit bpu, SimpluParameters p,
+			Environnement env, int id,
+			ConfigurationModificationPredicate<GraphConfiguration<LBuildingWithRoof>, BirthDeathModification<LBuildingWithRoof>> pred,
+			IGeometry polygon)
+	{
+		return process(Random.random(), bpu, p, env, id, pred, polygon);
+	}
 	public GraphConfiguration<LBuildingWithRoof> process(RandomGenerator rG, BasicPropertyUnit bpu, SimpluParameters p,
 			Environnement env, int id,
 			ConfigurationModificationPredicate<GraphConfiguration<LBuildingWithRoof>, BirthDeathModification<LBuildingWithRoof>> pred,
@@ -203,7 +211,7 @@ public class OptimisedLShapeDirectRejection extends DefaultSimPLU3DOptimizer<LBu
 		double heightToTopgMax = p.getDouble("heightToTopgMax");
 
 		double orientationMin = 0;
-		double orientationMax = 2 * Math.PI;
+		double orientationMax =  Math.PI;
 
 		double heightgutterMin = p.getDouble("heightgutterMin");
 		;
