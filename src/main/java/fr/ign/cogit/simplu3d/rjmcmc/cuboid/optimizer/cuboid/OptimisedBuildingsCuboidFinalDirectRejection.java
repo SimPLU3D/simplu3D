@@ -32,7 +32,7 @@ import fr.ign.simulatedannealing.visitor.Visitor;
  * 
  * see LICENSE.TXT
  * 
- * see  http://www.cecill.info/
+ * see http://www.cecill.info/
  * 
  * 
  * 
@@ -43,49 +43,63 @@ import fr.ign.simulatedannealing.visitor.Visitor;
  * @version 1.0
  **/
 public class OptimisedBuildingsCuboidFinalDirectRejection extends BasicCuboidOptimizer<Cuboid> {
-	
-	
 
 	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, SimpluParameters p, Environnement env, int id,
-											  ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred) {
-	return this.process(bpu, p, env, id, pred, new ArrayList<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>>());
-}
-	
-	
-	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, IGeometry geom, SimpluParameters p, Environnement env, int id,
 			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred) {
-	return this.process(bpu, geom, p, env, id, pred, new ArrayList<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>>());
-}
-	
+		return this.process(bpu, p, env, id, pred,
+				new ArrayList<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>>());
+	}
+
+	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, IGeometry geom, SimpluParameters p,
+			Environnement env, int id,
+			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred) {
+		return this.process(bpu, geom, p, env, id, pred,
+				new ArrayList<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>>());
+	}
 
 	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, SimpluParameters p, Environnement env, int id,
-			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred, List<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> lSupplementaryVisitors) {
+			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred,
+			List<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> lSupplementaryVisitors) {
 		// Géométrie de l'unité foncière sur laquelle porte la génération
 		IGeometry geom = bpu.generateGeom().buffer(1);
-		return this.process(bpu,geom, p, env, id, pred,lSupplementaryVisitors);
-		
-	}
-	
-	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, IGeometry geom, SimpluParameters p, Environnement env, int id,
-			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred, List<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> lSupplementaryVisitors) {
-		// Géométrie de l'unité foncière sur laquelle porte la génération
-	
+		return this.process(bpu, geom, p, env, id, pred, lSupplementaryVisitors);
 
-		// Définition de la fonction d'optimisation (on optimise en décroissant)
-		// relative au volume
+	}
+
+	/**
+	 * Process the generation of the optimization
+	 * @param bpu                    Basic property unit
+	 * @param geom                   The geometry in which the centroid of the
+	 *                               cuboids will be generated
+	 * @param p                      the parameters
+	 * @param env                    the environement
+	 * @param id                     the id of the experiments
+	 * @param pred                   the rules to check
+	 * @param lSupplementaryVisitors some extra visitors
+	 * @return a set of cuboid as a graph
+	 */
+	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, IGeometry geom, SimpluParameters p,
+			Environnement env, int id,
+			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred,
+			List<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> lSupplementaryVisitors) {
+
+		// Sampler creation
+		Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> samp = create_sampler(Random.random(), p,
+				bpu, pred, geom);
+		
+		//Initializing the configuration
 		GraphConfiguration<Cuboid> conf = null;
 
 		try {
-			conf = create_configuration(p, AdapterFactory.toGeometry(new GeometryFactory(), bpu.getGeom()),bpu);
+			conf = create_configuration(p, AdapterFactory.toGeometry(new GeometryFactory(), bpu.getGeom()), bpu);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		// Création de l'échantilloneur
-		Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> samp = create_sampler(Random.random(), p,
-				bpu, pred, geom);
-		// Température
+		
+		// Temperature initialization
 		Schedule<SimpleTemperature> sch = create_schedule(p);
-
+	
+		//We may initialize the initial configuration with existing cuboids
 		int loadExistingConfig = p.getInteger("load_existing_config");
 		if (loadExistingConfig == 1) {
 			String configPath = p.get("config_shape_file").toString();
@@ -99,29 +113,28 @@ public class OptimisedBuildingsCuboidFinalDirectRejection extends BasicCuboidOpt
 			m.apply(conf);
 			System.out.println("First update OK");
 		}
-		// EndTest<Cuboid2, Configuration<Cuboid2>, SimpleTemperature,
-		// Sampler<Cuboid2, Configuration<Cuboid2>, SimpleTemperature>> end =
-		// create_end_test(p);
+		
+		//The end test condition
+		end = create_end_test(p);
 
-		 end = create_end_test(p);
-
-		PrepareVisitors<Cuboid> pv = new PrepareVisitors<>(env,lSupplementaryVisitors);
+		//The visitors initialisation
+		PrepareVisitors<Cuboid> pv = new PrepareVisitors<>(env, lSupplementaryVisitors);
 		CompositeVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> mVisitor = pv.prepare(p, id);
+		
+		
 		countV = pv.getCountV();
-		/*
-		 * < This is the way to launch the optimization process. Here, the magic
-		 * happen... >
-		 */
+		
+		//Optimization process
 		SimulatedAnnealing.optimize(Random.random(), conf, samp, sch, end, mVisitor);
 		return conf;
 	}
-	
+
 	private EndTest end;
-	
-	public EndTest getEndTest(){
-	  return end;
+
+	public EndTest getEndTest() {
+		return end;
 	}
-	
+
 	public int getCount() {
 		return countV.getCount();
 	}

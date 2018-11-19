@@ -56,8 +56,8 @@ public class BasicCuboidOptimizer<C extends Cuboid> extends DefaultSimPLU3DOptim
 
 
 	/**
-	 * 
-	 * @param rng  a randome generator
+	 * Creation of the sampler
+	 * @param rng  a random generator
 	 * @param p    the parameters loaded from the json file
 	 * @param bpU  the basic property unit on which the simulation will be proceeded
 	 * @param pred a predicate that will check the respect of the rules
@@ -68,7 +68,11 @@ public class BasicCuboidOptimizer<C extends Cuboid> extends DefaultSimPLU3DOptim
 			SimpluParameters p, BasicPropertyUnit bpU,
 			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred,
 			IGeometry geom) {
-		// Un vecteur ?????
+		
+		
+		//Step 1 : Creation of the object that will control the birth and death of cuboid
+		
+		//Getting minimal and maximal dimension from the parameter file
 		double minlen = Double.isNaN(this.minLengthBox) ? p.getDouble("minlen") : this.minLengthBox;
 		double maxlen = Double.isNaN(this.maxLengthBox) ? p.getDouble("maxlen") : this.maxLengthBox;
 
@@ -77,10 +81,12 @@ public class BasicCuboidOptimizer<C extends Cuboid> extends DefaultSimPLU3DOptim
 
 		double minheight = p.getDouble("minheight");
 		double maxheight = p.getDouble("maxheight");
-		// A priori on redéfini le constructeur de l'objet
-		// A priori on redéfini le constructeur de l'objet
+
+		
+		//Builder class of the object
 		ObjectBuilder<Cuboid> builder = new CuboidBuilder();
 
+		//The geometry in which the sampler will be instanciated
 		if (geom != null) {
 			samplingSurface = geom;
 		}
@@ -88,26 +94,30 @@ public class BasicCuboidOptimizer<C extends Cuboid> extends DefaultSimPLU3DOptim
 		if (samplingSurface == null) {
 			samplingSurface = bpU.getGeom();
 		}
-
 		IEnvelope env = samplingSurface.getEnvelope();
-		System.out.println(env);
+		
+		//Instanciation of the object dedicated for the creation of new cuboid during the process
+		//Passing the building, the class (TransformToSurface) that will make 
+		// the transformation between random numbers and coordinates inside the samplingSurface
 		UniformBirth<Cuboid> birth = new UniformBirth<Cuboid>(rng,
 				new Cuboid(env.minX(), env.minY(), minlen, minwid, minheight, 0),
 				new Cuboid(env.maxX(), env.maxY(), maxlen, maxwid, maxheight, Math.PI), builder,
 				TransformToSurface.class, samplingSurface);
+		
 
-		// Distribution de poisson
-		PoissonDistribution distribution = new PoissonDistribution(rng, p.getDouble("poisson"));
+		
+		//Step 2  : Listing the modification kernel
 
-		DirectSampler<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> ds = new DirectRejectionSampler<>(
-				distribution, birth, pred);
-
-		// Probabilité de naissance-morts modifications
-		List<Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> kernels = new ArrayList<>(3);
+		//List of kernel for modification during the process
+		List<Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> kernels = new ArrayList<>();
+		
+		//A factory to create proper kernels
 		KernelFactory<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> factory = new KernelFactory<>();
-		// TODO Use a KernelProposalRatio to propose only birth when size is 0
+		
+		//Adding the birth/death kernel
 		kernels.add(
 				factory.make_uniform_birth_death_kernel(rng, builder, birth, p.getDouble("pbirth"), 1.0, "BirthDeath"));
+		//Adding the other modification kernel
 		double amplitudeMove = p.getDouble("amplitudeMove");
 		kernels.add(factory.make_uniform_modification_kernel(rng, builder, new MoveCuboid(amplitudeMove), 0.2, "Move"));
 		double amplitudeRotate = p.getDouble("amplitudeRotate") * Math.PI / 180;
@@ -121,14 +131,26 @@ public class BasicCuboidOptimizer<C extends Cuboid> extends DefaultSimPLU3DOptim
 		double amplitudeHeight = p.getDouble("amplitudeHeight");
 		kernels.add(factory.make_uniform_modification_kernel(rng, builder, new ChangeHeight(amplitudeHeight), 0.2,
 				"ChgHeight"));
-
+		
+		//Step 3  : Creation of the sampler for the brith/death of cuboid
+		
+		// This distribution create a biais to make the system tends around a certain number of boxes
+		PoissonDistribution distribution = new PoissonDistribution(rng, p.getDouble("poisson"));
+		//Creation of the sampler with the modification in itself
+		DirectSampler<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> ds = new DirectRejectionSampler<>(
+				distribution, birth, pred);
+		
+		//Step 4  : Creation of the GreenSampler that will be used during the optimization process 
+		//It notably control the acception ratio and that the created objects and that the proposed configurations area generated
+		//According to the uniformbirth
 		Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> s = new GreenSamplerBlockTemperature<>(rng,
 				ds, new MetropolisAcceptance<SimpleTemperature>(), kernels);
 		return s;
 	}
 
-	// Création de la configuration
+	
 	/**
+	 * Creation of a cuboid configuration
 	 * @param p    parameters from the json file
 	 * @param bpu  the basic property unit on which the optimization will be
 	 *             proceeded
