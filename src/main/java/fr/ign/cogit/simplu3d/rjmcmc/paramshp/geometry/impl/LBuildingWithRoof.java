@@ -39,14 +39,14 @@ public class LBuildingWithRoof extends AbstractSimpleBuilding {
 	 * 
 	 * @param centerx x coordinate of the shape center
 	 * @param centery  y coordinate of the shape center
-	 * @param l1 total length of the shape
-	 * @param l2 height of the bar of the L
-	 * @param h1 total height of the shape
+	 * @param l1 total length of the shape without the length of the L bar
+	 * @param l2 length of the bar of the L
+	 * @param h1 total height of the shape without the length of the L bar
 	 * @param h2 height of the L bar
 	 * @param height maximal height of the shape
 	 * @param orientation azimut of the shape
 	 * @param hgutter gutter height of the shape
-	 * @param shift slope of the height
+	 * @param shift slope at the extremities of the L
 	 */
 	public LBuildingWithRoof(double centerx, double centery, double l1, double l2, double h1, double h2, double height,
 			double orientation, double hgutter, double shift) {

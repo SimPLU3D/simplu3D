@@ -6,7 +6,6 @@ import com.vividsolutions.jts.geom.Polygon;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.simplu3d.model.Building;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
-import fr.ign.rjmcmc.kernel.SimpleObject;
 
 /**
  * 
@@ -24,7 +23,7 @@ import fr.ign.rjmcmc.kernel.SimpleObject;
  * 
  * @version 1.0
  **/
-public abstract class AbstractSimpleBuilding extends Building implements SimpleObject, ISimPLU3DPrimitive {
+public abstract class AbstractSimpleBuilding extends Building implements ISimPLU3DPrimitive {
 
 	public double centerx;
 	public double centery;
