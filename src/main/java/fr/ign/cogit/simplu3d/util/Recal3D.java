@@ -55,15 +55,16 @@ public class Recal3D {
 
 	private static Logger logger = Logger.getLogger(Recal3D.class);
 
-	private final static String ATT_TEMP = "TEMP";
+	private final static String ATT_TEMP = "ZTEMP";
+	private final static String ATT_SURFACE = "SURFACE";
 
 	public static void main(String[] args) throws CloneNotSupportedException {
 
 		DirectPosition.PRECISION = 6;
 		// Fixing the Z Min
-		double ZMIN = 0;// 139.;
+		double ZMIN = 139.;
 
-		// The shapefile to simplu3D simulatoin to process
+		// The shapefile to simplu3D simulation to process
 		String shpeIn = "/home/mickael/data/mbrasebin/donnees/IAUIDF/data_grille/results_77_test/77007650/simul_77007650_true_no_demo_sampler.shp";
 
 		// Folder in
@@ -76,26 +77,42 @@ public class Recal3D {
 		ShapefileWriter.write(fus, strShpOut + "fus.shp");
 
 	}
-	
-	double surface;
+
+	double surface = 0;
 
 	public IFeatureCollection<IFeature> fusionneGeomByGroup(String shpIn, double zMini) {
-		
-		//Creating a partition of cuboid with height stored as ATT_TEMP attribute
-		IFeatureCollection<IFeature> featColl = this.createPartitionCollection(shpIn);
-		
 
-		//Creating the neighbourhood relationship with CarteTopo
-		CarteTopo carteTopo = newCarteTopo("-aex90", featColl, 0.5);
-
-		//Spatial index to speed up
-		featColl.initSpatialIndex(Tiling.class, false);
-		
-		//Surface is computed
-		surface = 0;
+		// Creating a partition of cuboid with height stored as ATT_TEMP
+		// attribute
+		List<IFeatureCollection<IFeature>> featColl = this.createPartitionCollection(shpIn);
 
 		//The results
 		IFeatureCollection<IFeature> featCollOut = new FT_FeatureCollection<>();
+
+		//We add the feature of each groups
+		for (IFeatureCollection<IFeature> currentCollection : featColl) {
+			featCollOut.add(fusionneGeomForAGroup(currentCollection, zMini));
+		}
+
+		return featCollOut;
+	}
+
+	/**
+	 * 
+	 * @param featColl a collection of a set of adjacing boxes
+	 * @param zMini the minimum z
+	 * @return a feature with agregated boxes and the surface of the feature stored as ATT_SURFACE attribute
+	 */
+	private IFeature fusionneGeomForAGroup(IFeatureCollection<IFeature> featColl, double zMini) {
+		// Creating the neighbourhood relationship with CarteTopo
+		CarteTopo carteTopo = newCarteTopo("-aex90", featColl, 0.5);
+
+		// Spatial index to speed up
+		featColl.initSpatialIndex(Tiling.class, false);
+
+		// Surface is computed
+		double surfaceGroup = 0;
+
 
 		// For each group the faces are treated (normally there is only one)
 		// for (Groupe g : lG) {
@@ -104,21 +121,21 @@ public class Recal3D {
 
 		// We prepare the list of available faces
 
-
 		// For each face we look at the maximal height
 		for (Face f : carteTopo.getPopFaces()) {
 
-			//We do not treat the infinite height
+			// We do not treat the infinite height
 			if (f.isInfinite()) {
 				continue;
 			}
 
-			//We took a point into the face and look if we find it in the original data
-			IPoint p = new GM_Point(PointInPolygon.get(f.getGeometrie(), 0.001));
+			// We took a point into the face and look if we find it in the
+			// original data
+			IPoint p = new GM_Point(PointInPolygon.get(f.getGeometrie(), 0.005));
 
 			if (!f.getGeometrie().contains(p)) {
-				//This may happen for all as CarteTopo create face for them
-				logger.info("Point not in polygon : " +f);
+				// This may happen for all as CarteTopo create face for them
+				logger.info("Point not in polygon : " + f);
 			}
 
 			Collection<IFeature> featSelect = featColl.select(p);
@@ -129,39 +146,42 @@ public class Recal3D {
 
 				zMax = zMini;
 				System.out.println(f.getGeometrie());
-				System.out.println("New empty face detected");
+			//System.out.println("New empty face detected");
 
 			}
-
+			// We get the max height of the initial data
 			for (IFeature feat : featSelect) {
 
 				zMax = Math.max(zMax, Double.parseDouble(feat.getAttribute(ATT_TEMP).toString()));
 			}
-
+			// We set the z of the point of the polygon as zMax
 			IPolygon poly = (IPolygon) f.getGeometrie().clone();
 
 			if (!featSelect.isEmpty()) {
 
 				lOS.add(poly);
-				surface = surface + poly.area();
+				// We compute the surface by adding the face (the roofs)
+				surfaceGroup = surfaceGroup + poly.area();
 			}
 
-			AttributeManager.addAttribute(f, "Z", zMax, "Double");
+			AttributeManager.addAttribute(f, ATT_TEMP, zMax+ zMini, "Double");
 
 			for (IDirectPosition dp : poly.coord()) {
-				dp.setZ(zMax);
+				dp.setZ(zMax + zMini);
 			}
 
 		}
 
 		// For each edges we determine the minimal and maximal height in
 		// order to generate vertical faces
-
 		for (Arc a : carteTopo.getListeArcs()) {
 
 			Face fd = a.getFaceDroite();
 			Face fg = a.getFaceGauche();
 
+			// No neighbour for the edge
+			// This case is not supposed to happen but we make a test to avoid
+			// it
 			if (fd == null && fg == null) {
 				continue;
 			}
@@ -169,23 +189,27 @@ public class Recal3D {
 			double z1 = 0;
 			double z2 = 0;
 
+			// If there is only one neighbour we make a wall until the ground
+			// (ATT_TEMP)
 			if (fd == null || fd.isInfinite()) {
 
-				z1 = Double.parseDouble(fg.getAttribute("Z").toString());
+				z1 = Double.parseDouble(fg.getAttribute(ATT_TEMP).toString());
 				z2 = zMini;
 
 			} else if (fg == null || fg.isInfinite()) {
 
-				z1 = Double.parseDouble(fd.getAttribute("Z").toString());
+				z1 = Double.parseDouble(fd.getAttribute(ATT_TEMP).toString());
 				z2 = zMini;
 
 			} else {
-
-				z1 = Double.parseDouble(fg.getAttribute("Z").toString());
-				z2 = Double.parseDouble(fd.getAttribute("Z").toString());
+				// There is two neighbour; it will be between the edges of the
+				// two roofs
+				z1 = Double.parseDouble(fg.getAttribute(ATT_TEMP).toString());
+				z2 = Double.parseDouble(fd.getAttribute(ATT_TEMP).toString());
 
 			}
 
+			// We ensure that the heights are not the same
 			double zMin = Math.min(z1, z2);
 			double zMax = Math.max(z1, z2);
 
@@ -194,9 +218,16 @@ public class Recal3D {
 				continue;
 			}
 
+			// We create the wall from the line
 			ILineString lineToExtrude = (ILineString) a.getGeometrie().clone();
 
-			surface = surface + lineToExtrude.length() * (zMax - zMin);
+			// We update the surface by considering this new wall
+			surfaceGroup = surfaceGroup + lineToExtrude.length() * (zMax - zMin);
+			
+			
+			if(zMax > 200){
+				System.out.println();
+			}
 
 			// Extrusion of the geometry according to the considered height
 			IGeometry geom = Extrusion2DObject.convertFromLine(lineToExtrude, zMin, zMax);
@@ -205,28 +236,37 @@ public class Recal3D {
 
 		}
 
-		System.out.println("surface : " + surface);
-		featCollOut.add(new DefaultFeature(new GM_MultiSurface<>(lOS)));
+		this.surface = this.surface + surfaceGroup;
 
-		return featCollOut;
+		IFeature feat = new DefaultFeature(new GM_MultiSurface<>(lOS));
+		AttributeManager.addAttribute(feat, ATT_SURFACE, surfaceGroup, "Double");
+		return feat;
+
 	}
-	
+
 	/**
 	 * 
-	 * @param shpIn shapefile from Cuboid simplu3D simulation
+	 * @param shpIn
+	 *            shapefile from Cuboid simplu3D simulation
 	 * @return a partition with polygons that have a Z
 	 */
-	public IFeatureCollection<IFeature> createPartitionCollection(String shpIn){
-		//Launching SDPCalc to get the partition as a collection of GeomHeightPair
+	public List<IFeatureCollection<IFeature>> createPartitionCollection(String shpIn) {
+		// Launching SDPCalc to get the partition as a collection of
+		// GeomHeightPair
 		SDPCalc sd = new SDPCalc();
 		sd.process(shpIn);
 
 		List<List<GeomHeightPair>> llGeomPair = sd.getGeometryPairByGroup();
 
-		//Agregating the pair into a collection of features
-		//With the height stored as ATT_TEMP
-		IFeatureCollection<IFeature> featColl = new FT_FeatureCollection<>();
+		// Agregating the pair into a list of collection of features (one
+		// collection by group)
+		// With the height stored as ATT_TEMP
+		List<IFeatureCollection<IFeature>> featColl = new ArrayList<>();
+
 		for (List<GeomHeightPair> lPair : llGeomPair) {
+
+			IFeatureCollection<IFeature> featCollTemp = new FT_FeatureCollection<>();
+
 			for (GeomHeightPair pair : lPair) {
 
 				IGeometry geom = JTS.fromJTS(pair.geom);
@@ -234,15 +274,26 @@ public class Recal3D {
 
 					IFeature feat = new DefaultFeature(os);
 					AttributeManager.addAttribute(feat, ATT_TEMP, pair.height, "Double");
-					featColl.add(feat);
+					featCollTemp.add(feat);
 				}
 			}
+
+			featColl.add(featCollTemp);
 		}
 
 		return featColl;
 	}
 
-
+	/**
+	 * 
+	 * @param name
+	 *            of the carte topo
+	 * @param collection
+	 *            a collection of faces that forms a partition
+	 * @param threshold
+	 *            a threshold to merge adjacing points
+	 * @return the carte topo
+	 */
 	private static CarteTopo newCarteTopo(String name, IFeatureCollection<? extends IFeature> collection,
 			double threshold) {
 
