@@ -180,23 +180,6 @@ public class ParallelCuboidOptimizer extends DefaultSimPLU3DOptimizer<ISimPLU3DP
 				pView, variate, variate, transform, 1.0, 1.0, "Parallel");
 		kernels.add(kernel2);
 
-		/*
-		 * double amplitudeHeight = p.getDouble("amplitudeHeight");
-		 * Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>
-		 * parallelHeight = new Kernel<>(pView, pView, variate, variate, new
-		 * ChangeValue(amplitudeHeight, 5, 3), 0.2, 1.0, "ChgHeightP");
-		 * kernels.add(parallelHeight);
-		 * 
-		 * Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>
-		 * parallelMovekernel = new Kernel<>(pView, pView, variate, variate, new
-		 * MoveParallelCuboid(p.getDouble("amplitudeMove")), 0.2, 1.0,
-		 * "SimpleMoveP"); kernels.add(parallelMovekernel);
-		 * 
-		 * Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>
-		 * parallelLength = new Kernel<>(pView, pView, variate, variate, new
-		 * ChangeValue(p.getDouble("amplitudeMaxDim"), 5, 2), 0.2, 1.0,
-		 * "ChgLengthP"); kernels.add(parallelLength);
-		 */
 
 		DirectSampler<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> ds = new DirectRejectionSampler<>(
 				distribution, birth, pred);
