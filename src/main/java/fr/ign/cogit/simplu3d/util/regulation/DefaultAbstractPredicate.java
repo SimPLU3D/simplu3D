@@ -173,6 +173,43 @@ public abstract class DefaultAbstractPredicate<O extends ISimPLU3DPrimitive, C e
 		this.bPUGeom = AdapterFactory.toGeometry(gf, bPU.getGeom());
 
 	}
+	
+	
+	
+	/////GETTERS
+
+	public BasicPropertyUnit getCurrentBPU() {
+		return currentBPU;
+	}
+
+	public Geometry getbPUGeom() {
+		return bPUGeom;
+	}
+
+	public Geometry getJtsCurveLimiteFondParcel() {
+		return jtsCurveLimiteFondParcel;
+	}
+
+	public Geometry getJtsCurveLimiteFrontParcel() {
+		return jtsCurveLimiteFrontParcel;
+	}
+
+	public Geometry getJtsCurveLimiteLatParcel() {
+		return jtsCurveLimiteLatParcel;
+	}
+
+	public Geometry getJtsCurveLimiteLatParcelRight() {
+		return jtsCurveLimiteLatParcelRight;
+	}
+
+	public Geometry getJtsCurveLimiteLatParcelLeft() {
+		return jtsCurveLimiteLatParcelLeft;
+	}
+
+	public Geometry getJtsCurveOppositeLimit() {
+		return jtsCurveOppositeLimit;
+	}
+	
 
 	/**
 	 * Return all the objects after modification
@@ -196,6 +233,8 @@ public abstract class DefaultAbstractPredicate<O extends ISimPLU3DPrimitive, C e
 		return listOfObjects;
 	}
 
+	
+	////METHOD TO TEST ON ALL OBJECTS (with getAllObjectsAfterModifcation() method for example)
 	/**
 	 * 
 	 * 
@@ -208,55 +247,22 @@ public abstract class DefaultAbstractPredicate<O extends ISimPLU3DPrimitive, C e
 		return allObjects.size() < numberMaxOfObject;
 	}
 
-	/**
-	 * 
-	 * 
-	 * @param object   an object of O class
-	 * @param geometry the geometry in which the object mus lay
-	 * @return Indicates if a geometry intersects a zone
-	 */
-	public boolean checkIfContainsGeometry(O object, Geometry geometry) {
-		if (geometry != null) {
-			if (geometry.contains(object.toGeometry())) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * 
-	 * 
-	 * @param objects  a list of class O objects
-	 * @param geometry the geometry in which the object mus lay
-	 * @return Indicates if a geometry intersects a zone
-	 */
-	public boolean checkIfContainsGeometry(List<O> objects, Geometry geometry) {
-
-		for (O currentObj : objects) {
-			if (!checkIfContainsGeometry(currentObj, geometry)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
+	
 	/**
 	 * 
 	 * 
 	 * @param allObjects        the list of all object after modifications
-	 * @param distanceInterBati
+	 * @param distanceInterBati minimal distance between two buildings
 	 * @return Check if distance between objects is greater than distanceInterBati
 	 */
 	public boolean checkDistanceBetweenObjects(List<O> allObjects, Double distanceInterBati) {
 
-		int nbCuboid = allObjects.size();
+		int nbObjects = allObjects.size();
 
-		for (int i = 0; i < nbCuboid; i++) {
+		for (int i = 0; i < nbObjects; i++) {
 			O cI = allObjects.get(i);
 
-			for (int j = i + 1; j < nbCuboid; j++) {
+			for (int j = i + 1; j < nbObjects; j++) {
 				O cJ = allObjects.get(j);
 
 				double distance = cI.toGeometry().distance(cJ.toGeometry());
@@ -270,96 +276,8 @@ public abstract class DefaultAbstractPredicate<O extends ISimPLU3DPrimitive, C e
 
 		return true;
 	}
-
-	/**
-	 * 
-	 * @param object   object to consider
-	 * @param geom     the geometry from wich the distance is calculated
-	 * @param dist     the distance value
-	 * @param supOrInf if the cubiod must be superior or inferior to the limit
-	 * @return Check if the distance between a cuboid and a geometry is lesser or
-	 *         more than distMax
-	 */
-	public boolean checkDistanceToGeometry(O object, Geometry geom, double dist, boolean supOrInf) {
-
-		if (dist == 99.0) {
-			return true;
-		}
-		// On vérifie la contrainte de recul par rapport au fond de parcelle
-		// Existe t il ?
-		if (geom != null) {
-			Geometry geomCuboid = object.toGeometry();
-			if (geomCuboid == null) {
-				System.out.println("Geometry cuboid is null " + DefaultAbstractPredicate.class.toString());
-			}
-			// determining if the distance in inferior or superior
-			if (supOrInf) {
-				// this distance must be superior
-				if (geomCuboid.distance(geom) < dist) {
-					// elle n'est pas respectée, on retourne faux
-					return false;
-				}
-			} else {
-				// this distance must be inferior
-				if (geomCuboid.distance(geom) > dist) {
-					// elle n'est pas respectée, on retourne faux
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * 
-	 * @param objects  a list of objects to consider
-	 * @param geom     the geometry from wich the distance is calculated
-	 * @param dist     the distance value
-	 * @param supOrInf if the cubiod must be superior or inferior to the limit
-	 * @return Check if the distance between a cuboid and a geometry is lesser or
-	 *         more than distMax
-	 */
-	public boolean checkDistanceToGeometry(List<O> objects, Geometry geom, double dist, boolean supOrInf) {
-
-		for (O object : objects) {
-			if (!checkDistanceToGeometry(object, geom, dist, supOrInf)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * 
-	 * @param object  object of the class O
-	 * @param geom    the geometry to consider
-	 * @param distMax the maximum distance between the object and a a geometry
-	 * @return Check if the distance between a cuboid and a geometry is lesser than
-	 *         distMax
-	 */
-	public boolean checkDistanceToGeometry(O object, Geometry geom, double distMax) {
-
-		return checkDistanceToGeometry(object, geom, distMax, true);
-
-	}
-
-	/**
-	 * 
-	 * @param objects a list of objects to consider
-	 * @param geom    the geometry from wich the distance is calculated
-	 * @param dist    the distance value
-	 * @return Check if the distance between a cuboid and a geometry is lesser than
-	 *         distMax
-	 */
-	public boolean checkDistanceToGeometry(List<O> objects, Geometry geom, double dist) {
-
-		for (O object : objects) {
-			if (!checkDistanceToGeometry(object, geom, dist, true)) {
-				return false;
-			}
-		}
-		return true;
-	}
+	
+	
 
 	/**
 	 * 
@@ -368,7 +286,7 @@ public abstract class DefaultAbstractPredicate<O extends ISimPLU3DPrimitive, C e
 	 * @param distanceInterBati distance between buildings to respect
 	 * @return Check the distance between an object and existing buildings
 	 */
-	public boolean checkDistanceBetweenCuboidandBuildings(O object, double distanceInterBati) {
+	public boolean checkDistanceBetweenObjectandBuildings(O object, double distanceInterBati) {
 
 		// Distance between existig building and cuboid
 		for (Building b : currentBPU.getBuildings()) {
@@ -388,15 +306,195 @@ public abstract class DefaultAbstractPredicate<O extends ISimPLU3DPrimitive, C e
 	 * @param distanceInterBati distance between buildings to respect
 	 * @return Check the distance between an object and existing buildings
 	 */
-	public boolean checkDistanceBetweenCuboidandBuildings(List<O> objects, double distanceInterBati) {
+	public boolean checkDistanceBetweenObjectandBuildings(List<O> objects, double distanceInterBati) {
 
 		for (O object : objects) {
-			if (!checkDistanceBetweenCuboidandBuildings(object, distanceInterBati)) {
+			if (!checkDistanceBetweenObjectandBuildings(object, distanceInterBati)) {
 				return false;
 			}
 		}
 		return true;
 	}
+	
+	
+
+	/**
+	 * 
+	 * @param objects the list of objects to test
+	 * @return Asses the built area on a parcel from a list of objects
+	 */
+	private double assesBuiltArea(List<O> objects) {
+		// On calcule la surface couverte par l'ensemble des cuboid
+		int nbElem = objects.size();
+
+		Geometry geom = objects.get(0).toGeometry();
+
+		for (int i = 1; i < nbElem; i++) {
+
+			geom = geom.union(objects.get(i).toGeometry());
+
+		}
+
+		return geom.getArea();
+	}
+
+
+	
+	/**
+	 * 
+	 * @param objects  list of objects (after modification) from class 0
+	 * @param maxValue  maxValue the maximal value of the built ratio
+	 * @return Check if the builtraio (with existing buildings) is lesser than a maxValue
+	 */
+	public boolean checkBuiltRatio(List<O> objects, double maxValue) {
+
+		double builtArea = assesBuiltArea(objects);
+
+		List<AbstractSimpleBuilding> lBatIni = new ArrayList<>();
+		for (ISimPLU3DPrimitive s : objects) {
+			lBatIni.add((AbstractSimpleBuilding) s);
+		}
+
+		// On récupère la superficie de la basic propertyUnit
+		double airePAr = 0;
+		for (CadastralParcel cP : currentBPU.getCadastralParcels()) {
+			airePAr = airePAr + cP.getArea();
+		}
+
+		return ((builtArea / airePAr) <= maxValue);
+	}
+	
+	////METHOD TO TEST ON NEW OBJECTS ONLY (with m.getBirth)
+	
+	
+	/**
+	 * 
+	 * 
+	 * @param object   an object of O class
+	 * @param geometry the geometry in which the object mus lay
+	 * @return Indicates if a geometry intersects a zone
+	 */
+	public boolean checkIfContainedInGeometry(O object, Geometry geometry) {
+		if (geometry != null) {
+			if (geometry.contains(object.toGeometry())) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * 
+	 * 
+	 * @param objects  a list of class O objects
+	 * @param geometry the geometry in which the object mus lay
+	 * @return Indicates if a geometry intersects a zone
+	 */
+	public boolean checkIfContainedInGeometry(List<O> objects, Geometry geometry) {
+
+		for (O currentObj : objects) {
+			if (!checkIfContainedInGeometry(currentObj, geometry)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+
+
+	/**
+	 * 
+	 * @param object   object to consider
+	 * @param geom     the geometry from wich the distance is calculated
+	 * @param dist     the distance value
+	 * @param supOrInf if the cubiod must be superior or inferior to the limit
+	 * @return Check if the distance between an object and a geometry is lesser or
+	 *         more than dist
+	 */
+	public boolean checkDistanceToGeometry(O object, Geometry geom, double dist, boolean supOrInf) {
+
+		if (dist == 99.0) {
+			return true;
+		}
+		// On vérifie la contrainte de recul par rapport au fond de parcelle
+		// Existe t il ?
+		if (geom != null) {
+			Geometry objectGeom = object.toGeometry();
+			if (objectGeom == null) {
+				System.out.println("Geometry object is null " + DefaultAbstractPredicate.class.toString());
+			}
+			// determining if the distance in inferior or superior
+			if (supOrInf) {
+				// this distance must be superior
+				if (objectGeom.distance(geom) < dist) {
+					// elle n'est pas respectée, on retourne faux
+					return false;
+				}
+			} else {
+				// this distance must be inferior
+				if (objectGeom.distance(geom) > dist) {
+					// elle n'est pas respectée, on retourne faux
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * 
+	 * @param objects  a list of objects to consider
+	 * @param geom     the geometry from wich the distance is calculated
+	 * @param dist     the distance value
+	 * @param supOrInf if the cubiod must be superior or inferior to the limit
+	 * @return Check if the distance between an object and a geometry is lesser or
+	 *         more than dist
+	 */
+	public boolean checkDistanceToGeometry(List<O> objects, Geometry geom, double dist, boolean supOrInf) {
+
+		for (O object : objects) {
+			if (!checkDistanceToGeometry(object, geom, dist, supOrInf)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * 
+	 * @param object  object of the class O
+	 * @param geom    the geometry to consider
+	 * @param distMin the maximum distance between the object and a a geometry
+	 * @return Check if the distance between an object and a geometry is bigger than
+	 *         distMin
+	 */
+	public boolean checkDistanceToGeometry(O object, Geometry geom, double distMin) {
+
+		return checkDistanceToGeometry(object, geom, distMin, true);
+
+	}
+
+
+	
+	/**
+	 * 
+	 * @param objects a list of objects to consider
+	 * @param geom the geometry from wich the distance is calculated
+	 * @param distMin the minimum distance value
+	 * @return  Check if the distance between an object and a geometry is greater than
+	 *         distMin
+	 */ 
+	public boolean checkDistanceToGeometry(List<O> objects, Geometry geom, double distMin) {
+
+		for (O object : objects) {
+			if (!checkDistanceToGeometry(object, geom, distMin, true)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 
 	/**
 	 * 
@@ -433,49 +531,160 @@ public abstract class DefaultAbstractPredicate<O extends ISimPLU3DPrimitive, C e
 		return true;
 	}
 
-	private double assesBuiltArea(List<O> lCuboid) {
-		// On calcule la surface couverte par l'ensemble des cuboid
-		int nbElem = lCuboid.size();
 
-		Geometry geom = lCuboid.get(0).toGeometry();
+	/**
+	 *
+	 * @param objects the list of objects to test
+	 * @return Check if the list of geometry is contained inside the BPUGeometry
+	 */
+	public boolean checkIfInsideBPU(List<O> objects) {
+		return checkIfContainedInGeometry(objects, bPUGeom);
+	}
 
-		for (int i = 1; i < nbElem; i++) {
-
-			geom = geom.union(lCuboid.get(i).toGeometry());
-
-		}
-
-		return geom.getArea();
+	/**
+	 *
+	 * @param object an object to test
+	 * @return Check if the list of geometry is contained inside the BPUGeometry
+	 */
+	public boolean checkIfInsideBPU(O object) {
+		return checkIfContainedInGeometry(object, bPUGeom);
 	}
 
 	/**
 	 * 
-	 * 
-	 * @param lCuboid  list of object (after modification) from class 0
-	 * @param maxValue the maximal value of the built ratio
-	 * @return Check if the builtraio (with existing buildings) is lesser than a
-	 *         maxValue
+	 * @param objects the list of objects to test
+	 * @param distanceMin minimal distance
+	 * @param lBoundaryType types of boundary
+	 * @return check if the distance to the types of boundaries is greater than distanceMin
 	 */
-	public boolean checkBuiltRatio(List<O> lCuboid, double maxValue) {
-
-		double builtArea = assesBuiltArea(lCuboid);
-
-		List<AbstractSimpleBuilding> lBatIni = new ArrayList<>();
-		for (ISimPLU3DPrimitive s : lCuboid) {
-			lBatIni.add((AbstractSimpleBuilding) s);
+	public boolean checkDistanceToLimitByType(List<O> objects, double distanceMin,
+			List<ParcelBoundaryType> lBoundaryType) {
+		for (O o : objects) {
+			if (!checkDistanceToLimitByType(o, distanceMin, lBoundaryType)) {
+				return false;
+			}
 		}
+		return true;
+	}
 
-		// On récupère la superficie de la basic propertyUnit
-		double airePAr = 0;
-		for (CadastralParcel cP : currentBPU.getCadastralParcels()) {
-			airePAr = airePAr + cP.getArea();
+	/**
+	 * 
+	 * @param object an object
+	 * @param distanceMin minimal distance  
+	 * @param lBoundaryType  types of boundary
+	 * @return  check if the distance to the types of boundaries is greater than distanceMin
+	 */
+	public boolean checkDistanceToLimitByType(O object, double distanceMin, List<ParcelBoundaryType> lBoundaryType) {
+
+		for (ParcelBoundaryType type : lBoundaryType) {
+			Geometry geom = null;
+			switch (type) {
+
+			case BOT:
+				geom = jtsCurveLimiteFondParcel;
+				break;
+			case LAT:
+				geom = jtsCurveLimiteLatParcel;
+				break;
+			case ROAD:
+				geom = jtsCurveLimiteFrontParcel;
+				break;
+			default:
+				System.out.println(DefaultAbstractPredicate.class + "  Cas non traité : " + type);
+				continue;
+
+			}
+
+			if (!this.checkDistanceToGeometry(object, geom, distanceMin)) {
+				return false;
+			}
+
 		}
+		return true;
 
-		return ((builtArea / airePAr) <= maxValue);
+	}
+
+	
+	/**
+	 * 
+	 * @param objects the list of objects to test
+	 * @param distanceMin minimal distance
+	 * @param  lBoundaryType types of boundary
+	 * @return  check if the distance to the sides of boundaries is greater than distanceMax
+	 */ 
+	public boolean checkDistanceToLimitBySide(List<O> objects, double distanceMin,
+			List<ParcelBoundarySide> lBoundaryType) {
+		for (O o : objects) {
+			if (!checkDistanceToLimitBySide(o, distanceMin, lBoundaryType)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	
+	/**
+	 * 
+	 * @param object an object to test
+	 * @param distanceMin minimal distance
+	 * @param  lBoundaryType types of boundary
+	 * @return  check if the distance to the sides of boundaries is greater than distanceMin
+	 */ 
+	public boolean checkDistanceToLimitBySide(O object, double distanceMin, List<ParcelBoundarySide> lBoundaryType) {
+
+		for (ParcelBoundarySide side : lBoundaryType) {
+			Geometry geom = null;
+			switch (side) {
+
+			case LEFT:
+				geom = jtsCurveLimiteLatParcelLeft;
+				break;
+			case RIGHT:
+				geom = jtsCurveLimiteLatParcelRight;
+				break;
+			default:
+				System.out.println(DefaultAbstractPredicate.class + "  Cas non traité : " + side);
+				continue;
+			}
+
+			if (!this.checkDistanceToGeometry(object, geom, distanceMin)) {
+				return false;
+			}
+
+		}
+		return true;
+
+	}
+
+	/**
+	 * 
+	 * @param objects the list of objects to test
+	 * @param distanceMin  minimal distance
+	 * @return  check if the distance to the sides of boundaries is greater than distanceMin
+	 */
+	public boolean checkDistanceToOppositeLimit(List<O> objects, double distanceMin) {
+		for (O o : objects) {
+			if (!checkDistanceToOppositeLimit(o, distanceMin)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * 
+	 * @param object an object to test
+	 * @param distanceMin minimal distance
+	 * @return  check if the distance to the sides of boundaries is greater than distanceMax
+	 */
+	public boolean checkDistanceToOppositeLimit(O object, double distanceMin) {
+
+		return this.checkDistanceToGeometry(object, jtsCurveOppositeLimit, distanceMin);
+
 	}
 	
 	
+
 	
-	//+distance to the differenty types of limits
 
 }
