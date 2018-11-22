@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.util;
+package fr.ign.cogit.simplu3d.util.merge;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +10,7 @@ import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid;
+import fr.ign.cogit.simplu3d.util.CuboidGroupCreation;
 
 /**
  * Computes the "Surface de plancher" from a collection of cuboids, essentially

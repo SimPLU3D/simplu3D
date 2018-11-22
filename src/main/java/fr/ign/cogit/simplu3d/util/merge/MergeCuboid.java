@@ -1,4 +1,4 @@
-package fr.ign.cogit.simplu3d.util;
+package fr.ign.cogit.simplu3d.util.merge;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,7 +31,8 @@ import fr.ign.cogit.geoxygene.util.algo.PointInPolygon;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.geoxygene.util.index.Tiling;
-import fr.ign.cogit.simplu3d.util.SDPCalc.GeomHeightPair;
+import fr.ign.cogit.simplu3d.util.JTS;
+import fr.ign.cogit.simplu3d.util.merge.SDPCalc.GeomHeightPair;
 
 /**
  * Class that enables the fusion of Cuboid Geometry in order to make consistant
@@ -51,11 +52,14 @@ import fr.ign.cogit.simplu3d.util.SDPCalc.GeomHeightPair;
  * 
  * @version 1.0
  **/
-public class Recal3D {
+public class MergeCuboid {
 
-	private static Logger logger = Logger.getLogger(Recal3D.class);
+	private static Logger logger = Logger.getLogger(MergeCuboid.class);
 
+	// A temporary attribute to store the z of a face
 	private final static String ATT_TEMP = "ZTEMP";
+
+	// The attribute where surface value will be stored
 	private final static String ATT_SURFACE = "SURFACE";
 
 	public static void main(String[] args) throws CloneNotSupportedException {
@@ -65,33 +69,45 @@ public class Recal3D {
 		double ZMIN = 139.;
 
 		// The shapefile to simplu3D simulation to process
-		String shpeIn = "/home/mickael/data/mbrasebin/donnees/IAUIDF/data_grille/results_77_test/77007650/simul_77007650_true_no_demo_sampler.shp";
+		String shpeIn = "/home/mbrasebin/Documents/Donnees/IAUIDF/Resultats/ResultatChoisy/results_pchoisy/24/simul_24_true_no_demo_sampler.shp";
 
 		// Folder in
 		String strShpOut = "/tmp/tmp/";
 
-		Recal3D recal = new Recal3D();
+		MergeCuboid recal = new MergeCuboid();
 
-		IFeatureCollection<IFeature> fus = recal.fusionneGeomByGroup(shpeIn, ZMIN);
+		IFeatureCollection<IFeature> fus = recal.mergeFromShapefile(shpeIn, ZMIN);
 
 		ShapefileWriter.write(fus, strShpOut + "fus.shp");
 
+		System.out.println(recal.getSurface());
+
 	}
 
-	double surface = 0;
+	public double getSurface() {
+		return surface;
+	}
 
-	public IFeatureCollection<IFeature> fusionneGeomByGroup(String shpIn, double zMini) {
+	private double surface = 0;
+
+	public IFeatureCollection<IFeature> mergeFromShapefile(String shpIn, double zMini) {
+
+		return mergeFromShapefile(shpIn, zMini, 0.05, 0.001);
+	}
+
+	public IFeatureCollection<IFeature> mergeFromShapefile(String shpIn, double zMini, double carteTopoThreshold,
+			double shrkiningThreshold) {
 
 		// Creating a partition of cuboid with height stored as ATT_TEMP
 		// attribute
 		List<IFeatureCollection<IFeature>> featColl = this.createPartitionCollection(shpIn);
 
-		//The results
+		// The results
 		IFeatureCollection<IFeature> featCollOut = new FT_FeatureCollection<>();
 
-		//We add the feature of each groups
+		// We add the feature of each groups
 		for (IFeatureCollection<IFeature> currentCollection : featColl) {
-			featCollOut.add(fusionneGeomForAGroup(currentCollection, zMini));
+			featCollOut.add(mergeAGroupOfCuboid(currentCollection, zMini, carteTopoThreshold, shrkiningThreshold));
 		}
 
 		return featCollOut;
@@ -99,20 +115,26 @@ public class Recal3D {
 
 	/**
 	 * 
-	 * @param featColl a collection of a set of adjacing boxes
-	 * @param zMini the minimum z
-	 * @return a feature with agregated boxes and the surface of the feature stored as ATT_SURFACE attribute
+	 * @param featColl            a collection of a set of adjacing boxes
+	 * @param zMini               the minimum z
+	 * @param carteTopoThreshold  the threshold for merging points in carte topo
+	 *                            creation
+	 * @param shrkinkingthreshold the face are shrinken by a positive value in order
+	 *                            to avoir numeric error in order to find a point
+	 *                            not too near from polygon boundary
+	 * @return a feature with agregated boxes and the surface of the feature stored
+	 *         as ATT_SURFACE attribute
 	 */
-	private IFeature fusionneGeomForAGroup(IFeatureCollection<IFeature> featColl, double zMini) {
+	private IFeature mergeAGroupOfCuboid(IFeatureCollection<IFeature> featColl, double zMini,
+			double carteTopoThreshold, double shrkiningThreshold) {
 		// Creating the neighbourhood relationship with CarteTopo
-		CarteTopo carteTopo = newCarteTopo("-aex90", featColl, 0.5);
+		CarteTopo carteTopo = newCarteTopo("-aex90", featColl, carteTopoThreshold);
 
 		// Spatial index to speed up
 		featColl.initSpatialIndex(Tiling.class, false);
 
 		// Surface is computed
 		double surfaceGroup = 0;
-
 
 		// For each group the faces are treated (normally there is only one)
 		// for (Groupe g : lG) {
@@ -131,7 +153,7 @@ public class Recal3D {
 
 			// We took a point into the face and look if we find it in the
 			// original data
-			IPoint p = new GM_Point(PointInPolygon.get(f.getGeometrie(), 0.005));
+			IPoint p = new GM_Point(PointInPolygon.get(f.getGeometrie(), shrkiningThreshold));
 
 			if (!f.getGeometrie().contains(p)) {
 				// This may happen for all as CarteTopo create face for them
@@ -144,15 +166,18 @@ public class Recal3D {
 
 			if (featSelect.isEmpty()) {
 
-				zMax = zMini;
+				zMax = 0;
 				System.out.println(f.getGeometrie());
-			//System.out.println("New empty face detected");
+				// System.out.println("New empty face detected");
+
+			} else {
 
 			}
 			// We get the max height of the initial data
 			for (IFeature feat : featSelect) {
 
 				zMax = Math.max(zMax, Double.parseDouble(feat.getAttribute(ATT_TEMP).toString()));
+
 			}
 			// We set the z of the point of the polygon as zMax
 			IPolygon poly = (IPolygon) f.getGeometrie().clone();
@@ -164,7 +189,7 @@ public class Recal3D {
 				surfaceGroup = surfaceGroup + poly.area();
 			}
 
-			AttributeManager.addAttribute(f, ATT_TEMP, zMax+ zMini, "Double");
+			AttributeManager.addAttribute(f, ATT_TEMP, zMax + zMini, "Double");
 
 			for (IDirectPosition dp : poly.coord()) {
 				dp.setZ(zMax + zMini);
@@ -223,11 +248,6 @@ public class Recal3D {
 
 			// We update the surface by considering this new wall
 			surfaceGroup = surfaceGroup + lineToExtrude.length() * (zMax - zMin);
-			
-			
-			if(zMax > 200){
-				System.out.println();
-			}
 
 			// Extrusion of the geometry according to the considered height
 			IGeometry geom = Extrusion2DObject.convertFromLine(lineToExtrude, zMin, zMax);
@@ -246,8 +266,7 @@ public class Recal3D {
 
 	/**
 	 * 
-	 * @param shpIn
-	 *            shapefile from Cuboid simplu3D simulation
+	 * @param shpIn shapefile from Cuboid simplu3D simulation
 	 * @return a partition with polygons that have a Z
 	 */
 	public List<IFeatureCollection<IFeature>> createPartitionCollection(String shpIn) {
@@ -286,12 +305,9 @@ public class Recal3D {
 
 	/**
 	 * 
-	 * @param name
-	 *            of the carte topo
-	 * @param collection
-	 *            a collection of faces that forms a partition
-	 * @param threshold
-	 *            a threshold to merge adjacing points
+	 * @param name       of the carte topo
+	 * @param collection a collection of faces that forms a partition
+	 * @param threshold  a threshold to merge adjacing points
 	 * @return the carte topo
 	 */
 	private static CarteTopo newCarteTopo(String name, IFeatureCollection<? extends IFeature> collection,
@@ -382,8 +398,7 @@ public class Recal3D {
 
 	/**
 	 * 
-	 * @param ct
-	 *            a CarteTopo to test
+	 * @param ct a CarteTopo to test
 	 * @return true if carteTopo is Valid
 	 */
 	private static boolean test(CarteTopo ct) {

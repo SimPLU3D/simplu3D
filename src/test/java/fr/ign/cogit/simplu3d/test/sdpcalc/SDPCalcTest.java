@@ -8,7 +8,7 @@ import java.util.List;
 import org.junit.Test;
 
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
-import fr.ign.cogit.simplu3d.util.SDPCalc;
+import fr.ign.cogit.simplu3d.util.merge.SDPCalc;
 
 public class SDPCalcTest {
 
