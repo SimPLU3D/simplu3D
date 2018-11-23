@@ -7,10 +7,22 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.PrecisionModel;
 import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 
+import fr.ign.cogit.geoxygene.api.feature.IFeature;
+import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
+import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
+import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
+import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
+import fr.ign.cogit.geoxygene.convert.FromGeomToSurface;
+import fr.ign.cogit.geoxygene.feature.DefaultFeature;
+import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
+import fr.ign.cogit.geoxygene.sig3d.convert.transform.Extrusion2DObject;
+import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
+import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid;
 import fr.ign.cogit.simplu3d.util.CuboidGroupCreation;
+import fr.ign.cogit.simplu3d.util.JTS;
 
 /**
  * Computes the "Surface de plancher" from a collection of cuboids, essentially
@@ -199,11 +211,59 @@ public class SDPCalc {
 	}
 
 	public static void main(String[] args) {
+		// The in shapefile
+		String shpeIn = "/home/mbrasebin/Documents/Donnees/IAUIDF/Resultats/ResultatChoisy/results_pchoisy/24/simul_24_true_no_demo_sampler.shp";
+
+		// The out shapefile
+		String shapeOut = "/tmp/tmp/sdp.shp";
+
+		// Instanciating the object
 		SDPCalc sd = new SDPCalc();
 
-		String shpeIn = "/home/mickael/data/mbrasebin/donnees/IAUIDF/data_grille/results_77_test/77007650/simul_77007650_true_no_demo_sampler.shp";
-
+		// Calculating sdp and generating the merge geometry
 		double sdp = sd.process(shpeIn);
+
 		System.out.println("SDP :" + sdp);
+		// Getting and adding the merged geometry to the collection
+		IFeatureCollection<IFeature> featColl = new FT_FeatureCollection<>();
+
+		List<List<GeomHeightPair>> llGeomPair = sd.getGeometryPairByGroup();
+
+		int count = 0;
+
+		for (List<GeomHeightPair> geomPairs : llGeomPair) {
+			for (GeomHeightPair g : geomPairs) {
+
+				IGeometry jtsGeom = JTS.fromJTS(g.geom);
+
+				if (jtsGeom == null || jtsGeom.coord().isEmpty()) {
+					continue;
+				}
+
+				IMultiSurface<IOrientableSurface> os = FromGeomToSurface.convertMSGeom(jtsGeom);
+
+				for (IOrientableSurface osTemp : os) {
+					if (osTemp.area() < 0.01) {
+						continue;
+					}
+					IGeometry extruded = Extrusion2DObject.convertFromGeometry(osTemp, 0, g.height);
+
+					IMultiSurface<IOrientableSurface> finalOs = FromGeomToSurface.convertMSGeom(extruded);
+
+					IFeature feat = new DefaultFeature(finalOs);
+
+					AttributeManager.addAttribute(feat, "ID", (count++), "Integer");
+					AttributeManager.addAttribute(feat, "HAUTEUR", g.height, "Double");
+					featColl.add(feat);
+
+				}
+
+			}
+
+		}
+
+		// Export the result
+		ShapefileWriter.write(featColl, shapeOut);
+
 	}
 }

@@ -66,7 +66,7 @@ public class MergeCuboid {
 
 		DirectPosition.PRECISION = 6;
 		// Fixing the Z Min
-		double ZMIN = 139.;
+		double ZMIN = 0;
 
 		// The shapefile to simplu3D simulation to process
 		String shpeIn = "/home/mbrasebin/Documents/Donnees/IAUIDF/Resultats/ResultatChoisy/results_pchoisy/24/simul_24_true_no_demo_sampler.shp";
