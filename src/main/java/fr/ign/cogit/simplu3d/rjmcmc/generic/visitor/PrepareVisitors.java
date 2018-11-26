@@ -55,7 +55,11 @@ public class PrepareVisitors<C extends ISimPLU3DPrimitive> {
 		}
 
 		if (p.getBoolean("visitorviewer")) {
-			ViewerVisitor<C, GraphConfiguration<C>, BirthDeathModification<C>> visitorViewer = new ViewerVisitor<>(env,"" + id, p);
+			Color c = new Color(p.getInteger("filmvisitorr"), p.getInteger("filmvisitorg"),
+
+					p.getInteger("filmvisitorb"));
+
+			ViewerVisitor<C, GraphConfiguration<C>, BirthDeathModification<C>> visitorViewer = new ViewerVisitor<>(env,"" + id, p,c);
 			list.add(visitorViewer);
 		}
 

@@ -74,8 +74,7 @@ public class ShapefileVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGr
 		
 		IFeatureCollection<IFeature> featureOut = new FT_FeatureCollection<>();
 		
-		
-		System.out.println(aFileName);
+	
 	
 			for (GraphVertex<O> v : config.getGraph().vertexSet()) {
 

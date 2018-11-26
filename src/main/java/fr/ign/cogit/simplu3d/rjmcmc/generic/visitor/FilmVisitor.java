@@ -85,6 +85,7 @@ public class FilmVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraphCo
 		this.vectOrientation = vectOrientation;
 		this.folder = folder;
 		this.col = col;
+		
 	}
 
 	@Override
@@ -235,16 +236,18 @@ public class FilmVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraphCo
 	private void represent(Environnement env, MainWindow mW, SimpluParameters p) {
 
 		List<Theme> lTheme = new ArrayList<>();
-		// lTheme.add(Theme.TOIT_BATIMENT);
-		// lTheme.add(Theme.FACADE_BATIMENT);
+		lTheme.add(Theme.TOIT_BATIMENT);
+		lTheme.add(Theme.FACADE_BATIMENT);
+
+		lTheme.add(Theme.VOIRIE);
 		// lTheme.add(Theme.FAITAGE);
 		// lTheme.add(Theme.PIGNON);
 		// lTheme.add(Theme.GOUTTIERE);
 		// lTheme.add(Theme.VOIRIE);
-		// lTheme.add(Theme.PARCELLE);
-		// lTheme.add(Theme.BORDURE);
-		// lTheme.add(Theme.ZONE);
-		// lTheme.add(Theme.PAN);
+		lTheme.add(Theme.PARCELLE);
+		lTheme.add(Theme.BORDURE);
+		lTheme.add(Theme.ZONE);
+		// lTheme.add(Theme.PAN)
 
 		Theme[] tab = lTheme.toArray(new Theme[0]);
 
@@ -295,12 +298,16 @@ public class FilmVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraphCo
 		// .textureLoading(folder + "Env3D_86.png"), dpUR.getX()-dpLL.getX(),
 		// dpUR.getY()-dpLL.getY()));
 
-		String background = p.getString("background_img");
+		if(p.getBoolean("showbackground")) {
+			String background = p.getString("background_img");
 
-		feat.setRepresentation(new TexturedSurface(feat, TextureManager.textureLoading(folder + background),
-				dpUR.getX() - dpLL.getX(), dpUR.getY() - dpLL.getY()));
+			feat.setRepresentation(new TexturedSurface(feat, TextureManager.textureLoading(background),
+					dpUR.getX() - dpLL.getX(), dpUR.getY() - dpLL.getY()));
 
-		mW.getInterfaceMap3D().getCurrent3DMap().addLayer(new VectorLayer(fc, "Fond"));
+			mW.getInterfaceMap3D().getCurrent3DMap().addLayer(new VectorLayer(fc, "Fond"));
+			MIN_LAYER = 2;
+		}
+
 
 		mW.getInterfaceMap3D().removeLight(0);
 		mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
