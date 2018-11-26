@@ -15,6 +15,8 @@ It provides an implementation of multi-dimensionnal simulated annealing algorith
 
 The project is developed over 3D GIS Open-Source library [GeOxygene](https://github.com/IGNF/geoxygene) concerning geometric operators and 3D visualization, [librjmcmc4j](https://github.com/IGNF/librjmcmc4j) for simulated annealing implementation and [simplu3d-rules](https://github.com/SimPLU3D/simplu3d-rules) for geographical model and regulation management.
 
+The javadoc is deployed in the [gh-pages branch of this project](https://simplu3d.github.io/simplu3D/).
+
 Conditions for use
 ---------------------
 This software is free to use under CeCILL license. However, if you use this library in a research paper, you are kindly requested to acknowledge the use of this software.
