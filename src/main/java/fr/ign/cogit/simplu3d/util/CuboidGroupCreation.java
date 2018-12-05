@@ -24,24 +24,28 @@ public class CuboidGroupCreation<C extends AbstractSimpleBuilding> {
 	public List<List<C>> createGroup(List<? extends C> lCuboids, double connexionDistance) {
 
 		List<List<C>> listGroup = new ArrayList<>();
+		
+		
+		List<C> lCuboidCurrentCuboid = new ArrayList<>();
+		lCuboidCurrentCuboid.addAll(lCuboids);
 
-		while (!lCuboids.isEmpty()) {
+		while (!lCuboidCurrentCuboid.isEmpty()) {
 
-			C batIni = lCuboids.remove(0);
+			C batIni = lCuboidCurrentCuboid.remove(0);
 
 			List<C> currentGroup = new ArrayList<>();
 			currentGroup.add(batIni);
 
-			int nbElem = lCuboids.size();
+			int nbElem = lCuboidCurrentCuboid.size();
 
 			bouclei: for (int i = 0; i < nbElem; i++) {
 
 				for (C batTemp : currentGroup) {
 
-					if (lCuboids.get(i).getFootprint().distance(batTemp.getFootprint()) <= connexionDistance) {
+					if (lCuboidCurrentCuboid.get(i).getFootprint().distance(batTemp.getFootprint()) <= connexionDistance) {
 
-						currentGroup.add(lCuboids.get(i));
-						lCuboids.remove(i);
+						currentGroup.add(lCuboidCurrentCuboid.get(i));
+						lCuboidCurrentCuboid.remove(i);
 						i = -1;
 						nbElem--;
 						continue bouclei;

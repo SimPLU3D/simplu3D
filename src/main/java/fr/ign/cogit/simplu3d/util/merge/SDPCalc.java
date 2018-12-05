@@ -109,13 +109,15 @@ public class SDPCalc {
 	private double sdpGroup(List<? extends AbstractSimpleBuilding> group, boolean sdp_or_surface) {
 		// The list of already met pair
 		List<GeomHeightPair> aCurrent = new ArrayList<>();
-
+		
+		List<AbstractSimpleBuilding> lCurrentGroup = new ArrayList<>();
+		lCurrentGroup.addAll(group);
 		// We initial with the first element of the list
-		AbstractSimpleBuilding cuboid = group.remove(0);
+		AbstractSimpleBuilding cuboid = lCurrentGroup.remove(0);
 		aCurrent.add(new GeomHeightPair(reducer.reduce(cuboid.toGeometry()), cuboid.height));
 
 		// For each building
-		for (AbstractSimpleBuilding b : group) {
+		for (AbstractSimpleBuilding b : lCurrentGroup) {
 
 			// We create a new pair
 			GeomHeightPair bgeom = new GeomHeightPair(reducer.reduce(b.toGeometry()), b.height);
@@ -164,7 +166,7 @@ public class SDPCalc {
 
 			aCurrent.addAll(newGeometryPair);
 
-	//		System.out.println("aprec [" + aCurrent.size() + "] " + group.size());
+	//		System.out.println("aprec [" + aCurrent.size() + "] " + lCurrentGroup.size());
 
 			if (bgeom != null) {
 				aCurrent.add(bgeom);
