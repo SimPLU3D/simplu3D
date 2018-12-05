@@ -64,13 +64,15 @@ public class ViewerVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraph
 	private C bestConfig = null;
 	private double bestValue = Double.POSITIVE_INFINITY;
 
-	public ViewerVisitor(Environnement env, String prefixe, SimpluParameters p) {
+	public ViewerVisitor(Environnement env, String prefixe, SimpluParameters p, Color c) {
 		prefix = prefixe;
 		if (mW == null) {
 			mW = new MainWindow();
 			// mW.getMainMenuBar().add(new IOToolBar(mW));
 			represent(env, mW, p);
 			MIN_LAYER = mW.getInterfaceMap3D().getCurrent3DMap().getLayerList().size();
+			mW.getInterfaceMap3D().setBackground(c);
+			
 		}
 
 	}
@@ -219,11 +221,16 @@ public class ViewerVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraph
 		// .textureLoading(folder + "Env3D_86.png"), dpUR.getX()-dpLL.getX(),
 		// dpUR.getY()-dpLL.getY()));
 
-		String backgroundTexture =  p.getString("folderOut")+ File.separator+p.getString("background_img").toString();
+		
 	
-		System.out.println(backgroundTexture);
-		feat.setRepresentation(new TexturedSurface(feat, TextureManager.textureLoading(backgroundTexture),
-				dpUR.getX() - dpLL.getX(), dpUR.getY() - dpLL.getY()));
+			String backgroundTexture =  p.getString("folderOut")+ File.separator+p.getString("background_img").toString();
+			
+			System.out.println(backgroundTexture);
+			feat.setRepresentation(new TexturedSurface(feat, TextureManager.textureLoading(backgroundTexture),
+					dpUR.getX() - dpLL.getX(), dpUR.getY() - dpLL.getY()));
+			MIN_LAYER=2;
+	
+
 
 		mW.getInterfaceMap3D().getCurrent3DMap().addLayer(new VectorLayer(fc, "Fond"));
 
