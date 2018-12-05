@@ -75,7 +75,7 @@ public class SDPCalc {
 		double sdp = 0;
 		CuboidGroupCreation<AbstractSimpleBuilding> cGC = new CuboidGroupCreation<AbstractSimpleBuilding>();
 		List<List<AbstractSimpleBuilding>> lGroupes = cGC.createGroup(cubes, 0);
-		System.out.println("nb groupes formé " + lGroupes.size());
+	//	System.out.println("nb groupes formé " + lGroupes.size());
 		for (List<AbstractSimpleBuilding> g : lGroupes)
 			sdp += sdpGroup(g, true);
 		return sdp;
@@ -86,13 +86,14 @@ public class SDPCalc {
 		return process(lCuboid);
 	}
 
-	public double processSurface(List<Cuboid> cubes) {
+	public double processSurface(List<? extends AbstractSimpleBuilding> cubes) {
 		double sdp = 0;
-		CuboidGroupCreation<Cuboid> cGC = new CuboidGroupCreation<Cuboid>();
-		List<List<Cuboid>> lGroupes = cGC.createGroup(cubes, 0);
-		System.out.println("nb groupes formé " + lGroupes.size());
-		for (List<Cuboid> g : lGroupes)
+		CuboidGroupCreation<AbstractSimpleBuilding> cGC = new CuboidGroupCreation<AbstractSimpleBuilding>();
+		List<List<AbstractSimpleBuilding>> lGroupes = cGC.createGroup(cubes, 0);
+	//	System.out.println("nb groupes formé " + lGroupes.size());
+		for (List<AbstractSimpleBuilding> g : lGroupes) {
 			sdp += sdpGroup(g, false);
+		}
 		return sdp;
 	}
 
@@ -163,7 +164,7 @@ public class SDPCalc {
 
 			aCurrent.addAll(newGeometryPair);
 
-			System.out.println("aprec [" + aCurrent.size() + "] " + group.size());
+	//		System.out.println("aprec [" + aCurrent.size() + "] " + group.size());
 
 			if (bgeom != null) {
 				aCurrent.add(bgeom);
