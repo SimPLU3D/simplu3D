@@ -108,7 +108,7 @@ Acknowledgments
 
 + This research is supported by the French National Mapping Agency ([IGN](http://www.ign.fr))
 + It is partially funded by the FUI TerraMagna project and by Île-de-France
-Région in the context of [e-PLU project](www.e-PLU.fr)
+Région in the context of e-PLU project
 + Mickaël Borne for improvements in the code and for refactoring
 + Imran Lokhat for tests and improvements about imrpoving the pipeline of simulation
 + [ISC-PIF](https://iscpif.fr/) - Paul Chapron and Romain Reuillon for proposing methods dedicated to model exploration and simulation distribution
