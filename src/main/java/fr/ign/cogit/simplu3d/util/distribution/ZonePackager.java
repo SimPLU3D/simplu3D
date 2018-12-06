@@ -564,8 +564,22 @@ public class ZonePackager {
 	 * @param x
 	 */
 	private static void generateMissingAttributes(IFeature x) {
+		//We set the NAME_BAND value to 0
+		AttributeManager.addAttribute(x, ZonePackager.ATTRIBUTE_NAME_BAND, 0, "Integer");
+		
 		Object departement = x.getAttribute(ATTRIBUTE_DEPARTEMENT);
-		String commune = x.getAttribute(ATTRIBUTE_COMMUNE).toString();
+		Object commune = x.getAttribute(ATTRIBUTE_COMMUNE);
+		
+		if(commune == null) {
+			///It is maybe only an IDPAR ?
+			Object idpar = x.getAttribute(ATTRIBUTE_NAME_ID);
+			if(idpar ==null) {
+				return;
+			}
+			AttributeManager.addAttribute(x, ZonePackager.ATTRIBUTE_NAME_ID, idpar, "String");
+			return;
+
+		}
 		String prefix = x.getAttribute(ATTRIBUTE_PREFIXE).toString();
 		String section = x.getAttribute(ATTRIBUTE_SECTION).toString();
 		String numero = x.getAttribute(ATTRIBUTE_NUMERO).toString();
@@ -577,7 +591,7 @@ public class ZonePackager {
 		String idFinal = strDepartement + commune + prefix + section + numero;
 		AttributeManager.addAttribute(x, ZonePackager.ATTRIBUTE_NAME_ID, idFinal, "String");
 
-		AttributeManager.addAttribute(x, ZonePackager.ATTRIBUTE_NAME_BAND, 0, "Integer");
+		
 	}
 
 }
