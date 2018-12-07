@@ -45,7 +45,7 @@ public class ZonePackager {
 	public static String ATTRIBUTE_NAME_BAND = "B1_T_BANDE";
 
 	// ATTRIBUTE USED TO DETERMINE IF A PARCEL HAS TO BE SIMULATED
-	public static String ATTRIBUTE_SIMUL = "simul";
+	public static String ATTRIBUTE_SIMUL = "SIMUL";
 
 	// OUTPUT SRID
 	public static String SRID_END = "EPSG:2154";
@@ -71,7 +71,8 @@ public class ZonePackager {
 	 * @param tempFolder                 temporary folder that can be cleaned after
 	 *                                   the simulation
 	 * @param folderOutPath              the final result
-	 * @param debug 					 if we want to export the current bounding box
+	 * @param debug                      if we want to export the current bounding
+	 *                                   box
 	 * @throws Exception exception
 	 */
 	public static void createParcelGroupsAndExport(IFeatureCollection<IFeature> parcelles,
@@ -152,7 +153,7 @@ public class ZonePackager {
 					idCurrentGroup++;
 				}
 			}
-			
+
 		}
 
 	}
@@ -228,21 +229,18 @@ public class ZonePackager {
 	}
 
 	/**
-	 * This method is used to cut the collection of blocks into sub block and
-	 * check the number of simulable parcels. It is a recursive method
+	 * This method is used to cut the collection of blocks into sub block and check
+	 * the number of simulable parcels. It is a recursive method
 	 * 
-	 * @param featColl
-	 *            the considered set of parcels for a block
-	 * @param featCollTotal
-	 *            the collection that contains all the parcels
-	 * @param numberMaxOfSimulatedParcel
-	 *            the number of max parcels to simulated
-	 * @param areaMax
-	 *            the maximal area
+	 * @param featColl                   the considered set of parcels for a block
+	 * @param featCollTotal              the collection that contains all the
+	 *                                   parcels
+	 * @param numberMaxOfSimulatedParcel the number of max parcels to simulated
+	 * @param areaMax                    the maximal area
 	 * @return
 	 * @throws Exception
 	 */
-	private static List<IFeatureCollection<IFeature>> determineCutBlocks(IFeatureCollection<IFeature> featColl,
+	public static List<IFeatureCollection<IFeature>> determineCutBlocks(IFeatureCollection<IFeature> featColl,
 			IFeatureCollection<IFeature> featCollTotal, int numberMaxOfSimulatedParcel, double areaMax)
 			throws Exception {
 		List<IFeatureCollection<IFeature>> results = new ArrayList<>();
@@ -257,8 +255,7 @@ public class ZonePackager {
 		// value is
 		// true
 		long nbOfSimulatedParcel = featColl.getElements().stream().filter(feat -> (feat.getGeom().area() < areaMax))
-				.filter(feat -> (hasToBeSimulated(feat)))
-				.count();
+				.filter(feat -> (hasToBeSimulated(feat))).count();
 
 		if (nbOfSimulatedParcel <= numberMaxOfSimulatedParcel) {
 			results.add(determineSimulationBLock(featColl, featCollTotal));
@@ -308,7 +305,6 @@ public class ZonePackager {
 				continue;
 			}
 
-	
 			DefaultFeature featureFakeClone = new DefaultFeature();
 			featureFakeClone.setGeom(feat.getGeom());
 			// It is a new context feature we add a false attribute
@@ -325,8 +321,7 @@ public class ZonePackager {
 	}
 
 	/**
-	 * Determine the splitting of a set of parcels into a subset of 2 set of
-	 * parcels
+	 * Determine the splitting of a set of parcels into a subset of 2 set of parcels
 	 * 
 	 * @param featColl
 	 * @return
@@ -405,10 +400,6 @@ public class ZonePackager {
 
 	}
 
-	
-	
-	
-	
 	/**
 	 * A method that determine the neighbour parcels from candidates
 	 * (featCandidates) and remove them from the general parcel collections
@@ -417,8 +408,8 @@ public class ZonePackager {
 	 * recursive method
 	 * 
 	 * @param featCandidates candidates parcels
-	 * @param parcelles  the collection that contains all parcels
-	 * @param grapFeatures an intermediary results stored for the recursive method
+	 * @param parcelles      the collection that contains all parcels
+	 * @param grapFeatures   an intermediary results stored for the recursive method
 	 */
 	public static void selectByNeighbourdHood(List<IFeature> featCandidates, IFeatureCollection<IFeature> parcelles,
 			IFeatureCollection<IFeature> grapFeatures) {
@@ -451,12 +442,9 @@ public class ZonePackager {
 	 * 
 	 * 
 	 * 
-	 * @param map
-	 *            the map to export
-	 * @param folderIn
-	 *            the folder where the map is exported
-	 * @param debug
-	 *            do we want to export the corresponding bbox ?
+	 * @param map      the map to export
+	 * @param folderIn the folder where the map is exported
+	 * @param debug    do we want to export the corresponding bbox ?
 	 */
 	public static void exportFolder(Map<Integer, IFeatureCollection<IFeature>> map, String folderIn, boolean debug) {
 
@@ -466,13 +454,13 @@ public class ZonePackager {
 	}
 
 	/**
-	 * Create a folder for an entry of the map (the name parcelle.shp is used in
-	 * the simulator)
+	 * Create a folder for an entry of the map (the name parcelle.shp is used in the
+	 * simulator)
 	 * 
 	 * @param path
 	 * @param features
 	 */
-	private static void createFolderAndExport(String path, IFeatureCollection<IFeature> features, boolean debug) {
+	public static void createFolderAndExport(String path, IFeatureCollection<IFeature> features, boolean debug) {
 		// We create the folder and store the collection
 
 		// This hint is to ensure that the first item has rules
@@ -523,7 +511,7 @@ public class ZonePackager {
 	/**
 	 * Set IDBlock value for a feature
 	 * 
-	 * @param x the feature
+	 * @param x     the feature
 	 * @param value the ID to set
 	 */
 	public static void setIDBlock(IFeature x, int value) {
@@ -535,7 +523,13 @@ public class ZonePackager {
 		Object o = feat.getAttribute(ATTRIBUTE_SIMUL);
 
 		if (o == null) {
-			return false;
+
+			o = feat.getAttribute(ATTRIBUTE_SIMUL.toUpperCase());
+			if (o == null) {
+				return false;
+
+			}
+
 		}
 
 		String strO = o.toString();
@@ -564,16 +558,16 @@ public class ZonePackager {
 	 * @param x
 	 */
 	private static void generateMissingAttributes(IFeature x) {
-		//We set the NAME_BAND value to 0
+		// We set the NAME_BAND value to 0
 		AttributeManager.addAttribute(x, ZonePackager.ATTRIBUTE_NAME_BAND, 0, "Integer");
-		
+
 		Object departement = x.getAttribute(ATTRIBUTE_DEPARTEMENT);
 		Object commune = x.getAttribute(ATTRIBUTE_COMMUNE);
-		
-		if(commune == null) {
-			///It is maybe only an IDPAR ?
+
+		if (commune == null) {
+			/// It is maybe only an IDPAR ?
 			Object idpar = x.getAttribute(ATTRIBUTE_NAME_ID);
-			if(idpar ==null) {
+			if (idpar == null) {
 				return;
 			}
 			AttributeManager.addAttribute(x, ZonePackager.ATTRIBUTE_NAME_ID, idpar, "String");
@@ -591,7 +585,6 @@ public class ZonePackager {
 		String idFinal = strDepartement + commune + prefix + section + numero;
 		AttributeManager.addAttribute(x, ZonePackager.ATTRIBUTE_NAME_ID, idFinal, "String");
 
-		
 	}
 
 }
