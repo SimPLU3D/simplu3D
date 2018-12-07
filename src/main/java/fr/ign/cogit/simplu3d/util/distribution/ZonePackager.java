@@ -46,6 +46,7 @@ public class ZonePackager {
 
 	// ATTRIBUTE USED TO DETERMINE IF A PARCEL HAS TO BE SIMULATED
 	public static String ATTRIBUTE_SIMUL = "SIMUL";
+	public static String ATTRIBUTE_SIMUL_TYPE = "String"; //or Integer ?
 
 	// OUTPUT SRID
 	public static String SRID_END = "EPSG:2154";
@@ -310,7 +311,15 @@ public class ZonePackager {
 			// It is a new context feature we add a false attribute
 			AttributeManager.addAttribute(featureFakeClone, ZonePackager.ATTRIBUTE_NAME_ID,
 					feat.getAttribute(ZonePackager.ATTRIBUTE_NAME_ID), "String");
-			AttributeManager.addAttribute(featureFakeClone, ZonePackager.ATTRIBUTE_SIMUL, "false", "String");
+			if(ATTRIBUTE_SIMUL_TYPE.equals("String")||ATTRIBUTE_SIMUL_TYPE.equals("Boolean")) {
+				//The attribute is stored as boolean
+				AttributeManager.addAttribute(featureFakeClone, ZonePackager.ATTRIBUTE_SIMUL, "false", "String");
+				
+			}else {
+				//The attribute is stored as Integer
+				AttributeManager.addAttribute(featureFakeClone, ZonePackager.ATTRIBUTE_SIMUL, "0", "Integer");
+				
+			}
 			AttributeManager.addAttribute(featureFakeClone, ZonePackager.ATTRIBUTE_NAME_BAND, 42, "Integer");
 
 			finalFeatColl.add(featureFakeClone);
@@ -522,16 +531,7 @@ public class ZonePackager {
 
 		Object o = feat.getAttribute(ATTRIBUTE_SIMUL);
 
-		if (o == null) {
-
-			o = feat.getAttribute(ATTRIBUTE_SIMUL.toUpperCase());
-			if (o == null) {
-				return false;
-
-			}
-
-		}
-
+	
 		String strO = o.toString();
 
 		try {
