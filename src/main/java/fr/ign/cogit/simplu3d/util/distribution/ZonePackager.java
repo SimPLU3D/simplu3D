@@ -370,13 +370,13 @@ public class ZonePackager {
 
 			// instead while(true) { for more robustness
 			// We cut in a first direction
-			List<IPolygon> poly = OBBBlockDecomposition.computeSplittingPolygon(area, true, 0);
+			List<IPolygon> poly = OBBBlockDecomposition.computeSplittingPolygon(area, true, 0,0,1,0);
 
 			Collection<IFeature> selection = featColl.select(poly.get(0));
 
 			// All elements are in a same side, we cut in an other direct
 			if (selection.size() == featColl.size() || selection.isEmpty()) {
-				poly = OBBBlockDecomposition.computeSplittingPolygon(area, false, 0);
+				poly = OBBBlockDecomposition.computeSplittingPolygon(area, false, 0,0,1,0);
 				selection = featColl.select(poly.get(0));
 			}
 
