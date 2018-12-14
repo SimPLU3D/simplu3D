@@ -80,7 +80,7 @@ public class ZonePackager {
 			int numberMaxOfSimulatedParcel, double areaMax, String tempFolder, String folderOutPath, boolean debug)
 			throws Exception {
 
-		/*
+
 		// Initialization of spatial index with updates
 		parcelles.initSpatialIndex(Tiling.class, true);
 
@@ -91,13 +91,12 @@ public class ZonePackager {
 		// ATTRIBUTE_NAME_BAND attribute name
 		parcelles.stream().forEach(x -> generateMissingAttributes(x));
 
-*/
 		// Current group ID
 		File folderTemp = new File(tempFolder);
 		folderTemp.mkdirs();
 
 		int idCurrentGroup = 0;
-/*
+
 		while (!parcelles.isEmpty()) {
 			// We get the first parcel and removes it from the list
 			IFeature currentParcel = parcelles.get(0);
@@ -123,7 +122,7 @@ public class ZonePackager {
 			createFolderAndExport(folderTemp.getAbsolutePath() + "/" + idCurrentGroup + "/", grapFeatures, debug);
 			idCurrentGroup++;
 		}
-  */
+
 		// Current group ID
 		File folderOut = new File(folderOutPath);
 		folderOut.mkdirs();
