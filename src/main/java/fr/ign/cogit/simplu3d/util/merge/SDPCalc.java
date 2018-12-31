@@ -79,13 +79,13 @@ public class SDPCalc {
 			if (height - ((int) (height)) > (1 - epsilon)) {
 				height = (int) (height) + 1;
 			}
-			int storey = (int) (Math.floor(height / FLOOR_HEIGHT));
+			int storey = (int) (Math.floor(height / floorHeight));
 
 			if (minimumStairsForAttic >= storey) {
-				return geom.getArea() * ((Math.floor(height / FLOOR_HEIGHT) - 1)) + geom.getArea() * atticRatio;
+				return geom.getArea() * ((Math.floor(height / floorHeight) - 1)) + geom.getArea() * atticRatio;
 
 			} else {
-				return geom.getArea() * (Math.floor(height / FLOOR_HEIGHT));
+				return geom.getArea() * (Math.floor(height / floorHeight));
 			}
 		}
 
@@ -242,8 +242,6 @@ public class SDPCalc {
 	public double getFloorHeight() {
 		return floorHeight;
 	}
-	
-	
 
 	public void setFloorHeight(double fLOOR_HEIGHT) {
 		floorHeight = fLOOR_HEIGHT;
