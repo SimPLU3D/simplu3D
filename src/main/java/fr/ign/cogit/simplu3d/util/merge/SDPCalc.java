@@ -67,6 +67,28 @@ public class SDPCalc {
 			return geom.getArea() * (Math.floor(height / FLOOR_HEIGHT));
 		}
 
+		/**
+		 * Calculation with the last stair as an attic
+		 * the attic is set if the minimumStairsForAttic number of stairs is reached
+		 * the attic makes atticRatio% of the total area of a storey.
+		 */
+		public double sdp(int minimumStairsForAttic, double atticRatio) {
+
+			double epsilon = 0.01;
+			// if height is x.99 we want it to be x+1
+			if (height - ((int) (height)) > (1 - epsilon)) {
+				height = (int) (height) + 1;
+			}
+			int storey = (int) (Math.floor(height / FLOOR_HEIGHT));
+
+			if (minimumStairsForAttic >= storey) {
+				return geom.getArea() * ((Math.floor(height / FLOOR_HEIGHT) - 1)) + geom.getArea() * atticRatio;
+
+			} else {
+				return geom.getArea() * (Math.floor(height / FLOOR_HEIGHT));
+			}
+		}
+
 		public double surface() {
 			return geom.getArea();
 		}
@@ -83,14 +105,18 @@ public class SDPCalc {
 		return process(lCuboid);
 	}
 
-	public double process(List<? extends AbstractSimpleBuilding> cubes) {
+	public double process(List<? extends AbstractSimpleBuilding> cubes, int nbStoreyAttic, double ratioAttic) {
 		double sdp = 0;
 		CuboidGroupCreation<AbstractSimpleBuilding> cGC = new CuboidGroupCreation<AbstractSimpleBuilding>();
 		List<List<AbstractSimpleBuilding>> lGroupes = cGC.createGroup(cubes, 0);
-	//	System.out.println("nb groupes formé " + lGroupes.size());
+		// System.out.println("nb groupes formé " + lGroupes.size());
 		for (List<AbstractSimpleBuilding> g : lGroupes)
-			sdp += sdpGroup(g, true);
+			sdp += sdpGroup(g, true, nbStoreyAttic, ratioAttic);
 		return sdp;
+	}
+
+	public double process(List<? extends AbstractSimpleBuilding> cubes) {
+		return process(cubes, 0, 0.0);
 	}
 
 	public double processSurface(String shape) {
@@ -102,9 +128,9 @@ public class SDPCalc {
 		double sdp = 0;
 		CuboidGroupCreation<AbstractSimpleBuilding> cGC = new CuboidGroupCreation<AbstractSimpleBuilding>();
 		List<List<AbstractSimpleBuilding>> lGroupes = cGC.createGroup(cubes, 0);
-	//	System.out.println("nb groupes formé " + lGroupes.size());
+		// System.out.println("nb groupes formé " + lGroupes.size());
 		for (List<AbstractSimpleBuilding> g : lGroupes) {
-			sdp += sdpGroup(g, false);
+			sdp += sdpGroup(g, false, 0, 0.0);
 		}
 		return sdp;
 	}
@@ -116,12 +142,15 @@ public class SDPCalc {
 	 * 
 	 * @param group
 	 * @param sdp_or_surface
+	 * @param nbStoreyAttic : a ratio of the last floor if it won't contain some countable surface de plancher
+	 * @param ratioAttic : ratio of the last storey that is set as an attic. 
 	 * @return
 	 */
-	private double sdpGroup(List<? extends AbstractSimpleBuilding> group, boolean sdp_or_surface) {
+	private double sdpGroup(List<? extends AbstractSimpleBuilding> group, boolean sdp_or_surface, int nbStoreyAttic,
+			double ratioAttic) {
 		// The list of already met pair
 		List<GeomHeightPair> aCurrent = new ArrayList<>();
-		
+
 		List<AbstractSimpleBuilding> lCurrentGroup = new ArrayList<>();
 		lCurrentGroup.addAll(group);
 		// We initial with the first element of the list
@@ -178,7 +207,8 @@ public class SDPCalc {
 
 			aCurrent.addAll(newGeometryPair);
 
-	//		System.out.println("aprec [" + aCurrent.size() + "] " + lCurrentGroup.size());
+			// System.out.println("aprec [" + aCurrent.size() + "] " +
+			// lCurrentGroup.size());
 
 			if (bgeom != null) {
 				aCurrent.add(bgeom);
@@ -193,7 +223,11 @@ public class SDPCalc {
 			// System.out.println("sdp partiel " + e.sdp());
 
 			if (sdp_or_surface) {
-				sdp += e.sdp();
+				if (nbStoreyAttic == 0 || nbStoreyAttic == 99) {
+					sdp += e.sdp();
+				} else {
+					sdp += e.sdp(nbStoreyAttic, ratioAttic);
+				}
 			} else {
 				sdp += e.surface();
 			}
