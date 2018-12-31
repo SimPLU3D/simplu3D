@@ -35,13 +35,13 @@ import fr.ign.cogit.simplu3d.util.JTS;
  */
 public class SDPCalc {
 
-	private double FLOOR_HEIGHT = 3;
+	private double floorHeight = 3;
 
 	public SDPCalc() {
 	}
 
 	public SDPCalc(double floorHeight) {
-		this.FLOOR_HEIGHT = floorHeight;
+		this.floorHeight = floorHeight;
 	}
 
 	/**
@@ -64,7 +64,7 @@ public class SDPCalc {
 			if (height - ((int) (height)) > (1 - epsilon)) {
 				height = (int) (height) + 1;
 			}
-			return geom.getArea() * (Math.floor(height / FLOOR_HEIGHT));
+			return geom.getArea() * (Math.floor(height / floorHeight));
 		}
 
 		/**
@@ -239,8 +239,14 @@ public class SDPCalc {
 
 	private List<List<GeomHeightPair>> geometryPairByGroup = new ArrayList<>();
 
-	public double getFLOOR_HEIGHT() {
-		return FLOOR_HEIGHT;
+	public double getFloorHeight() {
+		return floorHeight;
+	}
+	
+	
+
+	public void setFloorHeight(double fLOOR_HEIGHT) {
+		floorHeight = fLOOR_HEIGHT;
 	}
 
 	public List<List<GeomHeightPair>> getGeometryPairByGroup() {

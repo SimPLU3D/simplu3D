@@ -15,7 +15,7 @@ It provides an implementation of multi-dimensionnal simulated annealing algorith
 
 The project is developed over 3D GIS Open-Source library [GeOxygene](https://github.com/IGNF/geoxygene) concerning geometric operators and 3D visualization, [librjmcmc4j](https://github.com/IGNF/librjmcmc4j) for simulated annealing implementation and [simplu3d-rules](https://github.com/SimPLU3D/simplu3d-rules) for geographical model and regulation management.
 
-The javadoc is deployed in the [gh-pages branch of this project](https://simplu3d.github.io/simplu3D/).
+The [official website is hosted on GitHub](https://simplu3d.github.io) and the javadoc is deployed in the [gh-pages branch of this project](https://simplu3d.github.io/simplu3D/).
 
 Conditions for use
 ---------------------
@@ -92,7 +92,7 @@ Contact for feedbacks
 ---------------------
 [Mickaël Brasebin](https://MBrasebin.github.io) & [Julien Perret](http://recherche.ign.fr/labos/cogit/cv.php?prenom=Julien&nom=Perret)
 [COGIT Laboratory](http://recherche.ign.fr/labos/cogit/accueilCOGIT.php)
-
+({surname.name} (AT) {gmail} (POINT) {com})
 
 Users and demo
 --------------------
