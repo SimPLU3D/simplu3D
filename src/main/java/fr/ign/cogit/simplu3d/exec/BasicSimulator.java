@@ -51,8 +51,12 @@ public class BasicSimulator {
 	 
 		// Loading of configuration file that contains sampling space
 		// information and simulated annealing configuration
-		String folderName = BasicSimulator.class.getClassLoader().getResource("scenario/").getPath();
-		String fileName = "building_parameters_project_expthese_3.xml";
+	    String folderName = BasicSimulator.class.getClassLoader().getResource("scenario/").getPath()    ;
+		System.out.println(BasicSimulator.class.getClassLoader().getResource(".").getPath());
+	    //String folderName = "/home/paulchapron/dev/simplu3d/src/main/resources/scenario/";
+
+        
+	    String fileName = "building_parameters_project_expthese_3.xml";
 		Parameters p = Parameters.unmarshall(new File(folderName + fileName));
 
 		// Load default environment (data are in resource directory)
