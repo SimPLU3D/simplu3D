@@ -47,11 +47,6 @@ System.out.println(test.toString());
   public void calculate(List<Double> heights) {
 
     int nbpts = heights.size();
-
-    
-              
-           
-          
           
     double sum_weights = 0;
     for (int i = 0; i < nbpts; i++) {

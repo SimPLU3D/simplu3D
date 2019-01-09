@@ -74,15 +74,10 @@ public class EntropyIndicator {
     
     System.out.println(eI.toString());
     
-    ShapefileWriter.write(featCOut, "/home/pchapron/temp/outdamier.shp");
+    //ShapefileWriter.write(featCOut, "/home/paulchapron/temp/outdamier.shp");
     
     
   }
-
-  public EntropyIndicator() {
-
-  }
-  
   
   
 
