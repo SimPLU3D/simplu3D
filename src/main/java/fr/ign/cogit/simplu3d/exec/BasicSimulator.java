@@ -42,20 +42,10 @@ public class BasicSimulator {
 
 		// Loading of configuration file that contains sampling space
 		// information and simulated annealing configuration
-<<<<<<< HEAD
 		String folderName = BasicSimulator.class.getClassLoader().getResource("scenario/").getPath();
 		
 		String fileName = "building_parameters_project_expthese_3.json";
 		SimpluParameters p = new SimpluParametersJSON(new File(folderName + fileName));
-=======
-	    String folderName = BasicSimulator.class.getClassLoader().getResource("scenario/").getPath()    ;
-		//System.out.println(BasicSimulator.class.getClassLoader().getResource(".").getPath());
-	    //String folderName = "/home/paulchapron/dev/simplu3d/src/main/resources/scenario/";
-
-        
-	    String fileName = "building_parameters_project_expthese_3.xml";
-		Parameters p = Parameters.unmarshall(new File(folderName + fileName));
->>>>>>> measures
 
 		// Load default environment (data are in resource directory)
 		Environnement env = LoaderSHP.loadNoDTM(new File(
