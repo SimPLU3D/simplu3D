@@ -43,6 +43,7 @@ public class BasicSimulator {
 		// Loading of configuration file that contains sampling space
 		// information and simulated annealing configuration
 		String folderName = BasicSimulator.class.getClassLoader().getResource("scenario/").getPath();
+		
 		String fileName = "building_parameters_project_expthese_3.json";
 		SimpluParameters p = new SimpluParametersJSON(new File(folderName + fileName));
 
@@ -76,7 +77,7 @@ public class BasicSimulator {
 		GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred);
 		// Writting the output
 		SaveGeneratedObjects.saveShapefile(p.get("result").toString() + "out.shp", cc, bPU.getId(), 0);
-
+		 System.out.println("that's all folks");
 	}
 
 }
