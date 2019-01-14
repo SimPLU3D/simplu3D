@@ -15,13 +15,20 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
+import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
+import fr.ign.cogit.geoxygene.api.spatial.coordgeom.ILineString;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
+import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
 import fr.ign.cogit.geoxygene.feature.DefaultFeature;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
-import fr.ign.cogit.geoxygene.sig3d.calculation.parcelDecomposition.OBBBlockDecomposition;
+import fr.ign.cogit.geoxygene.sig3d.calculation.OrientedBoundingBox;
+import fr.ign.cogit.geoxygene.sig3d.equation.LineEquation;
+import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
+import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_LineString;
+import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Polygon;
 import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiPoint;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
@@ -369,13 +376,13 @@ public class ZonePackager {
 
 			// instead while(true) { for more robustness
 			// We cut in a first direction
-			List<IPolygon> poly = OBBBlockDecomposition.computeSplittingPolygon(area, true, 0,0,1,0);
+			List<IPolygon> poly = computeSplittingPolygon(area, true, 0,0,1,0);
 
 			Collection<IFeature> selection = featColl.select(poly.get(0));
 
 			// All elements are in a same side, we cut in an other direct
 			if (selection.size() == featColl.size() || selection.isEmpty()) {
-				poly = OBBBlockDecomposition.computeSplittingPolygon(area, false, 0,0,1,0);
+				poly = computeSplittingPolygon(area, false, 0,0,1,0);
 				selection = featColl.select(poly.get(0));
 			}
 
@@ -407,6 +414,154 @@ public class ZonePackager {
 		featColl.remove(0);
 		collection1.addAll(featColl);
 		return featureCollection;
+
+	}
+	
+	
+	
+	
+
+	/**
+	 * Computed the splitting polygons composed by two boxes determined from the oriented bounding boxes splited from a line at its middle
+	 * 
+	 * @param pol
+	 *            : the input polygon
+	 * @param shortDirectionSplit
+	 *            : it is splitted by the short edges or by the long edge.
+	 * @return
+	 * @throws Exception
+	 */
+	public static List<IPolygon> computeSplittingPolygon(IGeometry pol, boolean shortDirectionSplit, double noise, int decompositionLevel, int decompositionLevelWithRoad,
+			double roadWidth) throws Exception {
+
+
+		// Determination of the bounding box
+		OrientedBoundingBox oBB = new OrientedBoundingBox(pol);
+
+		// Detmermination of the split vector
+		Vecteur splitDirection = (shortDirectionSplit) ? oBB.shortestDirection() : oBB.longestDirection();
+
+		IDirectPosition centroid = oBB.getCentre();
+
+		// The noise value is determined by noise parameters and parcel width
+		// (to avoid lines that go out of parcel)
+		double noiseTemp = Math.min(oBB.getWidth() / 3, noise);
+
+		// X and Y move of the centroid
+		double alphaX = (0.5 - Math.random()) * noiseTemp;
+		double alphaY = (0.5 - Math.random()) * noiseTemp;
+		IDirectPosition translateCentroid = new DirectPosition(centroid.getX() + alphaX, centroid.getY() + alphaY);
+
+		// Determine the points that intersect the line and the OBB according to
+		// chosen direction
+		// This points will be used for splitting
+		IDirectPositionList intersectedPoints = determineIntersectedPoints(new LineEquation(translateCentroid, splitDirection),
+				(shortDirectionSplit) ? oBB.getLongestEdges() : oBB.getShortestEdges());
+
+		// Construction of the two splitting polygons by using the OBB edges and the
+		// intersection points
+		IPolygon pol1 = determinePolygon(intersectedPoints, (shortDirectionSplit) ? oBB.getShortestEdges().get(0) : oBB.getLongestEdges().get(0), decompositionLevel,
+				decompositionLevelWithRoad, roadWidth);
+		IPolygon pol2 = determinePolygon(intersectedPoints, (shortDirectionSplit) ? oBB.getShortestEdges().get(1) : oBB.getLongestEdges().get(1), decompositionLevel,
+				decompositionLevelWithRoad, roadWidth);
+
+		// Generated polygons are added and returned
+		List<IPolygon> outList = new ArrayList<>();
+		outList.add(pol1);
+		outList.add(pol2);
+
+		return outList;
+	}
+	
+
+	/**
+	 * Build the output polygon from OBB edges and splitting points
+	 * 
+	 * @param intersectedPoints
+	 * @param edge
+	 * @return
+	 */
+	private static IPolygon determinePolygon(IDirectPositionList intersectedPoints, ILineString edge, int decompositionLevel, int decompositionLevelWithRoad, double roadWidth) {
+
+		IDirectPosition dp1 = intersectedPoints.get(0);
+		IDirectPosition dp2 = intersectedPoints.get(1);
+
+		Vecteur v = new Vecteur(dp1, dp2);
+
+		Vecteur v1 = new Vecteur(edge.coord().get(0), edge.coord().get(1));
+
+		IDirectPositionList dpl1 = new DirectPositionList();
+		if (v.prodScalaire(v1) > 0) {
+
+			dpl1.add(dp2);
+			dpl1.add(dp1);
+			dpl1.addAll(edge.coord());
+
+			dpl1.add(dp2);
+
+		} else {
+
+			dpl1.add(dp1);
+			dpl1.add(dp2);
+			dpl1.addAll(edge.coord());
+
+			dpl1.add(dp1);
+
+		}
+
+		IPolygon pol = new GM_Polygon(new GM_LineString(dpl1));
+
+		if (decompositionLevel < decompositionLevelWithRoad) {
+
+			IDirectPositionList dpl = new DirectPositionList(dp1, dp2);
+
+			ILineString directionOfCut = (new GM_LineString(dpl));
+
+			IGeometry geom = pol.difference(directionOfCut.buffer(roadWidth));
+
+			// To check the geometries
+			// Decomment the follong lines
+
+			// System.out.println(geom);
+			// System.out.println(roadWidth);
+			// System.out.println(directionOfCut);
+
+			// We keep it if it is only a polygon
+			// If it is not a polygon it means that the OBB is too small to support
+			// this
+			// operation
+			// So we do not create the road
+			if (geom instanceof IPolygon) {
+				pol = (IPolygon) geom;
+			}
+		}
+
+		return pol;
+
+	}
+
+	/**
+	 * Determine the splitting points from line equation and OBB edges
+	 * 
+	 * @param eq
+	 * @param ls
+	 * @return
+	 */
+	private static IDirectPositionList determineIntersectedPoints(LineEquation eq, List<ILineString> ls) {
+
+		IDirectPosition dp1 = eq.intersectionLineLine(new LineEquation(ls.get(0).coord().get(0), ls.get(0).coord().get(1)));
+		IDirectPosition dp2 = eq.intersectionLineLine(new LineEquation(ls.get(1).coord().get(0), ls.get(1).coord().get(1)));
+
+		if (dp1 == null) {
+			System.out.println("determineIntersectedPoints: Null");
+			dp1 = eq.intersectionLineLine(new LineEquation(ls.get(0).coord().get(0), ls.get(0).coord().get(1)));
+
+		}
+		IDirectPositionList dpl = new DirectPositionList();
+		dpl.add(dp1);
+		dpl.add(dp2);
+
+		return dpl;
 
 	}
 
