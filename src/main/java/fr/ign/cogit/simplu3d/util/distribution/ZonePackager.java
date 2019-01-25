@@ -67,6 +67,13 @@ public class ZonePackager {
 	public static String ATTRIBUTE_PREFIXE = "CODE_ARR";
 	public static String ATTRIBUTE_SECTION = "SECTION";
 	public static String ATTRIBUTE_NUMERO = "NUMERO";
+	
+	
+	public static void createParcelGroupsAndExport(IFeatureCollection<IFeature> parcelles,
+			int numberMaxOfSimulatedParcel, double areaMax, String tempFolder, String folderOutPath,  boolean debug)
+			throws Exception {
+		createParcelGroupsAndExport(parcelles, numberMaxOfSimulatedParcel, areaMax, tempFolder, folderOutPath, "", debug);
+	}
 
 	/**
 	 * Create parcel groups and export with a temporary export to avoid out of
@@ -84,7 +91,7 @@ public class ZonePackager {
 	 * @throws Exception exception
 	 */
 	public static void createParcelGroupsAndExport(IFeatureCollection<IFeature> parcelles,
-			int numberMaxOfSimulatedParcel, double areaMax, String tempFolder, String folderOutPath, boolean debug)
+			int numberMaxOfSimulatedParcel, double areaMax, String tempFolder, String folderOutPath,String zipCode, boolean debug)
 			throws Exception {
 
 
@@ -139,7 +146,9 @@ public class ZonePackager {
 		// In order to have more balanced bags and increase the distribution
 		// performances
 		idCurrentGroup = 0;
-
+		if (zipCode != "") {
+			zipCode = zipCode + "-";
+		}
 		for (File f : folderTemp.listFiles()) {
 			if (f.isDirectory()) {
 
@@ -156,8 +165,9 @@ public class ZonePackager {
 					for (IFeature feat : featCollCutUrbanBlock) {
 						setIDBlock(feat, idCurrentGroup);
 					}
+					//if we want to append a "-" between the defined zipCode and the idCurrentGroup
 
-					createFolderAndExport(folderOut + "/" + idCurrentGroup + "/", featCollCutUrbanBlock, debug);
+					createFolderAndExport(folderOut + "/" + zipCode + idCurrentGroup  + "/", featCollCutUrbanBlock, debug);
 
 					idCurrentGroup++;
 				}
