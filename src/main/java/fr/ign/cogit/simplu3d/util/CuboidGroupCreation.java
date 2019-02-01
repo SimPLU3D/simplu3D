@@ -1,6 +1,7 @@
 package fr.ign.cogit.simplu3d.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -13,6 +14,14 @@ import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 
 public class CuboidGroupCreation<C extends AbstractSimpleBuilding> {
 
+	private List<C> connectedGroup(List<List<C>> listGroup, C cuboid, double connexionDistance) {
+		for (List<C> group : listGroup) {
+			for (C c : group) {
+				if (c.getFootprint().distance(cuboid.getFootprint()) <= connexionDistance) return group;
+			}
+		}
+		return null;
+	}
 	/**
 	 * Create a group from cuboids
 	 * 
@@ -22,44 +31,18 @@ public class CuboidGroupCreation<C extends AbstractSimpleBuilding> {
 	 * @return a list of group of connected cuboids (a group is a list)
 	 */
 	public List<List<C>> createGroup(List<? extends C> lCuboids, double connexionDistance) {
-
 		List<List<C>> listGroup = new ArrayList<>();
-		
-		
-		List<C> lCuboidCurrentCuboid = new ArrayList<>();
-		lCuboidCurrentCuboid.addAll(lCuboids);
-
-		while (!lCuboidCurrentCuboid.isEmpty()) {
-
-			C batIni = lCuboidCurrentCuboid.remove(0);
-
-			List<C> currentGroup = new ArrayList<>();
-			currentGroup.add(batIni);
-
-			int nbElem = lCuboidCurrentCuboid.size();
-
-			bouclei: for (int i = 0; i < nbElem; i++) {
-
-				for (C batTemp : currentGroup) {
-
-					if (lCuboidCurrentCuboid.get(i).getFootprint().distance(batTemp.getFootprint()) <= connexionDistance) {
-
-						currentGroup.add(lCuboidCurrentCuboid.get(i));
-						lCuboidCurrentCuboid.remove(i);
-						i = -1;
-						nbElem--;
-						continue bouclei;
-
-					}
-				}
-
+		for (C cuboid : lCuboids) {
+			List<C> group = connectedGroup(listGroup, cuboid, connexionDistance);
+			if (group == null) {
+				List<C> currentGroup = new ArrayList<>();
+				currentGroup.add(cuboid);
+				listGroup.add(currentGroup);
+			} else {
+				group.add(cuboid);
 			}
-
-			listGroup.add(currentGroup);
 		}
-
 		return listGroup;
-
 	}
 
 	private static long c = 0;

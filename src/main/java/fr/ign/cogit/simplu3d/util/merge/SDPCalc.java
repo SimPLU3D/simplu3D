@@ -171,6 +171,7 @@ public class SDPCalc {
 
 				GeomHeightPair a = aCurrent.get(i);
 				// If there is no intersection, we continue;
+//				Geometry intersection = GeometryPrecisionReducer.reduce(a.geom, new PrecisionModel(1)).intersection(GeometryPrecisionReducer.reduce(bgeom.geom, new PrecisionModel(1)));
 				Geometry intersection = a.geom.intersection(bgeom.geom);
 
 				if (intersection == null || intersection.isEmpty()) {
