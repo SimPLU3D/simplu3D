@@ -53,7 +53,7 @@ public class ZonePackager {
 
 	// ATTRIBUTE USED TO DETERMINE IF A PARCEL HAS TO BE SIMULATED
 	public static String ATTRIBUTE_SIMUL = "SIMUL";
-	public static String ATTRIBUTE_SIMUL_TYPE = "String"; //or Integer ?
+	public static String ATTRIBUTE_SIMUL_TYPE = "String"; // or Integer ?
 
 	// OUTPUT SRID
 	public static String SRID_END = "EPSG:2154";
@@ -67,33 +67,49 @@ public class ZonePackager {
 	public static String ATTRIBUTE_PREFIXE = "CODE_ARR";
 	public static String ATTRIBUTE_SECTION = "SECTION";
 	public static String ATTRIBUTE_NUMERO = "NUMERO";
-	
-	
-	public static void createParcelGroupsAndExport(IFeatureCollection<IFeature> parcelles,
-			int numberMaxOfSimulatedParcel, double areaMax, String tempFolder, String folderOutPath,  boolean debug)
-			throws Exception {
+
+	public static void createParcelGroupsAndExport(IFeatureCollection<IFeature> parcelles, int numberMaxOfSimulatedParcel, double areaMax,
+			String tempFolder, String folderOutPath, boolean debug) throws Exception {
 		createParcelGroupsAndExport(parcelles, numberMaxOfSimulatedParcel, areaMax, tempFolder, folderOutPath, "", debug);
 	}
 
 	/**
-	 * Create parcel groups and export with a temporary export to avoid out of
-	 * memory error
+	 * Create parcel groups and export with a temporary export to avoid out of memory error
 	 * 
-	 * @param parcelles                  the set of parcels to decompose
-	 * @param numberMaxOfSimulatedParcel the number of max parcels to simulated
-	 * @param areaMax                    the maximal area to consider a parcel as
-	 *                                   simulable
-	 * @param tempFolder                 temporary folder that can be cleaned after
-	 *                                   the simulation
-	 * @param folderOutPath              the final result
-	 * @param debug                      if we want to export the current bounding
-	 *                                   box
-	 * @throws Exception exception
+	 * @param parcelles
+	 *            the set of parcels to decompose
+	 * @param numberMaxOfSimulatedParcel
+	 *            the number of max parcels to simulated
+	 * @param areaMax
+	 *            the maximal area to consider a parcel as simulable
+	 * @param tempFolder
+	 *            temporary folder that can be cleaned after the simulation
+	 * @param folderOutPath
+	 *            the final result
+	 * @param packagingName : packaging option. If emprty, everything pack are generated in the folderOutPath
+	 *            if length ==5, it'll be considered as a zipFile and a folder will be created for each zip
+	 *            otherwise, make superpackages of x element in each, x would be the value of the packagingName 
+	 * @param debug
+	 *            if we want to export the current bounding box
+	 * @throws Exception
+	 *             exception
 	 */
-	public static void createParcelGroupsAndExport(IFeatureCollection<IFeature> parcelles,
-			int numberMaxOfSimulatedParcel, double areaMax, String tempFolder, String folderOutPath,String zipCode, boolean debug)
-			throws Exception {
+	public static void createParcelGroupsAndExport(IFeatureCollection<IFeature> parcelles, int numberMaxOfSimulatedParcel, double areaMax,
+			String tempFolder, String folderOutPath, String packagingName, boolean debug) throws Exception {
 
+		boolean zip = true;
+		if (packagingName.length() != 5) {
+			zip = false;
+		}
+		else {
+			try {
+				Integer.valueOf(packagingName);
+			}
+			catch (NumberFormatException n) {
+				System.out.println("invalid packaging name on createParcelGroupsAndExport");
+				packagingName = "";
+			}
+		}
 
 		// Initialization of spatial index with updates
 		parcelles.initSpatialIndex(Tiling.class, true);
@@ -146,9 +162,9 @@ public class ZonePackager {
 		// In order to have more balanced bags and increase the distribution
 		// performances
 		idCurrentGroup = 0;
-		if (zipCode != "") {
-			zipCode = zipCode + "-";
-		}
+
+		int count = 0;
+		int folder = 0;
 		for (File f : folderTemp.listFiles()) {
 			if (f.isDirectory()) {
 
@@ -156,35 +172,50 @@ public class ZonePackager {
 				if (grapFeatures == null || grapFeatures.isEmpty()) {
 					continue;
 				}
-				List<IFeatureCollection<IFeature>> listOfCutUrbanBlocks = determineCutBlocks(grapFeatures, grapFeatures,
-						numberMaxOfSimulatedParcel, areaMax);
+				List<IFeatureCollection<IFeature>> listOfCutUrbanBlocks = determineCutBlocks(grapFeatures, grapFeatures, numberMaxOfSimulatedParcel,
+						areaMax);
 
 				for (IFeatureCollection<IFeature> featCollCutUrbanBlock : listOfCutUrbanBlocks) {
-					System.out.println(
-							"---- Group " + idCurrentGroup + " has " + featCollCutUrbanBlock.size() + " elements");
+					System.out.println("---- Group " + idCurrentGroup + " has " + featCollCutUrbanBlock.size() + " elements");
 					for (IFeature feat : featCollCutUrbanBlock) {
 						setIDBlock(feat, idCurrentGroup);
 					}
-					//if we want to append a "-" between the defined zipCode and the idCurrentGroup
-
-					createFolderAndExport(folderOut + "/" + zipCode + idCurrentGroup  + "/", featCollCutUrbanBlock, debug);
-
+					// if we want to append a "-" between the defined zipCode and the idCurrentGroup
+					if (zip) {
+						System.out.println("pack with zip");
+						createFolderAndExport(folderOut + "/" + packagingName + "/" + idCurrentGroup + "/", featCollCutUrbanBlock, debug);
+					} else if (!packagingName.equals("")) {
+						// case where we want to create a package for every number of a (the number is contained into the zipCode string
+						System.out.println("pack of number "+folder);
+						createFolderAndExport(folderOut + "/" + folder + "/" + idCurrentGroup + "/", featCollCutUrbanBlock, debug);
+					} else {
+						// no ordering on packages on other files
+						System.out.println("pack in no order");
+						createFolderAndExport(folderOut + "/" + idCurrentGroup + "/", featCollCutUrbanBlock, debug);
+					}
 					idCurrentGroup++;
 				}
 			}
-
+			count++;
+			if (!zip && count == Integer.parseInt(packagingName)) {
+				count =- Integer.parseInt(packagingName);
+				folder++;
+			}
 		}
 
 	}
 
 	/**
 	 * 
-	 * @param parcelles                  the set of parcels to decompose
-	 * @param numberMaxOfSimulatedParcel the number of max parcels to simulated
-	 * @param areaMax                    the maximal area to consider a parcel as
-	 *                                   simulable
+	 * @param parcelles
+	 *            the set of parcels to decompose
+	 * @param numberMaxOfSimulatedParcel
+	 *            the number of max parcels to simulated
+	 * @param areaMax
+	 *            the maximal area to consider a parcel as simulable
 	 * @return a map of group of parcels by urban blocks
-	 * @throws Exception exception
+	 * @throws Exception
+	 *             exception
 	 */
 	public static Map<Integer, IFeatureCollection<IFeature>> createParcelGroups(IFeatureCollection<IFeature> parcelles,
 			int numberMaxOfSimulatedParcel, double areaMax) throws Exception {
@@ -230,11 +261,10 @@ public class ZonePackager {
 			// In order to have more balanced bags and increase the distribution
 			// performances
 			System.out.println("Splitting group");
-			List<IFeatureCollection<IFeature>> listOfCutUrbanBlocks = determineCutBlocks(grapFeatures, grapFeatures,
-					numberMaxOfSimulatedParcel, areaMax);
+			List<IFeatureCollection<IFeature>> listOfCutUrbanBlocks = determineCutBlocks(grapFeatures, grapFeatures, numberMaxOfSimulatedParcel,
+					areaMax);
 			for (IFeatureCollection<IFeature> featCollCutUrbanBlock : listOfCutUrbanBlocks) {
-				System.out
-						.println("---- Group " + idCurrentGroup + " has " + featCollCutUrbanBlock.size() + " elements");
+				System.out.println("---- Group " + idCurrentGroup + " has " + featCollCutUrbanBlock.size() + " elements");
 				for (IFeature feat : featCollCutUrbanBlock) {
 					setIDBlock(feat, idCurrentGroup);
 				}
@@ -248,20 +278,21 @@ public class ZonePackager {
 	}
 
 	/**
-	 * This method is used to cut the collection of blocks into sub block and check
-	 * the number of simulable parcels. It is a recursive method
+	 * This method is used to cut the collection of blocks into sub block and check the number of simulable parcels. It is a recursive method
 	 * 
-	 * @param featColl                   the considered set of parcels for a block
-	 * @param featCollTotal              the collection that contains all the
-	 *                                   parcels
-	 * @param numberMaxOfSimulatedParcel the number of max parcels to simulated
-	 * @param areaMax                    the maximal area
+	 * @param featColl
+	 *            the considered set of parcels for a block
+	 * @param featCollTotal
+	 *            the collection that contains all the parcels
+	 * @param numberMaxOfSimulatedParcel
+	 *            the number of max parcels to simulated
+	 * @param areaMax
+	 *            the maximal area
 	 * @return
 	 * @throws Exception
 	 */
 	public static List<IFeatureCollection<IFeature>> determineCutBlocks(IFeatureCollection<IFeature> featColl,
-			IFeatureCollection<IFeature> featCollTotal, int numberMaxOfSimulatedParcel, double areaMax)
-			throws Exception {
+			IFeatureCollection<IFeature> featCollTotal, int numberMaxOfSimulatedParcel, double areaMax) throws Exception {
 		List<IFeatureCollection<IFeature>> results = new ArrayList<>();
 
 		// Is the block empty enough ?
@@ -290,8 +321,7 @@ public class ZonePackager {
 	}
 
 	/**
-	 * Determine the simulation block and get the context around the simulable
-	 * parcels (CONTEXT_AREA value determines the radisu)
+	 * Determine the simulation block and get the context around the simulable parcels (CONTEXT_AREA value determines the radisu)
 	 * 
 	 * @param featColl
 	 * @param featCollTotal
@@ -327,16 +357,16 @@ public class ZonePackager {
 			DefaultFeature featureFakeClone = new DefaultFeature();
 			featureFakeClone.setGeom(feat.getGeom());
 			// It is a new context feature we add a false attribute
-			AttributeManager.addAttribute(featureFakeClone, ZonePackager.ATTRIBUTE_NAME_ID,
-					feat.getAttribute(ZonePackager.ATTRIBUTE_NAME_ID), "String");
-			if(ATTRIBUTE_SIMUL_TYPE.equals("String")||ATTRIBUTE_SIMUL_TYPE.equals("Boolean")) {
-				//The attribute is stored as boolean
+			AttributeManager.addAttribute(featureFakeClone, ZonePackager.ATTRIBUTE_NAME_ID, feat.getAttribute(ZonePackager.ATTRIBUTE_NAME_ID),
+					"String");
+			if (ATTRIBUTE_SIMUL_TYPE.equals("String") || ATTRIBUTE_SIMUL_TYPE.equals("Boolean")) {
+				// The attribute is stored as boolean
 				AttributeManager.addAttribute(featureFakeClone, ZonePackager.ATTRIBUTE_SIMUL, "false", "String");
-				
-			}else {
-				//The attribute is stored as Integer
+
+			} else {
+				// The attribute is stored as Integer
 				AttributeManager.addAttribute(featureFakeClone, ZonePackager.ATTRIBUTE_SIMUL, "0", "Integer");
-				
+
 			}
 			AttributeManager.addAttribute(featureFakeClone, ZonePackager.ATTRIBUTE_NAME_BAND, 42, "Integer");
 
@@ -354,8 +384,7 @@ public class ZonePackager {
 	 * @return
 	 * @throws Exception
 	 */
-	private static List<IFeatureCollection<IFeature>> determine(IFeatureCollection<IFeature> featColl)
-			throws Exception {
+	private static List<IFeatureCollection<IFeature>> determine(IFeatureCollection<IFeature> featColl) throws Exception {
 
 		// We make two collection that contains different features
 		IFeatureCollection<IFeature> collection1 = new FT_FeatureCollection<>();
@@ -386,13 +415,13 @@ public class ZonePackager {
 
 			// instead while(true) { for more robustness
 			// We cut in a first direction
-			List<IPolygon> poly = computeSplittingPolygon(area, true, 0,0,1,0);
+			List<IPolygon> poly = computeSplittingPolygon(area, true, 0, 0, 1, 0);
 
 			Collection<IFeature> selection = featColl.select(poly.get(0));
 
 			// All elements are in a same side, we cut in an other direct
 			if (selection.size() == featColl.size() || selection.isEmpty()) {
-				poly = computeSplittingPolygon(area, false, 0,0,1,0);
+				poly = computeSplittingPolygon(area, false, 0, 0, 1, 0);
 				selection = featColl.select(poly.get(0));
 			}
 
@@ -426,10 +455,6 @@ public class ZonePackager {
 		return featureCollection;
 
 	}
-	
-	
-	
-	
 
 	/**
 	 * Computed the splitting polygons composed by two boxes determined from the oriented bounding boxes splited from a line at its middle
@@ -441,9 +466,8 @@ public class ZonePackager {
 	 * @return
 	 * @throws Exception
 	 */
-	public static List<IPolygon> computeSplittingPolygon(IGeometry pol, boolean shortDirectionSplit, double noise, int decompositionLevel, int decompositionLevelWithRoad,
-			double roadWidth) throws Exception {
-
+	public static List<IPolygon> computeSplittingPolygon(IGeometry pol, boolean shortDirectionSplit, double noise, int decompositionLevel,
+			int decompositionLevelWithRoad, double roadWidth) throws Exception {
 
 		// Determination of the bounding box
 		OrientedBoundingBox oBB = new OrientedBoundingBox(pol);
@@ -470,10 +494,10 @@ public class ZonePackager {
 
 		// Construction of the two splitting polygons by using the OBB edges and the
 		// intersection points
-		IPolygon pol1 = determinePolygon(intersectedPoints, (shortDirectionSplit) ? oBB.getShortestEdges().get(0) : oBB.getLongestEdges().get(0), decompositionLevel,
-				decompositionLevelWithRoad, roadWidth);
-		IPolygon pol2 = determinePolygon(intersectedPoints, (shortDirectionSplit) ? oBB.getShortestEdges().get(1) : oBB.getLongestEdges().get(1), decompositionLevel,
-				decompositionLevelWithRoad, roadWidth);
+		IPolygon pol1 = determinePolygon(intersectedPoints, (shortDirectionSplit) ? oBB.getShortestEdges().get(0) : oBB.getLongestEdges().get(0),
+				decompositionLevel, decompositionLevelWithRoad, roadWidth);
+		IPolygon pol2 = determinePolygon(intersectedPoints, (shortDirectionSplit) ? oBB.getShortestEdges().get(1) : oBB.getLongestEdges().get(1),
+				decompositionLevel, decompositionLevelWithRoad, roadWidth);
 
 		// Generated polygons are added and returned
 		List<IPolygon> outList = new ArrayList<>();
@@ -482,7 +506,6 @@ public class ZonePackager {
 
 		return outList;
 	}
-	
 
 	/**
 	 * Build the output polygon from OBB edges and splitting points
@@ -491,7 +514,8 @@ public class ZonePackager {
 	 * @param edge
 	 * @return
 	 */
-	private static IPolygon determinePolygon(IDirectPositionList intersectedPoints, ILineString edge, int decompositionLevel, int decompositionLevelWithRoad, double roadWidth) {
+	private static IPolygon determinePolygon(IDirectPositionList intersectedPoints, ILineString edge, int decompositionLevel,
+			int decompositionLevelWithRoad, double roadWidth) {
 
 		IDirectPosition dp1 = intersectedPoints.get(0);
 		IDirectPosition dp2 = intersectedPoints.get(1);
@@ -576,15 +600,15 @@ public class ZonePackager {
 	}
 
 	/**
-	 * A method that determine the neighbour parcels from candidates
-	 * (featCandidates) and remove them from the general parcel collections
-	 * (parcelles) and set the value attributeCount for the group. The result is
-	 * stored in grapFeatures that will be reused in the different uses of the
-	 * recursive method
+	 * A method that determine the neighbour parcels from candidates (featCandidates) and remove them from the general parcel collections (parcelles) and set the value
+	 * attributeCount for the group. The result is stored in grapFeatures that will be reused in the different uses of the recursive method
 	 * 
-	 * @param featCandidates candidates parcels
-	 * @param parcelles      the collection that contains all parcels
-	 * @param grapFeatures   an intermediary results stored for the recursive method
+	 * @param featCandidates
+	 *            candidates parcels
+	 * @param parcelles
+	 *            the collection that contains all parcels
+	 * @param grapFeatures
+	 *            an intermediary results stored for the recursive method
 	 */
 	public static void selectByNeighbourdHood(List<IFeature> featCandidates, IFeatureCollection<IFeature> parcelles,
 			IFeatureCollection<IFeature> grapFeatures) {
@@ -596,8 +620,7 @@ public class ZonePackager {
 			Collection<IFeature> surroundingParcels = parcelles.select(currentParcel.getGeom().buffer(0.1));
 
 			// We only keep features where ID is not set
-			List<IFeature> listNotSetSurroundingParcels = surroundingParcels.stream().filter(x -> -1 == getIDBlock(x))
-					.collect(Collectors.toList());
+			List<IFeature> listNotSetSurroundingParcels = surroundingParcels.stream().filter(x -> -1 == getIDBlock(x)).collect(Collectors.toList());
 			// We set the group value to the features
 			listNotSetSurroundingParcels.stream().forEach(x -> setIDBlock(x, 1));
 
@@ -617,9 +640,12 @@ public class ZonePackager {
 	 * 
 	 * 
 	 * 
-	 * @param map      the map to export
-	 * @param folderIn the folder where the map is exported
-	 * @param debug    do we want to export the corresponding bbox ?
+	 * @param map
+	 *            the map to export
+	 * @param folderIn
+	 *            the folder where the map is exported
+	 * @param debug
+	 *            do we want to export the corresponding bbox ?
 	 */
 	public static void exportFolder(Map<Integer, IFeatureCollection<IFeature>> map, String folderIn, boolean debug) {
 
@@ -629,8 +655,7 @@ public class ZonePackager {
 	}
 
 	/**
-	 * Create a folder for an entry of the map (the name parcelle.shp is used in the
-	 * simulator)
+	 * Create a folder for an entry of the map (the name parcelle.shp is used in the simulator)
 	 * 
 	 * @param path
 	 * @param features
@@ -676,7 +701,8 @@ public class ZonePackager {
 	/**
 	 * Get IDBlock value for a feature
 	 * 
-	 * @param x the feature
+	 * @param x
+	 *            the feature
 	 * @return the ID value
 	 */
 	public static int getIDBlock(IFeature x) {
@@ -686,8 +712,10 @@ public class ZonePackager {
 	/**
 	 * Set IDBlock value for a feature
 	 * 
-	 * @param x     the feature
-	 * @param value the ID to set
+	 * @param x
+	 *            the feature
+	 * @param value
+	 *            the ID to set
 	 */
 	public static void setIDBlock(IFeature x, int value) {
 		AttributeManager.addAttribute(x, ZonePackager.ATTRIBUTE_NAME_GROUP, value, "Integer");
@@ -697,7 +725,6 @@ public class ZonePackager {
 
 		Object o = feat.getAttribute(ATTRIBUTE_SIMUL);
 
-	
 		String strO = o.toString();
 
 		try {
@@ -717,9 +744,7 @@ public class ZonePackager {
 	}
 
 	/**
-	 * Adding missing attributes : - the ID is generated from a concatenation of
-	 * several attributes - the ATTRIBUTE_NAME_BAND that is set to 0 as there is
-	 * only one band regulation
+	 * Adding missing attributes : - the ID is generated from a concatenation of several attributes - the ATTRIBUTE_NAME_BAND that is set to 0 as there is only one band regulation
 	 * 
 	 * @param x
 	 */
