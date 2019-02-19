@@ -90,7 +90,6 @@ public class Cuboid extends AbstractSimpleBuilding {
 	@Override
 	public Polygon toGeometry() {
 		if (geomJTS == null) {
-
 			Coordinate[] pts = new Coordinate[5];
 			double cosOrient = Math.cos(orientation);
 			double sinOrient = Math.sin(orientation);
@@ -103,7 +102,6 @@ public class Cuboid extends AbstractSimpleBuilding {
 			pts[2] = new Coordinate(this.centerx + a - b, this.centery + c + d, height);
 			pts[3] = new Coordinate(this.centerx - a - b, this.centery - c + d, height);
 			pts[4] = new Coordinate(pts[0]);
-
 			LinearRing ring = geomFact.createLinearRing(pts);
 			Polygon poly = geomFact.createPolygon(ring, null);
 			this.geomJTS = poly;
