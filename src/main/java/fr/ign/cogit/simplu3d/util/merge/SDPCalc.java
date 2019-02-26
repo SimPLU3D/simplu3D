@@ -36,12 +36,24 @@ import fr.ign.cogit.simplu3d.util.JTS;
 public class SDPCalc {
 
 	private double floorHeight = 3;
-
+	private double atticRatio;
+	private int minimumStairsForAttic;
+	
 	public SDPCalc() {
 	}
 
 	public SDPCalc(double floorHeight) {
 		this.floorHeight = floorHeight;
+	}
+	/**
+	 * Calculation with the last stair as an attic
+	 * the attic is set if the minimumStairsForAttic number of stairs is reached
+	 * the attic makes atticRatio% of the total area of a storey.
+	 */
+	public SDPCalc(double floorHeight, int minimumStairsForAttic,double atticRatio) {
+		this.floorHeight = floorHeight;
+		this.atticRatio = atticRatio;
+		this.minimumStairsForAttic = minimumStairsForAttic;
 	}
 
 	/**
@@ -53,41 +65,24 @@ public class SDPCalc {
 		public double height;
 		public Geometry geom;
 
-		public GeomHeightPair(Geometry g, double h) {
-			this.height = h;
-			this.geom = g;
+	public GeomHeightPair(Geometry g, double h) {
+		this.height = h;
+		this.geom = g;
+	}
+
+	public double sdp() {
+		double epsilon = 0.01;
+		// if height is x.99 we want it to be x+1
+		if (height - ((int) (height)) > (1 - epsilon)) {
+			height = (int) (height) + 1;
 		}
-
-		public double sdp() {
-			double epsilon = 0.01;
-			// if height is x.99 we want it to be x+1
-			if (height - ((int) (height)) > (1 - epsilon)) {
-				height = (int) (height) + 1;
-			}
-			return geom.getArea() * (Math.floor(height / floorHeight));
+		int storey = (int) (Math.floor(height / floorHeight));
+		//case where an attic is set
+		if (minimumStairsForAttic != 0 && atticRatio != 0.0 && minimumStairsForAttic >= storey) {
+				return geom.getArea() * ((storey - 1)) + geom.getArea() * atticRatio;
 		}
-
-		/**
-		 * Calculation with the last stair as an attic
-		 * the attic is set if the minimumStairsForAttic number of stairs is reached
-		 * the attic makes atticRatio% of the total area of a storey.
-		 */
-		public double sdp(int minimumStairsForAttic, double atticRatio) {
-
-			double epsilon = 0.01;
-			// if height is x.99 we want it to be x+1
-			if (height - ((int) (height)) > (1 - epsilon)) {
-				height = (int) (height) + 1;
-			}
-			int storey = (int) (Math.floor(height / floorHeight));
-
-			if (minimumStairsForAttic >= storey) {
-				return geom.getArea() * ((Math.floor(height / floorHeight) - 1)) + geom.getArea() * atticRatio;
-
-			} else {
-				return geom.getArea() * (Math.floor(height / floorHeight));
-			}
-		}
+		return geom.getArea() * storey;
+	}
 
 		public double surface() {
 			return geom.getArea();
@@ -105,18 +100,14 @@ public class SDPCalc {
 		return process(lCuboid);
 	}
 
-	public double process(List<? extends AbstractSimpleBuilding> cubes, int nbStoreyAttic, double ratioAttic) {
+	public double process(List<? extends AbstractSimpleBuilding> cubes) {
 		double sdp = 0;
 		CuboidGroupCreation<AbstractSimpleBuilding> cGC = new CuboidGroupCreation<AbstractSimpleBuilding>();
 		List<List<AbstractSimpleBuilding>> lGroupes = cGC.createGroup(cubes, 0);
 		// System.out.println("nb groupes formé " + lGroupes.size());
 		for (List<AbstractSimpleBuilding> g : lGroupes)
-			sdp += sdpGroup(g, true, nbStoreyAttic, ratioAttic);
+			sdp += sdpGroup(g, true);
 		return sdp;
-	}
-
-	public double process(List<? extends AbstractSimpleBuilding> cubes) {
-		return process(cubes, 0, 0.0);
 	}
 
 	public double processSurface(String shape) {
@@ -130,7 +121,7 @@ public class SDPCalc {
 		List<List<AbstractSimpleBuilding>> lGroupes = cGC.createGroup(cubes, 0);
 		// System.out.println("nb groupes formé " + lGroupes.size());
 		for (List<AbstractSimpleBuilding> g : lGroupes) {
-			sdp += sdpGroup(g, false, 0, 0.0);
+			sdp += sdpGroup(g, false);
 		}
 		return sdp;
 	}
@@ -146,8 +137,7 @@ public class SDPCalc {
 	 * @param ratioAttic : ratio of the last storey that is set as an attic. 
 	 * @return
 	 */
-	private double sdpGroup(List<? extends AbstractSimpleBuilding> group, boolean sdp_or_surface, int nbStoreyAttic,
-			double ratioAttic) {
+	private double sdpGroup(List<? extends AbstractSimpleBuilding> group, boolean sdp_or_surface) {
 		// The list of already met pair
 		List<GeomHeightPair> aCurrent = new ArrayList<>();
 
@@ -224,11 +214,7 @@ public class SDPCalc {
 			// System.out.println("sdp partiel " + e.sdp());
 
 			if (sdp_or_surface) {
-				if (nbStoreyAttic == 0 || nbStoreyAttic == 99) {
-					sdp += e.sdp();
-				} else {
-					sdp += e.sdp(nbStoreyAttic, ratioAttic);
-				}
+				sdp += e.sdp();
 			} else {
 				sdp += e.surface();
 			}
