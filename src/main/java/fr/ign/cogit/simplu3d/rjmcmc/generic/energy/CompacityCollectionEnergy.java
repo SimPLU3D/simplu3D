@@ -59,6 +59,7 @@ public class CompacityCollectionEnergy<T extends ISimPLU3DPrimitive> implements 
       else {
         
             Cuboid cucu = (Cuboid)featColl_Lili.get(0);
+            //surfaceExterieure = cucu.getExternalSurfaceWithoutFloor();
       }
       
       

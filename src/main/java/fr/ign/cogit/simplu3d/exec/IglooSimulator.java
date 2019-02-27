@@ -138,7 +138,7 @@ public class IglooSimulator {
     Geometry geombPU =  AdapterFactory.toGeometry(new GeometryFactory(), bPU.getGeom());
     GraphConfiguration<Cuboid> compacityConfig =  create_configurationCompacity(p, geombPU, bPU);
     
-    compacityConfig.
+
 
 //    BasicCuboidOptimizer< Cuboid> bco = new BasicCuboidOptimizer<>() ;
 //    GraphConfiguration<Cuboid> confQuimarche  = bco.create_configuration(p, geombPU,bPU);
