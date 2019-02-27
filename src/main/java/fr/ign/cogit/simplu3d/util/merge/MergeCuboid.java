@@ -2,6 +2,7 @@ package fr.ign.cogit.simplu3d.util.merge;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -31,6 +32,7 @@ import fr.ign.cogit.geoxygene.util.algo.PointInPolygon;
 import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.geoxygene.util.index.Tiling;
+import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.util.JTS;
 import fr.ign.cogit.simplu3d.util.merge.SDPCalc.GeomHeightPair;
 
@@ -125,7 +127,7 @@ public class MergeCuboid {
 	 * @return a feature with agregated boxes and the surface of the feature stored
 	 *         as ATT_SURFACE attribute
 	 */
-	private IFeature mergeAGroupOfCuboid(IFeatureCollection<IFeature> featColl, double zMini,
+	public IFeature mergeAGroupOfCuboid(IFeatureCollection<IFeature> featColl, double zMini,
 			double carteTopoThreshold, double shrkiningThreshold) {
 		// Creating the neighbourhood relationship with CarteTopo
 		CarteTopo carteTopo = newCarteTopo("-aex90", featColl, carteTopoThreshold);
@@ -148,6 +150,7 @@ public class MergeCuboid {
 
 			// We do not treat the infinite height
 			if (f.isInfinite()) {
+			  System.out.println("### INFINITE face detected ###");
 				continue;
 			}
 
@@ -168,22 +171,18 @@ public class MergeCuboid {
 
 				zMax = 0;
 				System.out.println(f.getGeometrie());
-				// System.out.println("New empty face detected");
-
-			} else {
-
-			}
+				logger.info("empty face detected");
+			} 
+			
 			// We get the max height of the initial data
-			for (IFeature feat : featSelect) {
-
+		for (IFeature feat : featSelect) {
 				zMax = Math.max(zMax, Double.parseDouble(feat.getAttribute(ATT_TEMP).toString()));
-
 			}
-			// We set the z of the point of the polygon as zMax
+
+		// We set the z of the point of the polygon as zMax
 			IPolygon poly = (IPolygon) f.getGeometrie().clone();
 
 			if (!featSelect.isEmpty()) {
-
 				lOS.add(poly);
 				// We compute the surface by adding the face (the roofs)
 				surfaceGroup = surfaceGroup + poly.area();
@@ -312,6 +311,7 @@ public class MergeCuboid {
 	 */
 	private static CarteTopo newCarteTopo(String name, IFeatureCollection<? extends IFeature> collection,
 			double threshold) {
+ 
 
 		try {
 			// Initialisation d'une nouvelle CarteTopo
@@ -321,9 +321,10 @@ public class MergeCuboid {
 			IPopulation<Arc> arcs = carteTopo.getPopArcs();
 			// Import des arcs de la collection dans la carteTopo
 			for (IFeature feature : collection) {
-
+			    System.out.println("boucle sur features" + feature.getFeatureType());
+			  
 				List<ILineString> lLLS = FromPolygonToLineString
-						.convertPolToLineStrings((IPolygon) FromGeomToSurface.convertGeom(feature.getGeom()).get(0));
+						.convertPolToLineStrings((IPolygon) FromGeomToSurface.convertGeom(((Cuboid)feature).getGeom()).get(0));
 
 				for (ILineString ls : lLLS) {
 
@@ -344,7 +345,7 @@ public class MergeCuboid {
 
 			}
 			if (!test(carteTopo)) {
-				logger.error("");
+				logger.error("Carte Topo non valide");
 				System.exit(0);
 			}
 			carteTopo.creeNoeudsManquants(0.0);

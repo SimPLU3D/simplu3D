@@ -49,7 +49,19 @@ public class OptimisedBuildingsCuboidFinalDirectRejection extends BasicCuboidOpt
 		return this.process(bpu, p, env, id, pred,
 				new ArrayList<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>>());
 	}
+ 
 
+   public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, SimpluParameters p, Environnement env, int id,
+           ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred, 
+           GraphConfiguration<Cuboid> conf) {
+  // Géométrie de l'unité foncière sur laquelle porte la génération
+     IGeometry geom = bpu.generateGeom().buffer(1);
+       return this.process(bpu,geom, p, env, id, pred,
+               new ArrayList<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>>(), conf);
+   }
+
+	
+	
 	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, IGeometry geom, SimpluParameters p,
 			Environnement env, int id,
 			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred) {
@@ -65,7 +77,15 @@ public class OptimisedBuildingsCuboidFinalDirectRejection extends BasicCuboidOpt
 		return this.process(bpu, geom, p, env, id, pred, lSupplementaryVisitors);
 
 	}
-
+	
+	
+	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, IGeometry geom, SimpluParameters p,
+        Environnement env, int id,
+        ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred,
+        List<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> lSupplementaryVisitors){
+	  return this.process(bpu,geom,p,env,id,pred,lSupplementaryVisitors,null);
+	}
+	
 	/**
 	 * Process the generation of the optimization
 	 * @param bpu                    Basic property unit
@@ -76,24 +96,25 @@ public class OptimisedBuildingsCuboidFinalDirectRejection extends BasicCuboidOpt
 	 * @param id                     the id of the experiments
 	 * @param pred                   the rules to check
 	 * @param lSupplementaryVisitors some extra visitors
+	 * @param conf                   empty configuration (for custom energy functions) 
 	 * @return a set of cuboid as a graph
 	 */
 	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, IGeometry geom, SimpluParameters p,
 			Environnement env, int id,
 			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred,
-			List<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> lSupplementaryVisitors) {
+			List<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> lSupplementaryVisitors,
+			GraphConfiguration<Cuboid> conf) {
 
 		// Sampler creation
 		Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> samp = create_sampler(Random.random(), p,
 				bpu, pred, geom);
 		
-		//Initializing the configuration
-		GraphConfiguration<Cuboid> conf = null;
-
+		if(conf == null) {
 		try {
 			conf = create_configuration(p, AdapterFactory.toGeometry(new GeometryFactory(), bpu.getGeom()), bpu);
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
 		}
 		
 		// Temperature initialization

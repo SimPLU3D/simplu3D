@@ -96,7 +96,7 @@ public class CSVendStats<O extends SimpleObject, C extends ListConfiguration<O, 
 		if (iter == 0) {
 			currentTime = System.currentTimeMillis();
 		}
-
+		
 		++iter;
 
 	}

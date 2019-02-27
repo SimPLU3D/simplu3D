@@ -430,5 +430,10 @@ public class Cuboid extends AbstractSimpleBuilding {
 
 		return volume;
 	}
+	
+	public double getExternalSurfaceWithoutFloor() {
+		  return 2 * height * width + 2*height*length + width*length ; 
+	  
+	}
 
 }

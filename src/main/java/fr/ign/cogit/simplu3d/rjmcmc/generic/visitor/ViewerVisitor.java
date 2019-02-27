@@ -225,7 +225,6 @@ public class ViewerVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraph
 	
 			String backgroundTexture =  p.getString("folderOut")+ File.separator+p.getString("background_img").toString();
 			
-			System.out.println(backgroundTexture);
 			feat.setRepresentation(new TexturedSurface(feat, TextureManager.textureLoading(backgroundTexture),
 					dpUR.getX() - dpLL.getX(), dpUR.getY() - dpLL.getY()));
 			MIN_LAYER=2;

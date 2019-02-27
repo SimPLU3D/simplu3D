@@ -300,7 +300,7 @@ public class FilmVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraphCo
 
 		if(p.getBoolean("showbackground")) {
 			String background = p.getString("background_img");
-
+			System.out.println("TUTUTU bckgnd" + background);
 			feat.setRepresentation(new TexturedSurface(feat, TextureManager.textureLoading(background),
 					dpUR.getX() - dpLL.getX(), dpUR.getY() - dpLL.getY()));
 
