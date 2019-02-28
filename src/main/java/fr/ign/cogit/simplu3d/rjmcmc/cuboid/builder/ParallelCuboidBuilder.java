@@ -1,11 +1,11 @@
 package fr.ign.cogit.simplu3d.rjmcmc.cuboid.builder;
 
-import com.vividsolutions.jts.algorithm.Angle;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.operation.distance.DistanceOp;
+import org.locationtech.jts.algorithm.Angle;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.operation.distance.DistanceOp;
 
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;

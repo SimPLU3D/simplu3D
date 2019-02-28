@@ -1,37 +1,28 @@
 package fr.ign.cogit.simplu3d.exec;
 
 import java.io.File;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.media.j3d.Sound;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
 
 import com.thoughtworks.xstream.io.path.Path;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
-import fr.ign.cogit.geoxygene.sig3d.semantic.DTMArea;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
-import fr.ign.cogit.simplu3d.demo.DemoEnvironmentProvider;
 import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
 import fr.ign.cogit.simplu3d.io.shapefile.SaveGeneratedObjects;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid.OptimisedBuildingsCuboidFinalDirectRejection;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid.OptimisedBuildingsCuboidFinalDirectRejectionParallelTempering;
+import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.CompacityCollectionEnergy;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.DifferenceVolumeUnaryEnergy;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.IntersectionVolumeBinaryEnergy;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.VolumeUnaryEnergy;
-import fr.ign.cogit.simplu3d.rjmcmc.generic.energy.CompacityCollectionEnergy;
-import fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid.BasicCuboidOptimizer;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.predicate.SamplePredicate;
 import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import fr.ign.cogit.simplu3d.util.SimpluParametersJSON;
@@ -41,7 +32,6 @@ import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.rjmcmc.energy.BinaryEnergy;
 import fr.ign.rjmcmc.energy.CollectionEnergy;
-
 import fr.ign.rjmcmc.energy.ConstantEnergy;
 import fr.ign.rjmcmc.energy.MinusUnaryEnergy;
 import fr.ign.rjmcmc.energy.MultipliesBinaryEnergy;

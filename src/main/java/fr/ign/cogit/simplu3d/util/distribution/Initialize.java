@@ -17,10 +17,11 @@ import javax.media.jai.util.ImagingListener;
 
 import org.geotools.coverage.CoverageFactoryFinder;
 import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.factory.GeoTools;
-import org.geotools.factory.Hints;
 import org.geotools.image.io.ImageIOExt;
 import org.geotools.referencing.ReferencingFactoryFinder;
+import org.geotools.referencing.factory.epsg.hsql.ThreadedHsqlEpsgFactory;
+import org.geotools.util.factory.GeoTools;
+import org.geotools.util.factory.Hints;
 import org.geotools.util.logging.Logging;
 
 import com.google.common.collect.Lists;
@@ -648,7 +649,7 @@ public class Initialize {
 		// com.sun.media.imageioimpl.plugins.tiff.TIFFImageWriterSpi());
 		// registry.registerServiceProvider(new
 		// com.sun.media.jai.imageioimpl.ImageReadWriteSpi());
-		ReferencingFactoryFinder.addAuthorityFactory(new org.geotools.referencing.factory.epsg.ThreadedHsqlEpsgFactory());
+		ReferencingFactoryFinder.addAuthorityFactory(new ThreadedHsqlEpsgFactory());
 		//printRegistry(registry);
 
 		// new com.sun.media.imageio.stream.RawImageInputStream(arg0, arg1)

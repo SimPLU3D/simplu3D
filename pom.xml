@@ -5,7 +5,7 @@
 
 	<groupId>fr.ign.cogit</groupId>
 	<artifactId>simplu3d</artifactId>
-	<version>1.2-SNAPSHOT</version>
+	<version>1.3-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>simplu3d</name>
 
@@ -19,8 +19,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<librjmcmc4j.version>1.1-SNAPSHOT</librjmcmc4j.version>
-		<geoxygene.version>1.9-SNAPSHOT</geoxygene.version>
+		<librjmcmc4j.version>1.2-SNAPSHOT</librjmcmc4j.version>
+		<geoxygene.version>1.10-SNAPSHOT</geoxygene.version>
 	</properties>
 
 	<developers>
@@ -314,7 +314,7 @@
 		<dependency>
 			<groupId>fr.ign.cogit</groupId>
 			<artifactId>simplu3d-rules</artifactId>
-			<version>1.2-SNAPSHOT</version>
+			<version>1.3-SNAPSHOT</version>
 			<exclusions>
 				<!-- <exclusion> <groupId>fr.ign.cogit</groupId> <artifactId>geoxygene-util</artifactId> 
 					</exclusion> -->
