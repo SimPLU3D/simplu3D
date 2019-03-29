@@ -202,7 +202,6 @@ public class ZonePackager {
 				folder++;
 			}
 		}
-
 	}
 
 	/**
@@ -278,8 +277,8 @@ public class ZonePackager {
 	}
 
 	/**
-	 * This method is used to cut the collection of blocks into sub block and check the number of simulable parcels. It is a recursive method
-	 * 
+	 * This method is used to cut the collection of blocks into sub block and check the number of simulable parcels.
+	 * It is a recursive method.
 	 * @param featColl
 	 *            the considered set of parcels for a block
 	 * @param featCollTotal
@@ -293,35 +292,35 @@ public class ZonePackager {
 	 */
 	public static List<IFeatureCollection<IFeature>> determineCutBlocks(IFeatureCollection<IFeature> featColl,
 			IFeatureCollection<IFeature> featCollTotal, int numberMaxOfSimulatedParcel, double areaMax) throws Exception {
-		List<IFeatureCollection<IFeature>> results = new ArrayList<>();
-
 		// Is the block empty enough ?
 		if (featColl.size() <= numberMaxOfSimulatedParcel) {
-			results.add(determineSimulationBLock(featColl, featCollTotal));
-			return results;
+		  return new ArrayList<IFeatureCollection<IFeature>>(Arrays.asList(determineSimulationBLock(featColl, featCollTotal)));
 		}
-
-		// We keep when the area is enough small and if the simule attribute
-		// value is
-		// true
-		long nbOfSimulatedParcel = featColl.getElements().stream().filter(feat -> (feat.getGeom().area() < areaMax))
+		// We keep when the area is enough small and if the simule attribute value is true
+		long nbOfSimulatedParcel = featColl.getElements().stream()
+		    .filter(feat -> (feat.getGeom().area() < areaMax))
 				.filter(feat -> (hasToBeSimulated(feat))).count();
-
 		if (nbOfSimulatedParcel <= numberMaxOfSimulatedParcel) {
-			results.add(determineSimulationBLock(featColl, featCollTotal));
-			return results;
+      return new ArrayList<IFeatureCollection<IFeature>>(Arrays.asList(determineSimulationBLock(featColl, featCollTotal)));
 		}
-
-		List<IFeatureCollection<IFeature>> collections = determine(featColl);
-		// We split into two parts and re-apply the method on them
-		results.addAll(determineCutBlocks(collections.get(0), featCollTotal, numberMaxOfSimulatedParcel, areaMax));
-		results.addAll(determineCutBlocks(collections.get(1), featCollTotal, numberMaxOfSimulatedParcel, areaMax));
-
-		return results;
+		return determine(featColl).stream().flatMap(f->{
+      try {
+        return determineCutBlocks(f, featCollTotal, numberMaxOfSimulatedParcel, areaMax).stream();
+      } catch (Exception e) {
+        e.printStackTrace();
+        return null;
+      }
+    }).collect(Collectors.toList());
+//		List<IFeatureCollection<IFeature>> collections = determine(featColl);
+//		// We split into two parts and re-apply the method on them
+//    List<IFeatureCollection<IFeature>> results = new ArrayList<>(2);
+//		results.addAll(determineCutBlocks(collections.get(0), featCollTotal, numberMaxOfSimulatedParcel, areaMax));
+//		results.addAll(determineCutBlocks(collections.get(1), featCollTotal, numberMaxOfSimulatedParcel, areaMax));
+//		return results;
 	}
 
 	/**
-	 * Determine the simulation block and get the context around the simulable parcels (CONTEXT_AREA value determines the radisu)
+	 * Determine the simulation block and get the context around the simulable parcels (CONTEXT_AREA value determines the radius).
 	 * 
 	 * @param featColl
 	 * @param featCollTotal
@@ -330,130 +329,99 @@ public class ZonePackager {
 	 */
 	private static IFeatureCollection<IFeature> determineSimulationBLock(IFeatureCollection<IFeature> featColl,
 			IFeatureCollection<IFeature> featCollTotal) throws CloneNotSupportedException {
-
 		if (!featCollTotal.hasSpatialIndex()) {
 			featCollTotal.initSpatialIndex(Tiling.class, false);
 		}
-
-		// InitialGeemetry
-		IDirectPositionList dpl = new DirectPositionList();
-		for (IFeature feat : featColl) {
-			dpl.addAll(feat.getGeom().coord());
-		}
-		IGeometry area = new GM_MultiPoint(dpl);
-
+		// InitialGeometry
+//		IDirectPositionList dpl = new DirectPositionList();
+//		for (IFeature feat : featColl) {
+//			dpl.addAll(feat.getGeom().coord());
+//		}
+//		IGeometry area = new GM_MultiPoint(dpl);
+		IGeometry area = featColl.getGeomAggregate().buffer(CONTEXT_AREA);
 		Collection<IFeature> featCollSelect = featCollTotal.select(area.buffer(CONTEXT_AREA));
-
 		IFeatureCollection<IFeature> finalFeatColl = new FT_FeatureCollection<>();
 		finalFeatColl.addAll(featColl);
-
 		for (IFeature feat : featCollSelect) {
-
 			if (featColl.contains(feat)) {
-
 				continue;
 			}
-
-			DefaultFeature featureFakeClone = new DefaultFeature();
-			featureFakeClone.setGeom(feat.getGeom());
-			// It is a new context feature we add a false attribute
-			AttributeManager.addAttribute(featureFakeClone, ZonePackager.ATTRIBUTE_NAME_ID, feat.getAttribute(ZonePackager.ATTRIBUTE_NAME_ID),
-					"String");
-			if (ATTRIBUTE_SIMUL_TYPE.equals("String") || ATTRIBUTE_SIMUL_TYPE.equals("Boolean")) {
-				// The attribute is stored as boolean
-				AttributeManager.addAttribute(featureFakeClone, ZonePackager.ATTRIBUTE_SIMUL, "false", "String");
-
-			} else {
-				// The attribute is stored as Integer
-				AttributeManager.addAttribute(featureFakeClone, ZonePackager.ATTRIBUTE_SIMUL, "0", "Integer");
-
-			}
-			AttributeManager.addAttribute(featureFakeClone, ZonePackager.ATTRIBUTE_NAME_BAND, 42, "Integer");
-
-			finalFeatColl.add(featureFakeClone);
-
+      DefaultFeature featureFakeClone = new DefaultFeature();
+      featureFakeClone.setGeom(feat.getGeom());
+      // It is a new context feature we add a false attribute
+      AttributeManager.addAttribute(featureFakeClone, ZonePackager.ATTRIBUTE_NAME_ID, feat.getAttribute(ZonePackager.ATTRIBUTE_NAME_ID),
+          "String");
+      if (ATTRIBUTE_SIMUL_TYPE.equals("String") || ATTRIBUTE_SIMUL_TYPE.equals("Boolean")) {
+        // The attribute is stored as boolean
+        AttributeManager.addAttribute(featureFakeClone, ZonePackager.ATTRIBUTE_SIMUL, "false", "String");
+      } else {
+        // The attribute is stored as Integer
+        AttributeManager.addAttribute(featureFakeClone, ZonePackager.ATTRIBUTE_SIMUL, "0", "Integer");
+      }
+      AttributeManager.addAttribute(featureFakeClone, ZonePackager.ATTRIBUTE_NAME_BAND, 42, "Integer");
+      finalFeatColl.add(featureFakeClone);
 		}
-
 		return finalFeatColl;
 	}
 
 	/**
-	 * Determine the splitting of a set of parcels into a subset of 2 set of parcels
+	 * Determine the splitting of a set of parcels into 2 subsets of parcels.
 	 * 
 	 * @param featColl
 	 * @return
 	 * @throws Exception
 	 */
 	private static List<IFeatureCollection<IFeature>> determine(IFeatureCollection<IFeature> featColl) throws Exception {
-
 		// We make two collection that contains different features
 		IFeatureCollection<IFeature> collection1 = new FT_FeatureCollection<>();
 		IFeatureCollection<IFeature> collection2 = new FT_FeatureCollection<>();
-
-		List<IFeatureCollection<IFeature>> featureCollection = new ArrayList<>();
-		featureCollection.add(collection1);
-		featureCollection.add(collection2);
-
 		// We arbitrary split the block into two parts
 		if (!featColl.hasSpatialIndex()) {
 			featColl.initSpatialIndex(Tiling.class, false);
 		}
-
 		// InitialGeemetry
 		IDirectPositionList dpl = new DirectPositionList();
 		for (IFeature feat : featColl) {
 			dpl.addAll(feat.getGeom().coord());
 		}
 		IGeometry area = new GM_MultiPoint(dpl);
-
 		int nbIterationMax = 15;
-
 		// It is possible that all the parcels intersect one of the two splitted
 		// OBB in the case we split the one that intersects all the parcels and
 		// subdivide it
 		for (int i = 0; i < nbIterationMax; i++) {
-
 			// instead while(true) { for more robustness
 			// We cut in a first direction
 			List<IPolygon> poly = computeSplittingPolygon(area, true, 0, 0, 1, 0);
-
 			Collection<IFeature> selection = featColl.select(poly.get(0));
-
 			// All elements are in a same side, we cut in an other direct
 			if (selection.size() == featColl.size() || selection.isEmpty()) {
 				poly = computeSplittingPolygon(area, false, 0, 0, 1, 0);
 				selection = featColl.select(poly.get(0));
 			}
-
 			if (selection.size() == featColl.size()) {
 				area = poly.get(0);
 				continue;
 			}
-
 			if (selection.isEmpty()) {
 				area = poly.get(1);
 				continue;
 			}
-
 			collection1.addAll(selection);
-
 			for (IFeature feat : featColl) {
 				if (!selection.contains(feat)) {
 					collection2.add(feat);
 				}
 			}
-
-			return featureCollection;
+			return new ArrayList<IFeatureCollection<IFeature>>(Arrays.asList(collection1, collection2));
 		}
 
-		// The algo does not seem to work, we only but 1 feature in each
-		// collection
+		// The algo does not seem to work, we only but 1 feature in each collection.
 		System.out.println("Going through this way");
 		collection1.add(featColl.get(0));
 		featColl.remove(0);
 		collection1.addAll(featColl);
-		return featureCollection;
-
+		return new ArrayList<IFeatureCollection<IFeature>>(Arrays.asList(collection1, collection2));
 	}
 
 	/**
@@ -655,18 +623,16 @@ public class ZonePackager {
 	}
 
 	/**
-	 * Create a folder for an entry of the map (the name parcelle.shp is used in the simulator)
+	 * Create a folder for an entry of the map (the name parcelle.shp is used in the simulator).
 	 * 
 	 * @param path
 	 * @param features
 	 */
 	public static void createFolderAndExport(String path, IFeatureCollection<IFeature> features, boolean debug) {
-		// We create the folder and store the collection
-
-		// This hint is to ensure that the first item has rules
+		// We create the folder and store the collection.
+		// This hint is to ensure that the first item has rules.
 		// Because the schema of the shapefile export is based on the schema of
-		// the
-		// first feature
+		// the first feature.
 		int nbElem = features.size();
 		for (int i = 0; i < nbElem; i++) {
 			IFeature feat = features.get(i);
@@ -676,11 +642,9 @@ public class ZonePackager {
 				break;
 			}
 		}
-
 		File f = new File(path);
 		f.mkdirs();
 		try {
-
 			if (debug) {
 				// If we want to export the bounding boxes
 				IFeatureCollection<IFeature> pop = new FT_FeatureCollection<>();
@@ -688,9 +652,7 @@ public class ZonePackager {
 				pop.add(feat);
 				ShapefileWriter.write(pop, path + "bbox.shp", CRS.decode(ZonePackager.SRID_END));
 			}
-
 			ShapefileWriter.write(features, path + "parcelle.shp", CRS.decode(ZonePackager.SRID_END));
-
 		} catch (NoSuchAuthorityCodeException e) {
 			e.printStackTrace();
 		} catch (FactoryException e) {
