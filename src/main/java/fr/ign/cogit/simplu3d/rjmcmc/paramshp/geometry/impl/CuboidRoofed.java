@@ -61,7 +61,7 @@ public class CuboidRoofed extends Cuboid {
 
   @Override
   public double getVolume() {
-    double v = super.getVolume();
+    double v = width * height * length;
     double Vsp = (deltaFromSide == 0) ? 0
         : 2 * (heightT * width * deltaFromSide / 3); // volume coté largeur
     double Vbp = 2 * (heightT * length * width * 0.5 / 3); // volume coté
@@ -320,7 +320,12 @@ public class CuboidRoofed extends Cuboid {
 
   public static void main(String[] args) {
     MainWindow mW = new MainWindow();
-    CuboidRoofed sb = new CuboidRoofed(0, 0, 20, 10, 20, 0.88, 3, 2);
+    //CuboidRoofed(double centerx, double centery, double length,
+    //double width, double heightG, double orientation, double heightT,
+    //double deltaFromSide)
+    
+    
+    CuboidRoofed sb = new CuboidRoofed(0, 0, 40, 10, 20, 0.88, 3, 0);
     // System.out.println(sb.toGeometry());
     IFeature feat = new DefaultFeature(sb.generated3DGeom());
     IFeatureCollection<IFeature> featColl = new FT_FeatureCollection<>();
