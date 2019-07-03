@@ -72,7 +72,7 @@ public class ViewerVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraph
 			represent(env, mW, p);
 			MIN_LAYER = mW.getInterfaceMap3D().getCurrent3DMap().getLayerList().size();
 			mW.getInterfaceMap3D().setBackground(c);
-			
+
 		}
 
 	}
@@ -111,9 +111,9 @@ public class ViewerVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraph
 	private void addInformationToMainWindow(C config) {
 
 		IFeatureCollection<IFeature> feat = new FT_FeatureCollection<>();
-		
-		if(config == null || config.getGraph() == null){
-		    return;
+
+		if (config == null || config.getGraph() == null) {
+			return;
 		}
 
 		for (GraphVertex<O> v : config.getGraph().vertexSet()) {
@@ -177,7 +177,7 @@ public class ViewerVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraph
 		mW.getInterfaceMap3D().addLight(new Color(147, 147, 147), 0, 0, 0);
 		mW.getInterfaceMap3D().moveLight(-140, 3, 120, 1);
 
-		if (! p.getBoolean("showbackground")) {
+		if (!p.getBoolean("showbackground")) {
 			return;
 		}
 
@@ -221,17 +221,17 @@ public class ViewerVisitor<O extends ISimPLU3DPrimitive, C extends AbstractGraph
 		// .textureLoading(folder + "Env3D_86.png"), dpUR.getX()-dpLL.getX(),
 		// dpUR.getY()-dpLL.getY()));
 
-		
-	
-			String backgroundTexture =  p.getString("folderOut")+ File.separator+p.getString("background_img").toString();
-			
+		String backgroundTexture = p.getString("folderOut") + File.separator + p.getString("background_img").toString();
+
+		File f = new File(backgroundTexture);
+
+		if (f!=null && f.exists()) {
 			feat.setRepresentation(new TexturedSurface(feat, TextureManager.textureLoading(backgroundTexture),
 					dpUR.getX() - dpLL.getX(), dpUR.getY() - dpLL.getY()));
-			MIN_LAYER=2;
-	
 
+			mW.getInterfaceMap3D().getCurrent3DMap().addLayer(new VectorLayer(fc, "Fond"));
 
-		mW.getInterfaceMap3D().getCurrent3DMap().addLayer(new VectorLayer(fc, "Fond"));
+		}
 
 	}
 }
