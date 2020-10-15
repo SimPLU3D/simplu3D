@@ -3,7 +3,8 @@ package fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 
@@ -27,7 +28,7 @@ public class TransformToSurface implements Transform {
 	/**
 	 * Logger.
 	 */
-	static Logger LOGGER = Logger.getLogger(TransformToSurface.class.getName());
+	static Logger LOGGER = LogManager.getLogger(TransformToSurface.class.getName());
 	
 	
 	private PolygonTransform polygonTransform;

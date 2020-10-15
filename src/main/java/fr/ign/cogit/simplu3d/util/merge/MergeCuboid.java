@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
@@ -53,7 +54,7 @@ import fr.ign.cogit.simplu3d.util.merge.SDPCalc.GeomHeightPair;
  **/
 public class MergeCuboid {
 
-  private static Logger logger = Logger.getLogger(MergeCuboid.class);
+  private static Logger logger = LogManager.getLogger(MergeCuboid.class);
 
   // A temporary attribute to store the z of a face
   private final static String ATT_TEMP = "ZTEMP";

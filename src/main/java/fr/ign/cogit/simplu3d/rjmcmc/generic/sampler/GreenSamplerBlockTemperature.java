@@ -5,7 +5,8 @@ import java.util.List;
 import org.apache.commons.math3.distribution.AbstractRealDistribution;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import fr.ign.mpp.DirectSampler;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
@@ -47,7 +48,7 @@ public class GreenSamplerBlockTemperature<O extends SimpleObject, C extends Abst
 	/**
 	 * Logger.
 	 */
-	static Logger LOGGER = Logger.getLogger(GreenSamplerBlockTemperature.class
+	static Logger LOGGER = LogManager.getLogger(GreenSamplerBlockTemperature.class
 			.getName());
 
 	public static Logger getLOGGER() {

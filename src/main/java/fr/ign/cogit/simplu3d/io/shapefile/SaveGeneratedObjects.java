@@ -4,7 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import fr.ign.cogit.geoxygene.sig3d.Messages;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
@@ -33,7 +34,7 @@ import fr.ign.mpp.configuration.GraphVertex;
  **/
 public class SaveGeneratedObjects {
 
-  private final static Logger logger = Logger.getLogger(SaveGeneratedObjects.class.getName());
+  private final static Logger logger = LogManager.getLogger(SaveGeneratedObjects.class.getName());
 
   public final static String SRID = "2154";
 

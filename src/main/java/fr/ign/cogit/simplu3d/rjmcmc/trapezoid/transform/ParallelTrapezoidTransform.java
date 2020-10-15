@@ -3,7 +3,8 @@ package fr.ign.cogit.simplu3d.rjmcmc.trapezoid.transform;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 
@@ -28,7 +29,7 @@ public class ParallelTrapezoidTransform implements Transform {
 	/**
 	 * Logger.
 	 */
-	static Logger LOGGER = Logger.getLogger(ParallelTrapezoidTransform.class.getName());
+	static Logger LOGGER = LogManager.getLogger(ParallelTrapezoidTransform.class.getName());
 
 	private double absJacobian[];
 	private PolygonTransform polygonTransform;
