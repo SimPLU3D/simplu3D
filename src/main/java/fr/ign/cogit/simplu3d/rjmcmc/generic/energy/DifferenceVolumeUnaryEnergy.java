@@ -1,6 +1,6 @@
 package fr.ign.cogit.simplu3d.rjmcmc.generic.energy;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
 import fr.ign.rjmcmc.energy.UnaryEnergy;

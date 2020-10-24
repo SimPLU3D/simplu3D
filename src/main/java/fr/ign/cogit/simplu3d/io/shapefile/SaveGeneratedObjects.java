@@ -4,7 +4,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.geotools.referencing.CRS;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 import fr.ign.cogit.geoxygene.sig3d.Messages;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
@@ -33,7 +37,7 @@ import fr.ign.mpp.configuration.GraphVertex;
  **/
 public class SaveGeneratedObjects {
 
-  private final static Logger logger = Logger.getLogger(SaveGeneratedObjects.class.getName());
+  private final static Logger logger = LogManager.getLogger(SaveGeneratedObjects.class.getName());
 
   public final static String SRID = "2154";
 
@@ -41,7 +45,15 @@ public class SaveGeneratedObjects {
 
   public static boolean saveShapefile(String path, GraphConfiguration<? extends AbstractSimpleBuilding> cc, int idParcelle, long seed) {
     ExportAsFeatureCollection exporter = new ExportAsFeatureCollection(cc, idParcelle);
-    ShapefileWriter.write(exporter.getFeatureCollection(), path);
+    try {
+		ShapefileWriter.write(exporter.getFeatureCollection(), path,   CRS.decode("EPSG:"+SRID));
+	} catch (NoSuchAuthorityCodeException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (FactoryException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
     return true;
   }
 

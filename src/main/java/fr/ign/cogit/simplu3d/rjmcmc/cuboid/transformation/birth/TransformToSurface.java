@@ -3,10 +3,10 @@ package fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.apache.log4j.Logger;
-
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
 
 import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
@@ -28,7 +28,7 @@ public class TransformToSurface implements Transform {
 	/**
 	 * Logger.
 	 */
-	static Logger LOGGER = Logger.getLogger(TransformToSurface.class.getName());
+	static Logger LOGGER = LogManager.getLogger(TransformToSurface.class.getName());
 	
 	
 	private PolygonTransform polygonTransform;

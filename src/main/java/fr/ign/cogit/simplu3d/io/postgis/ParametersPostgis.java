@@ -6,7 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import fr.ign.parameters.Parameters;
 
@@ -33,7 +34,7 @@ public class ParametersPostgis extends Parameters {
   public final static String PARAMETERS_ID = "id";
   private ResultSet rs;
 
-  private Logger log = Logger.getLogger(ParametersPostgis.class);
+  private Logger log = LogManager.getLogger(ParametersPostgis.class);
 
   public ParametersPostgis(String host, String port, String database, String user, String pw, int id) throws SQLException {
     String url = "jdbc:postgresql://" + host + ":" + port + "/" + database;

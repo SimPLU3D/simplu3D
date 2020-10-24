@@ -6,7 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import fr.ign.parameters.Parameters;
 /**
@@ -32,7 +33,7 @@ public class ExperimentationPostGIS extends Parameters {
   public final static String EXPERIMENTATION_ID_PARAM = "idparam";
   private ResultSet rs;
 
-  private Logger log = Logger.getLogger(ParametersPostgis.class);
+  private Logger log = LogManager.getLogger(ParametersPostgis.class);
 
   private int id;
 
