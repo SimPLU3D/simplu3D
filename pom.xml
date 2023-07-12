@@ -5,7 +5,7 @@
 
 	<groupId>fr.ign.cogit</groupId>
 	<artifactId>simplu3d</artifactId>
-	<version>1.3-SNAPSHOT</version>
+	<version>1.3</version>
 	<packaging>jar</packaging>
 	<name>simplu3d</name>
 
@@ -19,7 +19,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<librjmcmc4j.version>1.2-SNAPSHOT</librjmcmc4j.version>
+		<librjmcmc4j.version>1.2</librjmcmc4j.version>
 		<geoxygene.version>1.10-SNAPSHOT</geoxygene.version>
 	</properties>
 
@@ -272,6 +272,7 @@
 	</profiles>
 
 	<repositories>
+	<!--
 		<repository>
 			<id>ign-snapshots</id>
 			<name>Cogit Snapshots Repository</name>
@@ -294,20 +295,36 @@
 				<enabled>true</enabled>
 			</releases>
 		</repository>
+	-->
 		<repository>
 		    <id>osgeo</id>
 			<name>Open Source Geospatial Foundation Repository</name>
 			<url>https://repo.osgeo.org/repository/release/</url>
 		    <snapshots><enabled>false</enabled></snapshots>
 		    <releases><enabled>true</enabled></releases>
-		  </repository>
+			</repository>
+		<repository>
+			<id>geoxygene</id>
+			<name>GitHub IGNF geoxygene Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/IGNF/geoxygene</url>
+		</repository>
+		<repository>
+			<id>librjmcmc4j</id>
+			<name>GitHub IGNF librjmcmc4j Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/IGNF/librjmcmc4j</url>
+		</repository>
+		<repository>
+			<id>simplu3D-rules</id>
+			<name>GitHub IGNF simplu3D-rules Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/SimPLU3D/simplu3D-rules</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
 		<dependency>
 			<groupId>fr.ign.cogit</groupId>
 			<artifactId>simplu3d-rules</artifactId>
-			<version>1.3-SNAPSHOT</version>
+			<version>1.3</version>
 			<exclusions>
 				<!-- <exclusion> <groupId>fr.ign.cogit</groupId> <artifactId>geoxygene-util</artifactId> 
 					</exclusion> -->
@@ -362,6 +379,7 @@
         </dependency>
     </dependencies>
 	<distributionManagement>
+	<!--
 		<repository>
 			<id>ign-releases</id>
 			<name>Nexus Releases Repository</name>
@@ -372,5 +390,11 @@
 			<name>Nexus Snapshots Repository</name>
 			<url>https://forge-cogit.ign.fr/nexus/content/repositories/snapshots/</url>
 		</snapshotRepository>
+	-->
+		<repository>
+			<id>github</id>
+			<name>GitHub IGNF simplu3D Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/simplu3D/simplu3D</url>
+		</repository>
 	</distributionManagement>
 </project>
