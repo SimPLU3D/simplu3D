@@ -6,10 +6,9 @@ import java.sql.Statement;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.geotools.api.referencing.FactoryException;
+import org.geotools.api.referencing.NoSuchAuthorityCodeException;
 import org.geotools.referencing.CRS;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-
 import fr.ign.cogit.geoxygene.sig3d.Messages;
 import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.geoxygene.util.conversion.WktGeOxygene;

@@ -114,7 +114,7 @@ public class MergeCuboid {
    *          the minimum z
    * @param carteTopoThreshold
    *          the threshold for merging points in carte topo creation
-   * @param shrkinkingthreshold
+   * @param shrkiningThreshold
    *          the face are shrinken by a positive value in order to avoir numeric error in order to find a point not too near from polygon boundary
    * @return a feature with agregated boxes and the surface of the feature stored as ATT_SURFACE attribute
    */

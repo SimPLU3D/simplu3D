@@ -9,10 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.geotools.api.referencing.FactoryException;
+import org.geotools.api.referencing.NoSuchAuthorityCodeException;
 import org.geotools.referencing.CRS;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-
 import fr.ign.cogit.geoxygene.api.feature.IFeature;
 import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
 import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
