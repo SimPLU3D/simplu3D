@@ -37,24 +37,24 @@ import fr.ign.cogit.simplu3d.util.merge.SDPCalc.GeomHeightPair;
 
 /**
  * Class that enables the fusion of Cuboid Geometry in order to make consistant geomtries one by path of cuboid.
- * 
+ * <p>
  * This software is released under the licence CeCILL.
- * 
+ * <p>
  * see LICENSE.TXT
- * 
- * see http://www.cecill.info/
- * 
- * 
- * 
+ * <p>
+ * see <a href="http://www.cecill.info/">...</a>
+ * <p>
+ *
+ *
  * copyright IGN
- * 
+ *
  * @author Brasebin Mickaël
- * 
+ *
  * @version 1.0
  **/
 public class MergeCuboid {
 
-  private static Logger logger = LogManager.getLogger(MergeCuboid.class);
+  private static final Logger logger = LogManager.getLogger(MergeCuboid.class);
 
   // A temporary attribute to store the z of a face
   private final static String ATT_TEMP = "ZTEMP";
@@ -242,7 +242,7 @@ public class MergeCuboid {
   }
 
   /**
-   * 
+   *
    * @param name
    *          of the carte topo
    * @param collection
@@ -260,7 +260,7 @@ public class MergeCuboid {
       IPopulation<Arc> arcs = carteTopo.getPopArcs();
       // Import des arcs de la collection dans la carteTopo
       for (IFeature feature : collection) {
-        List<ILineString> lLLS = FromPolygonToLineString.convertPolToLineStrings((IPolygon) FromGeomToSurface.convertGeom(feature.getGeom()).get(0));
+        List<ILineString> lLLS = FromPolygonToLineString.convertPolToLineStrings((IPolygon) FromGeomToSurface.convertGeom(feature.getGeom()).getFirst());
         for (ILineString ls : lLLS) {
           // affectation de la géométrie de l'objet issu de la collection à l'arc de la carteTopo
           for (int i = 0; i < ls.numPoints() - 1; i++) {
@@ -272,44 +272,44 @@ public class MergeCuboid {
           }
         }
       }
-      if (!test(carteTopo)) {
+      if (invalid(carteTopo)) {
         logger.error("Carte Topo non valide");
         System.exit(0);
       }
       carteTopo.creeNoeudsManquants(0.0);
-      if (!test(carteTopo)) {
+      if (invalid(carteTopo)) {
         logger.error("");
         System.exit(0);
       }
       carteTopo.fusionNoeuds(threshold);
-      if (!test(carteTopo)) {
+      if (invalid(carteTopo)) {
         logger.error("");
         System.exit(0);
       }
       carteTopo.decoupeArcs(0.01);
       carteTopo.splitEdgesWithPoints(0.01);
       carteTopo.filtreArcsDoublons();
-      if (!test(carteTopo)) {
+      if (invalid(carteTopo)) {
         logger.error("");
         System.exit(0);
       }
       // Création de la topologie Arcs Noeuds
       carteTopo.creeTopologieArcsNoeuds(threshold);
       // La carteTopo est rendue planaire
-      if (!test(carteTopo)) {
+      if (invalid(carteTopo)) {
         logger.error("");
         System.exit(0);
       }
       // DEBUG.addAll(carteTopo.getListeArcs());
       // Création des faces de la carteTopo
       carteTopo.creeTopologieFaces();
-      if (!test(carteTopo)) {
+      if (invalid(carteTopo)) {
         logger.error("");
         System.out.println("Error 3");
       }
       return carteTopo;
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.error(e);
     }
     return null;
   }
@@ -320,12 +320,7 @@ public class MergeCuboid {
    *          a CarteTopo to test
    * @return true if carteTopo is Valid
    */
-  private static boolean test(CarteTopo ct) {
-    for (Arc a : ct.getPopArcs()) {
-      if (a.getGeometrie().coord().size() < 2) {
-        return false;
-      }
-    }
-    return true;
+  private static boolean invalid(CarteTopo ct) {
+    return ct.getPopArcs().stream().anyMatch(a->a.getGeometrie().coord().size() < 2);
   }
 }

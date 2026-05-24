@@ -1,9 +1,11 @@
 package fr.ign.cogit.simplu3d.exec;
 
 import java.io.File;
+import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import fr.ign.mpp.configuration.GraphVertex;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 
@@ -39,227 +41,199 @@ import fr.ign.rjmcmc.energy.MultipliesCollectionEnergy;
 import fr.ign.rjmcmc.energy.MultipliesUnaryEnergy;
 import fr.ign.rjmcmc.energy.PlusUnaryEnergy;
 import fr.ign.rjmcmc.energy.UnaryEnergy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IglooSimulator {
 
-  public static void main(String[] args) {
-    
-    
+    private static final Logger log = LoggerFactory.getLogger(IglooSimulator.class);
+
+    public static void main(String[] args) {
+
+
     // Loading of configuration file that contains sampling space
     // information and simulated annealing configuration
-    
+
     //ATTENTION : c'est dans target qu'il faut le mettre  !!!
-    String folderName = BasicSimulator.class.getClassLoader().getResource("scenario/").getPath();
-    
+    URL url = BasicSimulator.class.getClassLoader().getResource("scenario/");
+    if (url == null) return;
+    String folderName = url.getPath();
+
     String fileName = "paramsIgloo.json";
     SimpluParameters p = new SimpluParametersJSON(new File(folderName + fileName));
 
-    
-    
-    
+
     // Load default environment (data are in resource directory)
     Environnement env;
     try {
 
-          
-      Path folder = new Path("/home/paulchapron/dev/simplu3d/src/main/resources/fr/ign/cogit/simplu3d/data") ;
+
+      Path folder = new Path("/home/paulchapron/dev/simplu3d/src/main/resources/fr/ign/cogit/simplu3d/data");
       File FICHIER_ZONAGE = null;
-      File FICHIER_PARCELLE = new File( folder + "/"+  "parcelleIgloo.shp");
-      File FICHIER_VOIRIE = new File(folder  + "/"+ "route.shp");
-      File FICHIER_BATIMENTS = new File(folder  + "/"+ "batiment.shp");
-      File FICHIER_PRESC_LINEAIRE = new File(folder + "/"+  "PRESPCRIPTION_LIN.shp");
-      File FICHIER_PRESC_PONCTUELLE = null ; 
+      File FICHIER_PARCELLE = new File(folder + "/" + "parcelleIgloo.shp");
+      File FICHIER_VOIRIE = new File(folder + "/" + "route.shp");
+      File FICHIER_BATIMENTS = new File(folder + "/" + "batiment.shp");
+      File FICHIER_PRESC_LINEAIRE = new File(folder + "/" + "PRESPCRIPTION_LIN.shp");
+      File FICHIER_PRESC_PONCTUELLE = null;
       File FICHIER_PRESC_SURFACIQUE = null;
-      File FICHIER_DOC_URBA = new File (folder + "/"+"DOC_URBA.shp" );
-     
-        
-      
-      
-      env=LoaderSHP.load(null, FICHIER_DOC_URBA,FICHIER_ZONAGE, FICHIER_PARCELLE, FICHIER_VOIRIE,
-          FICHIER_BATIMENTS, FICHIER_PRESC_PONCTUELLE, FICHIER_PRESC_LINEAIRE,
-          FICHIER_PRESC_SURFACIQUE, null);
-      
-   
-      System.out.println(env.getBpU().size() + " parcelle(s) à simuler" );
-      
-      
+      File FICHIER_DOC_URBA = new File(folder + "/" + "DOC_URBA.shp");
+
+
+      env = LoaderSHP.load(null, FICHIER_DOC_URBA, FICHIER_ZONAGE, FICHIER_PARCELLE, FICHIER_VOIRIE,
+              FICHIER_BATIMENTS, FICHIER_PRESC_PONCTUELLE, FICHIER_PRESC_LINEAIRE,
+              FICHIER_PRESC_SURFACIQUE, null);
+
+
+      System.out.println(env.getBpU().size() + " parcelle(s) à simuler");
+
+
       BasicPropertyUnit bPU = env.getBpU().get(0);
-     
 
-      
-    
+
       // il faut d'abord créer la config pour y coller la fonction d'optim 
-      
-      
-       
-      
-
-      
-      
-      
-    // Select a parcel on which generation is proceeded
-    //BasicPropertyUnit bPU = env.getBpU().get(17);
-
-    // Instantiation of the sampler
-    OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();
-
-    // Rules parameters.8
-    // Distance to road
-    double distReculVoirie = 1;
-    // Distance to bottom of the parcel
-    double distReculFond = 1;
-    // Distance to lateral parcel limits
-    double distReculLat = 2;
-    // Distance between two buildings of a parcel
-    double distanceInterBati = 0;
-    // Maximal ratio built area
-    double maximalCES = 0.9;
-
-    // Instantiation of the rule checker
-    SamplePredicate<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new SamplePredicate<>(
-            bPU, distReculVoirie, distReculFond, distReculLat, distanceInterBati, maximalCES);
-
-    
-    
-    
-    // Run of the optimisation on a parcel with the predicate
-    // and a specifi empty configuration embedding compacity 
-    
-    Geometry geombPU =  AdapterFactory.toGeometry(new GeometryFactory(), bPU.getGeom());
-    GraphConfiguration<Cuboid> compacityConfig =  create_configurationCompacity(p, geombPU, bPU);
-    
 
 
-//    BasicCuboidOptimizer< Cuboid> bco = new BasicCuboidOptimizer<>() ;
-//    GraphConfiguration<Cuboid> confQuimarche  = bco.create_configuration(p, geombPU,bPU);
-  //GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred, confQuimarche);
-    
-    
-    GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred, compacityConfig);
-    
-    
-    
-    
-    
-    System.out.println("dans la parcelle" + bPU.getId()+ "il y a" + cc.size()+ "cuboides" );
-    
+      // Select a parcel on which generation is proceeded
+      //BasicPropertyUnit bPU = env.getBpU().get(17);
 
-    
-    
-    
-    // Writting the output
-    String pathCourant = p.get("result").toString() + "out_"+ bPU.getId() +".shp";
-    SaveGeneratedObjects.saveShapefile(pathCourant, cc, bPU.getId(), 0);
+      // Instantiation of the sampler
+      OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();
 
-     
-    
-    
-    
-    System.out.println("merging ");
-    
-    MergeCuboid recal = new MergeCuboid();
-    
-    // on récupère les cubes du graph
-   List<Cuboid> listCubz= cc.getGraph().vertexSet() .stream().map(x -> x.getValue()).collect(Collectors.toList());
-   // on transforme 
-   IFeatureCollection<IFeature> CubzfeatColl= new FT_FeatureCollection<>();
-   for (Cuboid cucube : listCubz) {
-     CubzfeatColl.add((IFeature)cucube);
-   }
-   
-     
-    //merge a partir d'un groupe de cuboides
-    IFeature mergedCubz = recal.mergeAGroupOfCuboid(CubzfeatColl,  0, 0.05, 0.001);    
- 
-    
-    
-  System.out.println("Surface" + recal.getSurface());
-  System.out.println("Energie" + cc.getEnergy());
-  System.out.println("ratio" + cc.getEnergy()/recal.getSurface());
-    
-    SDPCalc sdpcalc = new SDPCalc();
-    Double surfDePlancher = sdpcalc.process(cc.getGraph().vertexSet().stream().map(x ->x.getValue()).collect(Collectors.toList()));
-    
-    //NB : dans notre cas , volume= unary + binary 
-    Double homogene_A_volume = cc.getBinaryEnergy() + cc.getUnaryEnergy();
-    
-    System.out.println( bPU.getId()+","+ cc.size()+","+recal.getSurface()+","+homogene_A_volume+","+surfDePlancher);
+      // Rules parameters.8
+      // Distance to road
+      double distReculVoirie = 1;
+      // Distance to bottom of the parcel
+      double distReculFond = 1;
+      // Distance to lateral parcel limits
+      double distReculLat = 2;
+      // Distance between two buildings of a parcel
+      double distanceInterBati = 0;
+      // Maximal ratio built area
+      double maximalCES = 0.9;
 
-    
-    System.out.println("that's all folks");
+      // Instantiation of the rule checker
+      SamplePredicate<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new SamplePredicate<>(
+              bPU, distReculVoirie, distReculFond, distReculLat, distanceInterBati, maximalCES);
 
-    
-  } catch (Exception e) {
-    // catch block pour l'env
-    e.printStackTrace();
-  }
 
-    
+      // Run of the optimisation on a parcel with the predicate
+      // and a specifi empty configuration embedding compacity
+
+      Geometry geombPU = AdapterFactory.toGeometry(new GeometryFactory(), bPU.getGeom());
+      GraphConfiguration<Cuboid> compacityConfig = create_configurationCompacity(p, geombPU, bPU);
+
+
+      //BasicCuboidOptimizer< Cuboid> bco = new BasicCuboidOptimizer<>() ;
+      //GraphConfiguration<Cuboid> confQuimarche  = bco.create_configuration(p, geombPU,bPU);
+      //GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred, confQuimarche);
+
+
+      GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred, compacityConfig);
+
+
+      System.out.println("dans la parcelle" + bPU.getId() + "il y a" + cc.size() + "cuboides");
+
+
+      // Writting the output
+      String pathCourant = p.get("result").toString() + "out_" + bPU.getId() + ".shp";
+      SaveGeneratedObjects.saveShapefile(pathCourant, cc, bPU.getId(), 0);
+
+
+      System.out.println("merging ");
+
+      MergeCuboid recal = new MergeCuboid();
+
+      // on récupère les cubes du graph
+      List<Cuboid> listCubz = cc.getGraph().vertexSet().stream().map(GraphVertex::getValue).toList();
+      // on transforme
+      IFeatureCollection<IFeature> CubzfeatColl = new FT_FeatureCollection<>();
+      CubzfeatColl.addAll(listCubz);
+
+
+      //merge a partir d'un groupe de cuboides
+      /*IFeature mergedCubz = */recal.mergeAGroupOfCuboid(CubzfeatColl, 0, 0.05, 0.001);
+
+
+      System.out.println("Surface" + recal.getSurface());
+      System.out.println("Energie" + cc.getEnergy());
+      System.out.println("ratio" + cc.getEnergy() / recal.getSurface());
+
+      SDPCalc sdpcalc = new SDPCalc();
+      double surfDePlancher = sdpcalc.process(cc.getGraph().vertexSet().stream().map(GraphVertex::getValue).collect(Collectors.toList()));
+
+      //NB : dans notre cas , volume= unary + binary
+      double homogene_A_volume = cc.getBinaryEnergy() + cc.getUnaryEnergy();
+
+      System.out.println(bPU.getId() + "," + cc.size() + "," + recal.getSurface() + "," + homogene_A_volume + "," + surfDePlancher);
+
+
+      System.out.println("that's all folks");
+
+
+    } catch (Exception e) {
+      // catch block pour l'env
+      log.error("e: ", e);
+    }
     System.exit(0);
-    
-  }  
 
-  
-
-public static GraphConfiguration<Cuboid> create_configurationCompacity(SimpluParameters p, Geometry geom, BasicPropertyUnit bpu) {
-  // Énergie constante : énergie de création d'un cuboide  
-  ConstantEnergy<Cuboid, Cuboid> energyCreation = new ConstantEnergy<Cuboid, Cuboid>(p.getDouble("energy"));
-  
-  
-  // Énergie constante : pondération de l'intersection
-    ConstantEnergy<Cuboid, Cuboid> ponderationVolume = new ConstantEnergy<Cuboid, Cuboid>(
-      p.getDouble("ponderation_volume"));
-  
-  // Énergie unaire : aire dans la parcelle
-  UnaryEnergy<Cuboid> energyVolume = new VolumeUnaryEnergy<Cuboid>();
-  
-  // Multiplication de l'énergie d'intersection et de l'aire
-  UnaryEnergy<Cuboid> energyVolumePondere = new MultipliesUnaryEnergy<Cuboid>(ponderationVolume, energyVolume);
-
-  // On retire de l'énergie de création, l'énergie de l'aire
-  UnaryEnergy<Cuboid> u3 = new MinusUnaryEnergy<Cuboid>(energyCreation, energyVolumePondere);
-
-  double ponderationExt = p.getDouble("ponderation_difference_ext");
-
-  UnaryEnergy<Cuboid> unaryEnergy;
-
-  if (ponderationExt != 0) {
-    // Énergie constante : pondération de la différence
-    ConstantEnergy<Cuboid, Cuboid> ponderationDifference = new ConstantEnergy<Cuboid, Cuboid>(
-        p.getDouble("ponderation_difference_ext"));
-    // On ajoute l'énergie de différence : la zone en dehors de la parcelle
-    UnaryEnergy<Cuboid> u4 = new DifferenceVolumeUnaryEnergy<Cuboid>(geom);
-    UnaryEnergy<Cuboid> u5 = new MultipliesUnaryEnergy<Cuboid>(ponderationDifference, u4);
-    unaryEnergy = new PlusUnaryEnergy<Cuboid>(u3, u5);
-  } else {
-    unaryEnergy = u3;
   }
 
-  // Énergie binaire : intersection entre deux rectangles
-  ConstantEnergy<Cuboid, Cuboid> c3 = new ConstantEnergy<Cuboid, Cuboid>(p.getDouble("ponderation_volume_inter"));
-  BinaryEnergy<Cuboid, Cuboid> b1 = new IntersectionVolumeBinaryEnergy<Cuboid>();
-  BinaryEnergy<Cuboid, Cuboid> binaryEnergy = new MultipliesBinaryEnergy<Cuboid, Cuboid>(c3, b1);
-  
-  //Energie de la collection,   fonction de la compacite 
-   CollectionEnergy<Cuboid>compacite= new CompacityCollectionEnergy<Cuboid>();
-       
-   
+
+  public static GraphConfiguration<Cuboid> create_configurationCompacity(SimpluParameters p, Geometry geom, BasicPropertyUnit bpu) {
+    // Énergie constante : énergie de création d'un cuboide
+    ConstantEnergy<Cuboid, Cuboid> energyCreation = new ConstantEnergy<>(p.getDouble("energy"));
+
+
+    // Énergie constante : pondération de l'intersection
+    ConstantEnergy<Cuboid, Cuboid> ponderationVolume = new ConstantEnergy<>(
+            p.getDouble("ponderation_volume"));
+
+    // Énergie unaire : aire dans la parcelle
+    UnaryEnergy<Cuboid> energyVolume = new VolumeUnaryEnergy<>();
+
+    // Multiplication de l'énergie d'intersection et de l'aire
+    UnaryEnergy<Cuboid> energyVolumePondere = new MultipliesUnaryEnergy<>(ponderationVolume, energyVolume);
+
+    // On retire de l'énergie de création, l'énergie de l'aire
+    UnaryEnergy<Cuboid> u3 = new MinusUnaryEnergy<>(energyCreation, energyVolumePondere);
+
+    double ponderationExt = p.getDouble("ponderation_difference_ext");
+
+    UnaryEnergy<Cuboid> unaryEnergy;
+
+    if (ponderationExt != 0) {
+      // Énergie constante : pondération de la différence
+      ConstantEnergy<Cuboid, Cuboid> ponderationDifference = new ConstantEnergy<>(
+              p.getDouble("ponderation_difference_ext"));
+      // On ajoute l'énergie de différence : la zone en dehors de la parcelle
+      UnaryEnergy<Cuboid> u4 = new DifferenceVolumeUnaryEnergy<>(geom);
+      UnaryEnergy<Cuboid> u5 = new MultipliesUnaryEnergy<>(ponderationDifference, u4);
+      unaryEnergy = new PlusUnaryEnergy<>(u3, u5);
+    } else {
+      unaryEnergy = u3;
+    }
+
+    // Énergie binaire : intersection entre deux rectangles
+    ConstantEnergy<Cuboid, Cuboid> c3 = new ConstantEnergy<>(p.getDouble("ponderation_volume_inter"));
+    BinaryEnergy<Cuboid, Cuboid> b1 = new IntersectionVolumeBinaryEnergy<>();
+    BinaryEnergy<Cuboid, Cuboid> binaryEnergy = new MultipliesBinaryEnergy<>(c3, b1);
+
+    //Energie de la collection,   fonction de la compacite
+    CollectionEnergy<Cuboid> compacite = new CompacityCollectionEnergy<>();
+
+
 // Énergie constante : pondération de la compacité de la collection
-   ConstantEnergy<Cuboid, Cuboid> ponderationCompacite = new ConstantEnergy<Cuboid, Cuboid>(
-       p.getDouble("ponderation_compacity"));
-   ;
-   
-   CollectionEnergy<Cuboid>compacityWeighted = new MultipliesCollectionEnergy<Cuboid>(ponderationCompacite, compacite);
-   
-   
-   
-   
-  // empty initial configuration*/
-  //GraphConfiguration<Cuboid> conf = new GraphConfiguration<>(unaryEnergy, binaryEnergy,compacityWeighted);
-  GraphConfiguration<Cuboid> conf = new GraphConfiguration<>(unaryEnergy, binaryEnergy, compacityWeighted);
-  
-  return conf;
-}
-      
-  
+    ConstantEnergy<Cuboid, Cuboid> ponderationCompacite = new ConstantEnergy<>(
+            p.getDouble("ponderation_compacity"));
+
+    CollectionEnergy<Cuboid> compacityWeighted = new MultipliesCollectionEnergy<>(ponderationCompacite, compacite);
+
+
+    // empty initial configuration*/
+    //GraphConfiguration<Cuboid> conf = new GraphConfiguration<>(unaryEnergy, binaryEnergy,compacityWeighted);
+
+      return new GraphConfiguration<>(unaryEnergy, binaryEnergy, compacityWeighted);
+  }
+
+
 }

@@ -102,7 +102,7 @@ public class SDPCalc {
 
 	public double process(List<? extends AbstractSimpleBuilding> cubes) {
 		double sdp = 0;
-		CuboidGroupCreation<AbstractSimpleBuilding> cGC = new CuboidGroupCreation<AbstractSimpleBuilding>();
+		CuboidGroupCreation<AbstractSimpleBuilding> cGC = new CuboidGroupCreation<>();
 		List<List<AbstractSimpleBuilding>> lGroupes = cGC.createGroup(cubes, 0);
 		// System.out.println("nb groupes formé " + lGroupes.size());
 		for (List<AbstractSimpleBuilding> g : lGroupes)
@@ -117,7 +117,7 @@ public class SDPCalc {
 
 	public double processSurface(List<? extends AbstractSimpleBuilding> cubes) {
 		double sdp = 0;
-		CuboidGroupCreation<AbstractSimpleBuilding> cGC = new CuboidGroupCreation<AbstractSimpleBuilding>();
+		CuboidGroupCreation<AbstractSimpleBuilding> cGC = new CuboidGroupCreation<>();
 		List<List<AbstractSimpleBuilding>> lGroupes = cGC.createGroup(cubes, 0);
 		// System.out.println("nb groupes formé " + lGroupes.size());
 		for (List<AbstractSimpleBuilding> g : lGroupes) {
@@ -131,20 +131,16 @@ public class SDPCalc {
 	/**
 	 * If true = sdp if false = surface 2D
 	 * 
-	 * @param group
-	 * @param sdp_or_surface
-	 * @param nbStoreyAttic : a ratio of the last floor if it won't contain some countable surface de plancher
-	 * @param ratioAttic : ratio of the last storey that is set as an attic. 
-	 * @return
-	 */
+	 * @param group buildings
+	 * @param sdp_or_surface If true = sdp if false = surface 2D
+     */
 	private double sdpGroup(List<? extends AbstractSimpleBuilding> group, boolean sdp_or_surface) {
 		// The list of already met pair
 		List<GeomHeightPair> aCurrent = new ArrayList<>();
 
-		List<AbstractSimpleBuilding> lCurrentGroup = new ArrayList<>();
-		lCurrentGroup.addAll(group);
+        List<AbstractSimpleBuilding> lCurrentGroup = new ArrayList<>(group);
 		// We initial with the first element of the list
-		AbstractSimpleBuilding cuboid = lCurrentGroup.remove(0);
+		AbstractSimpleBuilding cuboid = lCurrentGroup.removeFirst();
 		aCurrent.add(new GeomHeightPair(reducer.reduce(cuboid.toGeometry()), cuboid.height));
 
 		// For each building
@@ -224,7 +220,7 @@ public class SDPCalc {
 		return sdp;
 	}
 
-	private List<List<GeomHeightPair>> geometryPairByGroup = new ArrayList<>();
+	private final List<List<GeomHeightPair>> geometryPairByGroup = new ArrayList<>();
 
 	public double getFloorHeight() {
 		return floorHeight;

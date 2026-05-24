@@ -5,7 +5,7 @@
 
 	<groupId>io.github.ignf</groupId>
 	<artifactId>simplu3d</artifactId>
-	<version>1.4</version>
+	<version>1.4.1</version>
 	<packaging>jar</packaging>
 	<name>simplu3d</name>
 	<url>https://github.com/SimPLU3D/simplu3d</url>
@@ -68,7 +68,7 @@
 				<version>2.19</version>
 				<configuration>
 					<environmentVariables>
-						<PATH>${basedir}\lib\native_libraries\windows-amd64\</PATH>
+						<PATH>${project.basedir}\lib\native_libraries\windows-amd64\</PATH>
 					</environmentVariables>
 					<excludes>
 						<exclude>**/SimulatorTest.java</exclude>
@@ -80,9 +80,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.4</version>
 				<configuration>
-					<compilerVersion>1.8</compilerVersion>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>21</source>
+					<target>21</target>
 					<includes>
 						<include>**/*</include>
 					</includes>
@@ -160,9 +159,11 @@
 				<version>${maven.javadoc.plugin}</version>
 				<configuration>
 					<doclint>all,-missing</doclint>
+<!--
 					<additionalparam>-header &apos;&lt;script
 						type=&quot;text/javascript&quot;
 						src=&quot;http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML&quot;&gt;&lt;/script&gt;&apos;</additionalparam>
+-->
 				</configuration>
 				<executions>
 					<execution>
@@ -186,7 +187,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-gpg-plugin</artifactId>
-				<version>1.5</version>
+				<version>3.2.8</version>
 				<executions>
 					<execution>
 						<id>sign-artifacts</id>
@@ -195,8 +196,52 @@
 							<goal>sign</goal>
 						</goals>
 						<configuration>
+							<!--suppress UnresolvedMavenProperty -->
 							<keyname>${my.gpg.keyname}</keyname>
+							<!--suppress UnresolvedMavenProperty -->
 							<passphraseServerId>${my.gpg.keyname}</passphraseServerId>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.6.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<!-- <minimizeJar>true</minimizeJar> -->
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
+							<!-- Additional configuration. -->
+							<shadedArtifactAttached>true</shadedArtifactAttached>
+							<transformers>
+								<transformer
+										implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<manifestEntries>
+										<Specification-Title>${artifactId}</Specification-Title>
+										<Specification-Version>${version}</Specification-Version>
+										<Specification-Vendor>IGN</Specification-Vendor>
+										<Implementation-Title>${artifactId}</Implementation-Title>
+										<Implementation-Version>${version}</Implementation-Version>
+										<Implementation-Vendor>IGN</Implementation-Vendor>
+									</manifestEntries>
+								</transformer>
+								<transformer
+										implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+							</transformers>
 						</configuration>
 					</execution>
 				</executions>
@@ -248,7 +293,7 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
-							<argLine>-Djava.library.path=${basedir}/lib/native_libraries/linux-i386</argLine>
+							<argLine>-Djava.library.path=${project.basedir}/lib/native_libraries/linux-i386</argLine>
 							<skipTests>false</skipTests>
 						</configuration>
 					</plugin>
@@ -271,7 +316,7 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
-							<argLine>-Djava.library.path=${basedir}/lib/native_libraries/linux-amd64</argLine>
+							<argLine>-Djava.library.path=${project.basedir}/lib/native_libraries/linux-amd64</argLine>
 							<skipTests>false</skipTests>
 						</configuration>
 					</plugin>
@@ -295,7 +340,7 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
-							<argLine>-Djava.library.path=${basedir}/lib/native_libraries/windows-amd64</argLine>
+							<argLine>-Djava.library.path=${project.basedir}/lib/native_libraries/windows-amd64</argLine>
 							<skipTests>false</skipTests>
 						</configuration>
 					</plugin>
@@ -318,7 +363,7 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
-							<argLine>-Djava.library.path=${basedir}/lib/native_libraries/windows-i586</argLine>
+							<argLine>-Djava.library.path=${project.basedir}/lib/native_libraries/windows-i586</argLine>
 							<skipTests>false</skipTests>
 						</configuration>
 					</plugin>
