@@ -229,11 +229,11 @@
 								<transformer
 										implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<manifestEntries>
-										<Specification-Title>${artifactId}</Specification-Title>
-										<Specification-Version>${version}</Specification-Version>
+										<Specification-Title>${project.artifactId}</Specification-Title>
+										<Specification-Version>${project.version}</Specification-Version>
 										<Specification-Vendor>IGN</Specification-Vendor>
-										<Implementation-Title>${artifactId}</Implementation-Title>
-										<Implementation-Version>${version}</Implementation-Version>
+										<Implementation-Title>${project.artifactId}</Implementation-Title>
+										<Implementation-Version>${project.version}</Implementation-Version>
 										<Implementation-Vendor>IGN</Implementation-Vendor>
 									</manifestEntries>
 								</transformer>
