@@ -1,12 +1,8 @@
 package fr.ign.cogit.simplu3d.rjmcmc.generic.visitor;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
-import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
-import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
 import fr.ign.cogit.simplu3d.util.SimpluParameters;
@@ -38,10 +34,9 @@ public class PrepareVisitors<C extends ISimPLU3DPrimitive> {
 		return countV;
 	}
 
-	public CompositeVisitor<GraphConfiguration<C>, BirthDeathModification<C>> prepare(SimpluParameters p, int id) {
+	public CompositeVisitor<GraphConfiguration<C>, BirthDeathModification<C>> prepare(SimpluParameters p, String id) {
 		List<Visitor<GraphConfiguration<C>, BirthDeathModification<C>>> list = new ArrayList<>();
-		
-			list.addAll(lSupplementaryVisitors);
+		list.addAll(lSupplementaryVisitors);
 		
 		if (p.getBoolean("outputstreamvisitor")) {
 			Visitor<GraphConfiguration<C>, BirthDeathModification<C>> visitor = new OutputStreamVisitor<>(System.out);
@@ -52,39 +47,6 @@ public class PrepareVisitors<C extends ISimPLU3DPrimitive> {
 			ShapefileVisitor<C, GraphConfiguration<C>, BirthDeathModification<C>> shpVisitor = new ShapefileVisitor<>(
 					p.get("result").toString() + "result");
 			list.add(shpVisitor);
-		}
-
-		if (p.getBoolean("visitorviewer")) {
-			Color c = new Color(p.getInteger("filmvisitorr"), p.getInteger("filmvisitorg"),
-
-					p.getInteger("filmvisitorb"));
-
-			ViewerVisitor<C, GraphConfiguration<C>, BirthDeathModification<C>> visitorViewer = new ViewerVisitor<>(env,"" + id, p,c);
-			list.add(visitorViewer);
-		}
-
-		if (p.getBoolean("statsvisitor")) {
-			StatsVisitor<C, GraphConfiguration<C>, BirthDeathModification<C>> statsViewer = new StatsVisitor<>(
-					"Énergie");
-			list.add(statsViewer);
-		}
-
-		if (p.getBoolean("filmvisitor")) {
-			IDirectPosition dpCentre = new DirectPosition(p.getDouble("filmvisitorx"), p.getDouble("filmvisitory"),
-					p.getDouble("filmvisitorz"));
-
-			Vecteur viewTo = new Vecteur(p.getDouble("filmvisitorvectx"), p.getDouble("filmvisitorvecty"),
-					p.getDouble("filmvisitorvectz")
-
-			);
-
-			Color c = new Color(p.getInteger("filmvisitorr"), p.getInteger("filmvisitorg"),
-
-					p.getInteger("filmvisitorb"));
-
-			FilmVisitor<C, GraphConfiguration<C>, BirthDeathModification<C>> visitorViewerFilmVisitor = new FilmVisitor<>(
-					dpCentre, viewTo, p.getString("result"), c, p,env);
-			list.add(visitorViewerFilmVisitor);
 		}
 
 		if (p.getBoolean("csvvisitorend")) {

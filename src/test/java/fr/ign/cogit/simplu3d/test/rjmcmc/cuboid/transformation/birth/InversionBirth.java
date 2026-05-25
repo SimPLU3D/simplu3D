@@ -1,42 +1,40 @@
 package fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation.birth;
 
+import fr.ign.cogit.simplu3d.distribution.EquiSurfaceDistribution;
+import fr.ign.cogit.simplu3d.io.feature.FeatureType;
+import fr.ign.cogit.simplu3d.model.AbstractUrbanFeature;
+import fr.ign.common.conversion.FromGeomToSurface;
+import fr.ign.common.io.ShapefileReader;
+import fr.ign.common.io.ShapefileWriter;
+import org.geotools.feature.DefaultFeatureCollection;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.triangulate.polygon.ConstrainedDelaunayTriangulator;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-import fr.ign.cogit.geoxygene.api.feature.IFeature;
-import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
-import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
-import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
-import fr.ign.cogit.geoxygene.contrib.cartetopo.Face;
-import fr.ign.cogit.geoxygene.contrib.delaunay.TriangulationJTS;
-import fr.ign.cogit.geoxygene.convert.FromGeomToSurface;
-import fr.ign.cogit.geoxygene.feature.DefaultFeature;
-import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
-import fr.ign.cogit.geoxygene.sig3d.distribution.EquiSurfaceDistribution;
-import fr.ign.cogit.geoxygene.sig3d.topology.TriangulationLoader;
-import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
-import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
-import fr.ign.cogit.geoxygene.util.conversion.ShapefileReader;
-import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 /**
- * 
+ *
  *        This software is released under the licence CeCILL
- * 
+ * <p>
  *        see LICENSE.TXT
- * 
- *        see http://www.cecill.info/
- * 
- * 
- * 
+ * <p>
+ *        see <a href="http://www.cecill.info/">...</a>
+ * <p>
+ *
+ *
  * copyright IGN
- * 
+ *
  * @author Brasebin Mickaël
- * 
+ *
  * @version 1.0
  **/
 public class InversionBirth {
-
 	/**
 	 * Class to test if the birth operation is reversible
 	 * @param args ont used
@@ -46,66 +44,42 @@ public class InversionBirth {
 
     int nbSample = 10000;
 
-    String folder = "E:/mbrasebin/Donnees/Strasbourg/DistribTest/";
+    URL url = InversionBirth.class.getClassLoader().getResource("fr/ign/cogit/simplu3d/data/parcelle.shp");
 
-    String file = folder + "parcelle.shp";
-    String fileOut = folder + "out.shp";
+    String fileOut = "out.shp";
 
-    IFeatureCollection<IFeature> feat = ShapefileReader.read(file);
+    DefaultFeatureCollection feat = ShapefileReader.read(url);
 
-    if (feat == null || feat.isEmpty()) return;
-		List<IOrientableSurface> lOS = FromGeomToSurface.convertGeom(feat.get(1)
-        .getGeom());
+    if (feat.isEmpty()) return;
+    List<Polygon> lOS = FromGeomToSurface.convertGeom((Geometry) feat.iterator().next().getDefaultGeometry());
+    Polygon pol = lOS.getFirst();
+    ConstrainedDelaunayTriangulator triangulation = new ConstrainedDelaunayTriangulator(pol);
+    Geometry result = triangulation.getResult();
 
-    TriangulationJTS triangulation = TriangulationLoader
-        .generate((IPolygon) lOS.get(0));
-
-    triangulation.triangule();
-
-    IMultiSurface<IOrientableSurface> iMS = new GM_MultiSurface<>();
-
-    for (Face f : triangulation.getPopFaces()) {
-
-      if (lOS.get(0).contains(f.getGeom())) {
-        iMS.add(f.getGeometrie());
-
-     //   break;
-      }
-
+    List<Polygon> triangles = new ArrayList<>();
+    for (int i = 0; i < result.getNumGeometries(); i++) {
+      if (pol.contains(result.getGeometryN(i)))
+        triangles.add((Polygon) result.getGeometryN(i));
     }
-
+    MultiPolygon iMS = pol.getFactory().createMultiPolygon(triangles.toArray(new Polygon[0]));
     EquiSurfaceDistribution eq = new EquiSurfaceDistribution(iMS);
-
-    IFeatureCollection<IFeature> featCollOut = new FT_FeatureCollection<>();
-
+    Collection<AbstractUrbanFeature> featCollOut = new ArrayList<>();
     for (int i = 0; i < nbSample; i++) {
-
       double rand1 = Math.random();
       double rand2 = Math.random();
-
-      IDirectPosition dpCal = eq.sample(rand1, rand2);
-
-      featCollOut.add(new DefaultFeature(new GM_Point(dpCal)));
-      
-      
-      IDirectPosition dpInv = eq.inversample(dpCal.getX(), dpCal.getY());
-      
+      Coordinate dpCal = eq.sample(rand1, rand2);
+      AbstractUrbanFeature feature = new AbstractUrbanFeature();
+      feature.setGeometry(pol.getFactory().createPoint(dpCal));
+      featCollOut.add(feature);
+      Coordinate dpInv = eq.inversample(dpCal.getX(), dpCal.getY());
       if((Math.abs( dpInv.getX() - eq.getCorrectedRand()) > 0.0001) || (0.0001 < Math.abs(dpInv.getY() - rand2))){
-          
-
-        
         System.out.println("Error X : " + dpInv.getX() + "        " + eq.getCorrectedRand());
         System.out.println("Error Y : " + dpInv.getY() + "        " + rand2);
       }
-      
-      
-
     }
-
     System.out.println(featCollOut.size());
-
-    ShapefileWriter.write(featCollOut, fileOut);
-
+    FeatureType ft = new FeatureType("Birth");
+    ft.setGeometryType("Point");
+    ShapefileWriter.write(featCollOut, ft, feat.getSchema().getCoordinateReferenceSystem(), fileOut);
   }
-
 }

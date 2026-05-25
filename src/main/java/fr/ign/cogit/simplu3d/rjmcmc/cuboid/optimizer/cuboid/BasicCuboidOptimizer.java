@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
+import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IEnvelope;
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.builder.CuboidBuilder;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
@@ -50,7 +49,7 @@ public class BasicCuboidOptimizer<C extends Cuboid> extends DefaultSimPLU3DOptim
 	public Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> create_sampler(RandomGenerator rng,
 			SimpluParameters p, BasicPropertyUnit bpU,
 			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred) {
-		return create_sampler(rng, p, bpU, pred, bpU.getGeom());
+		return create_sampler(rng, p, bpU, pred, bpU.getGeometry());
 	}
 
 
@@ -66,9 +65,8 @@ public class BasicCuboidOptimizer<C extends Cuboid> extends DefaultSimPLU3DOptim
 	public Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> create_sampler(RandomGenerator rng,
 			SimpluParameters p, BasicPropertyUnit bpU,
 			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred,
-			IGeometry geom) {
-		
-		
+			Geometry geom) {
+
 		//Step 1 : Creation of the object that will control the birth and death of cuboid
 		
 		//Getting minimal and maximal dimension from the parameter file
@@ -91,22 +89,18 @@ public class BasicCuboidOptimizer<C extends Cuboid> extends DefaultSimPLU3DOptim
 		}
 
 		if (samplingSurface == null) {
-			samplingSurface = bpU.getGeom();
+			samplingSurface = bpU.getGeometry();
 		}
-		IEnvelope env = samplingSurface.getEnvelope();
-		
+		Envelope env = samplingSurface.getEnvelopeInternal();
 		//Instanciation of the object dedicated for the creation of new cuboid during the process
 		//Passing the building, the class (TransformToSurface) that will make 
 		// the transformation between random numbers and coordinates inside the samplingSurface
 		UniformBirth<Cuboid> birth = new UniformBirth<Cuboid>(rng,
-				new Cuboid(env.minX(), env.minY(), minlen, minwid, minheight, 0),
-				new Cuboid(env.maxX(), env.maxY(), maxlen, maxwid, maxheight, Math.PI), builder,
+				new Cuboid(env.getMinX(), env.getMinY(), minlen, minwid, minheight, 0),
+				new Cuboid(env.getMaxX(), env.getMaxY(), maxlen, maxwid, maxheight, Math.PI), builder,
 				TransformToSurface.class, samplingSurface);
 		
-
-		
 		//Step 2  : Listing the modification kernel
-
 		//List of kernel for modification during the process
 		List<Kernel<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> kernels = new ArrayList<>();
 		

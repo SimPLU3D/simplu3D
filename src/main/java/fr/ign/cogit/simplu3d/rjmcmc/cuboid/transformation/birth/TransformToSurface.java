@@ -2,14 +2,11 @@ package fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.logging.Logger;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.transform.SimplePolygonTransform;
 import fr.ign.geometry.transform.PolygonTransform;
 import fr.ign.rjmcmc.kernel.Transform;
@@ -28,7 +25,7 @@ public class TransformToSurface implements Transform {
 	/**
 	 * Logger.
 	 */
-	static Logger LOGGER = LogManager.getLogger(TransformToSurface.class.getName());
+	static Logger LOGGER = Logger.getLogger(TransformToSurface.class.getName());
 	
 	
 	private PolygonTransform polygonTransform;
@@ -47,8 +44,8 @@ public class TransformToSurface implements Transform {
 		return isValid;
 	}
 
-	public TransformToSurface(double[] d, double[] v, IGeometry geom) throws Exception {
-		Geometry pp = AdapterFactory.toGeometry(factory, geom);
+	public TransformToSurface(double[] d, double[] v, Geometry geom) throws Exception {
+		Geometry pp = geom;
 
 		Iterator<Double> testedSnapping = Arrays.asList(0.1, 0.001, 0.0).iterator();
 

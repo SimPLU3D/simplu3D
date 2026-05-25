@@ -1,6 +1,7 @@
 package fr.ign.cogit.simplu3d.exec;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -40,13 +41,13 @@ import fr.ign.mpp.configuration.GraphConfiguration;
  *
  */
 public class BlockSimulator {
-	public record SimulationResult (GraphConfiguration<Cuboid> configuration, int id) {}
+	public record SimulationResult (GraphConfiguration<Cuboid> configuration, String id) {}
 	public static Stream<SimulationResult> simulate(String configurationFileName, String dataFolderName) throws Exception {
 		// Load default environment (data are in resource directory)
 		//List<GraphConfiguration<Cuboid>> results = new ArrayList<>();
 		SimpluParameters p = new SimpluParametersJSON(new File(configurationFileName));
-		Environnement env = LoaderSHP.loadNoDTM(new File(dataFolderName));
-		return env.getBpU().stream().map(bPU -> {
+		Environnement env = LoaderSHP.loadNoDTM(new File(dataFolderName).toURI().toURL());
+		return env.getBpU().findAll().stream().map(bPU -> {
 			// Instantiation of the sampler
 			OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();
 
@@ -103,16 +104,26 @@ public class BlockSimulator {
 
 			MergeCuboid recal = new MergeCuboid();
 
-			/* IFeatureCollection<IFeature> fus = */recal.mergeFromShapefile(pathCourant, 0.0);
-			// System.out.println("Surface" + recal.getSurface());
+			/* IFeatureCollection<IFeature> fus = */
+            try {
+                recal.mergeFromShapefile(pathCourant, 0.0);
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+            // System.out.println("Surface" + recal.getSurface());
 			// System.out.println("Energie" + cc.getEnergy());
 			// System.out.println("ratio" + cc.getEnergy()/recal.getSurface());
 
 			SDPCalc sdpcalc = new SDPCalc();
 
-			double sdp = sdpcalc.process(pathCourant);
+            double sdp = 0;
+            try {
+                sdp = sdpcalc.process(pathCourant);
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
 
-			System.out.println(result.id + "," + result.configuration.size() + "," + recal.getSurface() + "," + result.configuration.getEnergy() + "," + sdp);
+            System.out.println(result.id + "," + result.configuration.size() + "," + recal.getSurface() + "," + result.configuration.getEnergy() + "," + sdp);
 		});
 		System.out.println("that's all folks");
 	}

@@ -2,14 +2,11 @@ package fr.ign.cogit.simplu3d.rjmcmc.trapezoid.geometry;
 
 import java.util.List;
 
+import fr.ign.common.util.Vecteur;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Polygon;
-
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
-import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
-import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
 
 /**
  * 
@@ -95,14 +92,13 @@ public class ParallelTrapezoid extends RightTrapezoid {
 			Vecteur v2 = new Vecteur(pts[3].x - pts[2].x,pts[3].y - pts[2].y);
 			v2.normalise();
 			v2 = v2.multConstante(length + length2);
-			IDirectPosition dp3 = v2.translate(new DirectPosition(pts[2].x, pts[2].y));
+			Coordinate dp3 = v2.translate(new Coordinate(pts[2].x, pts[2].y));
 			
 			
 			Vecteur v = new Vecteur(pts[0].x - pts[1].x,pts[0].y - pts[1].y);
 			v.normalise();
 			v = v.multConstante(length + length3);
-			IDirectPosition dp0 = v.translate(new DirectPosition(pts[1].x, pts[1].y));
-			
+			Coordinate dp0 = v.translate(new Coordinate(pts[1].x, pts[1].y));
 			
 			System.out.println("length + length2" + (length + length2));
 			System.out.println("length + length3" + (length + length3));

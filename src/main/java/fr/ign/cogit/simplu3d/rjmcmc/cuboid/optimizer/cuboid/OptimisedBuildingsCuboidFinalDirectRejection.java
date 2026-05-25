@@ -1,12 +1,11 @@
 package fr.ign.cogit.simplu3d.rjmcmc.cuboid.optimizer.cuboid;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Geometry;
 
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
@@ -27,62 +26,58 @@ import fr.ign.simulatedannealing.visitor.CompositeVisitor;
 import fr.ign.simulatedannealing.visitor.Visitor;
 
 /**
- * 
+ *
  * This software is released under the licence CeCILL
- * 
+ * <p>
  * see LICENSE.TXT
- * 
- * see http://www.cecill.info/
- * 
- * 
- * 
+ * <p>
+ * see <a href="http://www.cecill.info/">...</a>
+ * <p>
+ *
  * copyright IGN
- * 
+ *
  * @author Brasebin Mickaël
- * 
+ *
  * @version 1.0
  **/
 public class OptimisedBuildingsCuboidFinalDirectRejection extends BasicCuboidOptimizer<Cuboid> {
 
-	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, SimpluParameters p, Environnement env, int id,
-			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred) {
-		return this.process(bpu, p, env, id, pred,
-				new ArrayList<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>>());
+	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, SimpluParameters p, Environnement env, String id,
+			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred) throws MalformedURLException {
+		return this.process(bpu, p, env, id, pred, new ArrayList<>());
 	}
  
 
-   public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, SimpluParameters p, Environnement env, int id,
+   public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, SimpluParameters p, Environnement env, String id,
            ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred, 
-           GraphConfiguration<Cuboid> conf) {
+           GraphConfiguration<Cuboid> conf) throws MalformedURLException {
   // Géométrie de l'unité foncière sur laquelle porte la génération
-     IGeometry geom = bpu.generateGeom().buffer(1);
-       return this.process(bpu,geom, p, env, id, pred,
-               new ArrayList<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>>(), conf);
+     Geometry geom = bpu.generateGeom().buffer(1);
+       return this.process(bpu, geom, p, env, id, pred,
+               new ArrayList<>(), conf);
    }
 
 	
 	
-	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, IGeometry geom, SimpluParameters p,
-			Environnement env, int id,
-			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred) {
+	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, Geometry geom, SimpluParameters p,
+			Environnement env, String id,
+			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred) throws MalformedURLException {
 		return this.process(bpu, geom, p, env, id, pred,
-				new ArrayList<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>>());
+                new ArrayList<>());
 	}
 
-	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, SimpluParameters p, Environnement env, int id,
+	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, SimpluParameters p, Environnement env, String id,
 			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred,
-			List<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> lSupplementaryVisitors) {
+			List<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> lSupplementaryVisitors) throws MalformedURLException {
 		// Géométrie de l'unité foncière sur laquelle porte la génération
-		IGeometry geom = bpu.generateGeom().buffer(1);
+		Geometry geom = bpu.generateGeom().buffer(1);
 		return this.process(bpu, geom, p, env, id, pred, lSupplementaryVisitors);
-
 	}
-	
-	
-	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, IGeometry geom, SimpluParameters p,
-        Environnement env, int id,
+
+	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, Geometry geom, SimpluParameters p,
+        Environnement env, String id,
         ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred,
-        List<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> lSupplementaryVisitors){
+        List<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> lSupplementaryVisitors) throws MalformedURLException {
 	  return this.process(bpu,geom,p,env,id,pred,lSupplementaryVisitors,null);
 	}
 	
@@ -99,22 +94,20 @@ public class OptimisedBuildingsCuboidFinalDirectRejection extends BasicCuboidOpt
 	 * @param conf                   empty configuration (for custom energy functions) 
 	 * @return a set of cuboid as a graph
 	 */
-	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, IGeometry geom, SimpluParameters p,
-			Environnement env, int id,
+	public GraphConfiguration<Cuboid> process(BasicPropertyUnit bpu, Geometry geom, SimpluParameters p,
+			Environnement env, String id,
 			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred,
 			List<Visitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>>> lSupplementaryVisitors,
-			GraphConfiguration<Cuboid> conf) {
-
+			GraphConfiguration<Cuboid> conf) throws MalformedURLException {
 		// Sampler creation
-		Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> samp = create_sampler(Random.random(), p,
-				bpu, pred, geom);
-		
+		Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> samp = create_sampler(
+				Random.random(), p, bpu, pred, geom);
 		if(conf == null) {
-		try {
-			conf = create_configuration(p, AdapterFactory.toGeometry(new GeometryFactory(), bpu.getGeom()), bpu);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+			try {
+				conf = create_configuration(p, bpu.getGeometry(), bpu);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
 		// Temperature initialization
@@ -125,7 +118,8 @@ public class OptimisedBuildingsCuboidFinalDirectRejection extends BasicCuboidOpt
 		if (loadExistingConfig == 1) {
 			String configPath = p.get("config_shape_file").toString();
 			List<Cuboid> lCuboid = LoaderCuboid.loadFromShapeFile(configPath);
-			BirthDeathModification<Cuboid> m = conf.newModification();
+            assert conf != null;
+            BirthDeathModification<Cuboid> m = conf.newModification();
 			for (Cuboid c : lCuboid) {
 				m.insertBirth(c);
 			}
@@ -134,17 +128,12 @@ public class OptimisedBuildingsCuboidFinalDirectRejection extends BasicCuboidOpt
 			m.apply(conf);
 			System.out.println("First update OK");
 		}
-		
 		//The end test condition
 		end = create_end_test(p);
-
 		//The visitors initialisation
 		PrepareVisitors<Cuboid> pv = new PrepareVisitors<>(env, lSupplementaryVisitors);
 		CompositeVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> mVisitor = pv.prepare(p, id);
-		
-		
 		countV = pv.getCountV();
-		
 		//Optimization process
 		SimulatedAnnealing.optimize(Random.random(), conf, samp, sch, end, mVisitor);
 		return conf;
@@ -161,5 +150,4 @@ public class OptimisedBuildingsCuboidFinalDirectRejection extends BasicCuboidOpt
 	}
 
 	protected CountVisitor<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> countV = null;
-
 }

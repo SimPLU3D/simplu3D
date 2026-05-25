@@ -1,12 +1,11 @@
 package fr.ign.cogit.simplu3d.rjmcmc.generic.sampler;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.apache.commons.math3.distribution.AbstractRealDistribution;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import fr.ign.mpp.DirectSampler;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
@@ -21,25 +20,25 @@ import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.Temperature;
 
 /**
- * 
+ *
  *        This software is released under the licence CeCILL
- * 
+ * <p>
  *        see LICENSE.TXT
- * 
- *        see  http://www.cecill.info/
- * 
- * 
- * 
+ * <p>
+ *        see  <a href="http://www.cecill.info/">...</a>
+ * <p>
+ *
+ *
  * copyright IGN
- * 
+ *
  * @author Brasebin Mickaël
- * 
+ *
  * @version 1.0
  *
- * 
+ *
  * Sampler bloquant la diminution de la température si une configuration ne
  * vérifie pas les résutlats
- * 
+ *
  *
  * @param <O> the class of object to sample
  */
@@ -48,7 +47,7 @@ public class GreenSamplerBlockTemperature<O extends SimpleObject, C extends Abst
 	/**
 	 * Logger.
 	 */
-	static Logger LOGGER = LogManager.getLogger(GreenSamplerBlockTemperature.class
+	static Logger LOGGER = Logger.getLogger(GreenSamplerBlockTemperature.class
 			.getName());
 
 	public static Logger getLOGGER() {

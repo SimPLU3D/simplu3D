@@ -7,8 +7,6 @@ import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.operation.distance.DistanceOp;
 
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.geometry.ParallelTrapezoid;
 import fr.ign.mpp.kernel.ObjectBuilder;
 
@@ -18,13 +16,13 @@ public class ParallelRightTrapezoidBuilder implements ObjectBuilder<ParallelTrap
 	MultiLineString limits;
 	double factMult = 10;
 
-	public ParallelRightTrapezoidBuilder(IGeometry[] limits) {
+	public ParallelRightTrapezoidBuilder(Geometry[] limits) {
 		super();
 		factory = new GeometryFactory();
 		LineString[] lineStrings = new LineString[limits.length];
 		for (int i = 0; i < limits.length; i++) {
 			try {
-				lineStrings[i] = (LineString) AdapterFactory.toGeometry(factory, limits[i]);
+				lineStrings[i] = (LineString) limits[i];
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -36,7 +34,6 @@ public class ParallelRightTrapezoidBuilder implements ObjectBuilder<ParallelTrap
 		Coordinate coMax = geom.getCoordinates()[3];
 
 		factMult = DistanceOp.distance(factory.createPoint(coMin), factory.createPoint(coMax));
-
 	}
 
 	@Override

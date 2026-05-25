@@ -5,12 +5,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.util.logging.Logger;
 
 import fr.ign.parameters.Parameters;
-
 
 /**
  * 
@@ -34,7 +31,7 @@ public class ParametersPostgis extends Parameters {
   public final static String PARAMETERS_ID = "id";
   private ResultSet rs;
 
-  private Logger log = LogManager.getLogger(ParametersPostgis.class);
+  private Logger log = Logger.getLogger(ParametersPostgis.class.getName());
 
   public ParametersPostgis(String host, String port, String database, String user, String pw, int id) throws SQLException {
     String url = "jdbc:postgresql://" + host + ":" + port + "/" + database;
@@ -44,7 +41,7 @@ public class ParametersPostgis extends Parameters {
     rs = s.executeQuery(sql);
     boolean next = rs.next();
     if (!next) {
-      log.error("No parameters line found");
+      log.severe("No parameters line found");
       System.exit(1);
     }
     conn.close();

@@ -1,18 +1,19 @@
 package fr.ign.cogit.simplu3d.util.convert;
 
-import fr.ign.cogit.geoxygene.api.feature.IFeature;
-import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
-import fr.ign.cogit.geoxygene.feature.DefaultFeature;
-import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
-import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
+import fr.ign.cogit.simplu3d.io.feature.FeatureType;
+import fr.ign.cogit.simplu3d.model.AbstractUrbanFeature;
+import fr.ign.cogit.simplu3d.model.UrbanFeature;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.mpp.configuration.GraphConfiguration;
 import fr.ign.mpp.configuration.GraphVertex;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 public class ExportAsFeatureCollection {
 	GraphConfiguration<? extends AbstractSimpleBuilding> config;
-	int id = -1;
+	String id = "-1";
 	long seed = -1;
 	boolean exportId = false;
 	boolean exportSeed = false;
@@ -21,44 +22,55 @@ public class ExportAsFeatureCollection {
 		this.config = cc;
 	}
 
-	public ExportAsFeatureCollection(GraphConfiguration<? extends AbstractSimpleBuilding> cc, int id) {
+	public ExportAsFeatureCollection(GraphConfiguration<? extends AbstractSimpleBuilding> cc, String id) {
 		this.config = cc;
 		this.id = id;
 		this.exportId = true;
 	}
 
-	public ExportAsFeatureCollection(GraphConfiguration<? extends AbstractSimpleBuilding> cc, int id, long seed) {
+	public ExportAsFeatureCollection(GraphConfiguration<? extends AbstractSimpleBuilding> cc, String id, long seed) {
 		this.config = cc;
 		this.id = id;
 		this.seed = seed;
 		this.exportId = this.exportSeed = true;
 	}
 
-	public IFeatureCollection<IFeature> getFeatureCollection() {
-		IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
+	public FeatureType getFeatureType() {
+		FeatureType featureType = new FeatureType("SimPLU feature");
+		featureType.setGeometryType("Polygon");
+		if (this.exportId) {
+			featureType.addAttribute("idparc", "Integer");
+		}
+		featureType.addAttribute("centerX", "Double");
+		featureType.addAttribute("centerY", "Double");
+		featureType.addAttribute("width", "Double");
+		featureType.addAttribute("lenght", "Double");
+		featureType.addAttribute("height", "Double");
+		featureType.addAttribute("orient", "Double");
+		if (this.exportSeed) {
+			featureType.addAttribute("seed", "Long");
+		}
+		return featureType;
+	}
+	public Collection<UrbanFeature> getFeatureCollection() {
+		Collection<UrbanFeature> featC = new ArrayList<>();
 		for (GraphVertex<? extends AbstractSimpleBuilding> v : this.config.getGraph().vertexSet()) {
-
 			AbstractSimpleBuilding build = v.getValue();
-			
-			IFeature feat = new DefaultFeature(build.generated3DGeom());
+			UrbanFeature feat = new AbstractUrbanFeature();
+			feat.setGeometry(build.generated3DGeom());
 			if (this.exportId) {
-				AttributeManager.addAttribute(feat, "idparc", this.id, "Integer");
+				feat.setAttribute("idparc", this.id);
 			}
-
-			if (build instanceof Cuboid) {
-				Cuboid c = (Cuboid) build;
-
-				AttributeManager.addAttribute(feat, "centerX", c.getCenterx(), "Double");
-				AttributeManager.addAttribute(feat, "centerY", c.getCentery(), "Double");
-				AttributeManager.addAttribute(feat, "width", c.getWidth(), "Double");
-				AttributeManager.addAttribute(feat, "lenght", c.getLength(), "Double");
-				AttributeManager.addAttribute(feat, "height", c.getHeight(), "Double");
-				AttributeManager.addAttribute(feat, "orient", c.getOrientation(), "Double");
-
+			if (build instanceof Cuboid c) {
+                feat.setAttribute("centerX", c.getCenterx());
+				feat.setAttribute("centerY", c.getCentery());
+				feat.setAttribute("width", c.getWidth());
+				feat.setAttribute("lenght", c.getLength());
+				feat.setAttribute("height", c.getHeight());
+				feat.setAttribute("orient", c.getOrientation());
 			}
-
 			if (this.exportSeed) {
-				AttributeManager.addAttribute(feat, "seed", this.seed, "Long");
+				feat.setAttribute("seed", this.seed);
 			}
 			featC.add(feat);
 		}

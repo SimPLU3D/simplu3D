@@ -4,10 +4,10 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.Before;
 import org.junit.Test;
 
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
-import fr.ign.cogit.geoxygene.util.conversion.WktGeOxygene;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth.ParallelPolygonTransform;
 import fr.ign.random.Random;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.io.WKTReader;
 
 public class ParallelPolygonTransformTest {
   ParallelPolygonTransform t;
@@ -16,8 +16,8 @@ public class ParallelPolygonTransformTest {
   public void setUp() throws Exception {
     // IPolygon polygon = (IPolygon) WktGeOxygene
     // .makeGeOxygene("POLYGON (( 5 0, 5 -10, 15 -10, 15 -5, 10 -5, 10 0, 5 0 ))");
-    IPolygon polygon = (IPolygon) WktGeOxygene
-        .makeGeOxygene("POLYGON (( 24.46264278127928 -13.32945321889124, 16.83388492956696 -2.4038452403082764, 21.54914732032382 4.036513147066944, 30.596317435922344 9.7484976692033, 35.119902493721604 1.4680368854351595, 23.657597982857375 1.1996886192945253, 32.66643263186438 -8.729197227908939, 41.17690621518163 -1.7138068416609316, 39.98850675084454 -16.47296147939581, 20.092399589846092 -22.60663613403888, 13.307022003147196 -13.942820684355546, 24.46264278127928 -13.32945321889124 ))");
+    WKTReader wktReader = new WKTReader();
+    Polygon polygon = (Polygon) wktReader.read("POLYGON (( 24.46264278127928 -13.32945321889124, 16.83388492956696 -2.4038452403082764, 21.54914732032382 4.036513147066944, 30.596317435922344 9.7484976692033, 35.119902493721604 1.4680368854351595, 23.657597982857375 1.1996886192945253, 32.66643263186438 -8.729197227908939, 41.17690621518163 -1.7138068416609316, 39.98850675084454 -16.47296147939581, 20.092399589846092 -22.60663613403888, 13.307022003147196 -13.942820684355546, 24.46264278127928 -13.32945321889124 ))");
     // ILineString limits = (ILineString)
     // WktGeOxygene.makeGeOxygene("LINESTRING ( 5 -10, 15 -10 )");
     //ILineString limit1 = (ILineString) WktGeOxygene

@@ -7,11 +7,6 @@ import java.util.List;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 
-import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiCurve;
-import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
-import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Building;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
@@ -22,6 +17,7 @@ import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
+import org.locationtech.jts.geom.LineString;
 
 public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGraphConfiguration<O, C, M>, M extends AbstractBirthDeathModification<O, C, M>>
 		implements ConfigurationModificationPredicate<C, M> {
@@ -85,81 +81,61 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 		// Pour simplifier la vérification, on extrait les différentes bordures
 		// de
 		// parcelles
-		IMultiCurve<IOrientableCurve> curveLimiteFondParcel = new GM_MultiCurve<>();
-		IMultiCurve<IOrientableCurve> curveLimiteFrontParcel = new GM_MultiCurve<>();
-		IMultiCurve<IOrientableCurve> curveLimiteLatParcel = new GM_MultiCurve<>();
-
+		List<LineString> curveLimiteFondParcel = new ArrayList<>();
+		List<LineString> curveLimiteFrontParcel = new ArrayList<>();
+		List<LineString> curveLimiteLatParcel = new ArrayList<>();
 		// On parcourt les parcelles du BasicPropertyUnit (un propriétaire peut
 		// avoir plusieurs parcelles)
 		for (CadastralParcel cP : bPU.getCadastralParcels()) {
-
 			// On parcourt les limites séparaticves
 			for (ParcelBoundary sCB : cP.getBoundaries()) {
-
 				// En fonction du type on ajoute à telle ou telle géométrie
-				IGeometry geom = sCB.getGeom();
-
-				if (geom == null || geom.isEmpty() || geom.length() < 0.01) {
+				Geometry geom = sCB.getGeometry();
+				if (geom == null || geom.isEmpty() || geom.getLength() < 0.01) {
 					continue;
 				}
-
 				// Fond de parcel
-				if (sCB.getType() == ParcelBoundaryType.BOT) {
-
-					if (geom instanceof IOrientableCurve) {
-						curveLimiteFondParcel.add((IOrientableCurve) geom);
-
+				if (sCB.getParcelBoundaryType() == ParcelBoundaryType.BOT) {
+					if (geom instanceof LineString) {
+						curveLimiteFondParcel.add((LineString) geom);
 					} else {
 						System.out.println(
 								"Classe SamplePredicate : quelque chose n'est pas un ICurve : " + geom.getClass());
 					}
-
 				}
-
 				// Limite latérale
-				if (sCB.getType() == ParcelBoundaryType.LAT) {
-
-					if (geom instanceof IOrientableCurve) {
-						curveLimiteLatParcel.add((IOrientableCurve) geom);
-
+				if (sCB.getParcelBoundaryType() == ParcelBoundaryType.LAT) {
+					if (geom instanceof LineString) {
+						curveLimiteLatParcel.add((LineString) geom);
 					} else {
 						System.out.println(
 								"Classe SamplePredicate : quelque chose n'est pas un ICurve : " + geom.getClass());
 					}
-
 				}
-
 				// Limite front
-				if (sCB.getType() == ParcelBoundaryType.ROAD) {
-
-					if (geom instanceof IOrientableCurve) {
-						curveLimiteFrontParcel.add((IOrientableCurve) geom);
-
+				if (sCB.getParcelBoundaryType() == ParcelBoundaryType.ROAD) {
+					if (geom instanceof LineString) {
+						curveLimiteFrontParcel.add((LineString) geom);
 					} else {
 						System.out.println(
 								"Classe SamplePredicate : quelque chose n'est pas un ICurve : " + geom.getClass());
 					}
-
 				}
-
 			}
-
 		}
-
 		GeometryFactory gf = new GeometryFactory();
-
-		this.surface = AdapterFactory.toGeometry(gf, bPU.getGeom());
+		this.surface = bPU.getGeometry();//FIXME REMOVE DUPLICATE GEOMETRY
 
 		if (!curveLimiteFondParcel.isEmpty()) {
-			this.jtsCurveLimiteFondParcel = AdapterFactory.toGeometry(gf, curveLimiteFondParcel);
+			this.jtsCurveLimiteFondParcel = gf.createMultiLineString(curveLimiteFondParcel.toArray(new LineString[0]));
 		}
 
 		if (!curveLimiteFrontParcel.isEmpty()) {
-			this.jtsCurveLimiteFrontParcel = AdapterFactory.toGeometry(gf, curveLimiteFrontParcel);
+			this.jtsCurveLimiteFrontParcel = gf.createMultiLineString(curveLimiteFrontParcel.toArray(new LineString[0]));
 		}
 
 		if (!curveLimiteLatParcel.isEmpty()) {
-			this.jtsCurveLimiteLatParcel = AdapterFactory.toGeometry(gf, curveLimiteLatParcel);
+			this.jtsCurveLimiteLatParcel = gf.createMultiLineString(curveLimiteLatParcel.toArray(new LineString[0]));
 		}
 	}
 
@@ -294,7 +270,7 @@ public class SamplePredicate<O extends ISimPLU3DPrimitive, C extends AbstractGra
 		// et les boîtes que l'on ajoute
 		for (Building b : currentBPU.getBuildings()) {
 			for (O ab : lO) {
-				Geometry geomBat = AdapterFactory.toGeometry(gf, b.getFootprint());
+				Geometry geomBat = b.getFootprint();
 				if (geomBat.distance(ab.toGeometry()) < distanceInterBati) {
 					return false;
 				}

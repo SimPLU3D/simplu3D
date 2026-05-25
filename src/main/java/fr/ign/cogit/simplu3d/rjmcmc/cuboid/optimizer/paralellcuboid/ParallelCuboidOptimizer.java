@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
+import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IEnvelope;
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.builder.ParallelCuboidBuilder;
@@ -56,17 +54,17 @@ import fr.ign.simulatedannealing.temperature.SimpleTemperature;
 public class ParallelCuboidOptimizer extends DefaultSimPLU3DOptimizer<ISimPLU3DPrimitive> {
 
 	public GraphConfiguration<Cuboid> process(RandomGenerator rng, BasicPropertyUnit bpu, SimpluParameters p,
-			Environnement env, int id,
+			Environnement env, String id,
 			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred,
-			IGeometry[] limits, IGeometry polygon) throws Exception {
+			Geometry[] limits, Geometry polygon) throws Exception {
 		// Géométrie de l'unité foncière sur laquelle porte la génération
-		IGeometry geom = bpu.generateGeom().buffer(1);
+		Geometry geom = bpu.generateGeom().buffer(1);
 
 		// Définition de la fonction d'optimisation (on optimise en décroissant)
 		// relative au volume
 		GraphConfiguration<Cuboid> conf = null;
 		try {
-			conf = create_configuration(p, AdapterFactory.toGeometry(new GeometryFactory(), geom), bpu);
+			conf = create_configuration(p, geom, bpu);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -81,13 +79,6 @@ public class ParallelCuboidOptimizer extends DefaultSimPLU3DOptimizer<ISimPLU3DP
 		PrepareVisitors<Cuboid> prep = new PrepareVisitors<>(env);
 		SimulatedAnnealing.optimize(rng, conf, samp, sch, end, prep.prepare(p, id));
 		return conf;
-	}
-
-	public GraphConfiguration<Cuboid> create_configuration(SimpluParameters p, IGeometry geom, BasicPropertyUnit bpu)
-			throws Exception {
-
-		return this.create_configuration(p, AdapterFactory.toGeometry(new GeometryFactory(), geom), bpu);
-
 	}
 
 	public GraphConfiguration<Cuboid> create_configuration(SimpluParameters p, Geometry geom, BasicPropertyUnit bpu) {
@@ -128,7 +119,7 @@ public class ParallelCuboidOptimizer extends DefaultSimPLU3DOptimizer<ISimPLU3DP
 	public static Sampler<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> create_sampler(
 			RandomGenerator rng, SimpluParameters p, BasicPropertyUnit bpU,
 			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred,
-			IGeometry pol, IGeometry[] lines) throws Exception {
+			Geometry pol, Geometry[] lines) throws Exception {
 
 		double minlen = p.getDouble("minlen");
 		double maxlen = p.getDouble("maxlen");
@@ -139,15 +130,15 @@ public class ParallelCuboidOptimizer extends DefaultSimPLU3DOptimizer<ISimPLU3DP
 		double minheight = p.getDouble("minheight");
 		double maxheight = p.getDouble("maxheight");
 
-		IEnvelope env = bpU.getGeom().envelope();
+		Envelope env = bpU.getGeometry().getEnvelopeInternal();
 		// in multi object situations, we need an object builder for each
 		// subtype and a sampler for the supertype (end of file)
 
-		double[] v = new double[] { env.minX(), env.minY(), minlen,  minheight};
+		double[] v = new double[] { env.getMinX(), env.getMinY(), minlen,  minheight};
 
 
 
-		double[] d2 = new double[] { env.maxX(), env.maxY(), maxlen, maxheight};
+		double[] d2 = new double[] { env.getMaxX(), env.getMaxY(), maxlen, maxheight};
 
 	
 
@@ -155,18 +146,15 @@ public class ParallelCuboidOptimizer extends DefaultSimPLU3DOptimizer<ISimPLU3DP
 			d2[i] = d2[i] - v[i];
 		}
 
-		IGeometry samplingSurface = null;
-		if (samplingSurface == null) {
-			samplingSurface = bpU.getPol2D();
-		}
+		Geometry samplingSurface = bpU.getPol2D();
 
-		Transform transform = new ParallelCuboidTransform(d2, v, samplingSurface);
+        Transform transform = new ParallelCuboidTransform(d2, v, samplingSurface);
 
 		ObjectBuilder<Cuboid> builder = new ParallelCuboidBuilder(lines, 1);
 
 		UniformBirth<Cuboid> birth = new UniformBirth<Cuboid>(rng,
-				new ParallelCuboid(env.minX(), env.minY(), minlen, minwid, minheight, 0),
-				new ParallelCuboid(env.maxX(), env.maxY(), maxlen, maxwid, maxheight, Math.PI), builder,
+				new ParallelCuboid(env.getMinX(), env.getMinY(), minlen, minwid, minheight, 0),
+				new ParallelCuboid(env.getMaxX(), env.getMaxY(), maxlen, maxwid, maxheight, Math.PI), builder,
 				ParallelCuboidTransform.class, samplingSurface);
 
 		PoissonDistribution distribution = new PoissonDistribution(rng, p.getDouble("poisson"));

@@ -2,42 +2,35 @@ package fr.ign.cogit.simplu3d.rjmcmc.trapezoid.geometry;
 
 import java.util.List;
 
+import fr.ign.common.conversion.FromGeomToSurface;
+import fr.ign.common.util.Vecteur;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Polygon;
 
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
-import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
-import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
-import fr.ign.cogit.geoxygene.convert.FromGeomToSurface;
-import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
-
 /**
- * 
+ *
  * This software is released under the licence CeCILL
- * 
+ * <p>
  * see LICENSE.TXT
- * 
- * see http://www.cecill.info/
- * 
- * 
- * 
+ * <p>
+ * see <a href="http://www.cecill.info/">...</a>
+ * <p>
+ *
+ *
  * copyright IGN
- * 
+ *
  * @author Brasebin Mickaël
- * 
+ *
  * @version 1.0
  **/
 public class ParallelTrapezoid2 extends RightTrapezoid {
-
 	public double abscisse;
-
 	public ParallelTrapezoid2(double centerx, double centery, double length1, double length2, double length3,
 			double width, double height, double abscisse) {
 		super(centerx, centery, length1, length2, length3, width, height, Double.NaN);
 		this.abscisse = abscisse;
-
 	}
 
 	@Override
@@ -94,10 +87,8 @@ public class ParallelTrapezoid2 extends RightTrapezoid {
 	}
 
 	@Override
-	public IOrientableSurface getFootprint() {
-
-		return FromGeomToSurface.convertGeom(this.getGeom()).get(0);
-
+	public Polygon getFootprint() {
+		return FromGeomToSurface.convertGeom(this.getGeometry()).getFirst();
 	}
 
 	@Override
@@ -120,12 +111,12 @@ public class ParallelTrapezoid2 extends RightTrapezoid {
 			Vecteur v2 = new Vecteur(pts[3].x - pts[2].x, pts[3].y - pts[2].y);
 			v2.normalise();
 			v2 = v2.multConstante(length + length2);
-			IDirectPosition dp3 = v2.translate(new DirectPosition(pts[2].x, pts[2].y));
+			Coordinate dp3 = v2.translate(new Coordinate(pts[2].x, pts[2].y));
 
 			Vecteur v = new Vecteur(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
 			v.normalise();
 			v = v.multConstante(length + length3);
-			IDirectPosition dp0 = v.translate(new DirectPosition(pts[1].x, pts[1].y));
+			Coordinate dp0 = v.translate(new Coordinate(pts[1].x, pts[1].y));
 
 			// System.out.println("length + length2" + (length + length2));
 			// System.out.println("length + length3" + (length + length3));
@@ -133,12 +124,10 @@ public class ParallelTrapezoid2 extends RightTrapezoid {
 			pts[0] = new Coordinate(dp0.getX(), dp0.getY());
 			pts[3] = new Coordinate(dp3.getX(), dp3.getY());
 			pts[4] = new Coordinate(pts[0]);
-
 			LinearRing ring = geomFact.createLinearRing(pts);
 			Polygon poly = geomFact.createPolygon(ring, null);
 			this.geomJTS = poly;
 		}
 		return this.geomJTS;
 	}
-
 }

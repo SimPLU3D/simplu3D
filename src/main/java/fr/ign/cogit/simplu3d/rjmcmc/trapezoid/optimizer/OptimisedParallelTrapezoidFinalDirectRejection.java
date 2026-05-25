@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
+import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IEnvelope;
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
@@ -73,9 +71,9 @@ public class OptimisedParallelTrapezoidFinalDirectRejection extends DefaultSimPL
 	public GraphConfiguration<ParallelTrapezoid2> process(RandomGenerator rG, BasicPropertyUnit bpu, SimpluParameters p,
 			Environnement env, int id,
 			ConfigurationModificationPredicate<GraphConfiguration<ParallelTrapezoid2>, BirthDeathModification<ParallelTrapezoid2>> pred,
-			IGeometry[] limits, IGeometry polygon) {
+			Geometry[] limits, Geometry polygon) {
 		// Géométrie de l'unité foncière sur laquelle porte la génération
-		IGeometry geom = bpu.generateGeom().buffer(1);
+		Geometry geom = bpu.generateGeom().buffer(1);
 
 		// Définition de la fonction d'optimisation (on optimise en décroissant)
 		// relative au volume
@@ -97,13 +95,6 @@ public class OptimisedParallelTrapezoidFinalDirectRejection extends DefaultSimPL
 
 		SimulatedAnnealing.optimize(rG, conf, samp, sch, end, pv.prepare(p, bpu.getId()));
 		return conf;
-	}
-
-	public GraphConfiguration<ParallelTrapezoid2> create_configuration(SimpluParameters p, IGeometry geom,
-			BasicPropertyUnit bpu) throws Exception {
-
-		return this.create_configuration(p, AdapterFactory.toGeometry(new GeometryFactory(), geom), bpu);
-
 	}
 
 	public GraphConfiguration<ParallelTrapezoid2> create_configuration(SimpluParameters p, Geometry geom,
@@ -160,7 +151,7 @@ public class OptimisedParallelTrapezoidFinalDirectRejection extends DefaultSimPL
 	public Sampler<GraphConfiguration<ParallelTrapezoid2>, BirthDeathModification<ParallelTrapezoid2>> create_sampler(
 			RandomGenerator rng, SimpluParameters p, BasicPropertyUnit bpU,
 			ConfigurationModificationPredicate<GraphConfiguration<ParallelTrapezoid2>, BirthDeathModification<ParallelTrapezoid2>> pred,
-			IGeometry[] limits, IGeometry polygon) {
+			Geometry[] limits, Geometry polygon) {
 		// Un vecteur ?????
 		double minlen1 = p.getDouble("minlen1");
 		double maxlen1 = p.getDouble("maxlen1");
@@ -180,7 +171,7 @@ public class OptimisedParallelTrapezoidFinalDirectRejection extends DefaultSimPL
 		// A priori on redéfini le constructeur de l'objet
 		ObjectBuilder<ParallelTrapezoid2> builder = new ParallelRightTrapezoidBuilder2(limits, polygon);
 
-		IEnvelope env = bpU.getGeom().envelope();
+		Envelope env = bpU.getGeometry().getEnvelopeInternal();
 		// Sampler de naissance
 		// UniformBirthInGeom<Cuboidpred2> birth = new
 		// UniformBirthInGeom<Cuboid2>(new
@@ -194,8 +185,8 @@ public class OptimisedParallelTrapezoidFinalDirectRejection extends DefaultSimPL
 		}
 
 		UniformBirth<ParallelTrapezoid2> birth = new UniformBirth<ParallelTrapezoid2>(rng,
-				new ParallelTrapezoid2(env.minX(), env.minY(), minlen1, minlen2, minlen3, minwid, minheight, 0),
-				new ParallelTrapezoid2(env.maxX(), env.maxY(), maxlen1, maxlen2, maxlen3, maxwid, maxheight, 1),
+				new ParallelTrapezoid2(env.getMinX(), env.getMinY(), minlen1, minlen2, minlen3, minwid, minheight, 0),
+				new ParallelTrapezoid2(env.getMaxX(), env.getMaxY(), maxlen1, maxlen2, maxlen3, maxwid, maxheight, 1),
 				new ParallelRightTrapezoidBuilder2(limits, polygon), ParallelTrapezoidTransform.class, polygon);
 
 		PoissonDistribution distribution = new PoissonDistribution(rng, p.getDouble("poisson"));

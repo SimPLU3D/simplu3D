@@ -4,14 +4,13 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
-import fr.ign.cogit.geoxygene.util.conversion.WktGeOxygene;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth.TransformToSurface;
 import fr.ign.random.Random;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.io.WKTReader;
 
 /**
  * 
@@ -39,8 +38,8 @@ public class TransformToSurfaceTest {
   }
   @Before
   public void setUp() throws Exception {
-    IPolygon polygon = (IPolygon) WktGeOxygene
-        .makeGeOxygene("POLYGON (( 5 0, 5 -10, 15 -10, 15 -5, 10 -5, 10 0, 5 0 ))");
+    WKTReader reader = new WKTReader();
+    Polygon polygon = (Polygon) reader.read("POLYGON (( 5 0, 5 -10, 15 -10, 15 -5, 10 -5, 10 0, 5 0 ))");
     double[] d = new double[] { 0, 0, 1, 1, 3, 0 };
     double[] v = new double[] { 10, 10, 5, 5, 3, Math.PI };
     t = new TransformToSurface(d, v, polygon);
@@ -229,9 +228,7 @@ public class TransformToSurfaceTest {
       // lvarOut.add(0.0);
 
       t.apply(true, in, out);
-
       System.out.println(f.createPoint(new Coordinate(out[0], out[1])));
-
     }
   }
 

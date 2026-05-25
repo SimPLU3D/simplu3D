@@ -1,20 +1,18 @@
 package fr.ign.cogit.simplu3d.experiments.openmole.diversity;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
-import fr.ign.cogit.geoxygene.api.feature.IFeature;
-import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
-import fr.ign.cogit.geoxygene.convert.FromGeomToSurface;
-import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
-import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
-import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
+import fr.ign.cogit.simplu3d.dao.SpatialRepository;
+import fr.ign.cogit.simplu3d.io.feature.FeatureType;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
+import fr.ign.common.conversion.FromGeomToSurface;
+import fr.ign.common.io.ShapefileWriter;
+import org.locationtech.jts.geom.Coordinate;
 
 public class EntropyIndicator {
 
@@ -28,70 +26,55 @@ public class EntropyIndicator {
 
     List<Double> energy_parcels = new ArrayList<>();
 
-    IFeatureCollection<IFeature> featCOut = new FT_FeatureCollection<>();
+    Collection<Cuboid> featCOut = new ArrayList<>();
     double energyTot = 0;
     double areaTot = 0;
-    Random randomnum =new Random();
-    
+    Random randomnum = new Random();
+    Collection<BasicPropertyUnit> bpus = new ArrayList<>();
     for (int i = 0; i < 20; i++) {
-
       for (int j = 0; j < 20; j++) {
-
         // A chaque case
-
         double height;
-        if (randomnum.nextInt(5)>3  ) { //damier (i+j) % 2 ==0 // random  : randomnum.nextint(2)>0 
+        if (randomnum.nextInt(5) > 3) { //damier (i+j) % 2 ==0 // random  : randomnum.nextint(2)>0
           height = 20;
         } else {
           height = 0;
         }
-
         Cuboid c = new Cuboid(i * 20, j * 20, 20, 20, height, 0);
-        c.setGeom(c.getFootprint());
-        
-        AttributeManager.addAttribute(c, "Hauteur", height, "Double");
+        c.setGeometry(c.getFootprint());
+        c.setAttribute("Hauteur", height);
+        //AttributeManager.addAttribute(c, "Hauteur", height, "Double");
         featCOut.add(c);
-        
-        
-        
-
         BasicPropertyUnit bPU = new BasicPropertyUnit();
-        bPU.setGeom(c.getFootprint());
-        bPU.setPol2D((IPolygon) FromGeomToSurface.convertGeom(c.getFootprint()).get(0));
-
-        env.getBpU().add(bPU);
-        energy_parcels.add(- c.getHeight() * c.length * c.width);
-
-        areaTot = areaTot + c.getFootprint().area();
+        bPU.setGeometry(c.getFootprint());
+        bPU.setPol2D(FromGeomToSurface.convertGeom(c.getFootprint()).getFirst());
+        bpus.add(bPU);
+        energy_parcels.add(-c.getHeight() * c.length * c.width);
+        areaTot = areaTot + c.getFootprint().getArea();
         energyTot = energyTot - c.getHeight() * c.length * c.width;
-        
       }
-
     }
-
+    FeatureType ft = new FeatureType("BasicPropertyUnit");
+    ft.setGeometryType("Polygon");
+    ft.addAttribute("Hauteur", "Double");
+    env.setBpU(new SpatialRepository<>(bpus, ft, null));
     EntropyIndicator eI = new EntropyIndicator();
     eI.calculate(env, energy_parcels, areaTot, energyTot);
-    
     System.out.println(eI.toString());
-    
-    //ShapefileWriter.write(featCOut, "/home/paulchapron/temp/outdamier.shp");
-    
-    
+    ShapefileWriter.write(featCOut, ft, null, "outdamier.shp");
   }
-  
-  
+
 
   @Override
   public String toString() {
     return "EntropyIndicator [giniFinal=" + giniFinal + ", moranFinal="
-        + moranFinal + ", entropyRelFinal=" + entropyRelFinal + "]";
+            + moranFinal + ", entropyRelFinal=" + entropyRelFinal + "]";
   }
 
   public void calculate(Environnement env, List<Double> energy_parcels,
-      double areaTot, double energyTot) {
+                        double areaTot, double energyTot) {
     // calculs des indicateurs Gini, Moran et entropie relative
-    int nbparcelles = env.getBpU().size();
-
+    int nbparcelles = env.getBpU().count();
     double gini = 0;
     double[] density_vals = new double[nbparcelles];
     double density_tot = 0;
@@ -102,13 +85,10 @@ public class EntropyIndicator {
     // et que energy_parcel[i] est bien l'energie de la parcelle
     // env.getBpu.get(i)
     for (int i = 0; i < nbparcelles; i++) {
-
-      BasicPropertyUnit parcelle = env.getBpU().get(i);
+      BasicPropertyUnit parcelle = env.getBpU().findAll().get(i);
       double energy_parcel = energy_parcels.get(i);
       double surface_parcel = parcelle.getArea();
-
       //System.out.println("parcelle i " + i + " energie" + energy_parcel);
-
       // one way of computing gini indice is taking sum for every parcels
       // of abs of surface proportion - minus variable (here energy)
       gini += Math.abs(surface_parcel / areaTot - energy_parcel / energyTot);
@@ -137,9 +117,9 @@ public class EntropyIndicator {
         if (i == j) {
           dist_mat[i][j] = 0;
         } else {
-          IDirectPosition centro_i = env.getBpU().get(i).getGeom().centroid();
-          IDirectPosition centro_j = env.getBpU().get(j).getGeom().centroid();
-          dist_mat[i][j] = centro_i.distance2D(centro_j);
+          Coordinate centro_i = env.getBpU().findAll().get(i).getGeometry().getCentroid().getCoordinate();
+          Coordinate centro_j = env.getBpU().findAll().get(j).getGeometry().getCentroid().getCoordinate();
+          dist_mat[i][j] = centro_i.distance(centro_j);
         }
       }
     }
@@ -158,23 +138,22 @@ public class EntropyIndicator {
     double mean_energy = energyTot / nbparcelles;
     double numer = 0;
     double denom = 0;
-    double moran = 0 ;
+    double moran = 0;
     for (int i = 0; i < nbparcelles; i++) {
       for (int j = 0; j < nbparcelles; j++) {
         if (i != j) {
           numer += (energy_parcels.get(i) - mean_energy) * (energy_parcels.get(j) - mean_energy) / dist_mat[i][j];
-         // denom += ((energy_parcels.get(i) - mean_energy) * (energy_parcels.get(i) - mean_energy));
-          
+          // denom += ((energy_parcels.get(i) - mean_energy) * (energy_parcels.get(i) - mean_energy));
+
         }
       }
-     denom += ((energy_parcels.get(i) - mean_energy) * (energy_parcels.get(i) - mean_energy));
+      denom += ((energy_parcels.get(i) - mean_energy) * (energy_parcels.get(i) - mean_energy));
     }
-    moran = numer /denom ;
-    
+    moran = numer / denom;
+
     moran *= (nbparcelles / sum_weights);
 
-    
-    
+
     this.moranFinal = moran;
 
     // moran should be between -1 and 1
@@ -204,8 +183,8 @@ public class EntropyIndicator {
 //    System.out.println("densité totale" + density_tot);
 //    
 //    this.entropyRelFinal = relative_entropy;
- this.entropyRelFinal = Double.NaN;
-    
+    this.entropyRelFinal = Double.NaN;
+
   }
 
   public double getGiniFinal() {

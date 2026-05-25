@@ -1,26 +1,14 @@
 package fr.ign.cogit.simplu3d.rjmcmc.trapezoid.builder;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.MultiLineString;
+import fr.ign.common.conversion.FromGeomToLineString;
+import fr.ign.common.util.Operateurs;
+import org.locationtech.jts.geom.*;
 import org.locationtech.jts.operation.distance.DistanceOp;
 
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IEnvelope;
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.ILineString;
-import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiCurve;
-import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.contrib.geometrie.Angle;
-import fr.ign.cogit.geoxygene.contrib.geometrie.Operateurs;
-import fr.ign.cogit.geoxygene.convert.FromGeomToLineString;
-import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
-import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
-import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.geometry.ParallelTrapezoid2;
 import fr.ign.mpp.kernel.ObjectBuilder;
 
@@ -28,53 +16,42 @@ public class ParallelRightTrapezoidBuilder2 implements ObjectBuilder<ParallelTra
 
 	GeometryFactory factory;
 	MultiLineString limits;
-	IMultiCurve<ILineString> limitsGeox;
+	MultiLineString limitsGeox;
 	double factMult = 200;
 
-	public ParallelRightTrapezoidBuilder2(IGeometry[] limits, IGeometry polygon) {
+	public ParallelRightTrapezoidBuilder2(Geometry[] limits, Geometry polygon) {
 		super();
 		factory = new GeometryFactory();
 		LineString[] lineStrings = new LineString[limits.length];
 		for (int i = 0; i < limits.length; i++) {
 			try {
-				lineStrings[i] = (LineString) AdapterFactory.toGeometry(factory, limits[i]);
+				lineStrings[i] = (LineString) limits[i];
 			} catch (Exception e) {
-
 				e.printStackTrace();
 			}
 		}
 		this.limits = factory.createMultiLineString(lineStrings);
-		IEnvelope geom = polygon.getEnvelope();
-
-		limitsGeox = new GM_MultiCurve<>();
-		for (int i = 0; i < limits.length; i++) {
-
-			List<IOrientableCurve> ils = FromGeomToLineString.convert(limits[i]);
-
-			for (IOrientableCurve c : ils) {
-				limitsGeox.add((ILineString) c);
-			}
-
-		}
-
-		factMult = geom.getLowerCorner().distance(geom.getUpperCorner());
-
+		Envelope geom = polygon.getEnvelopeInternal();
+		List<LineString> list = new ArrayList<LineString>();
+        for (Geometry limit : limits) {
+            Collection<LineString> ils = FromGeomToLineString.convert(limit);
+            list.addAll(ils);
+        }
+		limitsGeox = polygon.getFactory().createMultiLineString(list.toArray(new LineString[0]));
+		Coordinate lowerLeft = new Coordinate(geom.getMinX(), geom.getMinY());
+		Coordinate upperRight = new Coordinate(geom.getMaxX(), geom.getMaxY());
+		factMult = lowerLeft.distance(upperRight);
 	}
 
 	@Override
 	public ParallelTrapezoid2 build(double[] val1) {
-
-		IDirectPosition dpOrientation = Operateurs.pointEnAbscisseCurviligne(limitsGeox, val1[5] * limitsGeox.length());
-
-		IDirectPosition centre = new DirectPosition(val1[0], val1[1]);
-
-		Angle angleOr = new Angle(dpOrientation, centre);
+		Coordinate dpOrientation = Operateurs.pointEnAbscisseCurviligne(limitsGeox, val1[5] * limitsGeox.getLength());
+		Coordinate centre = new Coordinate(val1[0], val1[1]);
+		//Angle angleOr = new Angle(dpOrientation, centre);
 		// angleOr.ajoute(new Angle(Math.PI/2));
 		// angleOr.ajoute(new Angle(Math.PI/2));
 		// angleOr.ajoute(new Angle(Math.PI/2));
-
-		double orientation = angleOr.getValeur();
-
+		double orientation = Operateurs.getAngle(dpOrientation, centre);
 		double a = Math.cos(orientation) * val1[3] / 2;
 		double b = Math.sin(orientation) * val1[3]/ 2;
 		/*
@@ -105,48 +82,27 @@ public class ParallelRightTrapezoidBuilder2 implements ObjectBuilder<ParallelTra
 
 		Geometry geom1 = g1.intersection(limits);
 		Geometry geom2 = g2.intersection(limits);
-
-		/*
-		 * try {
-		 * TestParallelRightTrapezoidSampler2.orientationLine.add(JtsGeOxygene.
-		 * makeGeOxygeneGeom(g1));
-		 * TestParallelRightTrapezoidSampler2.orientationLine.add(JtsGeOxygene.
-		 * makeGeOxygeneGeom(g2)); } catch (Exception e) { e.printStackTrace();
-		 * 
-		 * }
-		 */
-
 		double length2 = Double.POSITIVE_INFINITY;
-
 		if (geom1 != null && !geom1.isEmpty()) {
-
 			Coordinate[] cTemp = geom1.getCoordinates();
-
-			for (int i = 0; i < cTemp.length; i++) {
-				length2 = Math.min(length2,
-						DistanceOp.distance(factory.createPoint(p1), factory.createPoint(cTemp[i])));
-			}
-
+            for (Coordinate coordinate : cTemp) {
+                length2 = Math.min(length2,
+                        DistanceOp.distance(factory.createPoint(p1), factory.createPoint(coordinate)));
+            }
 		}
 		double length3 = Double.POSITIVE_INFINITY;
-
 		if (geom2 != null && !geom2.isEmpty()) {
-
 			Coordinate[] cTemp = geom2.getCoordinates();
-
-			for (int i = 0; i < cTemp.length; i++) {
-				length3 = Math.min(length3,
-						DistanceOp.distance(factory.createPoint(p2), factory.createPoint(cTemp[i])));
-			}
-
+            for (Coordinate coordinate : cTemp) {
+                length3 = Math.min(length3,
+                        DistanceOp.distance(factory.createPoint(p2), factory.createPoint(coordinate)));
+            }
 		}
-
 		if (length2 == Double.POSITIVE_INFINITY || length3 == Double.POSITIVE_INFINITY) {
 			length2 = 0;
 			length3 = 0;
 			return new ParallelTrapezoid2(val1[0], val1[1],0, length3, length2, 0,0,0);
 		}
-
 		ParallelTrapezoid2 t2 = new ParallelTrapezoid2(val1[0], val1[1], val1[2], length3, length2, val1[3], val1[4],
 				val1[5]);
 		t2.setOrientation(orientation);
@@ -163,12 +119,9 @@ public class ParallelRightTrapezoidBuilder2 implements ObjectBuilder<ParallelTra
 		val1[3] = t.width;
 		val1[4] = t.height;
 		val1[5] = t.abscisse;
-
 	}
-
 	@Override
 	public int size() {
 		return 6;
 	}
-
 }

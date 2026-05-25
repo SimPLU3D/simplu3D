@@ -5,9 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.util.logging.Logger;
 
 public class SimpluParametersPostgis implements SimpluParameters{
     private final static String PARAMETERS_TABLE = "parameters";
@@ -22,8 +20,8 @@ public class SimpluParametersPostgis implements SimpluParameters{
         rs = s.executeQuery(sql);
         boolean next = rs.next();
         if (!next) {
-            Logger log = LogManager.getLogger(SimpluParametersPostgis.class);
-            log.error("No parameters line found");
+            Logger log = Logger.getLogger(SimpluParametersPostgis.class.getName());
+            log.severe("No parameters line found");
             System.exit(1);
         }
         conn.close();

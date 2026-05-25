@@ -7,11 +7,6 @@ import java.util.List;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 
-import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiCurve;
-import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
-import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Building;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
@@ -21,10 +16,11 @@ import fr.ign.cogit.simplu3d.model.ParcelBoundarySide;
 import fr.ign.cogit.simplu3d.model.ParcelBoundaryType;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
-import fr.ign.cogit.simplu3d.util.JTS;
 import fr.ign.mpp.configuration.AbstractBirthDeathModification;
 import fr.ign.mpp.configuration.AbstractGraphConfiguration;
 import fr.ign.rjmcmc.configuration.ConfigurationModificationPredicate;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
 
 /**
  * An abstract class that defines a set of optimized operators to check rules
@@ -44,8 +40,7 @@ public abstract class DefaultAbstractPredicate<O extends ISimPLU3DPrimitive, C e
 	// JTS cached geometries
 
 	// The geometry of the current BPU
-	protected Geometry bPUGeom = null;
-
+	protected Geometry bPUGeom = null;//FIXME remove duplicate geom
 	// Cached geometries according to the different limits categories
 	protected Geometry jtsCurveLimiteFondParcel = null;
 	protected Geometry jtsCurveLimiteFrontParcel = null;
@@ -69,47 +64,39 @@ public abstract class DefaultAbstractPredicate<O extends ISimPLU3DPrimitive, C e
 	 * @throws Exception geometric errors
 	 */
 	protected void prepareCachedGeometries(BasicPropertyUnit bPU, Environnement env) throws Exception {
-
 		// The GeOXygene intermediate geoemtries
-		IMultiCurve<IOrientableCurve> curveLimiteFondParcel = new GM_MultiCurve<>();
-		IMultiCurve<IOrientableCurve> curveLimiteFrontParcel = new GM_MultiCurve<>();
-		IMultiCurve<IOrientableCurve> curveLimiteLatParcel = new GM_MultiCurve<>();
-		IMultiCurve<IOrientableCurve> curveLimiteLatRightParcel = new GM_MultiCurve<>();
-		IMultiCurve<IOrientableCurve> curveLimiteLatLeftParcel = new GM_MultiCurve<>();
-		IMultiCurve<IOrientableCurve> curveOppositeLimit = new GM_MultiCurve<>();
-
+		List<LineString> curveLimiteFondParcel = new ArrayList<>();
+		List<LineString> curveLimiteFrontParcel = new ArrayList<>();
+		List<LineString> curveLimiteLatParcel = new ArrayList<>();
+		List<LineString> curveLimiteLatRightParcel = new ArrayList<>();
+		List<LineString> curveLimiteLatLeftParcel = new ArrayList<>();
+		List<LineString> curveOppositeLimit = new ArrayList<>();
 		// For each parcel
 		for (CadastralParcel cP : bPU.getCadastralParcels()) {
-
 			// for each voundaries
 			for (ParcelBoundary sCB : cP.getBoundaries()) {
-
 				// According to the type of boundary we add the geometry into the right geometry
-				IGeometry geom = sCB.getGeom();
-
-				if (geom == null || geom.isEmpty() || geom.length() < 0.01) {
+				Geometry geom = sCB.getGeometry();
+				if (geom == null || geom.isEmpty() || geom.getLength() < 0.01) {
 					continue;
 				}
 				// Bot boundary
-				if (sCB.getType() == ParcelBoundaryType.BOT) {
-
-					if (geom instanceof IOrientableCurve) {
-						curveLimiteFondParcel.add((IOrientableCurve) geom);
+				if (sCB.getParcelBoundaryType() == ParcelBoundaryType.BOT) {
+					if (geom instanceof LineString) {
+						curveLimiteFondParcel.add((LineString) geom);
 					} else {
 						System.out.println(
 								"Classe SamplePredicate : quelque chose n'est pas un ICurve : " + geom.getClass());
 					}
 				}
-
 				// Lateral boundary
-				if (sCB.getType() == ParcelBoundaryType.LAT) {
-
-					if (geom instanceof IOrientableCurve) {
-						curveLimiteLatParcel.add((IOrientableCurve) geom);
+				if (sCB.getParcelBoundaryType() == ParcelBoundaryType.LAT) {
+					if (geom instanceof LineString) {
+						curveLimiteLatParcel.add((LineString) geom);
 						if (sCB.getSide() == ParcelBoundarySide.LEFT) {
-							curveLimiteLatLeftParcel.add((IOrientableCurve) geom);
+							curveLimiteLatLeftParcel.add((LineString) geom);
 						} else if (sCB.getSide() == ParcelBoundarySide.RIGHT) {
-							curveLimiteLatRightParcel.add((IOrientableCurve) geom);
+							curveLimiteLatRightParcel.add((LineString) geom);
 						}
 					} else {
 						System.out.println(
@@ -117,10 +104,9 @@ public abstract class DefaultAbstractPredicate<O extends ISimPLU3DPrimitive, C e
 					}
 				}
 				// Front boundary
-				if (sCB.getType() == ParcelBoundaryType.ROAD) {
-
-					if (geom instanceof IOrientableCurve) {
-						curveLimiteFrontParcel.add((IOrientableCurve) geom);
+				if (sCB.getParcelBoundaryType() == ParcelBoundaryType.ROAD) {
+					if (geom instanceof LineString) {
+						curveLimiteFrontParcel.add((LineString) geom);
 					} else {
 						System.out.println(
 								"Classe SamplePredicate : quelque chose n'est pas un ICurve : " + geom.getClass());
@@ -128,54 +114,46 @@ public abstract class DefaultAbstractPredicate<O extends ISimPLU3DPrimitive, C e
 				}
 			}
 		}
-
 		// Oposite boundary
 		for (ParcelBoundary currentBoundary : bPU.getCadastralParcels().get(0)
 				.getBoundariesByType(ParcelBoundaryType.ROAD)) {
-
 			if (currentBoundary.getOppositeBoundary() != null) {
-				IGeometry geom = currentBoundary.getOppositeBoundary().getGeom();
-				if (geom instanceof IOrientableCurve) {
-					curveOppositeLimit.add((IOrientableCurve) geom);
+				Geometry geom = currentBoundary.getOppositeBoundary().getGeometry();
+				if (geom instanceof LineString) {
+					curveOppositeLimit.add((LineString) geom);
 				} else {
 					System.out
 							.println("Classe SamplePredicate : quelque chose n'est pas un ICurve : " + geom.getClass());
 				}
 			}
-
 		}
-
 		// Generating the JTS geometries
 		if (!curveOppositeLimit.isEmpty()) {
-			this.jtsCurveOppositeLimit = AdapterFactory.toGeometry(gf, curveOppositeLimit);
+			this.jtsCurveOppositeLimit = bPUGeom.getFactory().createMultiLineString(curveOppositeLimit.toArray(new LineString[0]));
 		}
-
 		if (!curveLimiteFondParcel.isEmpty()) {
-			this.jtsCurveLimiteFondParcel = AdapterFactory.toGeometry(gf, curveLimiteFondParcel);
+			this.jtsCurveLimiteFondParcel = bPUGeom.getFactory().createMultiLineString(curveLimiteFondParcel.toArray(new LineString[0]));
 		}
 
 		if (!curveLimiteFrontParcel.isEmpty()) {
-			this.jtsCurveLimiteFrontParcel = AdapterFactory.toGeometry(gf, curveLimiteFrontParcel);
+			this.jtsCurveLimiteFrontParcel = bPUGeom.getFactory().createMultiLineString(curveLimiteFrontParcel.toArray(new LineString[0]));
 		}
 
 		if (!curveLimiteLatParcel.isEmpty()) {
-			this.jtsCurveLimiteLatParcel = AdapterFactory.toGeometry(gf, curveLimiteLatParcel);
+			this.jtsCurveLimiteLatParcel = bPUGeom.getFactory().createMultiLineString(curveLimiteLatParcel.toArray(new LineString[0]));
 		}
 
 		if (!curveLimiteLatLeftParcel.isEmpty()) {
-			this.jtsCurveLimiteLatParcelLeft = AdapterFactory.toGeometry(gf, curveLimiteLatLeftParcel);
+			this.jtsCurveLimiteLatParcelLeft = bPUGeom.getFactory().createMultiLineString(curveLimiteLatLeftParcel.toArray(new LineString[0]));
 		}
 
 		if (!curveLimiteLatRightParcel.isEmpty()) {
-			this.jtsCurveLimiteLatParcelRight = AdapterFactory.toGeometry(gf, curveLimiteLatRightParcel);
+			this.jtsCurveLimiteLatParcelRight = bPUGeom.getFactory().createMultiLineString(curveLimiteLatRightParcel.toArray(new LineString[0]));
 		}
 
-		this.bPUGeom = AdapterFactory.toGeometry(gf, bPU.getGeom());
-
+		this.bPUGeom = bPU.getGeometry();
 	}
-	
-	
-	
+
 	/////GETTERS
 
 	public BasicPropertyUnit getCurrentBPU() {
@@ -287,15 +265,12 @@ public abstract class DefaultAbstractPredicate<O extends ISimPLU3DPrimitive, C e
 	 * @return Check the distance between an object and existing buildings
 	 */
 	public boolean checkDistanceBetweenObjectandBuildings(O object, double distanceInterBati) {
-
 		// Distance between existig building and cuboid
 		for (Building b : currentBPU.getBuildings()) {
-
-			if (JTS.toJTS(b.getFootprint()).distance(object.toGeometry()) <= distanceInterBati) {
+			if (b.getFootprint().distance(object.toGeometry()) <= distanceInterBati) {
 				return false;
 			}
 		}
-
 		return true;
 	}
 
@@ -307,7 +282,6 @@ public abstract class DefaultAbstractPredicate<O extends ISimPLU3DPrimitive, C e
 	 * @return Check the distance between an object and existing buildings
 	 */
 	public boolean checkDistanceBetweenObjectandBuildings(List<O> objects, double distanceInterBati) {
-
 		for (O object : objects) {
 			if (!checkDistanceBetweenObjectandBuildings(object, distanceInterBati)) {
 				return false;

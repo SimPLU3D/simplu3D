@@ -1,28 +1,25 @@
 package fr.ign.cogit.simplu3d.util.merge;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.ign.cogit.simplu3d.io.feature.FeatureType;
+import fr.ign.cogit.simplu3d.model.AbstractUrbanFeature;
+import fr.ign.cogit.simplu3d.model.UrbanFeature;
+import fr.ign.common.conversion.FromGeomToSurface;
+import fr.ign.common.extrusion.Extrusion2DObject;
+import fr.ign.common.io.ShapefileWriter;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.locationtech.jts.precision.GeometryPrecisionReducer;
 
-import fr.ign.cogit.geoxygene.api.feature.IFeature;
-import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
-import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
-import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.convert.FromGeomToSurface;
-import fr.ign.cogit.geoxygene.feature.DefaultFeature;
-import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
-import fr.ign.cogit.geoxygene.sig3d.convert.transform.Extrusion2DObject;
-import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
-import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.loader.LoaderCuboid;
 import fr.ign.cogit.simplu3d.util.CuboidGroupCreation;
-import fr.ign.cogit.simplu3d.util.JTS;
 
 /**
  * Computes the "Surface de plancher" from a collection of cuboids, essentially
@@ -95,7 +92,7 @@ public class SDPCalc {
 		return super.clone();
 	}
 
-	public double process(String shape) {
+	public double process(String shape) throws MalformedURLException {
 		List<Cuboid> lCuboid = LoaderCuboid.loadFromShapeFile(shape);
 		return process(lCuboid);
 	}
@@ -110,7 +107,7 @@ public class SDPCalc {
 		return sdp;
 	}
 
-	public double processSurface(String shape) {
+	public double processSurface(String shape) throws MalformedURLException {
 		List<Cuboid> lCuboid = LoaderCuboid.loadFromShapeFile(shape);
 		return process(lCuboid);
 	}
@@ -234,7 +231,7 @@ public class SDPCalc {
 		return geometryPairByGroup;
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws MalformedURLException {
 		// The in shapefile
 		String shpeIn = "/home/mbrasebin/Documents/Donnees/IAUIDF/Resultats/ResultatChoisy/results_pchoisy/24/simul_24_true_no_demo_sampler.shp";
 
@@ -249,45 +246,35 @@ public class SDPCalc {
 
 		System.out.println("SDP :" + sdp);
 		// Getting and adding the merged geometry to the collection
-		IFeatureCollection<IFeature> featColl = new FT_FeatureCollection<>();
-
+		List<UrbanFeature> featColl = new ArrayList<>();
 		List<List<GeomHeightPair>> llGeomPair = sd.getGeometryPairByGroup();
-
 		int count = 0;
-
 		for (List<GeomHeightPair> geomPairs : llGeomPair) {
 			for (GeomHeightPair g : geomPairs) {
-
-				IGeometry jtsGeom = JTS.fromJTS(g.geom);
-
-				if (jtsGeom == null || jtsGeom.coord().isEmpty()) {
+				Geometry jtsGeom = g.geom;
+				if (jtsGeom == null || jtsGeom.isEmpty()) {
 					continue;
 				}
-
-				IMultiSurface<IOrientableSurface> os = FromGeomToSurface.convertMSGeom(jtsGeom);
-
-				for (IOrientableSurface osTemp : os) {
-					if (osTemp.area() < 0.01) {
+				List<Polygon> os = FromGeomToSurface.convertGeom(jtsGeom);
+				for (Polygon osTemp : os) {
+					if (osTemp.getArea() < 0.01) {
 						continue;
 					}
-					IGeometry extruded = Extrusion2DObject.convertFromGeometry(osTemp, 0, g.height);
-
-					IMultiSurface<IOrientableSurface> finalOs = FromGeomToSurface.convertMSGeom(extruded);
-
-					IFeature feat = new DefaultFeature(finalOs);
-
-					AttributeManager.addAttribute(feat, "ID", (count++), "Integer");
-					AttributeManager.addAttribute(feat, "HAUTEUR", g.height, "Double");
+					Geometry extruded = Extrusion2DObject.convertFromGeometry(osTemp, 0, g.height);
+					MultiPolygon finalOs = FromGeomToSurface.convertMSGeom(extruded);
+					UrbanFeature feat = new AbstractUrbanFeature();
+					feat.setGeometry(finalOs);
+					feat.setAttribute("ID", (count++));
+					feat.setAttribute("HAUTEUR", g.height);
 					featColl.add(feat);
-
 				}
-
 			}
-
 		}
-
+		FeatureType featureType = new FeatureType("Feature");
+		featureType.setGeometryType("MultiPolygon");
+		featureType.addAttribute("ID", "Integer");
+		featureType.addAttribute("HAUTEUR", "Double");
 		// Export the result
-		ShapefileWriter.write(featColl, shapeOut);
-
+		ShapefileWriter.write(featColl, featureType, null, shapeOut);
 	}
 }

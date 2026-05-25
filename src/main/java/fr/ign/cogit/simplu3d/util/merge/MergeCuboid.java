@@ -1,39 +1,21 @@
 package fr.ign.cogit.simplu3d.util.merge;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.net.MalformedURLException;
+import java.util.*;
+import java.util.logging.Logger;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import fr.ign.cogit.geoxygene.api.feature.IFeature;
-import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
-import fr.ign.cogit.geoxygene.api.feature.IPopulation;
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.ILineString;
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
-import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
-import fr.ign.cogit.geoxygene.api.spatial.geomprim.IPoint;
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.contrib.cartetopo.Arc;
-import fr.ign.cogit.geoxygene.contrib.cartetopo.CarteTopo;
-import fr.ign.cogit.geoxygene.contrib.cartetopo.Face;
-import fr.ign.cogit.geoxygene.convert.FromGeomToSurface;
-import fr.ign.cogit.geoxygene.feature.DefaultFeature;
-import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
-import fr.ign.cogit.geoxygene.sig3d.convert.geom.FromPolygonToLineString;
-import fr.ign.cogit.geoxygene.sig3d.convert.transform.Extrusion2DObject;
-import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
-import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_LineString;
-import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
-import fr.ign.cogit.geoxygene.spatial.geomprim.GM_Point;
-import fr.ign.cogit.geoxygene.util.algo.PointInPolygon;
-import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
-import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
-import fr.ign.cogit.geoxygene.util.index.Tiling;
-import fr.ign.cogit.simplu3d.util.JTS;
+import fr.ign.cogit.simplu3d.dao.SpatialRepository;
+import fr.ign.cogit.simplu3d.io.feature.FeatureType;
+import fr.ign.cogit.simplu3d.model.AbstractUrbanFeature;
+import fr.ign.cogit.simplu3d.model.UrbanFeature;
 import fr.ign.cogit.simplu3d.util.merge.SDPCalc.GeomHeightPair;
+import fr.ign.common.conversion.FromGeomToSurface;
+import fr.ign.common.extrusion.Extrusion2DObject;
+import fr.ign.common.io.ShapefileWriter;
+import fr.ign.common.topo.Arc;
+import fr.ign.common.topo.CarteTopo;
+import fr.ign.common.topo.Face;
+import org.locationtech.jts.geom.*;
 
 /**
  * Class that enables the fusion of Cuboid Geometry in order to make consistant geomtries one by path of cuboid.
@@ -54,7 +36,7 @@ import fr.ign.cogit.simplu3d.util.merge.SDPCalc.GeomHeightPair;
  **/
 public class MergeCuboid {
 
-  private static final Logger logger = LogManager.getLogger(MergeCuboid.class);
+  private static final Logger logger = Logger.getLogger(MergeCuboid.class.getName());
 
   // A temporary attribute to store the z of a face
   private final static String ATT_TEMP = "ZTEMP";
@@ -62,9 +44,9 @@ public class MergeCuboid {
   // The attribute where surface value will be stored
   private final static String ATT_SURFACE = "SURFACE";
 
-  public static void main(String[] args) throws CloneNotSupportedException {
+  public static void main(String[] args) throws CloneNotSupportedException, MalformedURLException {
 
-    DirectPosition.PRECISION = 6;
+    //DirectPosition.PRECISION = 6;
     // Fixing the Z Min
     double ZMIN = 0;
 
@@ -76,12 +58,13 @@ public class MergeCuboid {
 
     MergeCuboid recal = new MergeCuboid();
 
-    IFeatureCollection<IFeature> fus = recal.mergeFromShapefile(shpeIn, ZMIN);
-
-    ShapefileWriter.write(fus, strShpOut + "fus.shp");
-
+    Collection<UrbanFeature> fus = recal.mergeFromShapefile(shpeIn, ZMIN);
+    FeatureType ft = new FeatureType("Feature");
+    ft.setGeometryType("MultiPolygon");
+    ft.addAttribute(ATT_TEMP, "Double");
+    //FIXME Other attributes?
+    ShapefileWriter.write(fus, ft, null, strShpOut + "fus.shp");
     System.out.println(recal.getSurface());
-
   }
 
   public double getSurface() {
@@ -90,60 +73,58 @@ public class MergeCuboid {
 
   private double surface = 0;
 
-  public IFeatureCollection<IFeature> mergeFromShapefile(String shpIn, double zMini) {
+  public Collection<UrbanFeature> mergeFromShapefile(String shpIn, double zMini) throws MalformedURLException {
     return mergeFromShapefile(shpIn, zMini, 0.05, 0.001);
   }
 
-  public IFeatureCollection<IFeature> mergeFromShapefile(String shpIn, double zMini, double carteTopoThreshold, double shrkiningThreshold) {
+  public Collection<UrbanFeature> mergeFromShapefile(String shpIn, double zMini, double carteTopoThreshold, double shrkiningThreshold) throws MalformedURLException {
     // Creating a partition of cuboid with height stored as ATT_TEMP attribute
-    List<IFeatureCollection<IFeature>> featColl = this.createPartitionCollection(shpIn);
+    List<Collection<UrbanFeature>> featColl = this.createPartitionCollection(shpIn);
     // The results
-    IFeatureCollection<IFeature> featCollOut = new FT_FeatureCollection<>();
+    Collection<UrbanFeature> featCollOut = new ArrayList<>();
     // We add the feature of each groups
-    for (IFeatureCollection<IFeature> currentCollection : featColl) {
+    for (Collection<UrbanFeature> currentCollection : featColl) {
       featCollOut.add(mergeAGroupOfCuboid(currentCollection, zMini, carteTopoThreshold, shrkiningThreshold));
     }
     return featCollOut;
   }
 
   /**
-   * 
-   * @param featColl
-   *          a collection of a set of adjacing boxes
-   * @param zMini
-   *          the minimum z
-   * @param carteTopoThreshold
-   *          the threshold for merging points in carte topo creation
-   * @param shrkiningThreshold
-   *          the face are shrinken by a positive value in order to avoir numeric error in order to find a point not too near from polygon boundary
+   *
+   * @param featColl           a collection of a set of adjacing boxes
+   * @param zMini              the minimum z
+   * @param carteTopoThreshold the threshold for merging points in carte topo creation
+   * @param shrkiningThreshold the face are shrinken by a positive value in order to avoir numeric error in order to find a point not too near from polygon boundary
    * @return a feature with agregated boxes and the surface of the feature stored as ATT_SURFACE attribute
    */
-  public IFeature mergeAGroupOfCuboid(IFeatureCollection<IFeature> featColl, double zMini, double carteTopoThreshold, double shrkiningThreshold) {
+  public UrbanFeature mergeAGroupOfCuboid(Collection<UrbanFeature> featColl, double zMini, double carteTopoThreshold, double shrkiningThreshold) {
     // Creating the neighbourhood relationship with CarteTopo
-    CarteTopo carteTopo = newCarteTopo("-aex90", featColl, carteTopoThreshold);
+    CarteTopo carteTopo = newCarteTopo(featColl, carteTopoThreshold);
+    SpatialRepository<UrbanFeature> repo = new SpatialRepository<>(featColl, null, null);
     // Spatial index to speed up
-    featColl.initSpatialIndex(Tiling.class, false);
+    //featColl.initSpatialIndex(Tiling.class, false);
     // Surface is computed
     double surfaceGroup = 0;
     // For each group the faces are treated (normally there is only one)
     // for (Groupe g : lG) {
-    List<IOrientableSurface> lOS = new ArrayList<>();
+    List<Polygon> lOS = new ArrayList<>();
+    Map<Face, Map<String, Object>> faceAttributes = new HashMap<>();
     // We prepare the list of available faces
     // For each face we look at the maximal height
     for (Face f : carteTopo.getPopFaces()) {
       // We do not treat the infinite height
-      if (f.isInfinite()) {
+      /*if (f.isInfinite()) {
         System.out.println("### INFINITE face detected ###");
         continue;
-      }
+      }*/
       // We took a point into the face and look if we find it in the
       // original data
-      IPoint p = new GM_Point(PointInPolygon.get(f.getGeometrie(), shrkiningThreshold));
+      Point p = f.getGeometrie().getInteriorPoint();
       if (!f.getGeometrie().contains(p)) {
         // This may happen for all as CarteTopo create face for them
         logger.info("Point not in polygon : " + f);
       }
-      Collection<IFeature> featSelect = featColl.select(p);
+      Collection<UrbanFeature> featSelect = repo.findIntersects(p);
       double zMax = Double.NEGATIVE_INFINITY;
       if (featSelect.isEmpty()) {
         zMax = 0;
@@ -151,24 +132,27 @@ public class MergeCuboid {
         logger.info("empty face detected");
       }
       // We get the max height of the initial data
-      for (IFeature feat : featSelect) {
+      for (UrbanFeature feat : featSelect) {
         zMax = Math.max(zMax, Double.parseDouble(feat.getAttribute(ATT_TEMP).toString()));
       }
       // We set the z of the point of the polygon as zMax
-      IPolygon poly = (IPolygon) f.getGeometrie().clone();
+      Polygon poly = (Polygon) f.getGeometrie().copy();
       if (!featSelect.isEmpty()) {
         lOS.add(poly);
         // We compute the surface by adding the face (the roofs)
-        surfaceGroup = surfaceGroup + poly.area();
+        surfaceGroup = surfaceGroup + poly.getArea();
       }
-      AttributeManager.addAttribute(f, ATT_TEMP, zMax + zMini, "Double");
-      for (IDirectPosition dp : poly.coord()) {
+      Map<String, Object> attributes = faceAttributes.getOrDefault(f, new HashMap<>());
+      attributes.put(ATT_TEMP, zMax + zMini);
+      faceAttributes.put(f, attributes);
+      //AttributeManager.addAttribute(f, ATT_TEMP, zMax + zMini, "Double");
+      for (Coordinate dp : poly.getCoordinates()) {
         dp.setZ(zMax + zMini);
       }
     }
     // For each edges we determine the minimal and maximal height in
     // order to generate vertical faces
-    for (Arc a : carteTopo.getListeArcs()) {
+    for (Arc a : carteTopo.getPopArcs()) {
       Face fd = a.getFaceDroite();
       Face fg = a.getFaceGauche();
       // No neighbour for the edge
@@ -179,17 +163,17 @@ public class MergeCuboid {
       double z1 = 0;
       double z2 = 0;
       // If there is only one neighbour we make a wall until the ground (ATT_TEMP)
-      if (fd == null || fd.isInfinite()) {
-        z1 = Double.parseDouble(fg.getAttribute(ATT_TEMP).toString());
+      if (fd == null) {
+        z1 = Double.parseDouble(faceAttributes.get(fg).get(ATT_TEMP).toString());
         z2 = zMini;
-      } else if (fg == null || fg.isInfinite()) {
-        z1 = Double.parseDouble(fd.getAttribute(ATT_TEMP).toString());
+      } else if (fg == null) {
+        z1 = Double.parseDouble(faceAttributes.get(fd).get(ATT_TEMP).toString());
         z2 = zMini;
       } else {
         // There is two neighbour; it will be between the edges of the
         // two roofs
-        z1 = Double.parseDouble(fg.getAttribute(ATT_TEMP).toString());
-        z2 = Double.parseDouble(fd.getAttribute(ATT_TEMP).toString());
+        z1 = Double.parseDouble(faceAttributes.get(fg).get(ATT_TEMP).toString());
+        z2 = Double.parseDouble(faceAttributes.get(fd).get(ATT_TEMP).toString());
       }
       // We ensure that the heights are not the same
       double zMin = Math.min(z1, z2);
@@ -198,26 +182,28 @@ public class MergeCuboid {
         continue;
       }
       // We create the wall from the line
-      ILineString lineToExtrude = (ILineString) a.getGeometrie().clone();
+      LineString lineToExtrude = (LineString) a.getGeometrie().copy();
       // We update the surface by considering this new wall
-      surfaceGroup = surfaceGroup + lineToExtrude.length() * (zMax - zMin);
+      surfaceGroup = surfaceGroup + lineToExtrude.getLength() * (zMax - zMin);
       // Extrusion of the geometry according to the considered height
-      IGeometry geom = Extrusion2DObject.convertFromLine(lineToExtrude, zMin, zMax);
+      Geometry geom = Extrusion2DObject.convertFromLine(lineToExtrude, zMin, zMax);
       lOS.addAll(FromGeomToSurface.convertGeom(geom));
     }
     this.surface = this.surface + surfaceGroup;
-    IFeature feat = new DefaultFeature(new GM_MultiSurface<>(lOS));
-    AttributeManager.addAttribute(feat, ATT_SURFACE, surfaceGroup, "Double");
+    UrbanFeature feat = new AbstractUrbanFeature();
+    GeometryFactory factory =  new GeometryFactory();
+    feat.setGeometry(factory.createMultiPolygon(lOS.toArray(new Polygon[0])));
+    feat.setAttribute(ATT_SURFACE, surfaceGroup);
+    //AttributeManager.addAttribute(feat, ATT_SURFACE, surfaceGroup, "Double");
     return feat;
   }
 
   /**
-   * 
-   * @param shpIn
-   *          shapefile from Cuboid simplu3D simulation
+   *
+   * @param shpIn shapefile from Cuboid simplu3D simulation
    * @return a partition with polygons that have a Z
    */
-  public List<IFeatureCollection<IFeature>> createPartitionCollection(String shpIn) {
+  public List<Collection<UrbanFeature>> createPartitionCollection(String shpIn) throws MalformedURLException {
     // Launching SDPCalc to get the partition as a collection of
     // GeomHeightPair
     SDPCalc sd = new SDPCalc();
@@ -225,14 +211,15 @@ public class MergeCuboid {
     List<List<GeomHeightPair>> llGeomPair = sd.getGeometryPairByGroup();
     // Agregating the pair into a list of collection of features (one collection by group)
     // With the height stored as ATT_TEMP
-    List<IFeatureCollection<IFeature>> featColl = new ArrayList<>();
+    List<Collection<UrbanFeature>> featColl = new ArrayList<>();
     for (List<GeomHeightPair> lPair : llGeomPair) {
-      IFeatureCollection<IFeature> featCollTemp = new FT_FeatureCollection<>();
+      Collection<UrbanFeature> featCollTemp = new ArrayList<>();
       for (GeomHeightPair pair : lPair) {
-        IGeometry geom = JTS.fromJTS(pair.geom);
-        for (IOrientableSurface os : FromGeomToSurface.convertGeom(geom)) {
-          IFeature feat = new DefaultFeature(os);
-          AttributeManager.addAttribute(feat, ATT_TEMP, pair.height, "Double");
+        Geometry geom = pair.geom;
+        for (Polygon os : FromGeomToSurface.convertGeom(geom)) {
+          UrbanFeature feat = new AbstractUrbanFeature();
+          feat.setGeometry(os);
+          feat.setAttribute(ATT_TEMP, pair.height);
           featCollTemp.add(feat);
         }
       }
@@ -242,20 +229,16 @@ public class MergeCuboid {
   }
 
   /**
-   *
-   * @param name
-   *          of the carte topo
-   * @param collection
-   *          a collection of faces that forms a partition
-   * @param threshold
-   *          a threshold to merge adjacing points
+   * @param collection a collection of faces that forms a partition
+   * @param threshold  a threshold to merge adjacing points
    * @return the carte topo
    */
-  private static CarteTopo newCarteTopo(String name, IFeatureCollection<? extends IFeature> collection, double threshold) {
+  private static CarteTopo newCarteTopo(Collection<UrbanFeature> collection, double threshold) {
     try {
       // Initialisation d'une nouvelle CarteTopo
-      CarteTopo carteTopo = new CarteTopo(name);
-      carteTopo.setBuildInfiniteFace(false);
+      CarteTopo carteTopo = new CarteTopo();
+      carteTopo.addFeatures(collection);
+/*      carteTopo.setBuildInfiniteFace(false);
       // Récupération des arcs de la carteTopo
       IPopulation<Arc> arcs = carteTopo.getPopArcs();
       // Import des arcs de la collection dans la carteTopo
@@ -288,39 +271,42 @@ public class MergeCuboid {
       }
       carteTopo.decoupeArcs(0.01);
       carteTopo.splitEdgesWithPoints(0.01);
-      carteTopo.filtreArcsDoublons();
+      carteTopo.filtreArcsDoublons();*/
       if (invalid(carteTopo)) {
-        logger.error("");
+        logger.severe("Invalid CarteTopo");
         System.exit(0);
       }
       // Création de la topologie Arcs Noeuds
-      carteTopo.creeTopologieArcsNoeuds(threshold);
+      //carteTopo.creeTopologieArcsNoeuds(threshold);
       // La carteTopo est rendue planaire
+/*
       if (invalid(carteTopo)) {
         logger.error("");
         System.exit(0);
       }
+*/
       // DEBUG.addAll(carteTopo.getListeArcs());
       // Création des faces de la carteTopo
+/*
       carteTopo.creeTopologieFaces();
       if (invalid(carteTopo)) {
         logger.error("");
         System.out.println("Error 3");
       }
+*/
       return carteTopo;
     } catch (Exception e) {
-      logger.error(e);
+      logger.severe(e.getMessage());
     }
     return null;
   }
 
   /**
-   * 
-   * @param ct
-   *          a CarteTopo to test
+   *
+   * @param ct a CarteTopo to test
    * @return true if carteTopo is Valid
    */
   private static boolean invalid(CarteTopo ct) {
-    return ct.getPopArcs().stream().anyMatch(a->a.getGeometrie().coord().size() < 2);
+    return ct.getPopArcs().stream().anyMatch(a -> a.getGeometrie().getCoordinates().length < 2);
   }
 }

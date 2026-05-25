@@ -1,17 +1,15 @@
 package fr.ign.cogit.simplu3d.test.rjmcmc.trapezoid;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import fr.ign.cogit.simplu3d.io.feature.FeatureType;
+import fr.ign.cogit.simplu3d.model.AbstractUrbanFeature;
+import fr.ign.cogit.simplu3d.model.UrbanFeature;
+import fr.ign.common.io.ShapefileWriter;
 import org.apache.commons.math3.random.RandomGenerator;
 
-import fr.ign.cogit.geoxygene.api.feature.IFeature;
-import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
-import fr.ign.cogit.geoxygene.feature.DefaultFeature;
-import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
-import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Envelope;
-import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
-import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth.TransformToSurface;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.sampler.GreenSamplerBlockTemperature;
 import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.builder.SimpleRightTrapezoidBuilder;
@@ -29,6 +27,9 @@ import fr.ign.rjmcmc.energy.ConstantEnergy;
 import fr.ign.rjmcmc.kernel.Kernel;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.SimpleTemperature;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
 
 public class TestRightTrapezoidSampler {
 
@@ -47,8 +48,8 @@ public class TestRightTrapezoidSampler {
 
 		double length2min = 1;
 		double length2max = 15;
-		
-		
+
+
 		double length3min = 1;
 		double length3max = 15;
 
@@ -60,15 +61,14 @@ public class TestRightTrapezoidSampler {
 
 		double orientationMin = 0;
 		double orientationMax = Math.PI;
-		
+
 		int nbSample = 5;
 
+		Geometry p = new GeometryFactory().toGeometry(new Envelope(xmin, xmax, ymin, ymax));
 		UniformBirth<RightTrapezoid> birth = new UniformBirth<RightTrapezoid>(rng,
 				new RightTrapezoid(xmin, ymin, length1min, length2min, length3min, widhtmin, heightMin, orientationMin),
 				new RightTrapezoid(xmax, ymax, length1max, length2max, length3max, widhtmax, heightMax, orientationMax),
-				new SimpleRightTrapezoidBuilder(), TransformToSurface.class, (new GM_Envelope(xmin, xmax, ymin, ymax)).getGeom());
-		
-		
+				new SimpleRightTrapezoidBuilder(), TransformToSurface.class, p);
 
 		List<Kernel<GraphConfiguration<RightTrapezoid>, BirthDeathModification<RightTrapezoid>>> kernels = new ArrayList<>(
 				3);
@@ -80,56 +80,47 @@ public class TestRightTrapezoidSampler {
 
 		DirectSampler<RightTrapezoid, GraphConfiguration<RightTrapezoid>, BirthDeathModification<RightTrapezoid>> ds = new DirectSampler<>(
 				distribution, birth);
-		
-	IFeatureCollection<IFeature> featColl = new FT_FeatureCollection<>();
 
+		Collection<UrbanFeature> featColl = new ArrayList<>();
 		Sampler<GraphConfiguration<RightTrapezoid>, BirthDeathModification<RightTrapezoid>> s = new GreenSamplerBlockTemperature<>(
 				rng, ds, new MetropolisAcceptance<SimpleTemperature>(), kernels);
-		
-		
-		for(int i=0; i < nbSample ; i++){
-			GraphConfiguration<RightTrapezoid> gC = new GraphConfiguration<>(new ConstantEnergy<RightTrapezoid,RightTrapezoid>(5.0), new ConstantEnergy<RightTrapezoid,RightTrapezoid>(0.0));
-			s.sample(rng	, gC, new SimpleTemperature(1000));
 
-		
+		for (int i = 0; i < nbSample; i++) {
+			GraphConfiguration<RightTrapezoid> gC = new GraphConfiguration<>(new ConstantEnergy<RightTrapezoid, RightTrapezoid>(5.0), new ConstantEnergy<RightTrapezoid, RightTrapezoid>(0.0));
+			s.sample(rng, gC, new SimpleTemperature(1000));
 			featColl.addAll(exportColl(gC));
 		}
-		
-		
-	System.out.println(featColl.size());
-		ShapefileWriter.write(featColl,"test_tra.shp");
-
+		System.out.println(featColl.size());
+		FeatureType featureType = new FeatureType("ParallelTrapezoid");
+		featureType.setGeometryType("MultiPolygon");
+		featureType.addAttribute("x", "Double");
+		featureType.addAttribute("y", "Double");
+		featureType.addAttribute("length1", "Double");
+		featureType.addAttribute("length2", "Double");
+		featureType.addAttribute("length3", "Double");
+		featureType.addAttribute("width", "Double");
+		featureType.addAttribute("Hauteur", "Double");
+		featureType.addAttribute("Rotation", "Double");
+		ShapefileWriter.write(featColl, featureType, null, "test_tra.shp");
 	}
 	
-	public static  IFeatureCollection<IFeature> exportColl(GraphConfiguration<RightTrapezoid> gC ){
-		
-		
-	IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
+	public static Collection<UrbanFeature> exportColl(GraphConfiguration<RightTrapezoid> gC ){
+	Collection<UrbanFeature> featC = new ArrayList<>();
 		for (GraphVertex<RightTrapezoid> v : gC.getGraph().vertexSet()) {
-
-			IFeature feat = new DefaultFeature(v.getValue().generated3DGeom());
+			UrbanFeature feat = new AbstractUrbanFeature();
+			feat.setGeometry(v.getValue().generated3DGeom());
 			// On ajoute des attributs aux entités (dimension des objets)
-			AttributeManager.addAttribute(feat, "x",v.getValue().centerx,
-					"Double");
-			AttributeManager.addAttribute(feat, "y",v.getValue().centery,
-					"Double");
-			AttributeManager.addAttribute(feat, "lenght1",v.getValue().length1,
-					"Double");
-			AttributeManager.addAttribute(feat, "lenght2",v.getValue().length2,
-					"Double");
-			AttributeManager.addAttribute(feat, "lenght3",v.getValue().length3,
-					"Double");
-			AttributeManager.addAttribute(feat, "width", v.getValue().width, "Double");
-			AttributeManager.addAttribute(feat, "Hauteur", v.getValue().height, "Double");
-			AttributeManager.addAttribute(feat, "Rotation", v.getValue().orientation, "Double");
-			
+			feat.setAttribute("x", v.getValue().centerx);
+			feat.setAttribute("y", v.getValue().centery);
+			feat.setAttribute("length1", v.getValue().length1);
+			feat.setAttribute("length2", v.getValue().length2);
+			feat.setAttribute("length3", v.getValue().length3);
+			feat.setAttribute("width", v.getValue().width);
+			feat.setAttribute("Hauteur", v.getValue().height);
+			feat.setAttribute("Rotation", v.getValue().orientation);
 			System.out.println("Orientaiton : " +  v.getValue().orientation);
-			
 			featC.add(feat);
-	
 		}
-		
 		return featC;
 	}
-
 }

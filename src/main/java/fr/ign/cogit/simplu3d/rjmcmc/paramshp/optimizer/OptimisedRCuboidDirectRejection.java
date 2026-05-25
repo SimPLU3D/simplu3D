@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
+import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IEnvelope;
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth.TransformToSurface;
@@ -49,15 +47,13 @@ import fr.ign.simulatedannealing.temperature.SimpleTemperature;
 
 public class OptimisedRCuboidDirectRejection extends DefaultSimPLU3DOptimizer<CuboidRoofed> {
 	public GraphConfiguration<CuboidRoofed> process(RandomGenerator rG, BasicPropertyUnit bpu, SimpluParameters p,
-			Environnement env, int id,
+			Environnement env, String id,
 			ConfigurationModificationPredicate<GraphConfiguration<CuboidRoofed>, BirthDeathModification<CuboidRoofed>> pred,
-			IGeometry polygon) {
+			Geometry polygon) {
 		// Géométrie de l'unité foncière sur laquelle porte la génération
-		IGeometry geom = bpu.generateGeom().buffer(1);
-
+		Geometry geom = bpu.generateGeom().buffer(1);
 		// Configuration que l'on optimise
 		GraphConfiguration<CuboidRoofed> conf = null;
-
 		try {
 			// On créer la configuration (notamment la fonction énergétique)
 			conf = create_configuration(p, geom, bpu);
@@ -75,13 +71,6 @@ public class OptimisedRCuboidDirectRejection extends DefaultSimPLU3DOptimizer<Cu
 
 		SimulatedAnnealing.optimize(rG, conf, samp, sch, end, pv.prepare(p, bpu.getId()));
 		return conf;
-	}
-
-	public GraphConfiguration<CuboidRoofed> create_configuration(SimpluParameters p, IGeometry geom,
-			BasicPropertyUnit bpu) throws Exception {
-
-		return this.create_configuration(p, AdapterFactory.toGeometry(new GeometryFactory(), geom), bpu);
-
 	}
 
 	public GraphConfiguration<CuboidRoofed> create_configuration(SimpluParameters p, Geometry geom,
@@ -136,17 +125,15 @@ public class OptimisedRCuboidDirectRejection extends DefaultSimPLU3DOptimizer<Cu
 	public Sampler<GraphConfiguration<CuboidRoofed>, BirthDeathModification<CuboidRoofed>> create_sampler(
 			RandomGenerator rng, SimpluParameters p, BasicPropertyUnit bpU,
 			ConfigurationModificationPredicate<GraphConfiguration<CuboidRoofed>, BirthDeathModification<CuboidRoofed>> pred,
-			IGeometry polygon) {
-
+			Geometry polygon) {
 		// On créé les bornes min et max pour le sampler (8 paramètres dans le cas
 		// du CuboidRoofed)
-		IEnvelope env = polygon.envelope();
+		Envelope env = polygon.getEnvelopeInternal();
+		double xmin = env.getMinX();
+		double xmax = env.getMaxX();
 
-		double xmin = env.getLowerCorner().getX();
-		double xmax = env.getUpperCorner().getX();
-
-		double ymin = env.getLowerCorner().getY();
-		double ymax = env.getUpperCorner().getY();
+		double ymin = env.getMinY();
+		double ymax = env.getMaxY();
 
 		double lmin = p.getDouble("minlen");
 		double lmax = p.getDouble("maxlen");

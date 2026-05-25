@@ -3,10 +3,9 @@ package fr.ign.cogit.simplu3d.test.rjmcmc.cuboid.transformation;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.vividsolutions.jts.util.Assert;
-
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.RotateCuboid;
+import org.locationtech.jts.util.Assert;
 
 /**
  * 

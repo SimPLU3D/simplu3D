@@ -1,28 +1,17 @@
 package fr.ign.cogit.simplu3d.rjmcmc.paramshp.geometry.impl;
 
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
+import fr.ign.common.util.Vecteur;
+import org.geotools.api.referencing.operation.MathTransform;
+import org.geotools.api.referencing.operation.TransformException;
+import org.geotools.geometry.jts.JTS;
+import org.geotools.referencing.operation.transform.AffineTransform2D;
+import org.locationtech.jts.geom.*;
 
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
-import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
-import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
-import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
-import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_LineString;
-import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Polygon;
-import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
-import fr.ign.cogit.geoxygene.util.algo.CommonAlgorithms;
-import fr.ign.cogit.geoxygene.util.conversion.JtsGeOxygene;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.cogit.simplu3d.util.AssignZ;
@@ -129,26 +118,29 @@ public class LBuildingWithRoof extends AbstractSimpleBuilding {
 	@Override
 	public Polygon toGeometry() {
 		if (geomJTS == null) {
+			Polygon pol = new GeometryFactory().createPolygon(new Coordinate[]{
+					new Coordinate(centerx, centery),
+					new Coordinate(centerx, centery + h1),
+					new Coordinate(centerx - l2, centery + h1),
+					new Coordinate(centerx - l2, centery - h2),
+					new Coordinate(centerx + l1, centery - h2),
+					new Coordinate(centerx + l1, centery),
+					new Coordinate(centerx, centery)
+			});
+			AffineTransform affineTransform = AffineTransform.getRotateInstance(this.orientation, centerx, centery);
+			MathTransform mathTransform = new AffineTransform2D(affineTransform);
+			//pol = CommonAlgorithms.rotation(pol, new Coordinate(centerx, centery), this.orientation);
+            try {
+                pol = (Polygon) JTS.transform(pol, mathTransform);//FIXME check that
+            } catch (TransformException e) {
+				throw new RuntimeException(e);
+            }
 
-			IPolygon pol = new GM_Polygon(new GM_LineString(new DirectPositionList(Arrays.asList(
-
-					(IDirectPosition) new DirectPosition(centerx, centery),
-					(IDirectPosition) new DirectPosition(centerx, centery + h1),
-					(IDirectPosition) new DirectPosition(centerx - l2, centery + h1),
-					(IDirectPosition) new DirectPosition(centerx - l2, centery - h2),
-					(IDirectPosition) new DirectPosition(centerx + l1, centery - h2),
-					(IDirectPosition) new DirectPosition(centerx + l1, centery),
-					(IDirectPosition) new DirectPosition(centerx, centery)))));
-
-			pol = CommonAlgorithms.rotation(pol, new DirectPosition(centerx, centery), this.orientation);
-
-			try {
-				this.geomJTS = (Polygon) JtsGeOxygene.makeJtsGeom(pol);
-
+            try {
+				this.geomJTS = pol;
 				if (this.geomJTS == null) {
 					System.out.println("null ? ");
 				}
-
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -157,13 +149,13 @@ public class LBuildingWithRoof extends AbstractSimpleBuilding {
 		return this.geomJTS;
 	}
 
-	IPolygon polyGeox = null;
+	Polygon polyGeox = null;
 
 	@Override
-	public IOrientableSurface getFootprint() {
+	public Polygon getFootprint() {
 		if (polyGeox == null) {
 			try {
-				polyGeox = (IPolygon) JtsGeOxygene.makeGeOxygeneGeom(this.toGeometry());
+				polyGeox = this.toGeometry();//FIXME REMOVE DUPLICATE?
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -176,27 +168,17 @@ public class LBuildingWithRoof extends AbstractSimpleBuilding {
 
 	@Override
 	public boolean prospectJTS(Geometry geom, double slope, double hIni) {
-
 		Coordinate[] coord = this.toGeometry().getCoordinates();
-
 		// We first check poits from exterior footprint
-		int nbCoord = coord.length;
-		for (int i = 0; i < nbCoord; i++) {
-			Coordinate c = coord[i];
-			Point p = geomF.createPoint(c);
-
-			double distance = p.distance(geom);
-
-			if (distance * slope + hIni < this.hgutter) {
-				return false;
-			}
-
-		}
-
-		
-
+        for (Coordinate c : coord) {
+            Point p = geomF.createPoint(c);
+            double distance = p.distance(geom);
+            if (distance * slope + hIni < this.hgutter) {
+                return false;
+            }
+        }
 		// We check the two inner point
-		IDirectPosition dp = this.getInnerPoint1();
+		Coordinate dp = this.getInnerPoint1();
 		Coordinate c1 = new Coordinate(dp.getX(), dp.getY(), dp.getZ());
 
 		Point p1 = geomF.createPoint(c1);
@@ -207,7 +189,7 @@ public class LBuildingWithRoof extends AbstractSimpleBuilding {
 			return false;
 		}
 
-		IDirectPosition dp2 = this.getInnerPoint2();
+		Coordinate dp2 = this.getInnerPoint2();
 		Coordinate c2 = new Coordinate(dp2.getX(), dp2.getY(), dp2.getZ());
 
 		Point p2 = geomF.createPoint(c2);
@@ -225,11 +207,11 @@ public class LBuildingWithRoof extends AbstractSimpleBuilding {
 
 	public double getZmin() {
 		if (Double.isNaN(zMin)) {
-			Environnement env = Environnement.getInstance();
-			if (env != null && env.getTerrain() != null) {
+			Environnement env = Environnement.createEnvironnement();
+			if (env.getTerrain() != null) {
 				zMin = env.getTerrain().castCoordinate(this.centerx, this.centery).z;
 			} else {
-				logger.warn("No terrain Cuboid ZMin set to 0");
+				System.out.println("No terrain Cuboid ZMin set to 0");//FIXME use logger
 				zMin = AssignZ.DEFAULT_Z;
 			}
 
@@ -238,216 +220,180 @@ public class LBuildingWithRoof extends AbstractSimpleBuilding {
 		return zMin;
 	}
 
-	public IGeometry getGeom() {
+	public Geometry getGeom() {
 		return generated3DGeom();
 	}
 
-	public boolean prospect(IGeometry geom, double slope, double hIni) {
-
+	public boolean prospect(Geometry geom, double slope, double hIni) {
 		try {
-			return prospectJTS(JtsGeOxygene.makeJtsGeom(geom), slope, hIni);
+			return prospectJTS(geom, slope, hIni);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 		return false;
 	}
 
-	IGeometry geometry3d = null;
+	Geometry geometry3d = null;
 
-	private IDirectPosition getInnerPoint1() {
-
-		IDirectPositionList dpl = this.getFootprint().coord();
-
-		IDirectPosition dp4 = dpl.get(4);
+	private Coordinate getInnerPoint1() {
+		List<Coordinate> dpl = Arrays.asList(this.getFootprint().getCoordinates());
+		Coordinate dp4 = dpl.get(4);
 		dp4.setZ(this.getZmin() + this.hgutter);
-		IDirectPosition dp5 = dpl.get(5);
+		Coordinate dp5 = dpl.get(5);
 		dp5.setZ(this.getZmin() + this.hgutter);
-
 		Vecteur vz = new Vecteur(0, 0, 1);
-
-		IDirectPosition dpc2 = new DirectPosition(dp4.getX() / 2 + dp5.getX() / 2, dp4.getY() / 2 + dp5.getY() / 2, 0);
+		Coordinate dpc2 = new Coordinate(dp4.getX() / 2 + dp5.getX() / 2, dp4.getY() / 2 + dp5.getY() / 2, 0);
 		Vecteur v2 = new Vecteur(dp4, dp5);
 		v2.normalise();
 		Vecteur vt2 = vz.prodVectoriel(v2);
 		vt2 = vt2.multConstante(this.shift * (this.l1 + this.l2 / 2));
-		IDirectPosition dp6 = vt2.translate(dpc2);
+		Coordinate dp6 = vt2.translate(dpc2);
 		dp6.setZ(this.getZmin() + this.height + this.hgutter);
-
 		return dp6;
-
 	}
 
-	private IDirectPosition getInnerPoint2() {
-
-		IDirectPositionList dpl = this.getFootprint().coord();
-
-		IDirectPosition dp1 = dpl.get(1);
+	private Coordinate getInnerPoint2() {
+		List<Coordinate> dpl = Arrays.asList(this.getFootprint().getCoordinates());
+		Coordinate dp1 = dpl.get(1);
 		dp1.setZ(this.getZmin() + this.hgutter);
-		IDirectPosition dp2 = dpl.get(2);
+		Coordinate dp2 = dpl.get(2);
 		dp2.setZ(this.getZmin() + this.hgutter);
-
 		Vecteur vz = new Vecteur(0, 0, 1);
-
-		IDirectPosition dpc1 = new DirectPosition(dp1.getX() / 2 + dp2.getX() / 2, dp1.getY() / 2 + dp2.getY() / 2, 0);
+		Coordinate dpc1 = new Coordinate(dp1.getX() / 2 + dp2.getX() / 2, dp1.getY() / 2 + dp2.getY() / 2, 0);
 		Vecteur v1 = new Vecteur(dp1, dp2);
 		v1.normalise();
 		Vecteur vt = vz.prodVectoriel(v1);
 		vt = vt.multConstante(this.shift * (this.h1 + this.h2 / 2));
-		IDirectPosition dp7 = vt.translate(dpc1);
+		Coordinate dp7 = vt.translate(dpc1);
 		dp7.setZ(this.getZmin() + this.height + this.hgutter);
-
 		return dp7;
-
 	}
 
 	@Override
-	public IGeometry generated3DGeom() {
-
+	public Geometry generated3DGeom() {
 		if (geometry3d == null) {
-			IDirectPositionList dpl = this.getFootprint().coord();
-
-			IDirectPosition dp0 = dpl.get(0);
+			List<Coordinate> dpl = Arrays.asList(this.getFootprint().getCoordinates());
+			Coordinate dp0 = dpl.get(0);
 			dp0.setZ(this.getZmin() + this.hgutter);
-			IDirectPosition dp1 = dpl.get(1);
+			Coordinate dp1 = dpl.get(1);
 			dp1.setZ(this.getZmin() + this.hgutter);
-			IDirectPosition dp2 = dpl.get(2);
+			Coordinate dp2 = dpl.get(2);
 			dp2.setZ(this.getZmin() + this.hgutter);
-			IDirectPosition dp3 = dpl.get(3);
+			Coordinate dp3 = dpl.get(3);
 			dp3.setZ(this.getZmin() + this.hgutter);
-			IDirectPosition dp4 = dpl.get(4);
+			Coordinate dp4 = dpl.get(4);
 			dp4.setZ(this.getZmin() + this.hgutter);
-			IDirectPosition dp5 = dpl.get(5);
+			Coordinate dp5 = dpl.get(5);
 			dp5.setZ(this.getZmin() + this.hgutter);
-
-
-
-			IDirectPosition dp6 = this.getInnerPoint1();
-			IDirectPosition dp7 = this.getInnerPoint2();
-
-			IDirectPosition dp8 = new DirectPosition(dp0.getX() / 2 + dp3.getX() / 2, dp0.getY() / 2 + dp3.getY() / 2);
+			Coordinate dp6 = this.getInnerPoint1();
+			Coordinate dp7 = this.getInnerPoint2();
+			Coordinate dp8 = new Coordinate(dp0.getX() / 2 + dp3.getX() / 2, dp0.getY() / 2 + dp3.getY() / 2);
 			dp8.setZ(this.getZmin() + this.height + this.hgutter);
-
-			IDirectPosition dp0Bas = (IDirectPosition) dp0.clone();
+			Coordinate dp0Bas = dp0.copy();
 			dp0Bas.setZ(this.getZmin());
-			IDirectPosition dp1Bas = (IDirectPosition) dp1.clone();
+			Coordinate dp1Bas = dp1.copy();
 			dp1Bas.setZ(this.getZmin());
-			IDirectPosition dp2Bas = (IDirectPosition) dp2.clone();
+			Coordinate dp2Bas = dp2.copy();
 			dp2Bas.setZ(this.getZmin());
-			IDirectPosition dp3Bas = (IDirectPosition) dp3.clone();
+			Coordinate dp3Bas = dp3.copy();
 			dp3Bas.setZ(this.getZmin());
-			IDirectPosition dp4Bas = (IDirectPosition) dp4.clone();
+			Coordinate dp4Bas = dp4.copy();
 			dp4Bas.setZ(this.getZmin());
-			IDirectPosition dp5Bas = (IDirectPosition) dp5.clone();
+			Coordinate dp5Bas = dp5.copy();
 			dp5Bas.setZ(this.getZmin());
-
-			IDirectPosition dp7Bas = (IDirectPosition) dp7.clone();
+			Coordinate dp7Bas = dp7.copy();
 			dp7Bas.setZ(this.getZmin());
-			IDirectPosition dp6Bas = (IDirectPosition) dp6.clone();
+			Coordinate dp6Bas = dp6.copy();
 			dp6Bas.setZ(this.getZmin());
-			IDirectPosition dp8Bas = (IDirectPosition) dp8.clone();
+			Coordinate dp8Bas = dp8.copy();
 			dp8Bas.setZ(this.getZmin());
-
-			IDirectPositionList dpl1 = new DirectPositionList();
+			CoordinateList dpl1 = new CoordinateList();
 			dpl1.add(dp3);
 			dpl1.add(dp4);
 			dpl1.add(dp6);
 			dpl1.add(dp8);
 			dpl1.add(dp3);
-
-			IDirectPositionList dpl2 = new DirectPositionList();
+			CoordinateList dpl2 = new CoordinateList();
 			dpl2.add(dp4);
 			dpl2.add(dp5);
 			dpl2.add(dp6);
 			dpl2.add(dp4);
-
-			IDirectPositionList dpl3 = new DirectPositionList();
+			CoordinateList dpl3 = new CoordinateList();
 			dpl3.add(dp5);
 			dpl3.add(dp0);
 			dpl3.add(dp8);
 			dpl3.add(dp6);
 			dpl3.add(dp5);
-
-			IDirectPositionList dpl4 = new DirectPositionList();
+			CoordinateList dpl4 = new CoordinateList();
 			dpl4.add(dp0);
 			dpl4.add(dp1);
 			dpl4.add(dp7);
 			dpl4.add(dp8);
 			dpl4.add(dp0);
-
-			IDirectPositionList dpl5 = new DirectPositionList();
+			CoordinateList dpl5 = new CoordinateList();
 			dpl5.add(dp1);
 			dpl5.add(dp2);
 			dpl5.add(dp7);
 			dpl5.add(dp1);
-
-			IDirectPositionList dpl6 = new DirectPositionList();
+			CoordinateList dpl6 = new CoordinateList();
 			dpl6.add(dp2);
 			dpl6.add(dp3);
 			dpl6.add(dp8);
 			dpl6.add(dp7);
 			dpl6.add(dp2);
-
-			IDirectPositionList dpl7 = new DirectPositionList();
+			CoordinateList dpl7 = new CoordinateList();
 			dpl7.add(dp0);
 			dpl7.add(dp1);
 			dpl7.add(dp1Bas);
 			dpl7.add(dp0Bas);
 			dpl7.add(dp0);
-
-			IDirectPositionList dpl8 = new DirectPositionList();
+			CoordinateList dpl8 = new CoordinateList();
 			dpl8.add(dp1);
 			dpl8.add(dp2);
 			dpl8.add(dp2Bas);
 			dpl8.add(dp1Bas);
 			dpl8.add(dp1);
-
-			IDirectPositionList dpl9 = new DirectPositionList();
+			CoordinateList dpl9 = new CoordinateList();
 			dpl9.add(dp2);
 			dpl9.add(dp3);
 			dpl9.add(dp3Bas);
 			dpl9.add(dp2Bas);
 			dpl9.add(dp2);
-
-			IDirectPositionList dpl10 = new DirectPositionList();
+			CoordinateList dpl10 = new CoordinateList();
 			dpl10.add(dp3);
 			dpl10.add(dp4);
 			dpl10.add(dp4Bas);
 			dpl10.add(dp3Bas);
 			dpl10.add(dp3);
-
-			IDirectPositionList dpl11 = new DirectPositionList();
+			CoordinateList dpl11 = new CoordinateList();
 			dpl11.add(dp4);
 			dpl11.add(dp5);
 			dpl11.add(dp5Bas);
 			dpl11.add(dp4Bas);
 			dpl11.add(dp4);
-
-			IDirectPositionList dpl12 = new DirectPositionList();
+			CoordinateList dpl12 = new CoordinateList();
 			dpl12.add(dp5);
 			dpl12.add(dp0);
 			dpl12.add(dp0Bas);
 			dpl12.add(dp5Bas);
 			dpl12.add(dp5);
-
-			List<IOrientableSurface> ims = new ArrayList<>();
-			ims.add(new GM_Polygon(new GM_LineString(dpl1)));
-			ims.add(new GM_Polygon(new GM_LineString(dpl2)));
-			ims.add(new GM_Polygon(new GM_LineString(dpl3)));
-			ims.add(new GM_Polygon(new GM_LineString(dpl4)));
-			ims.add(new GM_Polygon(new GM_LineString(dpl5)));
-			ims.add(new GM_Polygon(new GM_LineString(dpl6)));
-			ims.add(new GM_Polygon(new GM_LineString(dpl7)));
-			ims.add(new GM_Polygon(new GM_LineString(dpl8)));
-			ims.add(new GM_Polygon(new GM_LineString(dpl9)));
-			ims.add(new GM_Polygon(new GM_LineString(dpl10)));
-			ims.add(new GM_Polygon(new GM_LineString(dpl11)));
-			ims.add(new GM_Polygon(new GM_LineString(dpl12)));
-
-			geometry3d = new GM_MultiSurface<>(ims);
+			List<Polygon> ims = new ArrayList<>();
+			GeometryFactory fact = new GeometryFactory();
+			ims.add(fact.createPolygon(dpl1.toCoordinateArray()));
+			ims.add(fact.createPolygon(dpl2.toCoordinateArray()));
+			ims.add(fact.createPolygon(dpl3.toCoordinateArray()));
+			ims.add(fact.createPolygon(dpl4.toCoordinateArray()));
+			ims.add(fact.createPolygon(dpl5.toCoordinateArray()));
+			ims.add(fact.createPolygon(dpl6.toCoordinateArray()));
+			ims.add(fact.createPolygon(dpl7.toCoordinateArray()));
+			ims.add(fact.createPolygon(dpl8.toCoordinateArray()));
+			ims.add(fact.createPolygon(dpl9.toCoordinateArray()));
+			ims.add(fact.createPolygon(dpl10.toCoordinateArray()));
+			ims.add(fact.createPolygon(dpl11.toCoordinateArray()));
+			ims.add(fact.createPolygon(dpl12.toCoordinateArray()));
+			geometry3d = fact.createMultiPolygon(ims.toArray(new Polygon[0]));
 		}
-
 		return geometry3d;
 	}
 
@@ -464,7 +410,6 @@ public class LBuildingWithRoof extends AbstractSimpleBuilding {
 		val1[7] = this.orientation;
 		val1[8] = this.hgutter;
 		val1[9] = this.shift;
-
 	}
 
 	@Override
@@ -472,5 +417,4 @@ public class LBuildingWithRoof extends AbstractSimpleBuilding {
 		return "LBuildingWithRoof [hgutter=" + hgutter + ", h1=" + h1 + ", h2=" + h2 + ", l1=" + l1 + ", l2=" + l2
 				+ ", shift=" + shift + ", geomJTS=" + geomJTS + ", polyGeox=" + polyGeox + ", zMin=" + zMin + "]";
 	}
-
 }

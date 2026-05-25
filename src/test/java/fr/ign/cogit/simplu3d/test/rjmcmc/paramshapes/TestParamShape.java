@@ -1,21 +1,15 @@
 package fr.ign.cogit.simplu3d.test.rjmcmc.paramshapes;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import fr.ign.cogit.simplu3d.io.feature.FeatureType;
+import fr.ign.cogit.simplu3d.model.AbstractUrbanFeature;
+import fr.ign.cogit.simplu3d.model.UrbanFeature;
+import fr.ign.common.io.ShapefileWriter;
 import org.apache.commons.math3.random.RandomGenerator;
 
-import fr.ign.cogit.geoxygene.api.feature.IFeature;
-import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IEnvelope;
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.feature.DefaultFeature;
-import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
-import fr.ign.cogit.geoxygene.util.attribute.AttributeManager;
-import fr.ign.cogit.geoxygene.util.conversion.ParseException;
-import fr.ign.cogit.geoxygene.util.conversion.ShapefileWriter;
-import fr.ign.cogit.geoxygene.util.conversion.WktGeOxygene;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth.TransformToSurface;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.sampler.GreenSamplerBlockTemperature;
 import fr.ign.cogit.simplu3d.rjmcmc.paramshp.builder.LBuildingWithRoofBuilder;
@@ -33,6 +27,11 @@ import fr.ign.rjmcmc.energy.ConstantEnergy;
 import fr.ign.rjmcmc.kernel.Kernel;
 import fr.ign.rjmcmc.sampler.Sampler;
 import fr.ign.simulatedannealing.temperature.SimpleTemperature;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
 
 public class TestParamShape {
 
@@ -40,16 +39,17 @@ public class TestParamShape {
 		RandomGenerator rng = Random.random();
 		PoissonDistribution distribution = new PoissonDistribution(rng, 20.0);
 
-		IPolygon polygon = (IPolygon) WktGeOxygene.makeGeOxygene(
+		WKTReader reader = new WKTReader();
+		Polygon polygon = (Polygon) reader.read(
 				"POLYGON (( 24.46264278127928 -13.32945321889124, 16.83388492956696 -2.4038452403082764, 21.54914732032382 4.036513147066944, 30.596317435922344 9.7484976692033, 35.119902493721604 1.4680368854351595, 23.657597982857375 1.1996886192945253, 32.66643263186438 -8.729197227908939, 41.17690621518163 -1.7138068416609316, 39.98850675084454 -16.47296147939581, 20.092399589846092 -22.60663613403888, 13.307022003147196 -13.942820684355546, 24.46264278127928 -13.32945321889124 ))");
 
-		IEnvelope env = polygon.envelope();
+		Envelope env = polygon.getEnvelopeInternal();
 
-		double xmin = env.getLowerCorner().getX();
-		double xmax = env.getUpperCorner().getX();
+		double xmin = env.getMinX();
+		double xmax = env.getMaxX();
 
-		double ymin = env.getLowerCorner().getY();
-		double ymax = env.getUpperCorner().getY();
+		double ymin = env.getMinY();
+		double ymax = env.getMaxY();
 
 		double l1min = 1;
 		double l1max = 15;
@@ -84,7 +84,7 @@ public class TestParamShape {
 						heightgutterMin, shiftMin),
 				new LBuildingWithRoof(xmax, ymax, l1max, l2max, h1max, h2max, heightToTopgMax, orientationMax,
 						heightguterrMax, shiftMax),
-				builder, TransformToSurface.class, (IGeometry) polygon);
+				builder, TransformToSurface.class, polygon);
 
 		List<Kernel<GraphConfiguration<LBuildingWithRoof>, BirthDeathModification<LBuildingWithRoof>>> kernels = new ArrayList<>(
 				3);
@@ -96,7 +96,7 @@ public class TestParamShape {
 		DirectSampler<LBuildingWithRoof, GraphConfiguration<LBuildingWithRoof>, BirthDeathModification<LBuildingWithRoof>> ds = new DirectSampler<>(
 				distribution, birth);
 
-		IFeatureCollection<IFeature> featColl = new FT_FeatureCollection<>();
+		Collection<UrbanFeature> featColl = new ArrayList<>();
 
 		Sampler<GraphConfiguration<LBuildingWithRoof>, BirthDeathModification<LBuildingWithRoof>> s = new GreenSamplerBlockTemperature<>(
 				rng, ds, new MetropolisAcceptance<SimpleTemperature>(), kernels);
@@ -106,30 +106,26 @@ public class TestParamShape {
 					new ConstantEnergy<LBuildingWithRoof, LBuildingWithRoof>(5.0),
 					new ConstantEnergy<LBuildingWithRoof, LBuildingWithRoof>(0.0));
 			s.sample(rng, gC, new SimpleTemperature(1000));
-
 			featColl.addAll(exportColl(gC));
 		}
-
 		System.out.println(featColl.size());
-		ShapefileWriter.write(featColl, "test_tra.shp");
-
+		FeatureType featureType = new FeatureType("ParallelTrapezoid");
+		featureType.setGeometryType("MultiPolygon");
+		featureType.addAttribute("x", "Double");
+		featureType.addAttribute("y", "Double");
+		ShapefileWriter.write(featColl, featureType, null, "test_tra.shp");
 	}
 
-	public static IFeatureCollection<IFeature> exportColl(GraphConfiguration<LBuildingWithRoof> gC) {
-
-		IFeatureCollection<IFeature> featC = new FT_FeatureCollection<>();
+	public static Collection<UrbanFeature> exportColl(GraphConfiguration<LBuildingWithRoof> gC) {
+		Collection<UrbanFeature> featC = new ArrayList<>();
 		for (GraphVertex<LBuildingWithRoof> v : gC.getGraph().vertexSet()) {
-
-			IFeature feat = new DefaultFeature(v.getValue().generated3DGeom());
+			UrbanFeature feat = new AbstractUrbanFeature();
+			feat.setGeometry(v.getValue().generated3DGeom());
 			// On ajoute des attributs aux entités (dimension des objets)
-			AttributeManager.addAttribute(feat, "x", v.getValue().centerx, "Double");
-			AttributeManager.addAttribute(feat, "y", v.getValue().centery, "Double");
-
+			feat.setAttribute("x", v.getValue().centerx);
+			feat.setAttribute("y", v.getValue().centery);
 			featC.add(feat);
-
 		}
-
 		return featC;
 	}
-
 }

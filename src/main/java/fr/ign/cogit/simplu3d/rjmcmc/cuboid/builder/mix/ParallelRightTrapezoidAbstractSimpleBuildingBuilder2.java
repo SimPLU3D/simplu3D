@@ -2,25 +2,10 @@ package fr.ign.cogit.simplu3d.rjmcmc.cuboid.builder.mix;
 
 import java.util.List;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.MultiLineString;
+import fr.ign.common.util.Operateurs;
+import org.locationtech.jts.geom.*;
 import org.locationtech.jts.operation.distance.DistanceOp;
 
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IEnvelope;
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.ILineString;
-import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiCurve;
-import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableCurve;
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.contrib.geometrie.Angle;
-import fr.ign.cogit.geoxygene.contrib.geometrie.Operateurs;
-import fr.ign.cogit.geoxygene.convert.FromGeomToLineString;
-import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
-import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiCurve;
-import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.cogit.simplu3d.rjmcmc.trapezoid.geometry.ParallelTrapezoid2;
 import fr.ign.mpp.kernel.ObjectBuilder;
@@ -29,53 +14,34 @@ public class ParallelRightTrapezoidAbstractSimpleBuildingBuilder2 implements Obj
 
 	GeometryFactory factory;
 	MultiLineString limits;
-	IMultiCurve<ILineString> limitsGeox;
 	double factMult = 200;
 
-	public ParallelRightTrapezoidAbstractSimpleBuildingBuilder2(IGeometry[] limits, IGeometry polygon) {
+	public ParallelRightTrapezoidAbstractSimpleBuildingBuilder2(Geometry[] limits, Geometry polygon) {
 		super();
 		factory = new GeometryFactory();
 		LineString[] lineStrings = new LineString[limits.length];
 		for (int i = 0; i < limits.length; i++) {
 			try {
-				lineStrings[i] = (LineString) AdapterFactory.toGeometry(factory, limits[i]);
+				lineStrings[i] = (LineString) limits[i];
 			} catch (Exception e) {
 
 				e.printStackTrace();
 			}
 		}
 		this.limits = factory.createMultiLineString(lineStrings);
-		IEnvelope geom = polygon.getEnvelope();
-
-		limitsGeox = new GM_MultiCurve<>();
-		for (int i = 0; i < limits.length; i++) {
-
-			List<IOrientableCurve> ils = FromGeomToLineString.convert(limits[i]);
-
-			for (IOrientableCurve c : ils) {
-				limitsGeox.add((ILineString) c);
-			}
-
-		}
-
-		factMult = geom.getLowerCorner().distance(geom.getUpperCorner());
-
+		Envelope geom = polygon.getEnvelopeInternal();
+		Coordinate lowerLeft = new Coordinate(geom.getMinX(), geom.getMinY());
+		Coordinate upperRight = new Coordinate(geom.getMaxX(), geom.getMaxY());
+		factMult = lowerLeft.distance(upperRight);
 	}
 
 	@Override
 	public AbstractSimpleBuilding build(double[] val1) {
 
-		IDirectPosition dpOrientation = Operateurs.pointEnAbscisseCurviligne(limitsGeox, val1[5] * limitsGeox.length());
+		Coordinate dpOrientation = Operateurs.pointEnAbscisseCurviligne(limits, val1[5] * limits.getLength());
 
-		IDirectPosition centre = new DirectPosition(val1[0], val1[1]);
-
-		
-		Angle angleOr = new Angle(dpOrientation, centre);
-		// angleOr.ajoute(new Angle(Math.PI/2));
-		// angleOr.ajoute(new Angle(Math.PI/2));
-		// angleOr.ajoute(new Angle(Math.PI/2));
-
-		double orientation = angleOr.getValeur();
+		Coordinate centre = new Coordinate(val1[0], val1[1]);
+		double orientation = Operateurs.getAngle(dpOrientation, centre);
 
 		double a = Math.cos(orientation) * val1[3] / 2;
 		double b = Math.sin(orientation) * val1[3] / 2;

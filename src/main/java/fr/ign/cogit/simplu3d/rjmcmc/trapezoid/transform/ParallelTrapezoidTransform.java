@@ -2,14 +2,11 @@ package fr.ign.cogit.simplu3d.rjmcmc.trapezoid.transform;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.logging.Logger;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.geometry.transform.PolygonTransform;
 import fr.ign.rjmcmc.kernel.Transform;
 
@@ -29,7 +26,7 @@ public class ParallelTrapezoidTransform implements Transform {
 	/**
 	 * Logger.
 	 */
-	static Logger LOGGER = LogManager.getLogger(ParallelTrapezoidTransform.class.getName());
+	static Logger LOGGER = Logger.getLogger(ParallelTrapezoidTransform.class.getName());
 
 	private double absJacobian[];
 	private PolygonTransform polygonTransform;
@@ -47,7 +44,7 @@ public class ParallelTrapezoidTransform implements Transform {
 	private double deltaWidth;
 	private double deltaOrientation;
 
-	public ParallelTrapezoidTransform(double[] d, double[] v, IGeometry polygon) throws Exception {
+	public ParallelTrapezoidTransform(double[] d, double[] v, Geometry polygon) throws Exception {
 		this.rangeLength = d[2];
 		this.rangeHeight = d[4];
 		this.rangeWidth = d[3];
@@ -63,16 +60,13 @@ public class ParallelTrapezoidTransform implements Transform {
 //      lineStrings[i] = (LineString) AdapterFactory.toGeometry(factory, limits[i]);
 //    }
 //    this.limits = factory.createMultiLineString(lineStrings);
-		Geometry pp = AdapterFactory.toGeometry(factory, polygon);
+		Geometry pp = polygon;
 		this.polygonTransform = new PolygonTransform(pp, 0.1);
-
 		Iterator<Double> testedSnapping = Arrays.asList(0.1, 0.001, 0.0).iterator();
-
 		while (testedSnapping.hasNext() && !isValid) {
 			this.polygonTransform = new PolygonTransform(pp, testedSnapping.next());
 			isValid = this.polygonTransform.isValid();
 		}
-
 		if (isValid) {
 			this.absJacobian = new double[2];
 			this.absJacobian[0] = Math.abs(determinant) * this.polygonTransform.getAbsJacobian(true);

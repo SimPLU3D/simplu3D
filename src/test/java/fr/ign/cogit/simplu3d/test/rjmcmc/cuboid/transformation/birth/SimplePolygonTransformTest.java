@@ -46,7 +46,7 @@ public class SimplePolygonTransformTest {
 		}
 		
 		
-		MultiPoint mp = gf.createMultiPoint(tabCoord);
+		MultiPoint mp = gf.createMultiPointFromCoords(tabCoord);
 		
 		System.out.println(mp.getCoordinates().length);
 

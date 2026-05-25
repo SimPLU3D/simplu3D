@@ -2,35 +2,32 @@ package fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.logging.Logger;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.transform.SimplePolygonTransform;
 import fr.ign.geometry.transform.PolygonTransform;
 import fr.ign.rjmcmc.kernel.Transform;
 
 /**
- * 
+ *
  * This software is released under the licence CeCILL
- * 
+ * <p>
  * see LICENSE.TXT
- * 
- * see http://www.cecill.info/
- * 
+ * <p>
+ * see <a href="http://www.cecill.info/">...</a>
+ * <p>
  * copyright IGN
- * 
+ *
  * @version 1.0
  **/
 public class ParallelCuboidTransform implements Transform {
   /**
    * Logger.
    */
-  static Logger LOGGER = LogManager.getLogger(ParallelCuboidTransform.class.getName());
+  static Logger LOGGER = Logger.getLogger(ParallelCuboidTransform.class.getName());
 
   private double absJacobian[];
   private PolygonTransform polygonTransform;
@@ -52,7 +49,7 @@ public class ParallelCuboidTransform implements Transform {
 	  return isValid;
   }
   
-  public ParallelCuboidTransform(double[] d, double[] v, IGeometry polygon)
+  public ParallelCuboidTransform(double[] d, double[] v, Geometry polygon)
       throws Exception {
     this.rangeLength = d[2];
     this.rangeHeight = d[3];
@@ -64,7 +61,7 @@ public class ParallelCuboidTransform implements Transform {
 //      lineStrings[i] = (LineString) AdapterFactory.toGeometry(factory, limits[i]);
 //    }
 //    this.limits = factory.createMultiLineString(lineStrings);
-    Geometry pp = AdapterFactory.toGeometry(factory, polygon);
+    Geometry pp = polygon;
     Iterator<Double> testedSnapping = Arrays.asList(0.1,0.001,0.0).iterator();
     
     while(testedSnapping.hasNext() && ! isValid) {

@@ -1,21 +1,13 @@
 package fr.ign.cogit.simplu3d.exec;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Stream;
 
-import fr.ign.cogit.geoxygene.api.feature.IFeature;
-import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
-import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.feature.DefaultFeature;
-import fr.ign.cogit.geoxygene.sig3d.calculation.BooleanOperators;
-import fr.ign.cogit.geoxygene.sig3d.convert.transform.Extrusion2DObject;
-import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
 import fr.ign.cogit.simplu3d.demo.DemoEnvironmentProvider;
+import fr.ign.cogit.simplu3d.io.feature.AttribNames;
 import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
 import fr.ign.cogit.simplu3d.io.shapefile.SaveGeneratedObjects;
 import fr.ign.cogit.simplu3d.model.Environnement;
@@ -26,8 +18,13 @@ import fr.ign.cogit.simplu3d.util.SimpluParameters;
 import fr.ign.cogit.simplu3d.util.SimpluParametersJSON;
 import fr.ign.cogit.simplu3d.util.merge.MergeCuboid;
 import fr.ign.cogit.simplu3d.util.merge.SDPCalc;
+import fr.ign.common.extrusion.Extrusion2DObject;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
+import org.geotools.feature.DefaultFeatureCollection;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.PrecisionModel;
 
 /**
@@ -53,16 +50,15 @@ import org.locationtech.jts.geom.PrecisionModel;
 public class BasicSimulator {
 	private static PrecisionModel pmFixed = new PrecisionModel(100);
 	public record Mesh(List<List<Double>> vertices, List<List<Integer>> faces) {}
-	public record SimulationResult (GraphConfiguration<Cuboid> configuration, int id) {}
+	public record SimulationResult (GraphConfiguration<Cuboid> configuration, String id) {}
 	public static Stream<SimulationResult> simulate(String configurationFileName, String dataFolderName) throws Exception {
 		// Load default environment (data are in resource directory)
 		//List<GraphConfiguration<Cuboid>> results = new ArrayList<>();
 		SimpluParameters p = new SimpluParametersJSON(new File(configurationFileName));
-		Environnement env = LoaderSHP.loadNoDTM(new File(dataFolderName));
-		return env.getBpU().stream().map(bPU -> {
+		Environnement env = LoaderSHP.loadNoDTM(new File(dataFolderName).toURI().toURL());
+		return env.getBpU().findAll().stream().map(bPU -> {
 			// Instantiation of the sampler
 			OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();
-
 			// Rules parameters.8
 			// Distance to road
 			double distReculVoirie = 1;
@@ -90,17 +86,22 @@ public class BasicSimulator {
 	}
 
 	@SuppressWarnings("unchecked")
-    public static IPolygon castAsPolygon(IGeometry geom) {
-		return (IPolygon) ((GM_MultiSurface<IOrientableSurface>) geom).get(0);
+    public static Polygon castAsPolygon(Geometry geom) {
+		return (Polygon) geom.getGeometryN(0);
 	}
-	public static IGeometry unionJ3D(IFeatureCollection<IFeature> collection) {
-		Stream<IGeometry> geoms = collection.stream().map(f-> {
-			Optional<IDirectPosition> optionMin = f.getGeom().coord().stream().min(Comparator.comparingDouble(IDirectPosition::getZ));
-			double zmin = optionMin.map(IDirectPosition::getZ).orElse(0d);
-			return Extrusion2DObject.convertFromPolygon(castAsPolygon(f.getGeom()),zmin,zmin+((Double)f.getAttribute("height")));
+/*
+	public static Geometry unionJ3D(DefaultFeatureCollection collection) {
+		Stream<Geometry> geoms = collection.stream().map(f-> {
+			Geometry geom = (Geometry) f.getDefaultGeometry();
+			Optional<Coordinate> optionMin = Arrays.stream(geom.getCoordinates()).min(Comparator.comparingDouble(Coordinate::getZ));
+			double zmin = optionMin.map(Coordinate::getZ).orElse(0d);
+			return Extrusion2DObject.convertFromPolygon(castAsPolygon(geom),zmin,zmin+((Double)f.getAttribute("height")));
 		});
-		return geoms.reduce(null, (partial, element) -> (partial == null) ? element : BooleanOperators.compute(new DefaultFeature(partial), new DefaultFeature(element), BooleanOperators.UNION));
+		return geoms.reduce(null, (partial, element) -> (partial == null) ?
+				element :
+				BooleanOperators.compute(new DefaultFeature(partial), new DefaultFeature(element), BooleanOperators.UNION));
 	}
+*/
 
 /*
 	public static List<Mesh> exportMesh(Stream<SimulationResult> simulationResult) {
@@ -136,6 +137,7 @@ public class BasicSimulator {
 		// Loading of configuration file that contains sampling space
 		// information and simulated annealing configuration
 		URL configURL = BasicSimulator.class.getClassLoader().getResource("scenario/");
+		AttribNames.setATT_BDP_NUMERO("ID_Parcell");
 		URL dataURL = DemoEnvironmentProvider.class.getClassLoader().getResource("fr/ign/cogit/simplu3d/data/");
 		if (configURL== null && dataURL == null) {
 			System.out.println("Can't go through because one of the directories is empty");
@@ -158,16 +160,26 @@ public class BasicSimulator {
 
 			MergeCuboid recal = new MergeCuboid();
 
-			/* IFeatureCollection<IFeature> fus = */recal.mergeFromShapefile(pathCourant, 0.0);
-			// System.out.println("Surface" + recal.getSurface());
+			/* IFeatureCollection<IFeature> fus = */
+            try {
+                recal.mergeFromShapefile(pathCourant, 0.0);
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+            // System.out.println("Surface" + recal.getSurface());
 			// System.out.println("Energie" + cc.getEnergy());
 			// System.out.println("ratio" + cc.getEnergy()/recal.getSurface());
 
 			SDPCalc sdpcalc = new SDPCalc();
 
-			double sdp = sdpcalc.process(pathCourant);
+            double sdp = 0;
+            try {
+                sdp = sdpcalc.process(pathCourant);
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
 
-			System.out.println(result.id + "," + result.configuration.size() + "," + recal.getSurface() + "," + result.configuration.getEnergy() + "," + sdp);
+            System.out.println(result.id + "," + result.configuration.size() + "," + recal.getSurface() + "," + result.configuration.getEnergy() + "," + sdp);
 		});
 		System.out.println("that's all folks");
 	}

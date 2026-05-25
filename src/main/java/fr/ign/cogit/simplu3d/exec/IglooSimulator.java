@@ -2,19 +2,15 @@ package fr.ign.cogit.simplu3d.exec;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import fr.ign.cogit.simplu3d.model.UrbanFeature;
 import fr.ign.mpp.configuration.GraphVertex;
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
 
-import com.thoughtworks.xstream.io.path.Path;
-
-import fr.ign.cogit.geoxygene.api.feature.IFeature;
-import fr.ign.cogit.geoxygene.api.feature.IFeatureCollection;
-import fr.ign.cogit.geoxygene.feature.FT_FeatureCollection;
-import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.io.nonStructDatabase.shp.LoaderSHP;
 import fr.ign.cogit.simplu3d.io.shapefile.SaveGeneratedObjects;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
@@ -66,32 +62,33 @@ public class IglooSimulator {
     // Load default environment (data are in resource directory)
     Environnement env;
     try {
+      String folder = "src/main/resources/fr/ign/cogit/simplu3d/data";
+      //Path folder = new Path("/home/paulchapron/dev/simplu3d/src/main/resources/fr/ign/cogit/simplu3d/data");
+      URL FICHIER_ZONAGE = null;
+      URL FICHIER_PARCELLE = new File(folder + "/" + "parcelleIgloo.shp").toURI().toURL();
+      URL FICHIER_VOIRIE = new File(folder + "/" + "route.shp").toURI().toURL();
+      URL FICHIER_BATIMENTS = new File(folder + "/" + "batiment.shp").toURI().toURL();
+      URL FICHIER_PRESC_LINEAIRE = new File(folder + "/" + "PRESPCRIPTION_LIN.shp").toURI().toURL();
+      URL FICHIER_PRESC_PONCTUELLE = null;
+      URL FICHIER_PRESC_SURFACIQUE = null;
+      URL FICHIER_DOC_URBA = new File(folder + "/" + "DOC_URBA.shp").toURI().toURL();
 
+      env = LoaderSHP.load(
+              FICHIER_DOC_URBA,
+              FICHIER_ZONAGE,
+              FICHIER_PARCELLE,
+              FICHIER_VOIRIE,
+              FICHIER_BATIMENTS,
+              FICHIER_PRESC_PONCTUELLE,
+              FICHIER_PRESC_LINEAIRE,
+              FICHIER_PRESC_SURFACIQUE,
+              null
+      );
 
-      Path folder = new Path("/home/paulchapron/dev/simplu3d/src/main/resources/fr/ign/cogit/simplu3d/data");
-      File FICHIER_ZONAGE = null;
-      File FICHIER_PARCELLE = new File(folder + "/" + "parcelleIgloo.shp");
-      File FICHIER_VOIRIE = new File(folder + "/" + "route.shp");
-      File FICHIER_BATIMENTS = new File(folder + "/" + "batiment.shp");
-      File FICHIER_PRESC_LINEAIRE = new File(folder + "/" + "PRESPCRIPTION_LIN.shp");
-      File FICHIER_PRESC_PONCTUELLE = null;
-      File FICHIER_PRESC_SURFACIQUE = null;
-      File FICHIER_DOC_URBA = new File(folder + "/" + "DOC_URBA.shp");
-
-
-      env = LoaderSHP.load(null, FICHIER_DOC_URBA, FICHIER_ZONAGE, FICHIER_PARCELLE, FICHIER_VOIRIE,
-              FICHIER_BATIMENTS, FICHIER_PRESC_PONCTUELLE, FICHIER_PRESC_LINEAIRE,
-              FICHIER_PRESC_SURFACIQUE, null);
-
-
-      System.out.println(env.getBpU().size() + " parcelle(s) à simuler");
-
-
-      BasicPropertyUnit bPU = env.getBpU().get(0);
-
+      System.out.println(env.getBpU().count() + " parcelle(s) à simuler");
+      BasicPropertyUnit bPU = env.getBpU().findAll().getFirst();
 
       // il faut d'abord créer la config pour y coller la fonction d'optim 
-
 
       // Select a parcel on which generation is proceeded
       //BasicPropertyUnit bPU = env.getBpU().get(17);
@@ -119,16 +116,15 @@ public class IglooSimulator {
       // Run of the optimisation on a parcel with the predicate
       // and a specifi empty configuration embedding compacity
 
-      Geometry geombPU = AdapterFactory.toGeometry(new GeometryFactory(), bPU.getGeom());
+      Geometry geombPU = bPU.getGeometry();
       GraphConfiguration<Cuboid> compacityConfig = create_configurationCompacity(p, geombPU, bPU);
-
 
       //BasicCuboidOptimizer< Cuboid> bco = new BasicCuboidOptimizer<>() ;
       //GraphConfiguration<Cuboid> confQuimarche  = bco.create_configuration(p, geombPU,bPU);
       //GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred, confQuimarche);
 
 
-      GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, 1, pred, compacityConfig);
+      GraphConfiguration<Cuboid> cc = oCB.process(bPU, p, env, "1", pred, compacityConfig);
 
 
       System.out.println("dans la parcelle" + bPU.getId() + "il y a" + cc.size() + "cuboides");
@@ -146,9 +142,7 @@ public class IglooSimulator {
       // on récupère les cubes du graph
       List<Cuboid> listCubz = cc.getGraph().vertexSet().stream().map(GraphVertex::getValue).toList();
       // on transforme
-      IFeatureCollection<IFeature> CubzfeatColl = new FT_FeatureCollection<>();
-      CubzfeatColl.addAll(listCubz);
-
+      Collection<UrbanFeature> CubzfeatColl = new ArrayList<>(listCubz);
 
       //merge a partir d'un groupe de cuboides
       /*IFeature mergedCubz = */recal.mergeAGroupOfCuboid(CubzfeatColl, 0, 0.05, 0.001);

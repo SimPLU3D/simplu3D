@@ -1,6 +1,5 @@
 package fr.ign.cogit.simplu3d.rjmcmc.generic.optimizer;
 
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.visitor.CountVisitor;
@@ -14,6 +13,7 @@ import fr.ign.simulatedannealing.endtest.StabilityEndTest;
 import fr.ign.simulatedannealing.schedule.GeometricSchedule;
 import fr.ign.simulatedannealing.schedule.Schedule;
 import fr.ign.simulatedannealing.temperature.SimpleTemperature;
+import org.locationtech.jts.geom.Geometry;
 
 
 public abstract class DefaultSimPLU3DOptimizer<C extends ISimPLU3DPrimitive> implements ISimPLU3DOptimizer<ISimPLU3DPrimitive> {
@@ -25,9 +25,9 @@ public abstract class DefaultSimPLU3DOptimizer<C extends ISimPLU3DPrimitive> imp
   protected double minWidthBox = Double.NaN;
   protected double maxWidthBox = Double.NaN;
   protected double energyCreation = Double.NaN;
-  protected IGeometry samplingSurface = null;
+  protected Geometry samplingSurface = null;
 
-  public void setSamplingSurface(IGeometry geom) {
+  public void setSamplingSurface(Geometry geom) {
     samplingSurface = geom;
   }
 

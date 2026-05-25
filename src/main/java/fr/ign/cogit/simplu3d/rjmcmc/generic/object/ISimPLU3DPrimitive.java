@@ -1,7 +1,7 @@
 package fr.ign.cogit.simplu3d.rjmcmc.generic.object;
 
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.geometry.Primitive;
+import org.locationtech.jts.geom.Geometry;
 
 public interface ISimPLU3DPrimitive extends Primitive {
 
@@ -9,5 +9,5 @@ public interface ISimPLU3DPrimitive extends Primitive {
 
 	public double getVolume();
 
-	public IGeometry generated3DGeom();
+	public Geometry generated3DGeom();
 }

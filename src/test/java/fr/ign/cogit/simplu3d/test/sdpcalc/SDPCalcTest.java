@@ -18,7 +18,7 @@ public class SDPCalcTest {
     SDPCalc sd = new SDPCalc();
     List<Cuboid> cubes = new ArrayList<>();
     cubes.add(a);
-    Double d = sd.process(cubes);
+    double d = sd.process(cubes);
     assertEquals("sdp must be 4 * 8 * 2  = 64 ", 64.0, d, 0.001);
   }
 

@@ -1,11 +1,11 @@
 package fr.ign.cogit.simplu3d.rjmcmc.generic.optimizer;
 
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
+import org.locationtech.jts.geom.Geometry;
 
 public interface ISimPLU3DOptimizer<C extends ISimPLU3DPrimitive> {
 
-	public void setSamplingSurface(IGeometry geom);
+	public void setSamplingSurface(Geometry geom);
 
 	public void setEnergyCreation(double energyCreation);
 

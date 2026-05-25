@@ -3,28 +3,28 @@ package fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
 import fr.ign.cogit.simplu3d.model.Building;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
 
+import java.util.Arrays;
+
 /**
- * 
+ *
  * This software is released under the licence CeCILL
- * 
+ * <p>
  * see LICENSE.TXT
- * 
- * see http://www.cecill.info/
- * 
- * 
- * 
+ * <p>
+ * see <a href="http://www.cecill.info/">...</a>
+ * <p>
+ *
+ *
  * copyright IGN
- * 
+ *
  * @author Brasebin Mickaël
- * 
+ *
  * @version 1.0
  **/
 public abstract class AbstractSimpleBuilding extends Building implements ISimPLU3DPrimitive {
-
 	public double centerx;
 	public double centery;
 	public double length;
@@ -40,25 +40,21 @@ public abstract class AbstractSimpleBuilding extends Building implements ISimPLU
 
 	public abstract boolean prospectJTS(Geometry geom, double slope, double hIni);
 
-	public abstract IGeometry generated3DGeom();
+	public abstract Geometry generated3DGeom();
 
 	public abstract void setCoordinates(double[] val1);
 
 	@Override
 	public boolean equals(Object obj) {
-
 		if (this == obj) {
 			return true;
 		}
-
 		if (this.getClass() != obj.getClass()) {
 			return false;
 		}
-
 		double[] array1 = this.toArray();
 		double[] array2 = this.toArray();
-
-		return array1.equals(array2);
+		return Arrays.equals(array1, array2);
 	}
 
 	public double getCenterx() {

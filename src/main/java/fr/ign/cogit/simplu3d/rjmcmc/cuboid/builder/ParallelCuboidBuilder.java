@@ -1,14 +1,9 @@
 package fr.ign.cogit.simplu3d.rjmcmc.cuboid.builder;
 
 import org.locationtech.jts.algorithm.Angle;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.*;
 import org.locationtech.jts.operation.distance.DistanceOp;
 
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.AbstractParallelCuboid;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.simple.ParallelCuboid;
@@ -38,11 +33,11 @@ public class ParallelCuboidBuilder implements ObjectBuilder<Cuboid>{
 
 
 	
-	public ParallelCuboidBuilder(IGeometry[] limits, int bandType) throws Exception {
+	public ParallelCuboidBuilder(Geometry[] limits, int bandType) throws Exception {
 		factory = new GeometryFactory();
 		LineString[] lineStrings = new LineString[limits.length];
 		for (int i = 0; i < limits.length; i++) {
-			lineStrings[i] = (LineString) AdapterFactory.toGeometry(factory, limits[i]);
+			lineStrings[i] = (LineString) limits[i];
 		}
 		this.limits = factory.createMultiLineString(lineStrings);
 		this.bandType = bandType;

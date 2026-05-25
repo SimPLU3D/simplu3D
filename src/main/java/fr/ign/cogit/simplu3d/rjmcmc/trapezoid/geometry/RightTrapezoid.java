@@ -1,27 +1,12 @@
 package fr.ign.cogit.simplu3d.rjmcmc.trapezoid.geometry;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LinearRing;
-import org.locationtech.jts.geom.Polygon;
+import fr.ign.common.util.Vecteur;
+import org.locationtech.jts.geom.*;
 
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
-import fr.ign.cogit.geoxygene.api.spatial.geomaggr.IMultiSurface;
-import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.contrib.geometrie.Vecteur;
-import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
-import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
-import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_LineString;
-import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Polygon;
-import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
-import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
-import fr.ign.cogit.geoxygene.util.conversion.JtsGeOxygene;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.AbstractSimpleBuilding;
 import fr.ign.cogit.simplu3d.rjmcmc.generic.object.ISimPLU3DPrimitive;
@@ -141,12 +126,12 @@ public class RightTrapezoid extends AbstractSimpleBuilding implements ISimPLU3DP
 			Vecteur v2 = new Vecteur(pts[3].x - pts[2].x, pts[3].y - pts[2].y);
 			v2.normalise();
 			v2 = v2.multConstante(length1 + length2);
-			IDirectPosition dp3 = v2.translate(new DirectPosition(pts[2].x, pts[2].y));
+			Coordinate dp3 = v2.translate(new Coordinate(pts[2].x, pts[2].y));
 
 			Vecteur v = new Vecteur(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
 			v.normalise();
 			v = v.multConstante(length1 + length3);
-			IDirectPosition dp0 = v.translate(new DirectPosition(pts[1].x, pts[1].y));
+			Coordinate dp0 = v.translate(new Coordinate(pts[1].x, pts[1].y));
 
 			pts[0] = new Coordinate(dp0.getX(), dp0.getY());
 			pts[3] = new Coordinate(dp3.getX(), dp3.getY());
@@ -165,9 +150,9 @@ public class RightTrapezoid extends AbstractSimpleBuilding implements ISimPLU3DP
 		return this.toGeometry().intersection(arg0.toGeometry()).getArea();
 	}
 
-	public boolean prospect(IGeometry geom, double slope, double hIni) {
+	public boolean prospect(Geometry geom, double slope, double hIni) {
 		try {
-			return prospectJTS(AdapterFactory.toGeometry(geomFact, geom), slope, hIni);
+			return prospectJTS(geom, slope, hIni);
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -195,11 +180,12 @@ public class RightTrapezoid extends AbstractSimpleBuilding implements ISimPLU3DP
 
 	public double getZmin() {
 		if (Double.isNaN(zMin)) {
-			Environnement env = Environnement.getInstance();
-			if (env != null && env.getTerrain() != null) {
+			Environnement env = Environnement.createEnvironnement();
+			if (env.getTerrain() != null) {
 				zMin = env.getTerrain().castCoordinate(this.centerx, this.centery).z;
 			} else {
-				logger.warn("No terrain Cuboid ZMin set to 0");
+				System.out.println("No terrain Cuboid ZMin set to 0");
+				//FIXME USe logger
 				zMin = 0;
 			}
 
@@ -209,48 +195,31 @@ public class RightTrapezoid extends AbstractSimpleBuilding implements ISimPLU3DP
 	}
 
 	@Override
-	public IGeometry generated3DGeom() {
+	public Geometry generated3DGeom() {
 		return generate(this, this.getZmin());
 	}
 
-	public IGeometry getGeom() {
-
-		if (geom == null) {
-			try {
-				geom = JtsGeOxygene.makeGeOxygeneGeom(this.toGeometry());
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+	public static MultiPolygon generate(RightTrapezoid c, double zMin) {
+		if (c.getGeometry() == null) {
+			c.setGeometry(c.toGeometry());
 		}
-
-		return geom;
-	}
-
-	public static IMultiSurface<IOrientableSurface> generate(RightTrapezoid c, double zMin) {
-
-		IDirectPositionList dpl = c.getGeom().coord();
-
-		IDirectPosition dp1 = dpl.get(0);
+		List<Coordinate> dpl = Arrays.asList(c.getGeometry().getCoordinates());
+		Coordinate dp1 = dpl.get(0);
 		dp1.setZ(zMin + c.height);
-		IDirectPosition dp2 = dpl.get(1);
+		Coordinate dp2 = dpl.get(1);
 		dp2.setZ(zMin + c.height);
-		IDirectPosition dp3 = dpl.get(2);
+		Coordinate dp3 = dpl.get(2);
 		dp3.setZ(zMin + c.height);
-		IDirectPosition dp4 = dpl.get(3);
+		Coordinate dp4 = dpl.get(3);
 		dp4.setZ(zMin + c.height);
-
 		return createCube(dp1, dp2, dp3, dp4, zMin);
 	}
 
-	private static IMultiSurface<IOrientableSurface> createCube(IDirectPosition p1, IDirectPosition p2,
-			IDirectPosition p3, IDirectPosition p4, double zmin) {
-
+	private static MultiPolygon createCube(Coordinate p1, Coordinate p2,
+			Coordinate p3, Coordinate p4, double zmin) {
 		// Polygone p1,p2,p3,p4 représente la face supérieure dans cet ordre
-
-		List<IDirectPositionList> lDpl = new ArrayList<IDirectPositionList>();
-
-		IDirectPositionList dpl1 = new DirectPositionList();
+		List<CoordinateList> lDpl = new ArrayList<>();
+		CoordinateList dpl1 = new CoordinateList();
 		dpl1.add(p1);
 		dpl1.add(p2);
 		dpl1.add(p3);
@@ -258,12 +227,12 @@ public class RightTrapezoid extends AbstractSimpleBuilding implements ISimPLU3DP
 		dpl1.add(p1);
 		lDpl.add(dpl1);
 
-		IDirectPosition p1bas = new DirectPosition(p1.getX(), p1.getY(), zmin);
-		IDirectPosition p2bas = new DirectPosition(p2.getX(), p2.getY(), zmin);
-		IDirectPosition p3bas = new DirectPosition(p3.getX(), p3.getY(), zmin);
-		IDirectPosition p4bas = new DirectPosition(p4.getX(), p4.getY(), zmin);
+		Coordinate p1bas = new Coordinate(p1.getX(), p1.getY(), zmin);
+		Coordinate p2bas = new Coordinate(p2.getX(), p2.getY(), zmin);
+		Coordinate p3bas = new Coordinate(p3.getX(), p3.getY(), zmin);
+		Coordinate p4bas = new Coordinate(p4.getX(), p4.getY(), zmin);
 
-		IDirectPositionList dpl2 = new DirectPositionList();
+		CoordinateList dpl2 = new CoordinateList();
 		dpl2.add(p2);
 		dpl2.add(p1);
 		dpl2.add(p1bas);
@@ -271,7 +240,7 @@ public class RightTrapezoid extends AbstractSimpleBuilding implements ISimPLU3DP
 		dpl2.add(p2);
 		lDpl.add(dpl2);
 
-		IDirectPositionList dpl3 = new DirectPositionList();
+		CoordinateList dpl3 = new CoordinateList();
 		dpl3.add(p3);
 		dpl3.add(p2);
 		dpl3.add(p2bas);
@@ -279,7 +248,7 @@ public class RightTrapezoid extends AbstractSimpleBuilding implements ISimPLU3DP
 		dpl3.add(p3);
 		lDpl.add(dpl3);
 
-		IDirectPositionList dpl4 = new DirectPositionList();
+		CoordinateList dpl4 = new CoordinateList();
 		dpl4.add(p4);
 		dpl4.add(p3);
 		dpl4.add(p3bas);
@@ -287,7 +256,7 @@ public class RightTrapezoid extends AbstractSimpleBuilding implements ISimPLU3DP
 		dpl4.add(p4);
 		lDpl.add(dpl4);
 
-		IDirectPositionList dpl5 = new DirectPositionList();
+		CoordinateList dpl5 = new CoordinateList();
 		dpl5.add(p1);
 		dpl5.add(p4);
 		dpl5.add(p4bas);
@@ -295,7 +264,7 @@ public class RightTrapezoid extends AbstractSimpleBuilding implements ISimPLU3DP
 		dpl5.add(p1);
 		lDpl.add(dpl5);
 
-		IDirectPositionList dpl6 = new DirectPositionList();
+		CoordinateList dpl6 = new CoordinateList();
 		dpl6.add(p1bas);
 		dpl6.add(p4bas);
 		dpl6.add(p3bas);
@@ -303,15 +272,11 @@ public class RightTrapezoid extends AbstractSimpleBuilding implements ISimPLU3DP
 		dpl6.add(p1bas);
 		lDpl.add(dpl6);
 
-		List<IOrientableSurface> lOS = new ArrayList<>();
-		for (IDirectPositionList dpl : lDpl) {
-
-			lOS.add(new GM_Polygon(new GM_LineString(dpl)));
-
+		List<Polygon> lOS = new ArrayList<>();
+		for (CoordinateList dpl : lDpl) {
+			lOS.add(geomFact.createPolygon(dpl.toCoordinateArray()));
 		}
-
-		return new GM_MultiSurface<>(lOS);
-
+		return geomFact.createMultiPolygon(lOS.toArray(new Polygon[0]));
 	}
 
 	private double area = -1;

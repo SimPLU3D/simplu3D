@@ -15,19 +15,17 @@ import fr.ign.cogit.simplu3d.util.SimpluParametersJSON;
 import fr.ign.mpp.configuration.BirthDeathModification;
 import fr.ign.mpp.configuration.GraphConfiguration;
 /**
- * 
+ *
  *        This software is released under the licence CeCILL
- * 
+ * <p>
  *        see LICENSE.TXT
- * 
- *        see http://www.cecill.info/
- * 
- * 
- * 
+ * <p>
+ *        see <a href="http://www.cecill.info/">...</a>
+ * <p>
  * copyright IGN
- * 
+ *
  * @author Brasebin Mickaël
- * 
+ *
  * @version 1.0
  **/ 
 public class SimulatorTest {
@@ -35,8 +33,7 @@ public class SimulatorTest {
   @Test
   public void testImport() throws Exception {
 
-    String folderName = SimulatorTest.class.getClassLoader()
-        .getResource("scenario/").getPath();
+    String folderName = SimulatorTest.class.getClassLoader().getResource("scenario/").getPath();
 
     String fileName = "scenariotest.json";
 
@@ -44,11 +41,9 @@ public class SimulatorTest {
 
     Environnement env = DemoEnvironmentProvider.getDefaultEnvironment();
 
-    if (env.getBpU().isEmpty()) return;
-    BasicPropertyUnit bPU = env.getBpU().get(1);
-
+    if (env.getBpU().findAll().isEmpty()) return;
+    BasicPropertyUnit bPU = env.getBpU().findAll().get(1);
     OptimisedBuildingsCuboidFinalDirectRejection oCB = new OptimisedBuildingsCuboidFinalDirectRejection();
-
 	// Rules parameters.8
 	// Distance to road
 	double distReculVoirie = 2;
@@ -60,13 +55,9 @@ public class SimulatorTest {
 	double distanceInterBati = 0;
 	// Maximal ratio built area
 	double maximalCES = 0.5;
-
 	// Instantiation of the rule checker
 	SamplePredicate<Cuboid, GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred = new SamplePredicate<>(
 			bPU, distReculVoirie, distReculFond, distReculLat, distanceInterBati, maximalCES);
-
-
-    oCB.process(bPU, p, env, 1, pred);
+    oCB.process(bPU, p, env, "1", pred);
   }
-
 }

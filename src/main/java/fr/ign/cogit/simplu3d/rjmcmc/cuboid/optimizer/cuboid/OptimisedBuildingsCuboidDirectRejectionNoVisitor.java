@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
-import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Geometry;
 
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl.Cuboid;
@@ -49,13 +47,12 @@ public class OptimisedBuildingsCuboidDirectRejectionNoVisitor extends BasicCuboi
 			Environnement env,
 			ConfigurationModificationPredicate<GraphConfiguration<Cuboid>, BirthDeathModification<Cuboid>> pred) {
 		// Géométrie de l'unité foncière sur laquelle porte la génération
-		IGeometry geom = bpu.generateGeom().buffer(1);
-
+		Geometry geom = bpu.generateGeom().buffer(1);
 		// Définition de la fonction d'optimisation (on optimise en décroissant)
 		// relative au volume
 		GraphConfiguration<Cuboid> conf = null;
 		try {
-			conf = create_configuration(p, AdapterFactory.toGeometry(new GeometryFactory(), geom), bpu);
+			conf = create_configuration(p, geom, bpu);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

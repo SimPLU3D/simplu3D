@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
+import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IEnvelope;
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
 import fr.ign.cogit.simplu3d.model.BasicPropertyUnit;
 import fr.ign.cogit.simplu3d.model.Environnement;
 import fr.ign.cogit.simplu3d.rjmcmc.cuboid.transformation.birth.TransformToSurface;
@@ -70,18 +68,18 @@ public class OptimisedLShapeDirectRejection extends DefaultSimPLU3DOptimizer<LBu
 	}
 
 	public GraphConfiguration<LBuildingWithRoof> process(BasicPropertyUnit bpu, SimpluParameters p,
-			Environnement env, int id,
+			Environnement env, String id,
 			ConfigurationModificationPredicate<GraphConfiguration<LBuildingWithRoof>, BirthDeathModification<LBuildingWithRoof>> pred,
-			IGeometry polygon)
+			Geometry polygon)
 	{
 		return process(Random.random(), bpu, p, env, id, pred, polygon);
 	}
 	public GraphConfiguration<LBuildingWithRoof> process(RandomGenerator rG, BasicPropertyUnit bpu, SimpluParameters p,
-			Environnement env, int id,
+			Environnement env, String id,
 			ConfigurationModificationPredicate<GraphConfiguration<LBuildingWithRoof>, BirthDeathModification<LBuildingWithRoof>> pred,
-			IGeometry polygon) {
+			Geometry polygon) {
 		// Géométrie de l'unité foncière sur laquelle porte la génération
-		IGeometry geom = bpu.generateGeom().buffer(1);
+		Geometry geom = bpu.generateGeom().buffer(1);
 
 		// Configuration que l'on optimise
 		GraphConfiguration<LBuildingWithRoof> conf = null;
@@ -103,13 +101,6 @@ public class OptimisedLShapeDirectRejection extends DefaultSimPLU3DOptimizer<LBu
 
 		SimulatedAnnealing.optimize(rG, conf, samp, sch, end, pv.prepare(p, bpu.getId()));
 		return conf;
-	}
-
-	public GraphConfiguration<LBuildingWithRoof> create_configuration(SimpluParameters p, IGeometry geom,
-			BasicPropertyUnit bpu) throws Exception {
-
-		return this.create_configuration(p, AdapterFactory.toGeometry(new GeometryFactory(), geom), bpu);
-
 	}
 
 	public GraphConfiguration<LBuildingWithRoof> create_configuration(SimpluParameters p, Geometry geom,
@@ -182,17 +173,17 @@ public class OptimisedLShapeDirectRejection extends DefaultSimPLU3DOptimizer<LBu
 	public Sampler<GraphConfiguration<LBuildingWithRoof>, BirthDeathModification<LBuildingWithRoof>> create_sampler(
 			RandomGenerator rng, SimpluParameters p, BasicPropertyUnit bpU,
 			ConfigurationModificationPredicate<GraphConfiguration<LBuildingWithRoof>, BirthDeathModification<LBuildingWithRoof>> pred,
-			IGeometry polygon) {
+			Geometry polygon) {
 
 		// On créé les bornes min et max pour le sampler (10 paramètres dans le
 		// cas du LBuildingWithRoof)
-		IEnvelope env = polygon.envelope();
+		Envelope env = polygon.getEnvelopeInternal();
 
-		double xmin = env.getLowerCorner().getX();
-		double xmax = env.getUpperCorner().getX();
+		double xmin = env.getMinX();
+		double xmax = env.getMaxX();
 
-		double ymin = env.getLowerCorner().getY();
-		double ymax = env.getUpperCorner().getY();
+		double ymin = env.getMinY();
+		double ymax = env.getMaxY();
 
 		double l1min = p.getDouble("l1min");
 		double l1max = p.getDouble("l1max");
@@ -236,7 +227,7 @@ public class OptimisedLShapeDirectRejection extends DefaultSimPLU3DOptimizer<LBu
 						heightgutterMin, shiftMin),
 				new LBuildingWithRoof(xmax, ymax, l1max, l2max, h1max, h2max, heightToTopgMax, orientationMax,
 						heightguterrMax, shiftMax),
-				builder, TransformToSurface.class, (IGeometry) polygon);
+				builder, TransformToSurface.class, polygon);
 
 		// La distribution de poisson qui drive le nombre total d'objets
 		PoissonDistribution distribution = new PoissonDistribution(rng, p.getDouble("poisson"));

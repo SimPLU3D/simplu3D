@@ -5,9 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.util.logging.Logger;
 
 import fr.ign.parameters.Parameters;
 /**
@@ -33,7 +31,7 @@ public class ExperimentationPostGIS extends Parameters {
   public final static String EXPERIMENTATION_ID_PARAM = "idparam";
   private ResultSet rs;
 
-  private Logger log = LogManager.getLogger(ParametersPostgis.class);
+  private Logger log = Logger.getLogger(ParametersPostgis.class.getName());
 
   private int id;
 
@@ -51,7 +49,7 @@ public class ExperimentationPostGIS extends Parameters {
     System.out.println(sql);
     boolean next = rs.next();
     if (!next) {
-      log.error("No parameters line found");
+      log.severe("No parameters line found");
       System.exit(1);
     }
     conn.close();

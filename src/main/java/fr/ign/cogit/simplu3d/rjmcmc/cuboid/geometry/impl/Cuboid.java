@@ -3,25 +3,13 @@ package fr.ign.cogit.simplu3d.rjmcmc.cuboid.geometry.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.ign.common.conversion.FromGeomToSurface;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Polygon;
 
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPosition;
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IDirectPositionList;
-import fr.ign.cogit.geoxygene.api.spatial.coordgeom.IPolygon;
-import fr.ign.cogit.geoxygene.api.spatial.geomprim.IOrientableSurface;
-import fr.ign.cogit.geoxygene.api.spatial.geomroot.IGeometry;
-import fr.ign.cogit.geoxygene.convert.FromGeomToSurface;
-import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPosition;
-import fr.ign.cogit.geoxygene.spatial.coordgeom.DirectPositionList;
-import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_LineString;
-import fr.ign.cogit.geoxygene.spatial.coordgeom.GM_Polygon;
-import fr.ign.cogit.geoxygene.spatial.geomaggr.GM_MultiSurface;
-import fr.ign.cogit.geoxygene.util.conversion.AdapterFactory;
-import fr.ign.cogit.geoxygene.util.conversion.JtsGeOxygene;
 import fr.ign.cogit.simplu3d.model.AbstractBuilding;
 import fr.ign.cogit.simplu3d.model.CadastralParcel;
 import fr.ign.cogit.simplu3d.model.Environnement;
@@ -31,19 +19,17 @@ import fr.ign.geometry.Primitive;
 import fr.ign.geometry.Rectangle2D;
 
 /**
- * 
+ *
  * This software is released under the licence CeCILL
- * 
+ * <p>
  * see LICENSE.TXT
- * 
- * see http://www.cecill.info/
- * 
- * 
- * 
+ * <p>
+ * see <a href="http://www.cecill.info/">...</a>
+ * <p>
  * copyright IGN
- * 
+ *
  * @author Brasebin Mickaël
- * 
+ *
  **/
 public class Cuboid extends AbstractSimpleBuilding {
 
@@ -58,38 +44,32 @@ public class Cuboid extends AbstractSimpleBuilding {
 		this.orientation = orientation;
 	}
 
-	private Polygon geomJTS = null;
-
 	@Override
 	public double intersectionArea(Primitive p) {
-
 		if (p instanceof Cuboid) {
 			return this.getRectangle2D().intersectionArea(((Cuboid) p).getRectangle2D());
 		}
-
 		return this.toGeometry().intersection(p.toGeometry()).getArea();
 	}
 
-	IPolygon polyGeox = null;
-
 	@Override
-	public IOrientableSurface getFootprint() {
-		if (polyGeox == null) {
+	public Polygon getFootprint() {
+		if (this.geometry == null) {
 			try {
-				polyGeox = (IPolygon) JtsGeOxygene.makeGeOxygeneGeom(this.toGeometry());
+				geometry = this.toGeometry();//FIXME Remove redundant geometry
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		return polyGeox;
+		return (Polygon) geometry;
 	}
 
 	private static GeometryFactory geomFact = new GeometryFactory();
 
 	@Override
 	public Polygon toGeometry() {
-		if (geomJTS == null) {
+		if (this.geometry == null) {
 			Coordinate[] pts = new Coordinate[5];
 			double cosOrient = Math.cos(orientation);
 			double sinOrient = Math.sin(orientation);
@@ -104,9 +84,9 @@ public class Cuboid extends AbstractSimpleBuilding {
 			pts[4] = new Coordinate(pts[0]);
 			LinearRing ring = geomFact.createLinearRing(pts);
 			Polygon poly = geomFact.createPolygon(ring, null);
-			this.geomJTS = poly;
+			this.geometry = poly;
 		}
-		return this.geomJTS;
+		return (Polygon) this.geometry;
 	}
 
 	@Override
@@ -139,8 +119,7 @@ public class Cuboid extends AbstractSimpleBuilding {
 	}
 
 	public int hashCode(double value) {
-		long bits = Double.doubleToLongBits(value);
-		return (int) (bits ^ (bits >>> 32));
+        return Double.hashCode(value);
 	}
 
 	public double height(int a, int b) {
@@ -190,11 +169,12 @@ public class Cuboid extends AbstractSimpleBuilding {
 
 	public double getZmin() {
 		if (Double.isNaN(zMin)) {
-			Environnement env = Environnement.getInstance();
-			if (env != null && env.getTerrain() != null) {
+			Environnement env = Environnement.createEnvironnement();
+			if (env.getTerrain() != null) {
 				zMin = env.getTerrain().castCoordinate(this.centerx, this.centery).z;
 			} else {
-				logger.warn("No terrain Cuboid ZMin set to AssignZ.DEFAULT_Z");
+				System.out.println("No terrain Cuboid ZMin set to AssignZ.DEFAULT_Z");
+				//FIXME Use logger
 				zMin = AssignZ.DEFAULT_Z;
 			}
 
@@ -213,30 +193,30 @@ public class Cuboid extends AbstractSimpleBuilding {
 
 	public List<AbstractBuilding> bandEpsilon(Geometry geom, double distMin, double distMax) {
 		List<AbstractBuilding> lPolygonOut = new ArrayList<>();
-		double d = geom.distance(geomJTS);
+		double d = geom.distance(geometry);
 		if (d > distMax) {
 			return lPolygonOut;
 		}
 		if (d < distMin) {
 			return lPolygonOut;
 		}
-		Geometry geomOut = Double.isNaN(distMax) ? geomJTS : geom.buffer(distMax).intersection(geomJTS);
+		Geometry geomOut = Double.isNaN(distMax) ? geometry : geom.buffer(distMax).intersection(geometry);
 		geomOut = geomOut.difference(geom.buffer(distMin));
 		List<AbstractBuilding> fBP = getFastBuildingPart(distMin, distMax);
 		if (fBP != null) {
 			return fBP;
 		}
-		List<IOrientableSurface> lS;
+		List<Polygon> lS;
 		try {
-			lS = FromGeomToSurface.convertGeom(JtsGeOxygene.makeGeOxygeneGeom(geomOut));
-			for (IOrientableSurface oS : lS) {
+			lS = FromGeomToSurface.convertGeom(geomOut);
+			for (Polygon oS : lS) {
 				if (oS == null || oS.isEmpty()) {
 					continue;
 				}
 				lDMin.add(distMin);
 				lDMax.add(distMax);
-				lPolygonOut.add(new FastBuildingPart((IPolygon) oS, this.height + this.getZmin()));
-				lFP.add(fBP);
+				lPolygonOut.add(new FastBuildingPart(oS, this.height + this.getZmin()));
+				lFP.add(fBP);//FIXME check
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -246,9 +226,9 @@ public class Cuboid extends AbstractSimpleBuilding {
 		return lPolygonOut;
 	}
 
-	private List<Double> lDMin = new ArrayList<>();
-	private List<Double> lDMax = new ArrayList<>();
-	private List<List<AbstractBuilding>> lFP = new ArrayList<>();
+	private final List<Double> lDMin = new ArrayList<>();
+	private final List<Double> lDMax = new ArrayList<>();
+	private final List<List<AbstractBuilding>> lFP = new ArrayList<>();
 
 	private List<AbstractBuilding> getFastBuildingPart(double dMin, double dMax) {
 		int nbLDmin = lDMin.size();
@@ -262,17 +242,7 @@ public class Cuboid extends AbstractSimpleBuilding {
 
 	public List<AbstractBuilding> bandEpsilon(CadastralParcel cP, double distMin, double distMax) {
 		try {
-			return bandEpsilon(JtsGeOxygene.makeJtsGeom(cP.getConsLine()), distMin, distMax);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	public List<AbstractBuilding> bandEpsilon(IGeometry geom, double distMin, double distMax) {
-		try {
-			return bandEpsilon(JtsGeOxygene.makeJtsGeom(geom), distMin, distMax);
+			return bandEpsilon(cP.getConsLine(), distMin, distMax);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -284,9 +254,9 @@ public class Cuboid extends AbstractSimpleBuilding {
 		return height;
 	}
 
-	public boolean prospect(IGeometry geom, double slope, double hIni) {
+	public boolean prospect(Geometry geom, double slope, double hIni) {
 		try {
-			return prospectJTS(AdapterFactory.toGeometry(geomFact, geom), slope, hIni);
+			return prospectJTS(geom, slope, hIni);
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -330,110 +300,57 @@ public class Cuboid extends AbstractSimpleBuilding {
 		this.setNew(true);
 	}
 
-	public IGeometry generated3DGeom() {
+	public Geometry generated3DGeom() {
 		// return generate(this, this.getZmin());
-		List<IDirectPositionList> lDpl = createCubePointsList();
-		List<IOrientableSurface> lOS = new ArrayList<>();
-		for (IDirectPositionList dpl : lDpl) {
-			lOS.add(new GM_Polygon(new GM_LineString(dpl)));
+		List<Coordinate[]> lDpl = createCubePointsList();
+		List<Polygon> lOS = new ArrayList<>();
+		for (Coordinate[] dpl : lDpl) {
+			lOS.add(geomFact.createPolygon(dpl));
 		}
-		return new GM_MultiSurface<>(lOS);
+		return geomFact.createMultiPolygon(lOS.toArray(new Polygon[0]));
 	}
 
 
-	private List<IDirectPositionList> pointsCube = null;
+	private List<Coordinate[]> pointsCube = null;
 
-	public List<IDirectPositionList> createCubePointsList() {
+	public List<Coordinate[]> createCubePointsList() {
 		if (pointsCube == null) {
 			double zmin = getZmin();
-			pointsCube = new ArrayList<IDirectPositionList>();
-			IDirectPositionList dpl = this.getFootprint().coord();
-			IDirectPosition p1 = dpl.get(0);
+			pointsCube = new ArrayList<>();
+			Coordinate[] dpl = this.getFootprint().getCoordinates();
+			Coordinate p1 = dpl[0];
 			p1.setZ(zMin + height);
-			IDirectPosition p2 = dpl.get(1);
+			Coordinate p2 = dpl[1];
 			p2.setZ(zMin + height);
-			IDirectPosition p3 = dpl.get(2);
+			Coordinate p3 = dpl[2];
 			p3.setZ(zMin + height);
-			IDirectPosition p4 = dpl.get(3);
+			Coordinate p4 = dpl[3];
 			p4.setZ(zMin + height);
-			IDirectPositionList dpl1 = new DirectPositionList();
-			dpl1.add(p1);
-			dpl1.add(p2);
-			dpl1.add(p3);
-			dpl1.add(p4);
-			dpl1.add(p1);
-			pointsCube.add(dpl1);
-
-			IDirectPosition p1bas = new DirectPosition(p1.getX(), p1.getY(), zmin);
-			IDirectPosition p2bas = new DirectPosition(p2.getX(), p2.getY(), zmin);
-			IDirectPosition p3bas = new DirectPosition(p3.getX(), p3.getY(), zmin);
-			IDirectPosition p4bas = new DirectPosition(p4.getX(), p4.getY(), zmin);
-
-			IDirectPositionList dpl2 = new DirectPositionList();
-			dpl2.add(p2);
-			dpl2.add(p1);
-			dpl2.add(p1bas);
-			dpl2.add(p2bas);
-			dpl2.add(p2);
-			pointsCube.add(dpl2);
-
-			IDirectPositionList dpl3 = new DirectPositionList();
-			dpl3.add(p3);
-			dpl3.add(p2);
-			dpl3.add(p2bas);
-			dpl3.add(p3bas);
-			dpl3.add(p3);
-			pointsCube.add(dpl3);
-
-			IDirectPositionList dpl4 = new DirectPositionList();
-			dpl4.add(p4);
-			dpl4.add(p3);
-			dpl4.add(p3bas);
-			dpl4.add(p4bas);
-			dpl4.add(p4);
-			pointsCube.add(dpl4);
-
-			IDirectPositionList dpl5 = new DirectPositionList();
-			dpl5.add(p1);
-			dpl5.add(p4);
-			dpl5.add(p4bas);
-			dpl5.add(p1bas);
-			dpl5.add(p1);
-			pointsCube.add(dpl5);
-
-			IDirectPositionList dpl6 = new DirectPositionList();
-			dpl6.add(p1bas);
-			dpl6.add(p4bas);
-			dpl6.add(p3bas);
-			dpl6.add(p2bas);
-			dpl6.add(p1bas);
-			pointsCube.add(dpl6);
+			pointsCube.add(new Coordinate[]{p1, p2, p3, p4, p1});
+			Coordinate p1bas = new Coordinate(p1.getX(), p1.getY(), zmin);
+			Coordinate p2bas = new Coordinate(p2.getX(), p2.getY(), zmin);
+			Coordinate p3bas = new Coordinate(p3.getX(), p3.getY(), zmin);
+			Coordinate p4bas = new Coordinate(p4.getX(), p4.getY(), zmin);
+			pointsCube.add(new Coordinate[]{p2, p1, p1bas, p2bas, p2});
+			pointsCube.add(new Coordinate[]{p3, p2, p2bas, p3bas, p3});
+			pointsCube.add(new Coordinate[]{p4, p3, p3bas, p4bas, p4});
+			pointsCube.add(new Coordinate[]{p1, p4, p4bas, p1bas, p1});
+			pointsCube.add(new Coordinate[]{p1bas, p4bas, p3bas, p2bas, p1bas});
 		}
 		return pointsCube;
 	}
 
-
-	
-	@Override
-	public double getHeight() {
-
-		return height;
-	}
-
-	private double volume = Double.NaN;
+    private double volume = Double.NaN;
 
 	@Override
 	public double getVolume() {
 		if (Double.isNaN(volume)) {
 			volume = this.width * this.length * this.height;
 		}
-
 		return volume;
 	}
 	
 	public double getExternalSurfaceWithoutFloor() {
-		  return 2 * height * width + 2*height*length + width*length ; 
-	  
+		  return 2 * height * width + 2*height*length + width*length ;
 	}
-
 }
