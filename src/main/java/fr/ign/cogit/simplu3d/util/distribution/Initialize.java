@@ -138,8 +138,8 @@ public class Initialize {
 
 		// in any case, the native png reader is worse than the pure java ones, so
 		// let's disable it (the native png writer is on the other side faster)...
-		ImageIOExt.allowNativeCodec("png", ImageReaderSpi.class, false);
-		ImageIOExt.allowNativeCodec("png", ImageWriterSpi.class, true);
+		//ImageIOExt.allowNativeCodec("png", ImageReaderSpi.class, false);
+		//ImageIOExt.allowNativeCodec("png", ImageWriterSpi.class, true);
 
 //		System.out.println("allowNativeCodec");
 		//printRegistry(registry);

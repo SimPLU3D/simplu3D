@@ -27,8 +27,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<librjmcmc4j.version>1.2.2</librjmcmc4j.version>
-		<maven.javadoc.plugin>3.11.2</maven.javadoc.plugin>
+		<librjmcmc4j.version>1.2.3</librjmcmc4j.version>
+		<maven.javadoc.plugin>3.12.0</maven.javadoc.plugin>
 	</properties>
 
 	<developers>
@@ -157,11 +157,10 @@
 				<version>${maven.javadoc.plugin}</version>
 				<configuration>
 					<doclint>all,-missing</doclint>
-<!--
 					<additionalparam>-header &apos;&lt;script
 						type=&quot;text/javascript&quot;
-						src=&quot;http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML&quot;&gt;&lt;/script&gt;&apos;</additionalparam>
--->
+						src=&quot;https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML&quot;&gt;&lt;/script&gt;&apos;
+					</additionalparam>
 				</configuration>
 				<executions>
 					<execution>
@@ -371,30 +370,6 @@
 	</profiles>
 
 	<repositories>
-	<!--
-		<repository>
-			<id>ign-snapshots</id>
-			<name>Cogit Snapshots Repository</name>
-			<url>https://forge-cogit.ign.fr/nexus/content/repositories/snapshots/</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-		</repository>
-		<repository>
-			<id>ign-releases</id>
-			<name>Cogit Releases Repository</name>
-			<url>https://forge-cogit.ign.fr/nexus/content/repositories/releases/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-		</repository>
-	-->
 		<repository>
 		    <id>osgeo</id>
 			<name>Open Source Geospatial Foundation Repository</name>
@@ -402,23 +377,7 @@
 		    <snapshots><enabled>false</enabled></snapshots>
 		    <releases><enabled>true</enabled></releases>
 		</repository>
-		<!-- <repository>
-			<id>geoxygene</id>
-			<name>GitHub IGNF geoxygene Apache Maven Packages</name>
-			<url>https://maven.pkg.github.com/IGNF/geoxygene</url>
-		</repository> -->
-		<!-- <repository>
-			<id>librjmcmc4j</id>
-			<name>GitHub IGNF librjmcmc4j Apache Maven Packages</name>
-			<url>https://maven.pkg.github.com/IGNF/librjmcmc4j</url>
-		</repository>
-		<repository>
-			<id>simplu3D-rules</id>
-			<name>GitHub IGNF simplu3D-rules Apache Maven Packages</name>
-			<url>https://maven.pkg.github.com/SimPLU3D/simplu3D-rules</url>
-		</repository> -->
 	</repositories>
-
 	<dependencies>
 		<dependency>
 			<groupId>io.github.ignf</groupId>

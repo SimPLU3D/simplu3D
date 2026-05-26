@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import fr.ign.cogit.simplu3d.dao.SpatialRepository;
 import fr.ign.cogit.simplu3d.io.feature.FeatureType;
 import fr.ign.cogit.simplu3d.model.AbstractUrbanFeature;
 import fr.ign.cogit.simplu3d.model.UrbanFeature;
@@ -14,7 +13,6 @@ import fr.ign.common.io.ShapefileReader;
 import fr.ign.common.io.ShapefileWriter;
 import fr.ign.common.util.OrientedBoundingBox;
 import fr.ign.common.util.Vecteur;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.api.feature.simple.SimpleFeatureType;
 import org.geotools.api.referencing.FactoryException;
@@ -23,7 +21,6 @@ import org.geotools.data.DataUtilities;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureImpl;
-import org.geotools.feature.simple.SimpleFeatureTypeImpl;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.*;
 
@@ -376,7 +373,7 @@ public class ZonePackager {
 	/**
 	 * Determine the splitting of a set of parcels into 2 subsets of parcels.
 	 */
-	private static List<DefaultFeatureCollection> determine(@MonotonicNonNull DefaultFeatureCollection featColl) throws Exception {
+	private static List<DefaultFeatureCollection> determine(DefaultFeatureCollection featColl) throws Exception {
 		// We make two collection that contains different features
 		DefaultFeatureCollection collection1 = new DefaultFeatureCollection();
 		DefaultFeatureCollection collection2 = new DefaultFeatureCollection();
